@@ -7,9 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
-	"github.com/jvllmr/frans/package/config"
-	apiRoutes "github.com/jvllmr/frans/package/routes/api"
-	clientRoutes "github.com/jvllmr/frans/package/routes/client"
+	"github.com/jvllmr/frans/pkg/config"
+	apiRoutes "github.com/jvllmr/frans/pkg/routes/api"
+	clientRoutes "github.com/jvllmr/frans/pkg/routes/client"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )

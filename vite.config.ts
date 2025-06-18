@@ -36,7 +36,7 @@ export default defineConfig((env) => ({
   build: {
     emptyOutDir: true,
     manifest: true,
-    outDir: path.resolve(__dirname, "package/routes/client/assets"),
+    outDir: path.resolve(__dirname, "pkg/routes/client/assets"),
     rollupOptions: {
       input: "client/main.tsx",
     },

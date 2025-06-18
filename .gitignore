@@ -1,6 +1,6 @@
 node_modules
-package/routes/client/assets/*
-!package/routes/client/assets/.gitkeep
+pkg/routes/client/assets/*
+!pkg/routes/client/assets/.gitkeep
 frans
 *.exe
 *.db
