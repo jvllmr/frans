@@ -1,0 +1,43 @@
+{
+  "name": "frans-client",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && go build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "dev:go": "go run main.go",
+    "services": "docker compose -f docker-compose.dev.yaml up",
+    "keycloak:export": "./keycloak/keycloak_export.sh",
+    "ent": "go run -mod=mod entgo.io/ent/cmd/ent",
+    "ent:generate": "go run -mod=mod entgo.io/ent/cmd/ent generate ./package/ent/schema",
+    "ent:new": "go run -mod=mod entgo.io/ent/cmd/ent new --target ./package/ent/schema",
+    "swag": "go run -mod=mod github.com/swaggo/swag/v2/cmd/swag",
+    "swag:init": "go run -mod=mod github.com/swaggo/swag/v2/cmd/swag init -o openapi --v3.1"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/node": "^22.15.30",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.1",
+    "eslint": "^9.28.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.2.0",
+    "jiti": "^2.4.2",
+    "tsx": "^4.19.4",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.33.1",
+    "vite": "^6.3.5"
+  },
+  "packageManager": "pnpm@10.12.1",
+  "engines": {
+    "node": ">22.0.0"
+  }
+}

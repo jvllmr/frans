@@ -1,0 +1,7 @@
+root_path: "/files"
+dev_mode: true
+oidc_issuer: http://localhost:8080/realms/dev
+oidc_client_id: frans
+oidc_client_secret: Xaxmu1Ufw5ee2okQoVN9fEla7JIjTiw9
+db_type: sqlite3
+port: 8081

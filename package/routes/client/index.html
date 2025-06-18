@@ -1,0 +1,35 @@
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <script type="module">
+      window.fransRootPath = "{{.rootPath}}"
+      window.__fransAssetUrl = (filename) => `${window.mciCompanionRootPath}/static/${filename}`
+    </script>
+    {{if .devMode}}
+    <script type="module">
+        import RefreshRuntime from 'http://localhost:3000/@react-refresh'
+        RefreshRuntime.injectIntoGlobalHook(window)
+        window.$RefreshReg$ = () => {}
+        window.$RefreshSig$ = () => (type) => type
+        window.__vite_plugin_react_preamble_installed__ = true
+    </script>
+    <script type="module" src="{{asset "@vite/client"}}"></script>
+    {{end}}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frans</title>
+    <script type="module" crossorigin src="{{asset "client/main.tsx"}}"></script>
+    {{range imports "client/main.tsx"}}
+    <link rel="modulepreload" crossorigin href="{{.}}">
+    {{end}}
+    {{range css "client/main.tsx"}}
+    <link rel="stylesheet" href="{{.}}">
+    {{end}}
+    {{range importsCSS "client/main.tsx"}}
+    <link rel="stylesheet" href="{{.}}">
+    {{end}}
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
