@@ -1,0 +1,9 @@
+repos:
+  - repo: https://github.com/jvllmr/pre-commit-prettier
+    rev: v3.5.2
+    hooks:
+      - id: prettier
+        additional_dependencies:
+          - typesript@latest
+          - prettier@latest
+          - prettier-plugin-organize-imports@latest

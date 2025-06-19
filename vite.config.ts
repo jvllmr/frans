@@ -1,7 +1,9 @@
-import { ConfigEnv, defineConfig } from "vite";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import * as path from "path";
-
+import { ConfigEnv, defineConfig } from "vite";
+import i18nextLoader from "vite-plugin-i18next-loader";
 function getDefines(env: ConfigEnv) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const defines: Record<string, any> = {};
@@ -12,6 +14,7 @@ function getDefines(env: ConfigEnv) {
 }
 
 // https://vite.dev/config/
+// @ts-ignore
 export default defineConfig((env) => ({
   define: getDefines(env),
   experimental: {
@@ -29,7 +32,17 @@ export default defineConfig((env) => ({
       "@tabler/icons-react": "@tabler/icons-react/dist/esm/icons/index.mjs",
     },
   },
-  plugins: [react()],
+  // @ts-ignore
+  plugins: [
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+      routesDirectory: path.resolve(__dirname, "./client/routes"),
+      generatedRouteTree: path.resolve(__dirname, "./client/routeTree.gen.ts"),
+    }),
+    react(),
+    i18nextLoader({ paths: ["./locales"], namespaceResolution: "basename" }),
+  ],
   server: {
     port: 3000,
   },

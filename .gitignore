@@ -4,3 +4,4 @@ pkg/routes/client/assets/*
 frans
 *.exe
 *.db
+.tanstack

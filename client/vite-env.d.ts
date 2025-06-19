@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 
-declare global {
-  interface Window {
-    fransRootPath: string;
-    __fransAssetUrl: (filename: string) => string;
-  }
+interface Window {
+  fransRootPath: string;
+  __fransAssetUrl: (filename: string) => string;
 }
+
+declare module "virtual:*";
