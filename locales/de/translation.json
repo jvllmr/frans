@@ -1,4 +1,6 @@
 {
-  "welcome": "Willkommen zurück!",
-  "logout": "Abmelden"
+  "logout": "Abmelden",
+  "upload": "Hochladen",
+  "reset": "Zurücksetzen",
+  "generate": "Generieren"
 }

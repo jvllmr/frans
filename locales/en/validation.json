@@ -1,0 +1,4 @@
+{
+  "email": "Input must be an e-mail address",
+  "min_length": "Input must have at least # symbols"
+}

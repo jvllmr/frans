@@ -1,4 +1,6 @@
 {
-  "welcome": "Welcome Home!",
-  "logout": "Logout"
+  "logout": "Logout",
+  "upload": "Upload",
+  "reset": "Reset",
+  "generate": "Generate"
 }
