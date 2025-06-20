@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   Divider,
   Flex,
@@ -9,6 +10,8 @@ import {
   Title,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRoute,
   Outlet,
@@ -19,8 +22,8 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { queryClient } from "~/api";
 import i18n, { availableLanguages, availableLanguagesLabels } from "~/i18n";
-
 function LanguageControls() {
   const [language, setLanguage] = useState(i18n.language);
   return (
@@ -75,6 +78,20 @@ function TabControls() {
   );
 }
 
+function LogoutButton() {
+  const { t } = useTranslation();
+
+  return (
+    <Button
+      size="xs"
+      component="a"
+      href={`${window.fransRootPath}/api/auth/logout?redirect_uri=${window.location.href}`}
+    >
+      {t("logout")}
+    </Button>
+  );
+}
+
 function TabTitle() {
   const { t } = useTranslation("tabs");
   const deepestMatch = useChildMatches({ select: (m) => m.at(-1) });
@@ -89,25 +106,39 @@ function TabTitle() {
   );
 }
 
+function DevTools() {
+  return (
+    <>
+      <TanStackRouterDevtools />
+      <ReactQueryDevtools buttonPosition="bottom-right" position="top" />
+    </>
+  );
+}
+
 function RootRoute() {
   return (
     <>
       <MantineProvider>
-        <Container pt={100}>
-          <Paper withBorder p="lg">
-            <Flex justify="space-between" p={3}>
-              <TabControls />
-              <LanguageControls />
-            </Flex>
-            <Box py="sm">
-              <TabTitle />
-              <Divider />
-            </Box>
-            <Outlet />
-          </Paper>
-        </Container>
+        <QueryClientProvider client={queryClient}>
+          <Container pt={100}>
+            <Paper withBorder p="lg">
+              <Flex justify="space-between" p={3}>
+                <LanguageControls />
+                <LogoutButton />
+              </Flex>
+              <Flex p={3}>
+                <TabControls />
+              </Flex>
+              <Box py="sm">
+                <TabTitle />
+                <Divider />
+              </Box>
+              <Outlet />
+            </Paper>
+          </Container>
+          <DevTools />
+        </QueryClientProvider>
       </MantineProvider>
-      <TanStackRouterDevtools />
     </>
   );
 }

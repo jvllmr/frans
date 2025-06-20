@@ -66,6 +66,48 @@ func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 	return uc
 }
 
+// SetSubmittedTickets sets the "submitted_tickets" field.
+func (uc *UserCreate) SetSubmittedTickets(i int) *UserCreate {
+	uc.mutation.SetSubmittedTickets(i)
+	return uc
+}
+
+// SetNillableSubmittedTickets sets the "submitted_tickets" field if the given value is not nil.
+func (uc *UserCreate) SetNillableSubmittedTickets(i *int) *UserCreate {
+	if i != nil {
+		uc.SetSubmittedTickets(*i)
+	}
+	return uc
+}
+
+// SetSubmittedGrants sets the "submitted_grants" field.
+func (uc *UserCreate) SetSubmittedGrants(i int) *UserCreate {
+	uc.mutation.SetSubmittedGrants(i)
+	return uc
+}
+
+// SetNillableSubmittedGrants sets the "submitted_grants" field if the given value is not nil.
+func (uc *UserCreate) SetNillableSubmittedGrants(i *int) *UserCreate {
+	if i != nil {
+		uc.SetSubmittedGrants(*i)
+	}
+	return uc
+}
+
+// SetTotalDataSize sets the "totalDataSize" field.
+func (uc *UserCreate) SetTotalDataSize(i int64) *UserCreate {
+	uc.mutation.SetTotalDataSize(i)
+	return uc
+}
+
+// SetNillableTotalDataSize sets the "totalDataSize" field if the given value is not nil.
+func (uc *UserCreate) SetNillableTotalDataSize(i *int64) *UserCreate {
+	if i != nil {
+		uc.SetTotalDataSize(*i)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(u uuid.UUID) *UserCreate {
 	uc.mutation.SetID(u)
@@ -126,6 +168,18 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := uc.mutation.SubmittedTickets(); !ok {
+		v := user.DefaultSubmittedTickets
+		uc.mutation.SetSubmittedTickets(v)
+	}
+	if _, ok := uc.mutation.SubmittedGrants(); !ok {
+		v := user.DefaultSubmittedGrants
+		uc.mutation.SetSubmittedGrants(v)
+	}
+	if _, ok := uc.mutation.TotalDataSize(); !ok {
+		v := user.DefaultTotalDataSize
+		uc.mutation.SetTotalDataSize(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -147,6 +201,15 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
+	}
+	if _, ok := uc.mutation.SubmittedTickets(); !ok {
+		return &ValidationError{Name: "submitted_tickets", err: errors.New(`ent: missing required field "User.submitted_tickets"`)}
+	}
+	if _, ok := uc.mutation.SubmittedGrants(); !ok {
+		return &ValidationError{Name: "submitted_grants", err: errors.New(`ent: missing required field "User.submitted_grants"`)}
+	}
+	if _, ok := uc.mutation.TotalDataSize(); !ok {
+		return &ValidationError{Name: "totalDataSize", err: errors.New(`ent: missing required field "User.totalDataSize"`)}
 	}
 	return nil
 }
@@ -206,6 +269,18 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if value, ok := uc.mutation.SubmittedTickets(); ok {
+		_spec.SetField(user.FieldSubmittedTickets, field.TypeInt, value)
+		_node.SubmittedTickets = value
+	}
+	if value, ok := uc.mutation.SubmittedGrants(); ok {
+		_spec.SetField(user.FieldSubmittedGrants, field.TypeInt, value)
+		_node.SubmittedGrants = value
+	}
+	if value, ok := uc.mutation.TotalDataSize(); ok {
+		_spec.SetField(user.FieldTotalDataSize, field.TypeInt64, value)
+		_node.TotalDataSize = value
 	}
 	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

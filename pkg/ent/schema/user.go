@@ -25,6 +25,9 @@ func (User) Fields() []ent.Field {
 		field.Bool("is_admin"),
 		field.Time("created_at").
 			Default(time.Now),
+		field.Int("submitted_tickets").Default(0),
+		field.Int("submitted_grants").Default(0),
+		field.Int64("totalDataSize").Default(0),
 	}
 }
 

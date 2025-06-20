@@ -26,6 +26,12 @@ const (
 	FieldIsAdmin = "is_admin"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// FieldSubmittedTickets holds the string denoting the submitted_tickets field in the database.
+	FieldSubmittedTickets = "submitted_tickets"
+	// FieldSubmittedGrants holds the string denoting the submitted_grants field in the database.
+	FieldSubmittedGrants = "submitted_grants"
+	// FieldTotalDataSize holds the string denoting the totaldatasize field in the database.
+	FieldTotalDataSize = "total_data_size"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
 	EdgeSessions = "sessions"
 	// Table holds the table name of the user in the database.
@@ -48,6 +54,9 @@ var Columns = []string{
 	FieldGroups,
 	FieldIsAdmin,
 	FieldCreatedAt,
+	FieldSubmittedTickets,
+	FieldSubmittedGrants,
+	FieldTotalDataSize,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -63,6 +72,12 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultSubmittedTickets holds the default value on creation for the "submitted_tickets" field.
+	DefaultSubmittedTickets int
+	// DefaultSubmittedGrants holds the default value on creation for the "submitted_grants" field.
+	DefaultSubmittedGrants int
+	// DefaultTotalDataSize holds the default value on creation for the "totalDataSize" field.
+	DefaultTotalDataSize int64
 )
 
 // OrderOption defines the ordering options for the User queries.
@@ -96,6 +111,21 @@ func ByIsAdmin(opts ...sql.OrderTermOption) OrderOption {
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// BySubmittedTickets orders the results by the submitted_tickets field.
+func BySubmittedTickets(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSubmittedTickets, opts...).ToFunc()
+}
+
+// BySubmittedGrants orders the results by the submitted_grants field.
+func BySubmittedGrants(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSubmittedGrants, opts...).ToFunc()
+}
+
+// ByTotalDataSize orders the results by the totalDataSize field.
+func ByTotalDataSize(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotalDataSize, opts...).ToFunc()
 }
 
 // BySessionsCount orders the results by sessions count.

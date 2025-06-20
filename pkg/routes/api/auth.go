@@ -1,6 +1,7 @@
 package apiRoutes
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -10,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/config"
+	"github.com/jvllmr/frans/pkg/ent/session"
 	"github.com/jvllmr/frans/pkg/util"
 )
 
@@ -98,5 +100,17 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 	}
 
 	authGroup.GET("/callback", authCallback)
+
+	authGroup.GET("/logout", func(ctx *gin.Context) {
+		ctx.SetCookie(config.AccessTokenCookieName, "", 5, "", "", true, true)
+		idTokenCookie, err := ctx.Request.Cookie(config.IdTokenCookieName)
+		if err == nil {
+			_, _ = config.DBClient.Session.Delete().Where(session.IDToken(idTokenCookie.Value)).Exec(ctx.Request.Context())
+		}
+		ctx.SetCookie(config.IdTokenCookieName, "", 5, "", "", true, true)
+		redirectURI := ctx.Query("redirect_uri")
+		log.Printf("redirect %s", redirectURI)
+		ctx.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s?id_token_hint=%s&post_logout_redirect_uri=%s", config.OidcProviderExtraEndpoints.EndSessionEndpoint, idTokenCookie.Value, redirectURI))
+	})
 
 }

@@ -534,23 +534,29 @@ func (m *SessionMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *uuid.UUID
-	username        *string
-	full_name       *string
-	email           *string
-	groups          *[]string
-	appendgroups    []string
-	is_admin        *bool
-	created_at      *time.Time
-	clearedFields   map[string]struct{}
-	sessions        map[int]struct{}
-	removedsessions map[int]struct{}
-	clearedsessions bool
-	done            bool
-	oldValue        func(context.Context) (*User, error)
-	predicates      []predicate.User
+	op                   Op
+	typ                  string
+	id                   *uuid.UUID
+	username             *string
+	full_name            *string
+	email                *string
+	groups               *[]string
+	appendgroups         []string
+	is_admin             *bool
+	created_at           *time.Time
+	submitted_tickets    *int
+	addsubmitted_tickets *int
+	submitted_grants     *int
+	addsubmitted_grants  *int
+	totalDataSize        *int64
+	addtotalDataSize     *int64
+	clearedFields        map[string]struct{}
+	sessions             map[int]struct{}
+	removedsessions      map[int]struct{}
+	clearedsessions      bool
+	done                 bool
+	oldValue             func(context.Context) (*User, error)
+	predicates           []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -888,6 +894,174 @@ func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetSubmittedTickets sets the "submitted_tickets" field.
+func (m *UserMutation) SetSubmittedTickets(i int) {
+	m.submitted_tickets = &i
+	m.addsubmitted_tickets = nil
+}
+
+// SubmittedTickets returns the value of the "submitted_tickets" field in the mutation.
+func (m *UserMutation) SubmittedTickets() (r int, exists bool) {
+	v := m.submitted_tickets
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubmittedTickets returns the old "submitted_tickets" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldSubmittedTickets(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubmittedTickets is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubmittedTickets requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubmittedTickets: %w", err)
+	}
+	return oldValue.SubmittedTickets, nil
+}
+
+// AddSubmittedTickets adds i to the "submitted_tickets" field.
+func (m *UserMutation) AddSubmittedTickets(i int) {
+	if m.addsubmitted_tickets != nil {
+		*m.addsubmitted_tickets += i
+	} else {
+		m.addsubmitted_tickets = &i
+	}
+}
+
+// AddedSubmittedTickets returns the value that was added to the "submitted_tickets" field in this mutation.
+func (m *UserMutation) AddedSubmittedTickets() (r int, exists bool) {
+	v := m.addsubmitted_tickets
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSubmittedTickets resets all changes to the "submitted_tickets" field.
+func (m *UserMutation) ResetSubmittedTickets() {
+	m.submitted_tickets = nil
+	m.addsubmitted_tickets = nil
+}
+
+// SetSubmittedGrants sets the "submitted_grants" field.
+func (m *UserMutation) SetSubmittedGrants(i int) {
+	m.submitted_grants = &i
+	m.addsubmitted_grants = nil
+}
+
+// SubmittedGrants returns the value of the "submitted_grants" field in the mutation.
+func (m *UserMutation) SubmittedGrants() (r int, exists bool) {
+	v := m.submitted_grants
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubmittedGrants returns the old "submitted_grants" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldSubmittedGrants(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubmittedGrants is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubmittedGrants requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubmittedGrants: %w", err)
+	}
+	return oldValue.SubmittedGrants, nil
+}
+
+// AddSubmittedGrants adds i to the "submitted_grants" field.
+func (m *UserMutation) AddSubmittedGrants(i int) {
+	if m.addsubmitted_grants != nil {
+		*m.addsubmitted_grants += i
+	} else {
+		m.addsubmitted_grants = &i
+	}
+}
+
+// AddedSubmittedGrants returns the value that was added to the "submitted_grants" field in this mutation.
+func (m *UserMutation) AddedSubmittedGrants() (r int, exists bool) {
+	v := m.addsubmitted_grants
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSubmittedGrants resets all changes to the "submitted_grants" field.
+func (m *UserMutation) ResetSubmittedGrants() {
+	m.submitted_grants = nil
+	m.addsubmitted_grants = nil
+}
+
+// SetTotalDataSize sets the "totalDataSize" field.
+func (m *UserMutation) SetTotalDataSize(i int64) {
+	m.totalDataSize = &i
+	m.addtotalDataSize = nil
+}
+
+// TotalDataSize returns the value of the "totalDataSize" field in the mutation.
+func (m *UserMutation) TotalDataSize() (r int64, exists bool) {
+	v := m.totalDataSize
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalDataSize returns the old "totalDataSize" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldTotalDataSize(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalDataSize is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalDataSize requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalDataSize: %w", err)
+	}
+	return oldValue.TotalDataSize, nil
+}
+
+// AddTotalDataSize adds i to the "totalDataSize" field.
+func (m *UserMutation) AddTotalDataSize(i int64) {
+	if m.addtotalDataSize != nil {
+		*m.addtotalDataSize += i
+	} else {
+		m.addtotalDataSize = &i
+	}
+}
+
+// AddedTotalDataSize returns the value that was added to the "totalDataSize" field in this mutation.
+func (m *UserMutation) AddedTotalDataSize() (r int64, exists bool) {
+	v := m.addtotalDataSize
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTotalDataSize resets all changes to the "totalDataSize" field.
+func (m *UserMutation) ResetTotalDataSize() {
+	m.totalDataSize = nil
+	m.addtotalDataSize = nil
+}
+
 // AddSessionIDs adds the "sessions" edge to the Session entity by ids.
 func (m *UserMutation) AddSessionIDs(ids ...int) {
 	if m.sessions == nil {
@@ -976,7 +1150,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 9)
 	if m.username != nil {
 		fields = append(fields, user.FieldUsername)
 	}
@@ -994,6 +1168,15 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
+	}
+	if m.submitted_tickets != nil {
+		fields = append(fields, user.FieldSubmittedTickets)
+	}
+	if m.submitted_grants != nil {
+		fields = append(fields, user.FieldSubmittedGrants)
+	}
+	if m.totalDataSize != nil {
+		fields = append(fields, user.FieldTotalDataSize)
 	}
 	return fields
 }
@@ -1015,6 +1198,12 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.IsAdmin()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
+	case user.FieldSubmittedTickets:
+		return m.SubmittedTickets()
+	case user.FieldSubmittedGrants:
+		return m.SubmittedGrants()
+	case user.FieldTotalDataSize:
+		return m.TotalDataSize()
 	}
 	return nil, false
 }
@@ -1036,6 +1225,12 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldIsAdmin(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case user.FieldSubmittedTickets:
+		return m.OldSubmittedTickets(ctx)
+	case user.FieldSubmittedGrants:
+		return m.OldSubmittedGrants(ctx)
+	case user.FieldTotalDataSize:
+		return m.OldTotalDataSize(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -1087,6 +1282,27 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
+	case user.FieldSubmittedTickets:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubmittedTickets(v)
+		return nil
+	case user.FieldSubmittedGrants:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubmittedGrants(v)
+		return nil
+	case user.FieldTotalDataSize:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalDataSize(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -1094,13 +1310,31 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *UserMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addsubmitted_tickets != nil {
+		fields = append(fields, user.FieldSubmittedTickets)
+	}
+	if m.addsubmitted_grants != nil {
+		fields = append(fields, user.FieldSubmittedGrants)
+	}
+	if m.addtotalDataSize != nil {
+		fields = append(fields, user.FieldTotalDataSize)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case user.FieldSubmittedTickets:
+		return m.AddedSubmittedTickets()
+	case user.FieldSubmittedGrants:
+		return m.AddedSubmittedGrants()
+	case user.FieldTotalDataSize:
+		return m.AddedTotalDataSize()
+	}
 	return nil, false
 }
 
@@ -1109,6 +1343,27 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case user.FieldSubmittedTickets:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSubmittedTickets(v)
+		return nil
+	case user.FieldSubmittedGrants:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSubmittedGrants(v)
+		return nil
+	case user.FieldTotalDataSize:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalDataSize(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
 }
@@ -1153,6 +1408,15 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case user.FieldSubmittedTickets:
+		m.ResetSubmittedTickets()
+		return nil
+	case user.FieldSubmittedGrants:
+		m.ResetSubmittedGrants()
+		return nil
+	case user.FieldTotalDataSize:
+		m.ResetTotalDataSize()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

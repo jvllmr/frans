@@ -31,6 +31,12 @@ type User struct {
 	IsAdmin bool `json:"is_admin,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// SubmittedTickets holds the value of the "submitted_tickets" field.
+	SubmittedTickets int `json:"submitted_tickets,omitempty"`
+	// SubmittedGrants holds the value of the "submitted_grants" field.
+	SubmittedGrants int `json:"submitted_grants,omitempty"`
+	// TotalDataSize holds the value of the "totalDataSize" field.
+	TotalDataSize int64 `json:"totalDataSize,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -64,6 +70,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case user.FieldIsAdmin:
 			values[i] = new(sql.NullBool)
+		case user.FieldSubmittedTickets, user.FieldSubmittedGrants, user.FieldTotalDataSize:
+			values[i] = new(sql.NullInt64)
 		case user.FieldUsername, user.FieldFullName, user.FieldEmail:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
@@ -129,6 +137,24 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.CreatedAt = value.Time
 			}
+		case user.FieldSubmittedTickets:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field submitted_tickets", values[i])
+			} else if value.Valid {
+				u.SubmittedTickets = int(value.Int64)
+			}
+		case user.FieldSubmittedGrants:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field submitted_grants", values[i])
+			} else if value.Valid {
+				u.SubmittedGrants = int(value.Int64)
+			}
+		case user.FieldTotalDataSize:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field totalDataSize", values[i])
+			} else if value.Valid {
+				u.TotalDataSize = value.Int64
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -187,6 +213,15 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("submitted_tickets=")
+	builder.WriteString(fmt.Sprintf("%v", u.SubmittedTickets))
+	builder.WriteString(", ")
+	builder.WriteString("submitted_grants=")
+	builder.WriteString(fmt.Sprintf("%v", u.SubmittedGrants))
+	builder.WriteString(", ")
+	builder.WriteString("totalDataSize=")
+	builder.WriteString(fmt.Sprintf("%v", u.TotalDataSize))
 	builder.WriteByte(')')
 	return builder.String()
 }

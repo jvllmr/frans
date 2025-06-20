@@ -81,6 +81,21 @@ func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
 }
 
+// SubmittedTickets applies equality check predicate on the "submitted_tickets" field. It's identical to SubmittedTicketsEQ.
+func SubmittedTickets(v int) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldSubmittedTickets, v))
+}
+
+// SubmittedGrants applies equality check predicate on the "submitted_grants" field. It's identical to SubmittedGrantsEQ.
+func SubmittedGrants(v int) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldSubmittedGrants, v))
+}
+
+// TotalDataSize applies equality check predicate on the "totalDataSize" field. It's identical to TotalDataSizeEQ.
+func TotalDataSize(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldTotalDataSize, v))
+}
+
 // UsernameEQ applies the EQ predicate on the "username" field.
 func UsernameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldUsername, v))
@@ -324,6 +339,126 @@ func CreatedAtLT(v time.Time) predicate.User {
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// SubmittedTicketsEQ applies the EQ predicate on the "submitted_tickets" field.
+func SubmittedTicketsEQ(v int) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldSubmittedTickets, v))
+}
+
+// SubmittedTicketsNEQ applies the NEQ predicate on the "submitted_tickets" field.
+func SubmittedTicketsNEQ(v int) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldSubmittedTickets, v))
+}
+
+// SubmittedTicketsIn applies the In predicate on the "submitted_tickets" field.
+func SubmittedTicketsIn(vs ...int) predicate.User {
+	return predicate.User(sql.FieldIn(FieldSubmittedTickets, vs...))
+}
+
+// SubmittedTicketsNotIn applies the NotIn predicate on the "submitted_tickets" field.
+func SubmittedTicketsNotIn(vs ...int) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldSubmittedTickets, vs...))
+}
+
+// SubmittedTicketsGT applies the GT predicate on the "submitted_tickets" field.
+func SubmittedTicketsGT(v int) predicate.User {
+	return predicate.User(sql.FieldGT(FieldSubmittedTickets, v))
+}
+
+// SubmittedTicketsGTE applies the GTE predicate on the "submitted_tickets" field.
+func SubmittedTicketsGTE(v int) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldSubmittedTickets, v))
+}
+
+// SubmittedTicketsLT applies the LT predicate on the "submitted_tickets" field.
+func SubmittedTicketsLT(v int) predicate.User {
+	return predicate.User(sql.FieldLT(FieldSubmittedTickets, v))
+}
+
+// SubmittedTicketsLTE applies the LTE predicate on the "submitted_tickets" field.
+func SubmittedTicketsLTE(v int) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldSubmittedTickets, v))
+}
+
+// SubmittedGrantsEQ applies the EQ predicate on the "submitted_grants" field.
+func SubmittedGrantsEQ(v int) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldSubmittedGrants, v))
+}
+
+// SubmittedGrantsNEQ applies the NEQ predicate on the "submitted_grants" field.
+func SubmittedGrantsNEQ(v int) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldSubmittedGrants, v))
+}
+
+// SubmittedGrantsIn applies the In predicate on the "submitted_grants" field.
+func SubmittedGrantsIn(vs ...int) predicate.User {
+	return predicate.User(sql.FieldIn(FieldSubmittedGrants, vs...))
+}
+
+// SubmittedGrantsNotIn applies the NotIn predicate on the "submitted_grants" field.
+func SubmittedGrantsNotIn(vs ...int) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldSubmittedGrants, vs...))
+}
+
+// SubmittedGrantsGT applies the GT predicate on the "submitted_grants" field.
+func SubmittedGrantsGT(v int) predicate.User {
+	return predicate.User(sql.FieldGT(FieldSubmittedGrants, v))
+}
+
+// SubmittedGrantsGTE applies the GTE predicate on the "submitted_grants" field.
+func SubmittedGrantsGTE(v int) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldSubmittedGrants, v))
+}
+
+// SubmittedGrantsLT applies the LT predicate on the "submitted_grants" field.
+func SubmittedGrantsLT(v int) predicate.User {
+	return predicate.User(sql.FieldLT(FieldSubmittedGrants, v))
+}
+
+// SubmittedGrantsLTE applies the LTE predicate on the "submitted_grants" field.
+func SubmittedGrantsLTE(v int) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldSubmittedGrants, v))
+}
+
+// TotalDataSizeEQ applies the EQ predicate on the "totalDataSize" field.
+func TotalDataSizeEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldTotalDataSize, v))
+}
+
+// TotalDataSizeNEQ applies the NEQ predicate on the "totalDataSize" field.
+func TotalDataSizeNEQ(v int64) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldTotalDataSize, v))
+}
+
+// TotalDataSizeIn applies the In predicate on the "totalDataSize" field.
+func TotalDataSizeIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldIn(FieldTotalDataSize, vs...))
+}
+
+// TotalDataSizeNotIn applies the NotIn predicate on the "totalDataSize" field.
+func TotalDataSizeNotIn(vs ...int64) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldTotalDataSize, vs...))
+}
+
+// TotalDataSizeGT applies the GT predicate on the "totalDataSize" field.
+func TotalDataSizeGT(v int64) predicate.User {
+	return predicate.User(sql.FieldGT(FieldTotalDataSize, v))
+}
+
+// TotalDataSizeGTE applies the GTE predicate on the "totalDataSize" field.
+func TotalDataSizeGTE(v int64) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldTotalDataSize, v))
+}
+
+// TotalDataSizeLT applies the LT predicate on the "totalDataSize" field.
+func TotalDataSizeLT(v int64) predicate.User {
+	return predicate.User(sql.FieldLT(FieldTotalDataSize, v))
+}
+
+// TotalDataSizeLTE applies the LTE predicate on the "totalDataSize" field.
+func TotalDataSizeLTE(v int64) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldTotalDataSize, v))
 }
 
 // HasSessions applies the HasEdge predicate on the "sessions" edge.

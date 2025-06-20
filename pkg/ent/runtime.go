@@ -19,4 +19,16 @@ func init() {
 	userDescCreatedAt := userFields[6].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescSubmittedTickets is the schema descriptor for submitted_tickets field.
+	userDescSubmittedTickets := userFields[7].Descriptor()
+	// user.DefaultSubmittedTickets holds the default value on creation for the submitted_tickets field.
+	user.DefaultSubmittedTickets = userDescSubmittedTickets.Default.(int)
+	// userDescSubmittedGrants is the schema descriptor for submitted_grants field.
+	userDescSubmittedGrants := userFields[8].Descriptor()
+	// user.DefaultSubmittedGrants holds the default value on creation for the submitted_grants field.
+	user.DefaultSubmittedGrants = userDescSubmittedGrants.Default.(int)
+	// userDescTotalDataSize is the schema descriptor for totalDataSize field.
+	userDescTotalDataSize := userFields[9].Descriptor()
+	// user.DefaultTotalDataSize holds the default value on creation for the totalDataSize field.
+	user.DefaultTotalDataSize = userDescTotalDataSize.Default.(int64)
 }

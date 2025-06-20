@@ -22,6 +22,7 @@ type Config struct {
 	DBName           string `mapstructure:"db_name"`
 	DBUser           string `mapstructure:"db_user"`
 	DBPassword       string `mapstructure:"db_password"`
+	AdminGroup       string `mapstructure:"admin_group"`
 }
 
 func GetConfig() (Config, error) {
@@ -41,7 +42,9 @@ func GetConfig() (Config, error) {
 	fransConf.SetDefault("db_user", "frans")
 	fransConf.SetDefault("db_password", "")
 
-	fransConf.SetConfigName("config")
+	fransConf.SetDefault("admin_group", "admin")
+
+	fransConf.SetConfigName("frans")
 	fransConf.SetConfigType("yaml")
 	fransConf.AddConfigPath(".")
 	fransConf.SetEnvPrefix("frans")

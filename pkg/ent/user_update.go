@@ -112,6 +112,69 @@ func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
 	return uu
 }
 
+// SetSubmittedTickets sets the "submitted_tickets" field.
+func (uu *UserUpdate) SetSubmittedTickets(i int) *UserUpdate {
+	uu.mutation.ResetSubmittedTickets()
+	uu.mutation.SetSubmittedTickets(i)
+	return uu
+}
+
+// SetNillableSubmittedTickets sets the "submitted_tickets" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableSubmittedTickets(i *int) *UserUpdate {
+	if i != nil {
+		uu.SetSubmittedTickets(*i)
+	}
+	return uu
+}
+
+// AddSubmittedTickets adds i to the "submitted_tickets" field.
+func (uu *UserUpdate) AddSubmittedTickets(i int) *UserUpdate {
+	uu.mutation.AddSubmittedTickets(i)
+	return uu
+}
+
+// SetSubmittedGrants sets the "submitted_grants" field.
+func (uu *UserUpdate) SetSubmittedGrants(i int) *UserUpdate {
+	uu.mutation.ResetSubmittedGrants()
+	uu.mutation.SetSubmittedGrants(i)
+	return uu
+}
+
+// SetNillableSubmittedGrants sets the "submitted_grants" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableSubmittedGrants(i *int) *UserUpdate {
+	if i != nil {
+		uu.SetSubmittedGrants(*i)
+	}
+	return uu
+}
+
+// AddSubmittedGrants adds i to the "submitted_grants" field.
+func (uu *UserUpdate) AddSubmittedGrants(i int) *UserUpdate {
+	uu.mutation.AddSubmittedGrants(i)
+	return uu
+}
+
+// SetTotalDataSize sets the "totalDataSize" field.
+func (uu *UserUpdate) SetTotalDataSize(i int64) *UserUpdate {
+	uu.mutation.ResetTotalDataSize()
+	uu.mutation.SetTotalDataSize(i)
+	return uu
+}
+
+// SetNillableTotalDataSize sets the "totalDataSize" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableTotalDataSize(i *int64) *UserUpdate {
+	if i != nil {
+		uu.SetTotalDataSize(*i)
+	}
+	return uu
+}
+
+// AddTotalDataSize adds i to the "totalDataSize" field.
+func (uu *UserUpdate) AddTotalDataSize(i int64) *UserUpdate {
+	uu.mutation.AddTotalDataSize(i)
+	return uu
+}
+
 // AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
 func (uu *UserUpdate) AddSessionIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddSessionIDs(ids...)
@@ -211,6 +274,24 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := uu.mutation.SubmittedTickets(); ok {
+		_spec.SetField(user.FieldSubmittedTickets, field.TypeInt, value)
+	}
+	if value, ok := uu.mutation.AddedSubmittedTickets(); ok {
+		_spec.AddField(user.FieldSubmittedTickets, field.TypeInt, value)
+	}
+	if value, ok := uu.mutation.SubmittedGrants(); ok {
+		_spec.SetField(user.FieldSubmittedGrants, field.TypeInt, value)
+	}
+	if value, ok := uu.mutation.AddedSubmittedGrants(); ok {
+		_spec.AddField(user.FieldSubmittedGrants, field.TypeInt, value)
+	}
+	if value, ok := uu.mutation.TotalDataSize(); ok {
+		_spec.SetField(user.FieldTotalDataSize, field.TypeInt64, value)
+	}
+	if value, ok := uu.mutation.AddedTotalDataSize(); ok {
+		_spec.AddField(user.FieldTotalDataSize, field.TypeInt64, value)
 	}
 	if uu.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -359,6 +440,69 @@ func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
 	return uuo
 }
 
+// SetSubmittedTickets sets the "submitted_tickets" field.
+func (uuo *UserUpdateOne) SetSubmittedTickets(i int) *UserUpdateOne {
+	uuo.mutation.ResetSubmittedTickets()
+	uuo.mutation.SetSubmittedTickets(i)
+	return uuo
+}
+
+// SetNillableSubmittedTickets sets the "submitted_tickets" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableSubmittedTickets(i *int) *UserUpdateOne {
+	if i != nil {
+		uuo.SetSubmittedTickets(*i)
+	}
+	return uuo
+}
+
+// AddSubmittedTickets adds i to the "submitted_tickets" field.
+func (uuo *UserUpdateOne) AddSubmittedTickets(i int) *UserUpdateOne {
+	uuo.mutation.AddSubmittedTickets(i)
+	return uuo
+}
+
+// SetSubmittedGrants sets the "submitted_grants" field.
+func (uuo *UserUpdateOne) SetSubmittedGrants(i int) *UserUpdateOne {
+	uuo.mutation.ResetSubmittedGrants()
+	uuo.mutation.SetSubmittedGrants(i)
+	return uuo
+}
+
+// SetNillableSubmittedGrants sets the "submitted_grants" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableSubmittedGrants(i *int) *UserUpdateOne {
+	if i != nil {
+		uuo.SetSubmittedGrants(*i)
+	}
+	return uuo
+}
+
+// AddSubmittedGrants adds i to the "submitted_grants" field.
+func (uuo *UserUpdateOne) AddSubmittedGrants(i int) *UserUpdateOne {
+	uuo.mutation.AddSubmittedGrants(i)
+	return uuo
+}
+
+// SetTotalDataSize sets the "totalDataSize" field.
+func (uuo *UserUpdateOne) SetTotalDataSize(i int64) *UserUpdateOne {
+	uuo.mutation.ResetTotalDataSize()
+	uuo.mutation.SetTotalDataSize(i)
+	return uuo
+}
+
+// SetNillableTotalDataSize sets the "totalDataSize" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableTotalDataSize(i *int64) *UserUpdateOne {
+	if i != nil {
+		uuo.SetTotalDataSize(*i)
+	}
+	return uuo
+}
+
+// AddTotalDataSize adds i to the "totalDataSize" field.
+func (uuo *UserUpdateOne) AddTotalDataSize(i int64) *UserUpdateOne {
+	uuo.mutation.AddTotalDataSize(i)
+	return uuo
+}
+
 // AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
 func (uuo *UserUpdateOne) AddSessionIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddSessionIDs(ids...)
@@ -488,6 +632,24 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := uuo.mutation.SubmittedTickets(); ok {
+		_spec.SetField(user.FieldSubmittedTickets, field.TypeInt, value)
+	}
+	if value, ok := uuo.mutation.AddedSubmittedTickets(); ok {
+		_spec.AddField(user.FieldSubmittedTickets, field.TypeInt, value)
+	}
+	if value, ok := uuo.mutation.SubmittedGrants(); ok {
+		_spec.SetField(user.FieldSubmittedGrants, field.TypeInt, value)
+	}
+	if value, ok := uuo.mutation.AddedSubmittedGrants(); ok {
+		_spec.AddField(user.FieldSubmittedGrants, field.TypeInt, value)
+	}
+	if value, ok := uuo.mutation.TotalDataSize(); ok {
+		_spec.SetField(user.FieldTotalDataSize, field.TypeInt64, value)
+	}
+	if value, ok := uuo.mutation.AddedTotalDataSize(); ok {
+		_spec.AddField(user.FieldTotalDataSize, field.TypeInt64, value)
 	}
 	if uuo.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

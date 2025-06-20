@@ -12,9 +12,7 @@
     "keycloak:export": "./keycloak/keycloak_export.sh",
     "ent": "go run -mod=mod entgo.io/ent/cmd/ent",
     "ent:generate": "go run -mod=mod entgo.io/ent/cmd/ent generate ./pkg/ent/schema",
-    "ent:new": "go run -mod=mod entgo.io/ent/cmd/ent new --target ./pkg/ent/schema",
-    "swag": "go run -mod=mod github.com/swaggo/swag/v2/cmd/swag",
-    "swag:init": "go run -mod=mod github.com/swaggo/swag/v2/cmd/swag init -o openapi --v3.1"
+    "ent:new": "go run -mod=mod entgo.io/ent/cmd/ent new --target ./pkg/ent/schema"
   },
   "dependencies": {
     "@mantine/core": "^8.1.1",
