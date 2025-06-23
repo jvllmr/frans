@@ -8,3 +8,4 @@ The used OIDC provider needs to:
 
 - provide an introspection endpoint that includes the `sub` claim
 - allow usage of refresh tokens
+- an `end_session_endpoint`

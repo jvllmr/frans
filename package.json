@@ -7,7 +7,7 @@
     "build": "tsc -b && vite build && go build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev:go": "go run main.go",
+    "dev:go": "go run -mod=mod github.com/air-verse/air",
     "services": "docker compose -f docker-compose.dev.yaml up",
     "keycloak:export": "./keycloak/keycloak_export.sh",
     "ent": "go run -mod=mod entgo.io/ent/cmd/ent",

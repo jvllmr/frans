@@ -1,0 +1,3 @@
+
+[build]
+exclude_dir = ["assets", "tmp", "vendor", "testdata", "client", "public", "build", "scripts", "dist", "node_modules"]

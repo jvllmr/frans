@@ -5,3 +5,4 @@ frans
 *.exe
 *.db
 .tanstack
+tmp
