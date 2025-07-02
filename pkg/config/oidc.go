@@ -21,7 +21,12 @@ var OidcProviderExtraEndpoints struct {
 	IntrospectionEndpoint string `json:"introspection_endpoint"`
 }
 
-func doOidcRequest(ctx context.Context, configValue Config, url string, data url.Values) (*http.Response, error) {
+func doOidcRequest(
+	ctx context.Context,
+	configValue Config,
+	url string,
+	data url.Values,
+) (*http.Response, error) {
 	request, err := http.NewRequestWithContext(ctx, "POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
 		return nil, err
@@ -37,15 +42,27 @@ type IntrospectionResponse struct {
 	Sub    string `json:"sub"`
 }
 
-func DoIntrospection(ctx context.Context, configValue Config, accessToken string) (*IntrospectionResponse, error) {
+func DoIntrospection(
+	ctx context.Context,
+	configValue Config,
+	accessToken string,
+) (*IntrospectionResponse, error) {
 	data := url.Values{}
 	data.Set("token", accessToken)
-	response, err := doOidcRequest(ctx, configValue, OidcProviderExtraEndpoints.IntrospectionEndpoint, data)
+	response, err := doOidcRequest(
+		ctx,
+		configValue,
+		OidcProviderExtraEndpoints.IntrospectionEndpoint,
+		data,
+	)
 	if err != nil {
 		return nil, err
 	}
 	if response.StatusCode != 200 {
-		return nil, fmt.Errorf("introspection response returned with status code %s", response.Status)
+		return nil, fmt.Errorf(
+			"introspection response returned with status code %s",
+			response.Status,
+		)
 	}
 	defer response.Body.Close()
 	bodyBytes, err := io.ReadAll(response.Body)
@@ -66,7 +83,11 @@ type TokenRefreshmentResponse struct {
 	ExpiresIn    int64  `json:"expires_in"`
 }
 
-func DoTokenRefreshment(ctx context.Context, configValue Config, refreshToken string) (*TokenRefreshmentResponse, error) {
+func DoTokenRefreshment(
+	ctx context.Context,
+	configValue Config,
+	refreshToken string,
+) (*TokenRefreshmentResponse, error) {
 	data := url.Values{}
 	data.Set("refresh_token", refreshToken)
 	data.Set("grant_type", "refresh_token")
@@ -78,7 +99,10 @@ func DoTokenRefreshment(ctx context.Context, configValue Config, refreshToken st
 		return nil, err
 	}
 	if response.StatusCode != 200 {
-		return nil, fmt.Errorf("token refreshment response returned with status code %s", response.Status)
+		return nil, fmt.Errorf(
+			"token refreshment response returned with status code %s",
+			response.Status,
+		)
 	}
 	defer response.Body.Close()
 	bodyBytes, err := io.ReadAll(response.Body)

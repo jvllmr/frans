@@ -36,7 +36,11 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		introspectionResponse, err := config.DoIntrospection(c.Request.Context(), configValue, accessTokenCookie.Value)
+		introspectionResponse, err := config.DoIntrospection(
+			c.Request.Context(),
+			configValue,
+			accessTokenCookie.Value,
+		)
 		if err != nil {
 			log.Printf("Not authenticated: %v", err)
 			missingAuthResponse(c, oauth2Config, redirect)
@@ -52,21 +56,32 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			session, err := config.DBClient.Session.Query().WithUser().Where(session.IDToken(idTokenCookie.Value)).Only(c.Request.Context())
+			session, err := config.DBClient.Session.Query().
+				WithUser().
+				Where(session.IDToken(idTokenCookie.Value)).
+				Only(c.Request.Context())
 			if err != nil {
 				log.Printf("Not authenticated: %v", err)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
 			}
-			tokenRefreshmentResponse, err := config.DoTokenRefreshment(c.Request.Context(), configValue, session.RefreshToken)
+			tokenRefreshmentResponse, err := config.DoTokenRefreshment(
+				c.Request.Context(),
+				configValue,
+				session.RefreshToken,
+			)
 			if err != nil {
 				log.Printf("Not authenticated: %v", err)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
 			}
-			introspectionResponse, err = config.DoIntrospection(c.Request.Context(), configValue, tokenRefreshmentResponse.AccessToken)
+			introspectionResponse, err = config.DoIntrospection(
+				c.Request.Context(),
+				configValue,
+				tokenRefreshmentResponse.AccessToken,
+			)
 			if err != nil {
 				log.Printf("Not authenticated: %v", err)
 				missingAuthResponse(c, oauth2Config, redirect)
@@ -74,14 +89,22 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 				return
 			}
 			if introspectionResponse.Sub != session.Edges.User.ID.String() {
-				log.Printf("Not authenticated: Introspection sub did not match user id - %s != %s", introspectionResponse.Sub, session.Edges.User.ID)
+				log.Printf(
+					"Not authenticated: Introspection sub did not match user id - %s != %s",
+					introspectionResponse.Sub,
+					session.Edges.User.ID,
+				)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
 			}
 			config.SetAccessTokenCookie(c, tokenRefreshmentResponse.AccessToken)
-			newExpiry := time.Now().Add(time.Duration(tokenRefreshmentResponse.ExpiresIn) * time.Second)
-			_ = config.DBClient.Session.UpdateOne(session).SetExpire(newExpiry).SetRefreshToken(tokenRefreshmentResponse.RefreshToken).Exec(c.Request.Context())
+			newExpiry := time.Now().
+				Add(time.Duration(tokenRefreshmentResponse.ExpiresIn) * time.Second)
+			_ = config.DBClient.Session.UpdateOne(session).
+				SetExpire(newExpiry).
+				SetRefreshToken(tokenRefreshmentResponse.RefreshToken).
+				Exec(c.Request.Context())
 		}
 		userId, _ := uuid.Parse(introspectionResponse.Sub)
 		user, _ := config.DBClient.User.Get(c.Request.Context(), userId)

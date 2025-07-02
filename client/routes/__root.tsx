@@ -121,7 +121,7 @@ function RootRoute() {
       <MantineProvider>
         <QueryClientProvider client={queryClient}>
           <Container pt={100}>
-            <Paper withBorder p="lg">
+            <Paper withBorder p="lg" mb="xs">
               <Flex justify="space-between" p={3}>
                 <LanguageControls />
                 <LogoutButton />

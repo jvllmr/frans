@@ -13,19 +13,17 @@ type PublicUser struct {
 	FullName string `json:"name"`
 }
 
-func toPublicUser(user *ent.User) PublicUser {
+func ToPublicUser(user *ent.User) PublicUser {
 	return PublicUser{
 		ID:       user.ID.String(),
 		FullName: user.FullName,
 	}
 }
 
-// @Success 200 {object} PublicUser
-// @Router /api/v1/user/me [get]
 func fetchMe(ctx *gin.Context) {
 	user := ctx.MustGet(config.UserGinContext).(*ent.User)
 
-	ctx.JSON(http.StatusOK, toPublicUser(user))
+	ctx.JSON(http.StatusOK, ToPublicUser(user))
 }
 
 func setupUserGroup(r *gin.RouterGroup) {

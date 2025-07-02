@@ -10,7 +10,7 @@ export async function baseFetch<T>(url: string, opts?: AxiosRequestConfig<T>) {
   return axios.get(`${window.fransRootPath}/${url}`, opts);
 }
 
-class FetchError extends Error {
+export class FetchError extends Error {
   statusCode: number;
   constructor(message: string, statusCode: number) {
     super(message);

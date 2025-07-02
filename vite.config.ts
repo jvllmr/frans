@@ -52,6 +52,11 @@ export default defineConfig((env) => ({
     outDir: path.resolve(__dirname, "pkg/routes/client/assets"),
     rollupOptions: {
       input: "client/main.tsx",
+      output: {
+        manualChunks: {
+          icons: ["@tabler/icons-react"],
+        },
+      },
     },
   },
 }));

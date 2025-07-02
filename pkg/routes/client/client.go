@@ -16,7 +16,7 @@ import (
 //go:embed assets/*
 var clientFiles embed.FS
 
-//go:embed index.html
+//go:embed index.html.tmpl
 var indexFileContent string
 
 func loadManifest() gjson.Result {
@@ -24,9 +24,9 @@ func loadManifest() gjson.Result {
 	return gjson.ParseBytes(jsonData)
 }
 
-func setIndexTemplate(r *gin.Engine, config config.Config) *gin.Engine {
+func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 	var manifest gjson.Result
-	if !config.DevMode {
+	if !configValue.DevMode {
 		manifest = loadManifest()
 	} else {
 		manifest = gjson.Parse("{}")
@@ -34,13 +34,13 @@ func setIndexTemplate(r *gin.Engine, config config.Config) *gin.Engine {
 
 	assetUrl := func(filePath string) string {
 
-		if config.DevMode {
+		if configValue.DevMode {
 			return fmt.Sprintf("http://localhost:3000/%s", filePath)
 		}
 
 		filePathResult := manifest.Get(fmt.Sprintf("%s.file", gjson.Escape(filePath)))
 
-		return fmt.Sprintf("%s/static/%s", config.RootPath, filePathResult.String())
+		return fmt.Sprintf("%s/static/%s", configValue.RootPath, filePathResult.String())
 	}
 	asset := func(filePath string) string {
 		return assetUrl((filePath))
@@ -54,10 +54,10 @@ func setIndexTemplate(r *gin.Engine, config config.Config) *gin.Engine {
 		}
 		for _, css_file_result := range css_files_result.Array() {
 			css_file := css_file_result.String()
-			if config.DevMode {
+			if configValue.DevMode {
 				urls = append(urls, fmt.Sprintf("http://localhost:3000/%s", css_file))
 			} else {
-				urls = append(urls, fmt.Sprintf("%s/static/%s", config.RootPath, css_file))
+				urls = append(urls, fmt.Sprintf("%s/static/%s", configValue.RootPath, css_file))
 			}
 		}
 		return urls
@@ -110,8 +110,13 @@ func SetupClientRoutes(r *gin.Engine, rGroup *gin.RouterGroup, configValue confi
 	r.NoRoute(routesUtil.AuthMiddleware(configValue, true), func(c *gin.Context) {
 		// Fallback to index.html for React Router
 		c.HTML(http.StatusOK, "index", gin.H{
-			"rootPath": configValue.RootPath,
-			"devMode":  configValue.DevMode,
+			"rootPath":                           configValue.RootPath,
+			"devMode":                            configValue.DevMode,
+			"maxFiles":                           configValue.MaxFiles,
+			"maxSizes":                           configValue.MaxSizes,
+			"defaultExpiryTotalDays":             configValue.DefaultExpiryTotalDays,
+			"defaultExpiryTotalDownloads":        configValue.DefaultExpiryTotalDownloads,
+			"defaultExpiryDaysSinceLastDownload": configValue.DefaultExpiryDaysSinceLastDownload,
 		})
 	})
 

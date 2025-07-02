@@ -65,7 +65,14 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 		email := claimsData["email"].(string)
 		user, err := config.DBClient.User.Get(c.Request.Context(), userId)
 		if err != nil {
-			user, err = config.DBClient.User.Create().SetGroups(groups).SetIsAdmin(isAdmin).SetUsername(username).SetFullName(fullName).SetEmail(email).SetID(userId).Save(c.Request.Context())
+			user, err = config.DBClient.User.Create().
+				SetGroups(groups).
+				SetIsAdmin(isAdmin).
+				SetUsername(username).
+				SetFullName(fullName).
+				SetEmail(email).
+				SetID(userId).
+				Save(c.Request.Context())
 			if err != nil {
 				log.Printf("Error: Could not create User %s", err)
 				c.AbortWithError(http.StatusInternalServerError, err)
@@ -80,7 +87,12 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 		}
 		config.SetIdTokenCookie(c, rawIDToken)
 		config.SetAccessTokenCookie(c, oauth2Token.AccessToken)
-		err = config.DBClient.Session.Create().SetUser(user).SetExpire(oauth2Token.Expiry).SetIDToken(rawIDToken).SetRefreshToken(oauth2Token.RefreshToken).Exec(c.Request.Context())
+		err = config.DBClient.Session.Create().
+			SetUser(user).
+			SetExpire(oauth2Token.Expiry).
+			SetIDToken(rawIDToken).
+			SetRefreshToken(oauth2Token.RefreshToken).
+			Exec(c.Request.Context())
 		if err != nil {
 			log.Printf("Error: could not store session: %v", err)
 		}
@@ -105,12 +117,22 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 		ctx.SetCookie(config.AccessTokenCookieName, "", 5, "", "", true, true)
 		idTokenCookie, err := ctx.Request.Cookie(config.IdTokenCookieName)
 		if err == nil {
-			_, _ = config.DBClient.Session.Delete().Where(session.IDToken(idTokenCookie.Value)).Exec(ctx.Request.Context())
+			_, _ = config.DBClient.Session.Delete().
+				Where(session.IDToken(idTokenCookie.Value)).
+				Exec(ctx.Request.Context())
 		}
 		ctx.SetCookie(config.IdTokenCookieName, "", 5, "", "", true, true)
 		redirectURI := ctx.Query("redirect_uri")
 		log.Printf("redirect %s", redirectURI)
-		ctx.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf("%s?id_token_hint=%s&post_logout_redirect_uri=%s", config.OidcProviderExtraEndpoints.EndSessionEndpoint, idTokenCookie.Value, redirectURI))
+		ctx.Redirect(
+			http.StatusTemporaryRedirect,
+			fmt.Sprintf(
+				"%s?id_token_hint=%s&post_logout_redirect_uri=%s",
+				config.OidcProviderExtraEndpoints.EndSessionEndpoint,
+				idTokenCookie.Value,
+				redirectURI,
+			),
+		)
 	})
 
 }

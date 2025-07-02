@@ -11,3 +11,8 @@ const IdTokenCookieName = "frans_id_token"
 const AuthOriginCookieName = "frans_auth_origin"
 
 const UserGinContext = "user"
+
+const TicketExpiryTypeAuto = "auto"
+const TicketExpiryTypeSingle = "single"
+const TicketExpiryTypeNone = "none"
+const TicketExpiryTypeCustom = "custom"

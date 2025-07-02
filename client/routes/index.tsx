@@ -11,30 +11,17 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { createFileRoute } from "@tanstack/react-router";
+import { zod4Resolver } from "mantine-form-zod-resolver";
 import { I18nextProvider, useTranslation } from "react-i18next";
-import { z } from "zod/v4";
+import { CreateTicket, createTicketSchema } from "~/api/ticket";
+import { FormDebugInfo } from "~/components/FormDebugInfo";
+import { FilesInput } from "~/components/inputs/FilesInput";
 import { NullTextarea } from "~/components/inputs/NullTextarea";
 import { NullTextInput } from "~/components/inputs/NullTextInput";
 import i18n from "~/i18n";
 export const Route = createFileRoute("/")({
   component: Index,
 });
-
-const createTicketSchema = z.object({
-  comment: z.string().nullable(),
-  email: z.email(i18n.t("email", { ns: "validation" })).nullable(),
-  password: z
-    .string()
-    .min(12, i18n.t("min_length", { ns: "validation" }).replace("#", "12")),
-  emailPassword: z.boolean(),
-  expiryType: z.enum(["auto", "single", "none", "custom"]),
-  expiryTotalDays: z.int(),
-  expiryDaysSinceLastDownload: z.int(),
-  expiryTotalDownloads: z.int(),
-  emailOnDownload: z.email(i18n.t("email", { ns: "validation" })).nullable(),
-});
-
-type CreateTicket = z.infer<typeof createTicketSchema>;
 
 const selectData: { label: string; value: CreateTicket["expiryType"] }[] = [
   { value: "auto", label: i18n.t("expiry_automatic", { ns: "ticket_new" }) },
@@ -61,11 +48,14 @@ function NewTicketForm() {
       password: "",
       emailPassword: false,
       expiryType: "auto",
-      expiryTotalDays: 30,
-      expiryDaysSinceLastDownload: 7,
-      expiryTotalDownloads: 10,
+      expiryTotalDays: window.fransDefaultExpiryTotalDays,
+      expiryDaysSinceLastDownload:
+        window.fransDefaultExpiryDaysSinceLastDownload,
+      expiryTotalDownloads: window.fransDefaultExpiryTotalDownloads,
       emailOnDownload: null,
+      files: [],
     },
+    validate: zod4Resolver(createTicketSchema),
   });
   return (
     <Box p="lg">
@@ -121,6 +111,8 @@ function NewTicketForm() {
           <Button>{t("upload", { ns: "translation" })}</Button>
           <Button>{t("reset", { ns: "translation" })}</Button>
         </Flex>
+        <FilesInput {...form.getInputProps("files")} />
+        <FormDebugInfo form={form} />
       </SimpleGrid>
     </Box>
   );

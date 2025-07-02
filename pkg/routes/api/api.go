@@ -14,4 +14,6 @@ func SetupAPIRoutes(r *gin.RouterGroup, configValue config.Config) {
 	v1Group := apiGroup.Group("/v1", routesUtil.AuthMiddleware(configValue, false))
 	userGroup := v1Group.Group("/user")
 	setupUserGroup(userGroup)
+	ticketGroup := v1Group.Group("/ticket")
+	setupTicketGroup(ticketGroup, configValue)
 }

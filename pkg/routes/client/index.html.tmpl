@@ -4,6 +4,11 @@
     <script type="module">
       window.fransRootPath = "{{.rootPath}}"
       window.__fransAssetUrl = (filename) => `${window.mciCompanionRootPath}/static/${filename}`
+      window.fransMaxFiles = {{.maxFiles}}
+      window.fransMaxSizes = {{.maxSizes}}
+      window.fransDefaultExpiryTotalDays = {{.defaultExpiryTotalDays}}
+      window.fransDefaultExpiryTotalDownloads = {{.defaultExpiryTotalDownloads}}
+      window.fransDefaultExpiryDaysSinceLastDownload = {{.defaultExpiryDaysSinceLastDownload}}
     </script>
     {{if .devMode}}
     <script type="module">

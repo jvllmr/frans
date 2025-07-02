@@ -23,6 +23,13 @@ type Config struct {
 	DBUser           string `mapstructure:"db_user"`
 	DBPassword       string `mapstructure:"db_password"`
 	AdminGroup       string `mapstructure:"admin_group"`
+	MaxFiles         string `mapstructure:"max_files"`
+	MaxSizes         string `mapstructure:"max_sizes"`
+	FilesDir         string `mapstructure:"files_dir"`
+
+	DefaultExpiryDaysSinceLastDownload uint8 `mapstructure:"default_expiry_days_since_last_download"`
+	DefaultExpiryTotalDownloads        uint8 `mapstructure:"default_expiry_total_downloads"`
+	DefaultExpiryTotalDays             uint8 `mapstructure:"default_expiry_total_days"`
 }
 
 func GetConfig() (Config, error) {
@@ -34,6 +41,13 @@ func GetConfig() (Config, error) {
 
 	fransConf.SetDefault("host", "127.0.0.1")
 	fransConf.SetDefault("port", 8080)
+
+	fransConf.SetDefault("max_files", 20)
+	fransConf.SetDefault("max_sizes", 2_000_000_000) // 2GB
+
+	fransConf.SetDefault("default_expiry_days_since_last_download", 7)
+	fransConf.SetDefault("default_expiry_total_downloads", 10)
+	fransConf.SetDefault("default_expiry_total_days", 30)
 
 	fransConf.SetDefault("db_type", "postgres")
 	fransConf.SetDefault("db_host", "localhost")
