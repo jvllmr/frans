@@ -11,12 +11,14 @@ import (
 type PublicUser struct {
 	ID       string `json:"id"`
 	FullName string `json:"name"`
+	IsAdmin  bool   `json:"isAdmin"`
 }
 
 func ToPublicUser(user *ent.User) PublicUser {
 	return PublicUser{
 		ID:       user.ID.String(),
 		FullName: user.FullName,
+		IsAdmin:  user.IsAdmin,
 	}
 }
 

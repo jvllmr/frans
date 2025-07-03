@@ -45,18 +45,17 @@ var (
 	// TicketsColumns holds the columns for the "tickets" table.
 	TicketsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "comment", Type: field.TypeString},
-		{Name: "size", Type: field.TypeUint64, Default: 0},
+		{Name: "comment", Type: field.TypeString, Nullable: true},
 		{Name: "expiry_type", Type: field.TypeString},
 		{Name: "hashed_password", Type: field.TypeString},
 		{Name: "salt", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "last_download", Type: field.TypeTime},
+		{Name: "last_download", Type: field.TypeTime, Nullable: true},
 		{Name: "times_downloaded", Type: field.TypeUint64, Default: 0},
 		{Name: "expiry_total_days", Type: field.TypeUint8},
 		{Name: "expiry_days_since_last_download", Type: field.TypeUint8},
 		{Name: "expiry_total_downloads", Type: field.TypeUint8},
-		{Name: "email_on_download", Type: field.TypeString},
+		{Name: "email_on_download", Type: field.TypeString, Nullable: true},
 		{Name: "user_tickets", Type: field.TypeUUID, Nullable: true},
 	}
 	// TicketsTable holds the schema information for the "tickets" table.
@@ -67,7 +66,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tickets_users_tickets",
-				Columns:    []*schema.Column{TicketsColumns[13]},
+				Columns:    []*schema.Column{TicketsColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

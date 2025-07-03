@@ -8,8 +8,10 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/config"
 	"github.com/jvllmr/frans/pkg/ent"
+	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/util"
 )
 
@@ -18,12 +20,13 @@ type PublicTicket struct {
 	EstimatedExpiry string       `json:"estimatedExpiry"`
 	User            PublicUser   `json:"owner"`
 	Files           []PublicFile `json:"files"`
+	CreatedAt       string       `json:"createdAt"`
 }
 
 func ToPublicTicket(configValue config.Config, ticket *ent.Ticket) PublicTicket {
 	files := []PublicFile{}
-	for _, file := range files {
-		files = append(files, file)
+	for _, file := range ticket.Edges.Files {
+		files = append(files, ToPublicFile(file))
 	}
 
 	return PublicTicket{
@@ -31,19 +34,20 @@ func ToPublicTicket(configValue config.Config, ticket *ent.Ticket) PublicTicket 
 		User:            ToPublicUser(ticket.Edges.Owner),
 		EstimatedExpiry: util.GetEstimatedExpiry(configValue, ticket).Format(http.TimeFormat),
 		Files:           files,
+		CreatedAt:       ticket.CreatedAt.UTC().Format(http.TimeFormat),
 	}
 }
 
 type ticketForm struct {
-	Comment                     *string `binding:"required" form:"comment"`
-	Email                       *string `binding:"required" form:"email"`
-	Password                    string  `binding:"required" form:"password"`
-	EmailPassword               bool    `binding:"required" form:"emailPassword"`
-	ExpiryType                  string  `binding:"required" form:"expiryType"`
-	ExpiryTotalDays             uint8   `binding:"required" form:"expiryTotalDays"`
-	ExpiryDaysSinceLastDownload uint8   `binding:"required" form:"expiryDaysSinceLastDownload"`
-	ExpiryTotalDownloads        uint8   `binding:"required" form:"expiryTotalDownloads"`
-	EmailOnDownload             *string `binding:"required" form:"emailOnDownload"`
+	Comment                     *string `form:"comment"`
+	Email                       *string `form:"email"`
+	Password                    string  `form:"password"                    binding:"required"`
+	EmailPassword               bool    `form:"emailPassword"`
+	ExpiryType                  string  `form:"expiryType"                  binding:"required"`
+	ExpiryTotalDays             uint8   `form:"expiryTotalDays"             binding:"required"`
+	ExpiryDaysSinceLastDownload uint8   `form:"expiryDaysSinceLastDownload" binding:"required"`
+	ExpiryTotalDownloads        uint8   `form:"expiryTotalDownloads"        binding:"required"`
+	EmailOnDownload             *string `form:"emailOnDownload"`
 }
 
 func createTicketFactory(configValue config.Config) gin.HandlerFunc {
@@ -60,23 +64,32 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 				c.AbortWithError(500, err)
 			}
 			hashedPassword := util.HashPassword(form.Password, salt)
-			ticket, err := tx.Ticket.Create().
-				SetComment(*form.Comment).
-				SetEmailOnDownload(*form.EmailOnDownload).
+			ticketBuilder := tx.Ticket.Create().
+				SetID(uuid.New()).
 				SetExpiryType(form.ExpiryType).
 				SetExpiryDaysSinceLastDownload(form.ExpiryDaysSinceLastDownload).
 				SetExpiryTotalDays(form.ExpiryTotalDays).
 				SetExpiryTotalDownloads(form.ExpiryTotalDownloads).
 				SetHashedPassword(hashedPassword).
 				SetSalt(hex.EncodeToString(salt)).
-				SetOwner(user).
-				Save(c.Request.Context())
+				SetOwner(user)
+
+			if form.Comment != nil {
+				ticketBuilder = ticketBuilder.SetComment(*form.Comment)
+			}
+
+			if form.EmailOnDownload != nil {
+				ticketBuilder = ticketBuilder.SetEmailOnDownload(*form.EmailOnDownload)
+			}
+
+			ticketValue, err := ticketBuilder.Save(c.Request.Context())
 			if err != nil {
 				c.AbortWithError(400, err)
 			}
 
 			multipartForm, _ := c.MultipartForm()
-			files := multipartForm.File["files"]
+			files := multipartForm.File["files[]"]
+			util.EnsureFilesTmpPath(configValue)
 			for _, fileHeader := range files {
 
 				incomingFileHandle, _ := fileHeader.Open()
@@ -115,12 +128,18 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 						c.AbortWithError(http.StatusInternalServerError, err)
 					}
 				}
-				ticket = config.DBClient.Ticket.UpdateOne(ticket).
+				ticketValue = tx.Ticket.UpdateOne(ticketValue).
 					AddFiles(dbFile).
 					SaveX(c.Request.Context())
 			}
+			ticketValue = tx.Ticket.Query().
+				Where(ticket.ID(ticketValue.ID)).
+				WithFiles().
+				WithOwner().
+				OnlyX(c.Request.Context())
+
+			c.JSON(http.StatusCreated, ToPublicTicket(configValue, ticketValue))
 			tx.Commit()
-			c.JSON(http.StatusCreated, ToPublicTicket(configValue, ticket))
 		} else {
 			c.AbortWithError(422, err)
 		}

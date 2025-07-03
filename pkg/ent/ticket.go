@@ -21,8 +21,6 @@ type Ticket struct {
 	ID uuid.UUID `json:"id,omitempty"`
 	// Comment holds the value of the "comment" field.
 	Comment *string `json:"comment,omitempty"`
-	// Size holds the value of the "size" field.
-	Size uint64 `json:"size,omitempty"`
 	// ExpiryType holds the value of the "expiryType" field.
 	ExpiryType string `json:"expiryType,omitempty"`
 	// HashedPassword holds the value of the "hashed_password" field.
@@ -86,7 +84,7 @@ func (*Ticket) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case ticket.FieldSize, ticket.FieldTimesDownloaded, ticket.FieldExpiryTotalDays, ticket.FieldExpiryDaysSinceLastDownload, ticket.FieldExpiryTotalDownloads:
+		case ticket.FieldTimesDownloaded, ticket.FieldExpiryTotalDays, ticket.FieldExpiryDaysSinceLastDownload, ticket.FieldExpiryTotalDownloads:
 			values[i] = new(sql.NullInt64)
 		case ticket.FieldComment, ticket.FieldExpiryType, ticket.FieldHashedPassword, ticket.FieldSalt, ticket.FieldEmailOnDownload:
 			values[i] = new(sql.NullString)
@@ -123,12 +121,6 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Comment = new(string)
 				*t.Comment = value.String
-			}
-		case ticket.FieldSize:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field size", values[i])
-			} else if value.Valid {
-				t.Size = uint64(value.Int64)
 			}
 		case ticket.FieldExpiryType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -249,9 +241,6 @@ func (t *Ticket) String() string {
 		builder.WriteString("comment=")
 		builder.WriteString(*v)
 	}
-	builder.WriteString(", ")
-	builder.WriteString("size=")
-	builder.WriteString(fmt.Sprintf("%v", t.Size))
 	builder.WriteString(", ")
 	builder.WriteString("expiryType=")
 	builder.WriteString(t.ExpiryType)

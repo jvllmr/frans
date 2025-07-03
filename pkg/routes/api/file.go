@@ -8,7 +8,7 @@ type PublicFile struct {
 	Name   string `json:"name"`
 }
 
-func ToPublicFile(file ent.File) PublicFile {
+func ToPublicFile(file *ent.File) PublicFile {
 	return PublicFile{
 		Sha256: file.ID,
 		Size:   uint64(file.Size),

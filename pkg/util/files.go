@@ -9,7 +9,10 @@ import (
 )
 
 func EnsureFilesTmpPath(configValue config.Config) {
-	os.MkdirAll(GetFilesTmpPath(configValue), 0664)
+	err := os.MkdirAll(GetFilesTmpPath(configValue), 0775)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func GetFilesTmpPath(configValue config.Config) string {

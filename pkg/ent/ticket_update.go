@@ -45,24 +45,9 @@ func (tu *TicketUpdate) SetNillableComment(s *string) *TicketUpdate {
 	return tu
 }
 
-// SetSize sets the "size" field.
-func (tu *TicketUpdate) SetSize(u uint64) *TicketUpdate {
-	tu.mutation.ResetSize()
-	tu.mutation.SetSize(u)
-	return tu
-}
-
-// SetNillableSize sets the "size" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableSize(u *uint64) *TicketUpdate {
-	if u != nil {
-		tu.SetSize(*u)
-	}
-	return tu
-}
-
-// AddSize adds u to the "size" field.
-func (tu *TicketUpdate) AddSize(u int64) *TicketUpdate {
-	tu.mutation.AddSize(u)
+// ClearComment clears the value of the "comment" field.
+func (tu *TicketUpdate) ClearComment() *TicketUpdate {
+	tu.mutation.ClearComment()
 	return tu
 }
 
@@ -133,6 +118,12 @@ func (tu *TicketUpdate) SetNillableLastDownload(t *time.Time) *TicketUpdate {
 	if t != nil {
 		tu.SetLastDownload(*t)
 	}
+	return tu
+}
+
+// ClearLastDownload clears the value of the "last_download" field.
+func (tu *TicketUpdate) ClearLastDownload() *TicketUpdate {
+	tu.mutation.ClearLastDownload()
 	return tu
 }
 
@@ -231,6 +222,12 @@ func (tu *TicketUpdate) SetNillableEmailOnDownload(s *string) *TicketUpdate {
 	if s != nil {
 		tu.SetEmailOnDownload(*s)
 	}
+	return tu
+}
+
+// ClearEmailOnDownload clears the value of the "email_on_download" field.
+func (tu *TicketUpdate) ClearEmailOnDownload() *TicketUpdate {
+	tu.mutation.ClearEmailOnDownload()
 	return tu
 }
 
@@ -339,11 +336,8 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Comment(); ok {
 		_spec.SetField(ticket.FieldComment, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.Size(); ok {
-		_spec.SetField(ticket.FieldSize, field.TypeUint64, value)
-	}
-	if value, ok := tu.mutation.AddedSize(); ok {
-		_spec.AddField(ticket.FieldSize, field.TypeUint64, value)
+	if tu.mutation.CommentCleared() {
+		_spec.ClearField(ticket.FieldComment, field.TypeString)
 	}
 	if value, ok := tu.mutation.ExpiryType(); ok {
 		_spec.SetField(ticket.FieldExpiryType, field.TypeString, value)
@@ -359,6 +353,9 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.LastDownload(); ok {
 		_spec.SetField(ticket.FieldLastDownload, field.TypeTime, value)
+	}
+	if tu.mutation.LastDownloadCleared() {
+		_spec.ClearField(ticket.FieldLastDownload, field.TypeTime)
 	}
 	if value, ok := tu.mutation.TimesDownloaded(); ok {
 		_spec.SetField(ticket.FieldTimesDownloaded, field.TypeUint64, value)
@@ -386,6 +383,9 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.EmailOnDownload(); ok {
 		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
+	}
+	if tu.mutation.EmailOnDownloadCleared() {
+		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeString)
 	}
 	if tu.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -495,24 +495,9 @@ func (tuo *TicketUpdateOne) SetNillableComment(s *string) *TicketUpdateOne {
 	return tuo
 }
 
-// SetSize sets the "size" field.
-func (tuo *TicketUpdateOne) SetSize(u uint64) *TicketUpdateOne {
-	tuo.mutation.ResetSize()
-	tuo.mutation.SetSize(u)
-	return tuo
-}
-
-// SetNillableSize sets the "size" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableSize(u *uint64) *TicketUpdateOne {
-	if u != nil {
-		tuo.SetSize(*u)
-	}
-	return tuo
-}
-
-// AddSize adds u to the "size" field.
-func (tuo *TicketUpdateOne) AddSize(u int64) *TicketUpdateOne {
-	tuo.mutation.AddSize(u)
+// ClearComment clears the value of the "comment" field.
+func (tuo *TicketUpdateOne) ClearComment() *TicketUpdateOne {
+	tuo.mutation.ClearComment()
 	return tuo
 }
 
@@ -583,6 +568,12 @@ func (tuo *TicketUpdateOne) SetNillableLastDownload(t *time.Time) *TicketUpdateO
 	if t != nil {
 		tuo.SetLastDownload(*t)
 	}
+	return tuo
+}
+
+// ClearLastDownload clears the value of the "last_download" field.
+func (tuo *TicketUpdateOne) ClearLastDownload() *TicketUpdateOne {
+	tuo.mutation.ClearLastDownload()
 	return tuo
 }
 
@@ -681,6 +672,12 @@ func (tuo *TicketUpdateOne) SetNillableEmailOnDownload(s *string) *TicketUpdateO
 	if s != nil {
 		tuo.SetEmailOnDownload(*s)
 	}
+	return tuo
+}
+
+// ClearEmailOnDownload clears the value of the "email_on_download" field.
+func (tuo *TicketUpdateOne) ClearEmailOnDownload() *TicketUpdateOne {
+	tuo.mutation.ClearEmailOnDownload()
 	return tuo
 }
 
@@ -819,11 +816,8 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 	if value, ok := tuo.mutation.Comment(); ok {
 		_spec.SetField(ticket.FieldComment, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.Size(); ok {
-		_spec.SetField(ticket.FieldSize, field.TypeUint64, value)
-	}
-	if value, ok := tuo.mutation.AddedSize(); ok {
-		_spec.AddField(ticket.FieldSize, field.TypeUint64, value)
+	if tuo.mutation.CommentCleared() {
+		_spec.ClearField(ticket.FieldComment, field.TypeString)
 	}
 	if value, ok := tuo.mutation.ExpiryType(); ok {
 		_spec.SetField(ticket.FieldExpiryType, field.TypeString, value)
@@ -839,6 +833,9 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 	}
 	if value, ok := tuo.mutation.LastDownload(); ok {
 		_spec.SetField(ticket.FieldLastDownload, field.TypeTime, value)
+	}
+	if tuo.mutation.LastDownloadCleared() {
+		_spec.ClearField(ticket.FieldLastDownload, field.TypeTime)
 	}
 	if value, ok := tuo.mutation.TimesDownloaded(); ok {
 		_spec.SetField(ticket.FieldTimesDownloaded, field.TypeUint64, value)
@@ -866,6 +863,9 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 	}
 	if value, ok := tuo.mutation.EmailOnDownload(); ok {
 		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
+	}
+	if tuo.mutation.EmailOnDownloadCleared() {
+		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeString)
 	}
 	if tuo.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{

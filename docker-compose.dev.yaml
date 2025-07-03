@@ -28,7 +28,7 @@ services:
     networks:
       - keycloak
     volumes:
-      - ./keycloak/realm_import:/opt/keycloak/data/import
+      - ./keycloak/realm_import:/opt/keycloak/data/import:Z
   smtp:
     container_name: frans_dev_smtp
     image: docker.io/rnwood/smtp4dev:3.8.6

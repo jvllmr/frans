@@ -16,6 +16,10 @@ func GetEstimatedExpiry(configValue config.Config, ticket *ent.Ticket) time.Time
 	}
 
 	totalLimit := ticket.CreatedAt.Add(time.Hour * 24 * time.Duration(expiryTotalDays))
+	if ticket.LastDownload == nil {
+		return totalLimit.UTC()
+	}
+
 	lastDownloadLimit := ticket.LastDownload.Add(
 		time.Hour * 24 * time.Duration(expiryDaysSinceLastDownload),
 	)

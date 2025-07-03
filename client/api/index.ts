@@ -3,11 +3,16 @@ import axios, { AxiosRequestConfig } from "axios";
 import { ZodType } from "zod/v4";
 
 export function v1Url(url: string) {
-  return `/api/v1${url}`;
+  return `${window.fransRootPath}/api/v1${url}`;
 }
 
 export async function baseFetch<T>(url: string, opts?: AxiosRequestConfig<T>) {
-  return axios.get(`${window.fransRootPath}/${url}`, opts);
+  return axios.get(
+    url.startsWith(window.fransRootPath)
+      ? url
+      : `${window.fransRootPath}/${url}`,
+    opts,
+  );
 }
 
 export class FetchError extends Error {

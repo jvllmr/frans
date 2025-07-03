@@ -3,6 +3,8 @@ import axios from "axios";
 import { z } from "zod/v4";
 import i18n from "~/i18n";
 import { FetchError, v1Url } from ".";
+import { fileSchema } from "./file";
+import { userSchema } from "./user";
 
 function v1TicketUrl(url: string) {
   return v1Url("/ticket" + url);
@@ -28,19 +30,16 @@ export type CreateTicket = z.infer<typeof createTicketSchema>;
 
 export const ticketSchema = z.object({
   id: z.uuid(),
-  userId: z.uuid(),
+  owner: userSchema,
+  files: fileSchema.array(),
   createdAt: z.date(),
-  expiryType: ticketExpiryType,
-  expiryTotalDays: z.int(),
-  expiryDaysSinceLastDownload: z.int(),
-  expiryTotalDownloads: z.int(),
-  lastDownload: z.date().nullable(),
+  estimatedExpiry: z.date(),
 });
 
 export type Ticket = z.infer<typeof ticketSchema>;
 
 export async function createTicket(data: CreateTicket): Promise<Ticket> {
-  return (await axios.postForm(v1TicketUrl(""), data)).data;
+  return ticketSchema.parse((await axios.postForm(v1TicketUrl(""), data)).data);
 }
 
 export function useCreateTicketMutation() {

@@ -42,6 +42,7 @@ func GetConfig() (Config, error) {
 	fransConf.SetDefault("host", "127.0.0.1")
 	fransConf.SetDefault("port", 8080)
 
+	fransConf.SetDefault("files_dir", "files")
 	fransConf.SetDefault("max_files", 20)
 	fransConf.SetDefault("max_sizes", 2_000_000_000) // 2GB
 

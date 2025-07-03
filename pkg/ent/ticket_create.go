@@ -29,16 +29,10 @@ func (tc *TicketCreate) SetComment(s string) *TicketCreate {
 	return tc
 }
 
-// SetSize sets the "size" field.
-func (tc *TicketCreate) SetSize(u uint64) *TicketCreate {
-	tc.mutation.SetSize(u)
-	return tc
-}
-
-// SetNillableSize sets the "size" field if the given value is not nil.
-func (tc *TicketCreate) SetNillableSize(u *uint64) *TicketCreate {
-	if u != nil {
-		tc.SetSize(*u)
+// SetNillableComment sets the "comment" field if the given value is not nil.
+func (tc *TicketCreate) SetNillableComment(s *string) *TicketCreate {
+	if s != nil {
+		tc.SetComment(*s)
 	}
 	return tc
 }
@@ -81,6 +75,14 @@ func (tc *TicketCreate) SetLastDownload(t time.Time) *TicketCreate {
 	return tc
 }
 
+// SetNillableLastDownload sets the "last_download" field if the given value is not nil.
+func (tc *TicketCreate) SetNillableLastDownload(t *time.Time) *TicketCreate {
+	if t != nil {
+		tc.SetLastDownload(*t)
+	}
+	return tc
+}
+
 // SetTimesDownloaded sets the "times_downloaded" field.
 func (tc *TicketCreate) SetTimesDownloaded(u uint64) *TicketCreate {
 	tc.mutation.SetTimesDownloaded(u)
@@ -116,6 +118,14 @@ func (tc *TicketCreate) SetExpiryTotalDownloads(u uint8) *TicketCreate {
 // SetEmailOnDownload sets the "email_on_download" field.
 func (tc *TicketCreate) SetEmailOnDownload(s string) *TicketCreate {
 	tc.mutation.SetEmailOnDownload(s)
+	return tc
+}
+
+// SetNillableEmailOnDownload sets the "email_on_download" field if the given value is not nil.
+func (tc *TicketCreate) SetNillableEmailOnDownload(s *string) *TicketCreate {
+	if s != nil {
+		tc.SetEmailOnDownload(*s)
+	}
 	return tc
 }
 
@@ -194,10 +204,6 @@ func (tc *TicketCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TicketCreate) defaults() {
-	if _, ok := tc.mutation.Size(); !ok {
-		v := ticket.DefaultSize
-		tc.mutation.SetSize(v)
-	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		v := ticket.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
@@ -210,12 +216,6 @@ func (tc *TicketCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TicketCreate) check() error {
-	if _, ok := tc.mutation.Comment(); !ok {
-		return &ValidationError{Name: "comment", err: errors.New(`ent: missing required field "Ticket.comment"`)}
-	}
-	if _, ok := tc.mutation.Size(); !ok {
-		return &ValidationError{Name: "size", err: errors.New(`ent: missing required field "Ticket.size"`)}
-	}
 	if _, ok := tc.mutation.ExpiryType(); !ok {
 		return &ValidationError{Name: "expiryType", err: errors.New(`ent: missing required field "Ticket.expiryType"`)}
 	}
@@ -228,9 +228,6 @@ func (tc *TicketCreate) check() error {
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Ticket.created_at"`)}
 	}
-	if _, ok := tc.mutation.LastDownload(); !ok {
-		return &ValidationError{Name: "last_download", err: errors.New(`ent: missing required field "Ticket.last_download"`)}
-	}
 	if _, ok := tc.mutation.TimesDownloaded(); !ok {
 		return &ValidationError{Name: "times_downloaded", err: errors.New(`ent: missing required field "Ticket.times_downloaded"`)}
 	}
@@ -242,9 +239,6 @@ func (tc *TicketCreate) check() error {
 	}
 	if _, ok := tc.mutation.ExpiryTotalDownloads(); !ok {
 		return &ValidationError{Name: "expiry_total_downloads", err: errors.New(`ent: missing required field "Ticket.expiry_total_downloads"`)}
-	}
-	if _, ok := tc.mutation.EmailOnDownload(); !ok {
-		return &ValidationError{Name: "email_on_download", err: errors.New(`ent: missing required field "Ticket.email_on_download"`)}
 	}
 	return nil
 }
@@ -284,10 +278,6 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Comment(); ok {
 		_spec.SetField(ticket.FieldComment, field.TypeString, value)
 		_node.Comment = &value
-	}
-	if value, ok := tc.mutation.Size(); ok {
-		_spec.SetField(ticket.FieldSize, field.TypeUint64, value)
-		_node.Size = value
 	}
 	if value, ok := tc.mutation.ExpiryType(); ok {
 		_spec.SetField(ticket.FieldExpiryType, field.TypeString, value)

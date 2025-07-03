@@ -16,8 +16,6 @@ const (
 	FieldID = "id"
 	// FieldComment holds the string denoting the comment field in the database.
 	FieldComment = "comment"
-	// FieldSize holds the string denoting the size field in the database.
-	FieldSize = "size"
 	// FieldExpiryType holds the string denoting the expirytype field in the database.
 	FieldExpiryType = "expiry_type"
 	// FieldHashedPassword holds the string denoting the hashed_password field in the database.
@@ -62,7 +60,6 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldComment,
-	FieldSize,
 	FieldExpiryType,
 	FieldHashedPassword,
 	FieldSalt,
@@ -103,8 +100,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultSize holds the default value on creation for the "size" field.
-	DefaultSize uint64
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultTimesDownloaded holds the default value on creation for the "times_downloaded" field.
@@ -122,11 +117,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByComment orders the results by the comment field.
 func ByComment(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldComment, opts...).ToFunc()
-}
-
-// BySize orders the results by the size field.
-func BySize(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSize, opts...).ToFunc()
 }
 
 // ByExpiryType orders the results by the expiryType field.

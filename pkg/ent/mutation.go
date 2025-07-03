@@ -1057,8 +1057,6 @@ type TicketMutation struct {
 	typ                                string
 	id                                 *uuid.UUID
 	comment                            *string
-	size                               *uint64
-	addsize                            *int64
 	expiryType                         *string
 	hashed_password                    *string
 	salt                               *string
@@ -1219,65 +1217,22 @@ func (m *TicketMutation) OldComment(ctx context.Context) (v *string, err error) 
 	return oldValue.Comment, nil
 }
 
+// ClearComment clears the value of the "comment" field.
+func (m *TicketMutation) ClearComment() {
+	m.comment = nil
+	m.clearedFields[ticket.FieldComment] = struct{}{}
+}
+
+// CommentCleared returns if the "comment" field was cleared in this mutation.
+func (m *TicketMutation) CommentCleared() bool {
+	_, ok := m.clearedFields[ticket.FieldComment]
+	return ok
+}
+
 // ResetComment resets all changes to the "comment" field.
 func (m *TicketMutation) ResetComment() {
 	m.comment = nil
-}
-
-// SetSize sets the "size" field.
-func (m *TicketMutation) SetSize(u uint64) {
-	m.size = &u
-	m.addsize = nil
-}
-
-// Size returns the value of the "size" field in the mutation.
-func (m *TicketMutation) Size() (r uint64, exists bool) {
-	v := m.size
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSize returns the old "size" field's value of the Ticket entity.
-// If the Ticket object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TicketMutation) OldSize(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSize is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSize requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSize: %w", err)
-	}
-	return oldValue.Size, nil
-}
-
-// AddSize adds u to the "size" field.
-func (m *TicketMutation) AddSize(u int64) {
-	if m.addsize != nil {
-		*m.addsize += u
-	} else {
-		m.addsize = &u
-	}
-}
-
-// AddedSize returns the value that was added to the "size" field in this mutation.
-func (m *TicketMutation) AddedSize() (r int64, exists bool) {
-	v := m.addsize
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetSize resets all changes to the "size" field.
-func (m *TicketMutation) ResetSize() {
-	m.size = nil
-	m.addsize = nil
+	delete(m.clearedFields, ticket.FieldComment)
 }
 
 // SetExpiryType sets the "expiryType" field.
@@ -1455,9 +1410,22 @@ func (m *TicketMutation) OldLastDownload(ctx context.Context) (v *time.Time, err
 	return oldValue.LastDownload, nil
 }
 
+// ClearLastDownload clears the value of the "last_download" field.
+func (m *TicketMutation) ClearLastDownload() {
+	m.last_download = nil
+	m.clearedFields[ticket.FieldLastDownload] = struct{}{}
+}
+
+// LastDownloadCleared returns if the "last_download" field was cleared in this mutation.
+func (m *TicketMutation) LastDownloadCleared() bool {
+	_, ok := m.clearedFields[ticket.FieldLastDownload]
+	return ok
+}
+
 // ResetLastDownload resets all changes to the "last_download" field.
 func (m *TicketMutation) ResetLastDownload() {
 	m.last_download = nil
+	delete(m.clearedFields, ticket.FieldLastDownload)
 }
 
 // SetTimesDownloaded sets the "times_downloaded" field.
@@ -1715,9 +1683,22 @@ func (m *TicketMutation) OldEmailOnDownload(ctx context.Context) (v *string, err
 	return oldValue.EmailOnDownload, nil
 }
 
+// ClearEmailOnDownload clears the value of the "email_on_download" field.
+func (m *TicketMutation) ClearEmailOnDownload() {
+	m.email_on_download = nil
+	m.clearedFields[ticket.FieldEmailOnDownload] = struct{}{}
+}
+
+// EmailOnDownloadCleared returns if the "email_on_download" field was cleared in this mutation.
+func (m *TicketMutation) EmailOnDownloadCleared() bool {
+	_, ok := m.clearedFields[ticket.FieldEmailOnDownload]
+	return ok
+}
+
 // ResetEmailOnDownload resets all changes to the "email_on_download" field.
 func (m *TicketMutation) ResetEmailOnDownload() {
 	m.email_on_download = nil
+	delete(m.clearedFields, ticket.FieldEmailOnDownload)
 }
 
 // AddFileIDs adds the "files" edge to the File entity by ids.
@@ -1847,12 +1828,9 @@ func (m *TicketMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TicketMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 11)
 	if m.comment != nil {
 		fields = append(fields, ticket.FieldComment)
-	}
-	if m.size != nil {
-		fields = append(fields, ticket.FieldSize)
 	}
 	if m.expiryType != nil {
 		fields = append(fields, ticket.FieldExpiryType)
@@ -1894,8 +1872,6 @@ func (m *TicketMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case ticket.FieldComment:
 		return m.Comment()
-	case ticket.FieldSize:
-		return m.Size()
 	case ticket.FieldExpiryType:
 		return m.ExpiryType()
 	case ticket.FieldHashedPassword:
@@ -1927,8 +1903,6 @@ func (m *TicketMutation) OldField(ctx context.Context, name string) (ent.Value, 
 	switch name {
 	case ticket.FieldComment:
 		return m.OldComment(ctx)
-	case ticket.FieldSize:
-		return m.OldSize(ctx)
 	case ticket.FieldExpiryType:
 		return m.OldExpiryType(ctx)
 	case ticket.FieldHashedPassword:
@@ -1964,13 +1938,6 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetComment(v)
-		return nil
-	case ticket.FieldSize:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSize(v)
 		return nil
 	case ticket.FieldExpiryType:
 		v, ok := value.(string)
@@ -2050,9 +2017,6 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TicketMutation) AddedFields() []string {
 	var fields []string
-	if m.addsize != nil {
-		fields = append(fields, ticket.FieldSize)
-	}
 	if m.addtimes_downloaded != nil {
 		fields = append(fields, ticket.FieldTimesDownloaded)
 	}
@@ -2073,8 +2037,6 @@ func (m *TicketMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TicketMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case ticket.FieldSize:
-		return m.AddedSize()
 	case ticket.FieldTimesDownloaded:
 		return m.AddedTimesDownloaded()
 	case ticket.FieldExpiryTotalDays:
@@ -2092,13 +2054,6 @@ func (m *TicketMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TicketMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case ticket.FieldSize:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddSize(v)
-		return nil
 	case ticket.FieldTimesDownloaded:
 		v, ok := value.(int64)
 		if !ok {
@@ -2134,7 +2089,17 @@ func (m *TicketMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TicketMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(ticket.FieldComment) {
+		fields = append(fields, ticket.FieldComment)
+	}
+	if m.FieldCleared(ticket.FieldLastDownload) {
+		fields = append(fields, ticket.FieldLastDownload)
+	}
+	if m.FieldCleared(ticket.FieldEmailOnDownload) {
+		fields = append(fields, ticket.FieldEmailOnDownload)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -2147,6 +2112,17 @@ func (m *TicketMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TicketMutation) ClearField(name string) error {
+	switch name {
+	case ticket.FieldComment:
+		m.ClearComment()
+		return nil
+	case ticket.FieldLastDownload:
+		m.ClearLastDownload()
+		return nil
+	case ticket.FieldEmailOnDownload:
+		m.ClearEmailOnDownload()
+		return nil
+	}
 	return fmt.Errorf("unknown Ticket nullable field %s", name)
 }
 
@@ -2156,9 +2132,6 @@ func (m *TicketMutation) ResetField(name string) error {
 	switch name {
 	case ticket.FieldComment:
 		m.ResetComment()
-		return nil
-	case ticket.FieldSize:
-		m.ResetSize()
 		return nil
 	case ticket.FieldExpiryType:
 		m.ResetExpiryType()

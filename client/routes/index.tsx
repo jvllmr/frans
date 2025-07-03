@@ -13,7 +13,11 @@ import { useForm } from "@mantine/form";
 import { createFileRoute } from "@tanstack/react-router";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { I18nextProvider, useTranslation } from "react-i18next";
-import { CreateTicket, createTicketSchema } from "~/api/ticket";
+import {
+  CreateTicket,
+  createTicketSchema,
+  useCreateTicketMutation,
+} from "~/api/ticket";
 import { FormDebugInfo } from "~/components/FormDebugInfo";
 import { FilesInput } from "~/components/inputs/FilesInput";
 import { NullTextarea } from "~/components/inputs/NullTextarea";
@@ -57,64 +61,86 @@ function NewTicketForm() {
     },
     validate: zod4Resolver(createTicketSchema),
   });
+  const createTicketMutation = useCreateTicketMutation();
+
   return (
-    <Box p="lg">
-      <SimpleGrid>
-        <NullTextarea
-          {...form.getInputProps("comment")}
-          label={t("label_comment")}
-        />
-        <NullTextInput
-          {...form.getInputProps("email")}
-          label={t("label_email")}
-        />
-        <PasswordInput
-          {...form.getInputProps("password")}
-          label={t("label_password")}
-        />
-        <Button>{t("generate", { ns: "translation" })}</Button>
-        <Checkbox
-          {...form.getInputProps("emailPassword", { type: "checkbox" })}
-          label={
-            <Highlight highlight={t("label_password_email_highlight")}>
-              {t("label_password_email")}
-            </Highlight>
-          }
-        />
-        <Select
-          {...form.getInputProps("expiryType")}
-          data={selectData}
-          label={t("label_expiry")}
-        />
-        {form.values.expiryType === "custom" ? (
-          <>
-            <NumberInput
-              {...form.getInputProps("expiryTotalDays")}
-              label={t("label_expiry_total_days")}
-            />
-            <NumberInput
-              {...form.getInputProps("expiryTotalDays")}
-              label={t("label_expiry_last_download")}
-            />
-            <NumberInput
-              {...form.getInputProps("expiryTotalDownloads")}
-              label={t("label_expiry_total_downloads")}
-            />
-          </>
-        ) : null}
-        <NullTextInput
-          {...form.getInputProps("emailOnDownload")}
-          label={t("label_notify_email")}
-        />
-        <Button>{t("label_own_email")}</Button>
-        <Flex justify="space-evenly">
-          <Button>{t("upload", { ns: "translation" })}</Button>
-          <Button>{t("reset", { ns: "translation" })}</Button>
-        </Flex>
-        <FilesInput {...form.getInputProps("files")} />
-        <FormDebugInfo form={form} />
-      </SimpleGrid>
-    </Box>
+    <form
+      onSubmit={form.onSubmit((values) => {
+        createTicketMutation.mutate(values, {
+          onSuccess() {
+            form.reset();
+          },
+        });
+      })}
+    >
+      <Box p="lg">
+        <SimpleGrid>
+          <NullTextarea
+            {...form.getInputProps("comment")}
+            label={t("label_comment")}
+          />
+          <NullTextInput
+            {...form.getInputProps("email")}
+            label={t("label_email")}
+          />
+          <PasswordInput
+            {...form.getInputProps("password")}
+            label={t("label_password")}
+            withAsterisk
+            required
+          />
+          <Button>{t("generate", { ns: "translation" })}</Button>
+          <Checkbox
+            {...form.getInputProps("emailPassword", { type: "checkbox" })}
+            label={
+              <Highlight highlight={t("label_password_email_highlight")}>
+                {t("label_password_email")}
+              </Highlight>
+            }
+          />
+          <Select
+            {...form.getInputProps("expiryType")}
+            data={selectData}
+            label={t("label_expiry")}
+          />
+          {form.values.expiryType === "custom" ? (
+            <>
+              <NumberInput
+                {...form.getInputProps("expiryTotalDays")}
+                label={t("label_expiry_total_days")}
+              />
+              <NumberInput
+                {...form.getInputProps("expiryTotalDays")}
+                label={t("label_expiry_last_download")}
+              />
+              <NumberInput
+                {...form.getInputProps("expiryTotalDownloads")}
+                label={t("label_expiry_total_downloads")}
+              />
+            </>
+          ) : null}
+          <NullTextInput
+            {...form.getInputProps("emailOnDownload")}
+            label={t("label_notify_email")}
+          />
+          <Button>{t("label_own_email")}</Button>
+          <Flex justify="space-evenly">
+            <Button type="submit" loading={createTicketMutation.isPending}>
+              {t("upload", { ns: "translation" })}
+            </Button>
+            <Button
+              onClick={() => {
+                form.reset();
+              }}
+            >
+              {t("reset", { ns: "translation" })}
+            </Button>
+          </Flex>
+          <FilesInput {...form.getInputProps("files")} />
+          <FormDebugInfo form={form} />
+        </SimpleGrid>
+      </Box>
+    </form>
   );
 }
 

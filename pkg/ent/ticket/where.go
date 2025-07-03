@@ -61,11 +61,6 @@ func Comment(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldComment, v))
 }
 
-// Size applies equality check predicate on the "size" field. It's identical to SizeEQ.
-func Size(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEQ(FieldSize, v))
-}
-
 // ExpiryType applies equality check predicate on the "expiryType" field. It's identical to ExpiryTypeEQ.
 func ExpiryType(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldExpiryType, v))
@@ -171,6 +166,16 @@ func CommentHasSuffix(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldHasSuffix(FieldComment, v))
 }
 
+// CommentIsNil applies the IsNil predicate on the "comment" field.
+func CommentIsNil() predicate.Ticket {
+	return predicate.Ticket(sql.FieldIsNull(FieldComment))
+}
+
+// CommentNotNil applies the NotNil predicate on the "comment" field.
+func CommentNotNil() predicate.Ticket {
+	return predicate.Ticket(sql.FieldNotNull(FieldComment))
+}
+
 // CommentEqualFold applies the EqualFold predicate on the "comment" field.
 func CommentEqualFold(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEqualFold(FieldComment, v))
@@ -179,46 +184,6 @@ func CommentEqualFold(v string) predicate.Ticket {
 // CommentContainsFold applies the ContainsFold predicate on the "comment" field.
 func CommentContainsFold(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldContainsFold(FieldComment, v))
-}
-
-// SizeEQ applies the EQ predicate on the "size" field.
-func SizeEQ(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEQ(FieldSize, v))
-}
-
-// SizeNEQ applies the NEQ predicate on the "size" field.
-func SizeNEQ(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldNEQ(FieldSize, v))
-}
-
-// SizeIn applies the In predicate on the "size" field.
-func SizeIn(vs ...uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldIn(FieldSize, vs...))
-}
-
-// SizeNotIn applies the NotIn predicate on the "size" field.
-func SizeNotIn(vs ...uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldNotIn(FieldSize, vs...))
-}
-
-// SizeGT applies the GT predicate on the "size" field.
-func SizeGT(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldGT(FieldSize, v))
-}
-
-// SizeGTE applies the GTE predicate on the "size" field.
-func SizeGTE(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldGTE(FieldSize, v))
-}
-
-// SizeLT applies the LT predicate on the "size" field.
-func SizeLT(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldLT(FieldSize, v))
-}
-
-// SizeLTE applies the LTE predicate on the "size" field.
-func SizeLTE(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldLTE(FieldSize, v))
 }
 
 // ExpiryTypeEQ applies the EQ predicate on the "expiryType" field.
@@ -496,6 +461,16 @@ func LastDownloadLTE(v time.Time) predicate.Ticket {
 	return predicate.Ticket(sql.FieldLTE(FieldLastDownload, v))
 }
 
+// LastDownloadIsNil applies the IsNil predicate on the "last_download" field.
+func LastDownloadIsNil() predicate.Ticket {
+	return predicate.Ticket(sql.FieldIsNull(FieldLastDownload))
+}
+
+// LastDownloadNotNil applies the NotNil predicate on the "last_download" field.
+func LastDownloadNotNil() predicate.Ticket {
+	return predicate.Ticket(sql.FieldNotNull(FieldLastDownload))
+}
+
 // TimesDownloadedEQ applies the EQ predicate on the "times_downloaded" field.
 func TimesDownloadedEQ(v uint64) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldTimesDownloaded, v))
@@ -709,6 +684,16 @@ func EmailOnDownloadHasPrefix(v string) predicate.Ticket {
 // EmailOnDownloadHasSuffix applies the HasSuffix predicate on the "email_on_download" field.
 func EmailOnDownloadHasSuffix(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldHasSuffix(FieldEmailOnDownload, v))
+}
+
+// EmailOnDownloadIsNil applies the IsNil predicate on the "email_on_download" field.
+func EmailOnDownloadIsNil() predicate.Ticket {
+	return predicate.Ticket(sql.FieldIsNull(FieldEmailOnDownload))
+}
+
+// EmailOnDownloadNotNil applies the NotNil predicate on the "email_on_download" field.
+func EmailOnDownloadNotNil() predicate.Ticket {
+	return predicate.Ticket(sql.FieldNotNull(FieldEmailOnDownload))
 }
 
 // EmailOnDownloadEqualFold applies the EqualFold predicate on the "email_on_download" field.

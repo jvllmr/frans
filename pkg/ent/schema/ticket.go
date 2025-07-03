@@ -18,19 +18,18 @@ type Ticket struct {
 func (Ticket) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Unique(),
-		field.String("comment").Nillable(),
-		field.Uint64("size").Default(0),
+		field.String("comment").Optional().Nillable(),
 		field.String("expiryType"),
 		field.String("hashed_password"),
 		field.String("salt"),
 		field.Time("created_at").
 			Default(time.Now),
-		field.Time("last_download").Nillable(),
+		field.Time("last_download").Nillable().Optional(),
 		field.Uint64("times_downloaded").Default(0),
 		field.Uint8("expiry_total_days"),
 		field.Uint8("expiry_days_since_last_download"),
 		field.Uint8("expiry_total_downloads"),
-		field.String("email_on_download").Nillable(),
+		field.String("email_on_download").Nillable().Optional(),
 	}
 }
 
