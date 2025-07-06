@@ -4,8 +4,6 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
-	"io"
-	"mime/multipart"
 )
 
 func InterfaceSliceToStringSlice(in []interface{}) []string {
@@ -34,15 +32,4 @@ func HashPassword(password string, salt []byte) string {
 	combined := append(salt, h1[:]...)
 	h2 := sha256.Sum256(combined)
 	return hex.EncodeToString(h2[:])
-}
-
-func GetFileHash(file multipart.File) (string, error) {
-	hasher := sha256.New()
-	if _, err := io.Copy(hasher, file); err != nil {
-		return "", err
-	}
-
-	hash := hasher.Sum(nil)
-	return hex.EncodeToString(hash), nil
-
 }

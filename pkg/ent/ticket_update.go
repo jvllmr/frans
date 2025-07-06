@@ -232,14 +232,14 @@ func (tu *TicketUpdate) ClearEmailOnDownload() *TicketUpdate {
 }
 
 // AddFileIDs adds the "files" edge to the File entity by IDs.
-func (tu *TicketUpdate) AddFileIDs(ids ...string) *TicketUpdate {
+func (tu *TicketUpdate) AddFileIDs(ids ...uuid.UUID) *TicketUpdate {
 	tu.mutation.AddFileIDs(ids...)
 	return tu
 }
 
 // AddFiles adds the "files" edges to the File entity.
 func (tu *TicketUpdate) AddFiles(f ...*File) *TicketUpdate {
-	ids := make([]string, len(f))
+	ids := make([]uuid.UUID, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -277,14 +277,14 @@ func (tu *TicketUpdate) ClearFiles() *TicketUpdate {
 }
 
 // RemoveFileIDs removes the "files" edge to File entities by IDs.
-func (tu *TicketUpdate) RemoveFileIDs(ids ...string) *TicketUpdate {
+func (tu *TicketUpdate) RemoveFileIDs(ids ...uuid.UUID) *TicketUpdate {
 	tu.mutation.RemoveFileIDs(ids...)
 	return tu
 }
 
 // RemoveFiles removes "files" edges to File entities.
 func (tu *TicketUpdate) RemoveFiles(f ...*File) *TicketUpdate {
-	ids := make([]string, len(f))
+	ids := make([]uuid.UUID, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -395,7 +395,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: ticket.FilesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -408,7 +408,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: ticket.FilesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -424,7 +424,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: ticket.FilesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -682,14 +682,14 @@ func (tuo *TicketUpdateOne) ClearEmailOnDownload() *TicketUpdateOne {
 }
 
 // AddFileIDs adds the "files" edge to the File entity by IDs.
-func (tuo *TicketUpdateOne) AddFileIDs(ids ...string) *TicketUpdateOne {
+func (tuo *TicketUpdateOne) AddFileIDs(ids ...uuid.UUID) *TicketUpdateOne {
 	tuo.mutation.AddFileIDs(ids...)
 	return tuo
 }
 
 // AddFiles adds the "files" edges to the File entity.
 func (tuo *TicketUpdateOne) AddFiles(f ...*File) *TicketUpdateOne {
-	ids := make([]string, len(f))
+	ids := make([]uuid.UUID, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -727,14 +727,14 @@ func (tuo *TicketUpdateOne) ClearFiles() *TicketUpdateOne {
 }
 
 // RemoveFileIDs removes the "files" edge to File entities by IDs.
-func (tuo *TicketUpdateOne) RemoveFileIDs(ids ...string) *TicketUpdateOne {
+func (tuo *TicketUpdateOne) RemoveFileIDs(ids ...uuid.UUID) *TicketUpdateOne {
 	tuo.mutation.RemoveFileIDs(ids...)
 	return tuo
 }
 
 // RemoveFiles removes "files" edges to File entities.
 func (tuo *TicketUpdateOne) RemoveFiles(f ...*File) *TicketUpdateOne {
-	ids := make([]string, len(f))
+	ids := make([]uuid.UUID, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -875,7 +875,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 			Columns: ticket.FilesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -888,7 +888,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 			Columns: ticket.FilesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -904,7 +904,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 			Columns: ticket.FilesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

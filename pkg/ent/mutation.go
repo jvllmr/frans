@@ -39,10 +39,11 @@ type FileMutation struct {
 	config
 	op             Op
 	typ            string
-	id             *string
+	id             *uuid.UUID
 	name           *string
 	size           *uint64
 	addsize        *int64
+	sha512         *string
 	clearedFields  map[string]struct{}
 	tickets        map[uuid.UUID]struct{}
 	removedtickets map[uuid.UUID]struct{}
@@ -72,7 +73,7 @@ func newFileMutation(c config, op Op, opts ...fileOption) *FileMutation {
 }
 
 // withFileID sets the ID field of the mutation.
-func withFileID(id string) fileOption {
+func withFileID(id uuid.UUID) fileOption {
 	return func(m *FileMutation) {
 		var (
 			err   error
@@ -124,13 +125,13 @@ func (m FileMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of File entities.
-func (m *FileMutation) SetID(id string) {
+func (m *FileMutation) SetID(id uuid.UUID) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *FileMutation) ID() (id string, exists bool) {
+func (m *FileMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -141,12 +142,12 @@ func (m *FileMutation) ID() (id string, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *FileMutation) IDs(ctx context.Context) ([]string, error) {
+func (m *FileMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []string{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -248,6 +249,42 @@ func (m *FileMutation) ResetSize() {
 	m.addsize = nil
 }
 
+// SetSha512 sets the "sha512" field.
+func (m *FileMutation) SetSha512(s string) {
+	m.sha512 = &s
+}
+
+// Sha512 returns the value of the "sha512" field in the mutation.
+func (m *FileMutation) Sha512() (r string, exists bool) {
+	v := m.sha512
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSha512 returns the old "sha512" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldSha512(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSha512 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSha512 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSha512: %w", err)
+	}
+	return oldValue.Sha512, nil
+}
+
+// ResetSha512 resets all changes to the "sha512" field.
+func (m *FileMutation) ResetSha512() {
+	m.sha512 = nil
+}
+
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by ids.
 func (m *FileMutation) AddTicketIDs(ids ...uuid.UUID) {
 	if m.tickets == nil {
@@ -336,12 +373,15 @@ func (m *FileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FileMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, file.FieldName)
 	}
 	if m.size != nil {
 		fields = append(fields, file.FieldSize)
+	}
+	if m.sha512 != nil {
+		fields = append(fields, file.FieldSha512)
 	}
 	return fields
 }
@@ -355,6 +395,8 @@ func (m *FileMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case file.FieldSize:
 		return m.Size()
+	case file.FieldSha512:
+		return m.Sha512()
 	}
 	return nil, false
 }
@@ -368,6 +410,8 @@ func (m *FileMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldName(ctx)
 	case file.FieldSize:
 		return m.OldSize(ctx)
+	case file.FieldSha512:
+		return m.OldSha512(ctx)
 	}
 	return nil, fmt.Errorf("unknown File field %s", name)
 }
@@ -390,6 +434,13 @@ func (m *FileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSize(v)
+		return nil
+	case file.FieldSha512:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSha512(v)
 		return nil
 	}
 	return fmt.Errorf("unknown File field %s", name)
@@ -460,6 +511,9 @@ func (m *FileMutation) ResetField(name string) error {
 		return nil
 	case file.FieldSize:
 		m.ResetSize()
+		return nil
+	case file.FieldSha512:
+		m.ResetSha512()
 		return nil
 	}
 	return fmt.Errorf("unknown File field %s", name)
@@ -1072,8 +1126,8 @@ type TicketMutation struct {
 	addexpiry_total_downloads          *int8
 	email_on_download                  *string
 	clearedFields                      map[string]struct{}
-	files                              map[string]struct{}
-	removedfiles                       map[string]struct{}
+	files                              map[uuid.UUID]struct{}
+	removedfiles                       map[uuid.UUID]struct{}
 	clearedfiles                       bool
 	owner                              *uuid.UUID
 	clearedowner                       bool
@@ -1702,9 +1756,9 @@ func (m *TicketMutation) ResetEmailOnDownload() {
 }
 
 // AddFileIDs adds the "files" edge to the File entity by ids.
-func (m *TicketMutation) AddFileIDs(ids ...string) {
+func (m *TicketMutation) AddFileIDs(ids ...uuid.UUID) {
 	if m.files == nil {
-		m.files = make(map[string]struct{})
+		m.files = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		m.files[ids[i]] = struct{}{}
@@ -1722,9 +1776,9 @@ func (m *TicketMutation) FilesCleared() bool {
 }
 
 // RemoveFileIDs removes the "files" edge to the File entity by IDs.
-func (m *TicketMutation) RemoveFileIDs(ids ...string) {
+func (m *TicketMutation) RemoveFileIDs(ids ...uuid.UUID) {
 	if m.removedfiles == nil {
-		m.removedfiles = make(map[string]struct{})
+		m.removedfiles = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
 		delete(m.files, ids[i])
@@ -1733,7 +1787,7 @@ func (m *TicketMutation) RemoveFileIDs(ids ...string) {
 }
 
 // RemovedFiles returns the removed IDs of the "files" edge to the File entity.
-func (m *TicketMutation) RemovedFilesIDs() (ids []string) {
+func (m *TicketMutation) RemovedFilesIDs() (ids []uuid.UUID) {
 	for id := range m.removedfiles {
 		ids = append(ids, id)
 	}
@@ -1741,7 +1795,7 @@ func (m *TicketMutation) RemovedFilesIDs() (ids []string) {
 }
 
 // FilesIDs returns the "files" edge IDs in the mutation.
-func (m *TicketMutation) FilesIDs() (ids []string) {
+func (m *TicketMutation) FilesIDs() (ids []uuid.UUID) {
 	for id := range m.files {
 		ids = append(ids, id)
 	}

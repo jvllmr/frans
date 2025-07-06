@@ -1,7 +1,7 @@
 package apiRoutes
 
 import (
-	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/hex"
 	"io"
 	"net/http"
@@ -90,10 +90,11 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 			multipartForm, _ := c.MultipartForm()
 			files := multipartForm.File["files[]"]
 			util.EnsureFilesTmpPath(configValue)
+
 			for _, fileHeader := range files {
 
 				incomingFileHandle, _ := fileHeader.Open()
-				hasher := sha256.New()
+				hasher := sha512.New()
 				tmpFilePath := util.GetFilesTmpFilePath(configValue)
 				tmpFileHandle, err := os.Create(tmpFilePath)
 				if err != nil {
@@ -110,28 +111,25 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 				tmpFileHandle.Close()
 
 				hash := hasher.Sum(nil)
-				sha256sum := hex.EncodeToString(hash)
-				dbFile, err := tx.File.Get(c.Request.Context(), sha256sum)
+				sha512sum := hex.EncodeToString(hash)
+				dbFile, err := tx.File.Create().
+					SetID(uuid.New()).
+					SetName(fileHeader.Filename).
+					SetSize(uint64(fileHeader.Size)).
+					SetSha512(sha512sum).
+					Save(c.Request.Context())
 				if err != nil {
-					if ent.IsNotFound(err) {
-						dbFile, err = tx.File.Create().
-							SetID(sha256sum).
-							SetName(fileHeader.Filename).
-							SetSize(uint64(fileHeader.Size)).
-							Save(c.Request.Context())
-						if err != nil {
-							c.AbortWithError(http.StatusInternalServerError, err)
-						} else {
-							os.Rename(tmpFilePath, util.GetFilesFilePath(configValue, sha256sum))
-						}
-					} else {
-						c.AbortWithError(http.StatusInternalServerError, err)
-					}
+					c.AbortWithError(http.StatusInternalServerError, err)
+				}
+				targetFilePath := util.GetFilesFilePath(configValue, sha512sum)
+				if _, err = os.Stat(targetFilePath); err != nil {
+					os.Rename(tmpFilePath, targetFilePath)
 				}
 				ticketValue = tx.Ticket.UpdateOne(ticketValue).
 					AddFiles(dbFile).
 					SaveX(c.Request.Context())
 			}
+
 			ticketValue = tx.Ticket.Query().
 				Where(ticket.ID(ticketValue.ID)).
 				WithFiles().

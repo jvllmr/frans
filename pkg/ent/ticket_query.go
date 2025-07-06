@@ -458,7 +458,7 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 func (tq *TicketQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *File)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[uuid.UUID]*Ticket)
-	nids := make(map[string]map[*Ticket]struct{})
+	nids := make(map[uuid.UUID]map[*Ticket]struct{})
 	for i, node := range nodes {
 		edgeIDs[i] = node.ID
 		byID[node.ID] = node
@@ -491,7 +491,7 @@ func (tq *TicketQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []
 			}
 			spec.Assign = func(columns []string, values []any) error {
 				outValue := *values[0].(*uuid.UUID)
-				inValue := values[1].(*sql.NullString).String
+				inValue := *values[1].(*uuid.UUID)
 				if nids[inValue] == nil {
 					nids[inValue] = map[*Ticket]struct{}{byID[outValue]: {}}
 					return assign(columns[1:], values[1:])

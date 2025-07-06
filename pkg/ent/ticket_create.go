@@ -136,14 +136,14 @@ func (tc *TicketCreate) SetID(u uuid.UUID) *TicketCreate {
 }
 
 // AddFileIDs adds the "files" edge to the File entity by IDs.
-func (tc *TicketCreate) AddFileIDs(ids ...string) *TicketCreate {
+func (tc *TicketCreate) AddFileIDs(ids ...uuid.UUID) *TicketCreate {
 	tc.mutation.AddFileIDs(ids...)
 	return tc
 }
 
 // AddFiles adds the "files" edges to the File entity.
 func (tc *TicketCreate) AddFiles(f ...*File) *TicketCreate {
-	ids := make([]string, len(f))
+	ids := make([]uuid.UUID, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -327,7 +327,7 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 			Columns: ticket.FilesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

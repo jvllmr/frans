@@ -5,62 +5,53 @@ package file
 import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id string) predicate.File {
+func ID(id uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id string) predicate.File {
+func IDEQ(id uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id string) predicate.File {
+func IDNEQ(id uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...string) predicate.File {
+func IDIn(ids ...uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...string) predicate.File {
+func IDNotIn(ids ...uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id string) predicate.File {
+func IDGT(id uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id string) predicate.File {
+func IDGTE(id uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id string) predicate.File {
+func IDLT(id uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id string) predicate.File {
+func IDLTE(id uuid.UUID) predicate.File {
 	return predicate.File(sql.FieldLTE(FieldID, id))
-}
-
-// IDEqualFold applies the EqualFold predicate on the ID field.
-func IDEqualFold(id string) predicate.File {
-	return predicate.File(sql.FieldEqualFold(FieldID, id))
-}
-
-// IDContainsFold applies the ContainsFold predicate on the ID field.
-func IDContainsFold(id string) predicate.File {
-	return predicate.File(sql.FieldContainsFold(FieldID, id))
 }
 
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
@@ -71,6 +62,11 @@ func Name(v string) predicate.File {
 // Size applies equality check predicate on the "size" field. It's identical to SizeEQ.
 func Size(v uint64) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldSize, v))
+}
+
+// Sha512 applies equality check predicate on the "sha512" field. It's identical to Sha512EQ.
+func Sha512(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldSha512, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -176,6 +172,71 @@ func SizeLT(v uint64) predicate.File {
 // SizeLTE applies the LTE predicate on the "size" field.
 func SizeLTE(v uint64) predicate.File {
 	return predicate.File(sql.FieldLTE(FieldSize, v))
+}
+
+// Sha512EQ applies the EQ predicate on the "sha512" field.
+func Sha512EQ(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldSha512, v))
+}
+
+// Sha512NEQ applies the NEQ predicate on the "sha512" field.
+func Sha512NEQ(v string) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldSha512, v))
+}
+
+// Sha512In applies the In predicate on the "sha512" field.
+func Sha512In(vs ...string) predicate.File {
+	return predicate.File(sql.FieldIn(FieldSha512, vs...))
+}
+
+// Sha512NotIn applies the NotIn predicate on the "sha512" field.
+func Sha512NotIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldSha512, vs...))
+}
+
+// Sha512GT applies the GT predicate on the "sha512" field.
+func Sha512GT(v string) predicate.File {
+	return predicate.File(sql.FieldGT(FieldSha512, v))
+}
+
+// Sha512GTE applies the GTE predicate on the "sha512" field.
+func Sha512GTE(v string) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldSha512, v))
+}
+
+// Sha512LT applies the LT predicate on the "sha512" field.
+func Sha512LT(v string) predicate.File {
+	return predicate.File(sql.FieldLT(FieldSha512, v))
+}
+
+// Sha512LTE applies the LTE predicate on the "sha512" field.
+func Sha512LTE(v string) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldSha512, v))
+}
+
+// Sha512Contains applies the Contains predicate on the "sha512" field.
+func Sha512Contains(v string) predicate.File {
+	return predicate.File(sql.FieldContains(FieldSha512, v))
+}
+
+// Sha512HasPrefix applies the HasPrefix predicate on the "sha512" field.
+func Sha512HasPrefix(v string) predicate.File {
+	return predicate.File(sql.FieldHasPrefix(FieldSha512, v))
+}
+
+// Sha512HasSuffix applies the HasSuffix predicate on the "sha512" field.
+func Sha512HasSuffix(v string) predicate.File {
+	return predicate.File(sql.FieldHasSuffix(FieldSha512, v))
+}
+
+// Sha512EqualFold applies the EqualFold predicate on the "sha512" field.
+func Sha512EqualFold(v string) predicate.File {
+	return predicate.File(sql.FieldEqualFold(FieldSha512, v))
+}
+
+// Sha512ContainsFold applies the ContainsFold predicate on the "sha512" field.
+func Sha512ContainsFold(v string) predicate.File {
+	return predicate.File(sql.FieldContainsFold(FieldSha512, v))
 }
 
 // HasTickets applies the HasEdge predicate on the "tickets" edge.

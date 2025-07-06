@@ -64,6 +64,20 @@ func (fu *FileUpdate) AddSize(u int64) *FileUpdate {
 	return fu
 }
 
+// SetSha512 sets the "sha512" field.
+func (fu *FileUpdate) SetSha512(s string) *FileUpdate {
+	fu.mutation.SetSha512(s)
+	return fu
+}
+
+// SetNillableSha512 sets the "sha512" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableSha512(s *string) *FileUpdate {
+	if s != nil {
+		fu.SetSha512(*s)
+	}
+	return fu
+}
+
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
 func (fu *FileUpdate) AddTicketIDs(ids ...uuid.UUID) *FileUpdate {
 	fu.mutation.AddTicketIDs(ids...)
@@ -133,7 +147,7 @@ func (fu *FileUpdate) ExecX(ctx context.Context) {
 }
 
 func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID))
 	if ps := fu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -149,6 +163,9 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := fu.mutation.AddedSize(); ok {
 		_spec.AddField(file.FieldSize, field.TypeUint64, value)
+	}
+	if value, ok := fu.mutation.Sha512(); ok {
+		_spec.SetField(file.FieldSha512, field.TypeString, value)
 	}
 	if fu.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -250,6 +267,20 @@ func (fuo *FileUpdateOne) AddSize(u int64) *FileUpdateOne {
 	return fuo
 }
 
+// SetSha512 sets the "sha512" field.
+func (fuo *FileUpdateOne) SetSha512(s string) *FileUpdateOne {
+	fuo.mutation.SetSha512(s)
+	return fuo
+}
+
+// SetNillableSha512 sets the "sha512" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableSha512(s *string) *FileUpdateOne {
+	if s != nil {
+		fuo.SetSha512(*s)
+	}
+	return fuo
+}
+
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
 func (fuo *FileUpdateOne) AddTicketIDs(ids ...uuid.UUID) *FileUpdateOne {
 	fuo.mutation.AddTicketIDs(ids...)
@@ -332,7 +363,7 @@ func (fuo *FileUpdateOne) ExecX(ctx context.Context) {
 }
 
 func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
-	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID))
 	id, ok := fuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "File.id" for update`)}
@@ -365,6 +396,9 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 	}
 	if value, ok := fuo.mutation.AddedSize(); ok {
 		_spec.AddField(file.FieldSize, field.TypeUint64, value)
+	}
+	if value, ok := fuo.mutation.Sha512(); ok {
+		_spec.SetField(file.FieldSha512, field.TypeString, value)
 	}
 	if fuo.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{

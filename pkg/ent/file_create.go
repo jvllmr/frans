@@ -33,9 +33,15 @@ func (fc *FileCreate) SetSize(u uint64) *FileCreate {
 	return fc
 }
 
+// SetSha512 sets the "sha512" field.
+func (fc *FileCreate) SetSha512(s string) *FileCreate {
+	fc.mutation.SetSha512(s)
+	return fc
+}
+
 // SetID sets the "id" field.
-func (fc *FileCreate) SetID(s string) *FileCreate {
-	fc.mutation.SetID(s)
+func (fc *FileCreate) SetID(u uuid.UUID) *FileCreate {
+	fc.mutation.SetID(u)
 	return fc
 }
 
@@ -94,6 +100,9 @@ func (fc *FileCreate) check() error {
 	if _, ok := fc.mutation.Size(); !ok {
 		return &ValidationError{Name: "size", err: errors.New(`ent: missing required field "File.size"`)}
 	}
+	if _, ok := fc.mutation.Sha512(); !ok {
+		return &ValidationError{Name: "sha512", err: errors.New(`ent: missing required field "File.sha512"`)}
+	}
 	return nil
 }
 
@@ -109,10 +118,10 @@ func (fc *FileCreate) sqlSave(ctx context.Context) (*File, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected File.ID type: %T", _spec.ID.Value)
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
 		}
 	}
 	fc.mutation.id = &_node.ID
@@ -123,11 +132,11 @@ func (fc *FileCreate) sqlSave(ctx context.Context) (*File, error) {
 func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	var (
 		_node = &File{config: fc.config}
-		_spec = sqlgraph.NewCreateSpec(file.Table, sqlgraph.NewFieldSpec(file.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(file.Table, sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID))
 	)
 	if id, ok := fc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = id
+		_spec.ID.Value = &id
 	}
 	if value, ok := fc.mutation.Name(); ok {
 		_spec.SetField(file.FieldName, field.TypeString, value)
@@ -136,6 +145,10 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	if value, ok := fc.mutation.Size(); ok {
 		_spec.SetField(file.FieldSize, field.TypeUint64, value)
 		_node.Size = value
+	}
+	if value, ok := fc.mutation.Sha512(); ok {
+		_spec.SetField(file.FieldSha512, field.TypeString, value)
+		_node.Sha512 = value
 	}
 	if nodes := fc.mutation.TicketsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

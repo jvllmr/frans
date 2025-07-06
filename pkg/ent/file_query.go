@@ -108,8 +108,8 @@ func (fq *FileQuery) FirstX(ctx context.Context) *File {
 
 // FirstID returns the first File ID from the query.
 // Returns a *NotFoundError when no File ID was found.
-func (fq *FileQuery) FirstID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (fq *FileQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = fq.Limit(1).IDs(setContextOp(ctx, fq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -121,7 +121,7 @@ func (fq *FileQuery) FirstID(ctx context.Context) (id string, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (fq *FileQuery) FirstIDX(ctx context.Context) string {
+func (fq *FileQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := fq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -159,8 +159,8 @@ func (fq *FileQuery) OnlyX(ctx context.Context) *File {
 // OnlyID is like Only, but returns the only File ID in the query.
 // Returns a *NotSingularError when more than one File ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (fq *FileQuery) OnlyID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (fq *FileQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = fq.Limit(2).IDs(setContextOp(ctx, fq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -176,7 +176,7 @@ func (fq *FileQuery) OnlyID(ctx context.Context) (id string, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (fq *FileQuery) OnlyIDX(ctx context.Context) string {
+func (fq *FileQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := fq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -204,7 +204,7 @@ func (fq *FileQuery) AllX(ctx context.Context) []*File {
 }
 
 // IDs executes the query and returns a list of File IDs.
-func (fq *FileQuery) IDs(ctx context.Context) (ids []string, err error) {
+func (fq *FileQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 	if fq.ctx.Unique == nil && fq.path != nil {
 		fq.Unique(true)
 	}
@@ -216,7 +216,7 @@ func (fq *FileQuery) IDs(ctx context.Context) (ids []string, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (fq *FileQuery) IDsX(ctx context.Context) []string {
+func (fq *FileQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := fq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -406,7 +406,7 @@ func (fq *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 
 func (fq *FileQuery) loadTickets(ctx context.Context, query *TicketQuery, nodes []*File, init func(*File), assign func(*File, *Ticket)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[string]*File)
+	byID := make(map[uuid.UUID]*File)
 	nids := make(map[uuid.UUID]map[*File]struct{})
 	for i, node := range nodes {
 		edgeIDs[i] = node.ID
@@ -436,10 +436,10 @@ func (fq *FileQuery) loadTickets(ctx context.Context, query *TicketQuery, nodes 
 				if err != nil {
 					return nil, err
 				}
-				return append([]any{new(sql.NullString)}, values...), nil
+				return append([]any{new(uuid.UUID)}, values...), nil
 			}
 			spec.Assign = func(columns []string, values []any) error {
-				outValue := values[0].(*sql.NullString).String
+				outValue := *values[0].(*uuid.UUID)
 				inValue := *values[1].(*uuid.UUID)
 				if nids[inValue] == nil {
 					nids[inValue] = map[*File]struct{}{byID[outValue]: {}}
@@ -476,7 +476,7 @@ func (fq *FileQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (fq *FileQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeString))
+	_spec := sqlgraph.NewQuerySpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID))
 	_spec.From = fq.sql
 	if unique := fq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

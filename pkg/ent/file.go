@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/ent/file"
 )
 
@@ -15,11 +16,13 @@ import (
 type File struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Size holds the value of the "size" field.
 	Size uint64 `json:"size,omitempty"`
+	// Sha512 holds the value of the "sha512" field.
+	Sha512 string `json:"sha512,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FileQuery when eager-loading is set.
 	Edges        FileEdges `json:"edges"`
@@ -51,8 +54,10 @@ func (*File) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case file.FieldSize:
 			values[i] = new(sql.NullInt64)
-		case file.FieldID, file.FieldName:
+		case file.FieldName, file.FieldSha512:
 			values[i] = new(sql.NullString)
+		case file.FieldID:
+			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -69,10 +74,10 @@ func (f *File) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case file.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				f.ID = value.String
+			} else if value != nil {
+				f.ID = *value
 			}
 		case file.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -85,6 +90,12 @@ func (f *File) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field size", values[i])
 			} else if value.Valid {
 				f.Size = uint64(value.Int64)
+			}
+		case file.FieldSha512:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field sha512", values[i])
+			} else if value.Valid {
+				f.Sha512 = value.String
 			}
 		default:
 			f.selectValues.Set(columns[i], values[i])
@@ -132,6 +143,9 @@ func (f *File) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("size=")
 	builder.WriteString(fmt.Sprintf("%v", f.Size))
+	builder.WriteString(", ")
+	builder.WriteString("sha512=")
+	builder.WriteString(f.Sha512)
 	builder.WriteByte(')')
 	return builder.String()
 }

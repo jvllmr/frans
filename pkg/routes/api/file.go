@@ -1,16 +1,21 @@
 package apiRoutes
 
-import "github.com/jvllmr/frans/pkg/ent"
+import (
+	"github.com/google/uuid"
+	"github.com/jvllmr/frans/pkg/ent"
+)
 
 type PublicFile struct {
-	Sha256 string `json:"sha256sum"`
-	Size   uint64 `json:"size"`
-	Name   string `json:"name"`
+	Id     uuid.UUID `json:"id"`
+	Sha512 string    `json:"sha512"`
+	Size   uint64    `json:"size"`
+	Name   string    `json:"name"`
 }
 
 func ToPublicFile(file *ent.File) PublicFile {
 	return PublicFile{
-		Sha256: file.ID,
+		Id:     file.ID,
+		Sha512: file.Sha512,
 		Size:   uint64(file.Size),
 		Name:   file.Name,
 	}

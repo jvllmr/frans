@@ -10,9 +10,10 @@ import (
 var (
 	// FilesColumns holds the columns for the "files" table.
 	FilesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "size", Type: field.TypeUint64},
+		{Name: "sha512", Type: field.TypeString},
 	}
 	// FilesTable holds the schema information for the "files" table.
 	FilesTable = &schema.Table{
@@ -94,7 +95,7 @@ var (
 	// TicketFilesColumns holds the columns for the "ticket_files" table.
 	TicketFilesColumns = []*schema.Column{
 		{Name: "ticket_id", Type: field.TypeUUID},
-		{Name: "file_id", Type: field.TypeString},
+		{Name: "file_id", Type: field.TypeUUID},
 	}
 	// TicketFilesTable holds the schema information for the "ticket_files" table.
 	TicketFilesTable = &schema.Table{

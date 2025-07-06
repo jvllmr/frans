@@ -16,6 +16,8 @@ const (
 	FieldName = "name"
 	// FieldSize holds the string denoting the size field in the database.
 	FieldSize = "size"
+	// FieldSha512 holds the string denoting the sha512 field in the database.
+	FieldSha512 = "sha512"
 	// EdgeTickets holds the string denoting the tickets edge name in mutations.
 	EdgeTickets = "tickets"
 	// Table holds the table name of the file in the database.
@@ -32,6 +34,7 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldSize,
+	FieldSha512,
 }
 
 var (
@@ -66,6 +69,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // BySize orders the results by the size field.
 func BySize(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSize, opts...).ToFunc()
+}
+
+// BySha512 orders the results by the sha512 field.
+func BySha512(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSha512, opts...).ToFunc()
 }
 
 // ByTicketsCount orders the results by tickets count.
