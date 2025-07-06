@@ -19,6 +19,9 @@ importers:
       "@mantine/hooks":
         specifier: ^8.1.1
         version: 8.1.1(react@19.1.0)
+      "@mantine/notifications":
+        specifier: ^8.1.2
+        version: 8.1.2(@mantine/core@8.1.1(@mantine/hooks@8.1.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.1.1(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@tabler/icons-react":
         specifier: ^3.34.0
         version: 3.34.0(react@19.1.0)
@@ -34,6 +37,15 @@ importers:
       axios:
         specifier: ^1.10.0
         version: 1.10.0
+      filesize:
+        specifier: ^10.1.6
+        version: 10.1.6
+      generate-password:
+        specifier: ^1.7.1
+        version: 1.7.1
+      generate-password-browser:
+        specifier: ^1.1.0
+        version: 1.1.0
       i18next:
         specifier: ^25.2.1
         version: 25.2.1(typescript@5.8.3)
@@ -819,6 +831,25 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
+  "@mantine/notifications@8.1.2":
+    resolution:
+      {
+        integrity: sha512-9yqMRz9KlU0rXYc2xB+gfKwm6wt5e05B2eCAx0QcSDaxUl2EIfDINqdD+rTTvuWDxiQoN16wF/VJvFHn9wj3Xw==,
+      }
+    peerDependencies:
+      "@mantine/core": 8.1.2
+      "@mantine/hooks": 8.1.2
+      react: ^18.x || ^19.x
+      react-dom: ^18.x || ^19.x
+
+  "@mantine/store@8.1.2":
+    resolution:
+      {
+        integrity: sha512-Dt7NJc2+kvtpWkTXR5Mwmwo5zluFM9n6UYaIn4i726PPoABCAvQU4wwkw9GkOEdPNkRcnRdNg5SxWa+QZY/4ag==,
+      }
+    peerDependencies:
+      react: ^18.x || ^19.x
+
   "@nodelib/fs.scandir@2.1.5":
     resolution:
       {
@@ -1447,6 +1478,12 @@ packages:
         integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==,
       }
 
+  base64-js@1.5.1:
+    resolution:
+      {
+        integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==,
+      }
+
   binary-extensions@2.3.0:
     resolution:
       {
@@ -1480,6 +1517,12 @@ packages:
       }
     engines: { node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7 }
     hasBin: true
+
+  buffer@6.0.3:
+    resolution:
+      {
+        integrity: sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==,
+      }
 
   call-bind-apply-helpers@1.0.2:
     resolution:
@@ -1639,6 +1682,12 @@ packages:
         integrity: sha512-sSuxWU5j5SR9QQji/o2qMvqRNYRDOcBTgsJ/DeCf4iSN4gW+gNMXM7wFIP+fdXZxoNiAnHUTGjCr+TSWXdRDKg==,
       }
     engines: { node: ">=0.3.1" }
+
+  dom-helpers@5.2.1:
+    resolution:
+      {
+        integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==,
+      }
 
   dot-prop@9.0.0:
     resolution:
@@ -1891,6 +1940,13 @@ packages:
       }
     engines: { node: ">= 12" }
 
+  filesize@10.1.6:
+    resolution:
+      {
+        integrity: sha512-sJslQKU2uM33qH5nqewAwVB2QgR6w1aMNsYUp3aN5rMRyXEwJGmZvaWzeJFNTOXWlHQyBFCWrdj3fV/fsTOX8w==,
+      }
+    engines: { node: ">= 10.4.0" }
+
   fill-range@7.1.1:
     resolution:
       {
@@ -1956,6 +2012,18 @@ packages:
     resolution:
       {
         integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==,
+      }
+
+  generate-password-browser@1.1.0:
+    resolution:
+      {
+        integrity: sha512-qsQve0rVbCqGqAfKgZwjxKUfI1d1nyd22dz+kE8gn1iw1LxGkR+Slsl79XXfm2wxuK27IkopTs5KXcOEQnhg0w==,
+      }
+
+  generate-password@1.7.1:
+    resolution:
+      {
+        integrity: sha512-9bVYY+16m7W7GczRBDqXE+VVuCX+bWNrfYKC/2p2JkZukFb2sKxT6E3zZ3mJGz7GMe5iRK0A/WawSL3jQfJuNQ==,
       }
 
   gensync@1.0.0-beta.2:
@@ -2119,6 +2187,12 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  ieee754@1.2.1:
+    resolution:
+      {
+        integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==,
+      }
 
   ignore@5.3.2:
     resolution:
@@ -2598,6 +2672,12 @@ packages:
         integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==,
       }
 
+  randombytes@2.1.0:
+    resolution:
+      {
+        integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==,
+      }
+
   react-dom@19.1.0:
     resolution:
       {
@@ -2704,6 +2784,15 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  react-transition-group@4.4.5:
+    resolution:
+      {
+        integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==,
+      }
+    peerDependencies:
+      react: ">=16.6.0"
+      react-dom: ">=16.6.0"
+
   react@19.1.0:
     resolution:
       {
@@ -2764,6 +2853,12 @@ packages:
     resolution:
       {
         integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==,
+      }
+
+  safe-buffer@5.2.1:
+    resolution:
+      {
+        integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==,
       }
 
   scheduler@0.26.0:
@@ -3682,6 +3777,19 @@ snapshots:
     dependencies:
       react: 19.1.0
 
+  "@mantine/notifications@8.1.2(@mantine/core@8.1.1(@mantine/hooks@8.1.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.1.1(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
+    dependencies:
+      "@mantine/core": 8.1.1(@mantine/hooks@8.1.1(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@mantine/hooks": 8.1.1(react@19.1.0)
+      "@mantine/store": 8.1.2(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-transition-group: 4.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+
+  "@mantine/store@8.1.2(react@19.1.0)":
+    dependencies:
+      react: 19.1.0
+
   "@nodelib/fs.scandir@2.1.5":
     dependencies:
       "@nodelib/fs.stat": 2.0.5
@@ -4086,6 +4194,8 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
+  base64-js@1.5.1: {}
+
   binary-extensions@2.3.0: {}
 
   brace-expansion@1.1.12:
@@ -4107,6 +4217,11 @@ snapshots:
       electron-to-chromium: 1.5.167
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.0)
+
+  buffer@6.0.3:
+    dependencies:
+      base64-js: 1.5.1
+      ieee754: 1.2.1
 
   call-bind-apply-helpers@1.0.2:
     dependencies:
@@ -4194,6 +4309,11 @@ snapshots:
   detect-node-es@1.1.0: {}
 
   diff@8.0.2: {}
+
+  dom-helpers@5.2.1:
+    dependencies:
+      "@babel/runtime": 7.27.6
+      csstype: 3.1.3
 
   dot-prop@9.0.0:
     dependencies:
@@ -4373,6 +4493,8 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  filesize@10.1.6: {}
+
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
@@ -4408,6 +4530,13 @@ snapshots:
     optional: true
 
   function-bind@1.1.2: {}
+
+  generate-password-browser@1.1.0:
+    dependencies:
+      buffer: 6.0.3
+      randombytes: 2.1.0
+
+  generate-password@1.7.1: {}
 
   gensync@1.0.0-beta.2: {}
 
@@ -4495,6 +4624,8 @@ snapshots:
       "@babel/runtime": 7.27.6
     optionalDependencies:
       typescript: 5.8.3
+
+  ieee754@1.2.1: {}
 
   ignore@5.3.2: {}
 
@@ -4717,6 +4848,10 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
+  randombytes@2.1.0:
+    dependencies:
+      safe-buffer: 5.2.1
+
   react-dom@19.1.0(react@19.1.0):
     dependencies:
       react: 19.1.0
@@ -4784,6 +4919,15 @@ snapshots:
     transitivePeerDependencies:
       - "@types/react"
 
+  react-transition-group@4.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      "@babel/runtime": 7.27.6
+      dom-helpers: 5.2.1
+      loose-envify: 1.4.0
+      prop-types: 15.8.1
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
   react@19.1.0: {}
 
   readdirp@3.6.0:
@@ -4835,6 +4979,8 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
+
+  safe-buffer@5.2.1: {}
 
   scheduler@0.26.0: {}
 

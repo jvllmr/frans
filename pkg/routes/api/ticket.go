@@ -16,6 +16,7 @@ import (
 )
 
 type PublicTicket struct {
+	Id              uuid.UUID    `json:"id"`
 	Comment         *string      `json:"comment"`
 	EstimatedExpiry string       `json:"estimatedExpiry"`
 	User            PublicUser   `json:"owner"`
@@ -30,6 +31,7 @@ func ToPublicTicket(configValue config.Config, ticket *ent.Ticket) PublicTicket 
 	}
 
 	return PublicTicket{
+		Id:              ticket.ID,
 		Comment:         ticket.Comment,
 		User:            ToPublicUser(ticket.Edges.Owner),
 		EstimatedExpiry: util.GetEstimatedExpiry(configValue, ticket).Format(http.TimeFormat),
@@ -89,9 +91,17 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 
 			multipartForm, _ := c.MultipartForm()
 			files := multipartForm.File["files[]"]
+			if len(files) > int(configValue.MaxFiles) {
+				c.AbortWithStatus(http.StatusUnprocessableEntity)
+				return
+			}
 			util.EnsureFilesTmpPath(configValue)
 
 			for _, fileHeader := range files {
+				if fileHeader.Size > configValue.MaxSizes {
+					c.AbortWithStatus(http.StatusUnprocessableEntity)
+					return
+				}
 
 				incomingFileHandle, _ := fileHeader.Open()
 				hasher := sha512.New()

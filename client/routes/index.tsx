@@ -10,6 +10,9 @@ import {
   SimpleGrid,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import passwordGenerator from "generate-password-browser";
+
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { I18nextProvider, useTranslation } from "react-i18next";
@@ -18,6 +21,7 @@ import {
   createTicketSchema,
   useCreateTicketMutation,
 } from "~/api/ticket";
+import { meQueryOptions } from "~/api/user";
 import { FormDebugInfo } from "~/components/FormDebugInfo";
 import { FilesInput } from "~/components/inputs/FilesInput";
 import { NullTextarea } from "~/components/inputs/NullTextarea";
@@ -62,6 +66,7 @@ function NewTicketForm() {
     validate: zod4Resolver(createTicketSchema),
   });
   const createTicketMutation = useCreateTicketMutation();
+  const { data: me } = useQuery(meQueryOptions);
 
   return (
     <form
@@ -89,7 +94,21 @@ function NewTicketForm() {
             withAsterisk
             required
           />
-          <Button>{t("generate", { ns: "translation" })}</Button>
+          <Button
+            onClick={() => {
+              form.setFieldValue(
+                "password",
+                passwordGenerator.generate({
+                  length: 12,
+                  strict: true,
+                  numbers: true,
+                  excludeSimilarCharacters: true,
+                }),
+              );
+            }}
+          >
+            {t("generate", { ns: "translation" })}
+          </Button>
           <Checkbox
             {...form.getInputProps("emailPassword", { type: "checkbox" })}
             label={
@@ -123,7 +142,15 @@ function NewTicketForm() {
             {...form.getInputProps("emailOnDownload")}
             label={t("label_notify_email")}
           />
-          <Button>{t("label_own_email")}</Button>
+          <Button
+            onClick={() => {
+              if (me) {
+                form.setFieldValue("emailOnDownload", me.email);
+              }
+            }}
+          >
+            {t("label_own_email")}
+          </Button>
           <Flex justify="space-evenly">
             <Button type="submit" loading={createTicketMutation.isPending}>
               {t("upload", { ns: "translation" })}

@@ -1,7 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import { z } from "zod/v4";
 import i18n from "~/i18n";
+import { errorNotification, successNotification } from "~/util/notifications";
 import { FetchError, v1Url } from ".";
 import { fileSchema } from "./file";
 import { userSchema } from "./user";
@@ -32,18 +34,27 @@ export const ticketSchema = z.object({
   id: z.uuid(),
   owner: userSchema,
   files: fileSchema.array(),
-  createdAt: z.date(),
-  estimatedExpiry: z.date(),
+  createdAt: z.coerce.date(),
+  estimatedExpiry: z.coerce.date(),
 });
 
 export type Ticket = z.infer<typeof ticketSchema>;
 
-export async function createTicket(data: CreateTicket): Promise<Ticket> {
-  return ticketSchema.parse((await axios.postForm(v1TicketUrl(""), data)).data);
+export async function createTicket(data: CreateTicket) {
+  const resp = await axios.postForm(v1TicketUrl(""), data);
+
+  return ticketSchema.parse(resp.data);
 }
 
 export function useCreateTicketMutation() {
+  const { t } = useTranslation("notifications");
   return useMutation<Ticket, FetchError, CreateTicket>({
     mutationFn: createTicket,
+    onSuccess() {
+      successNotification(t("ticket_new_success"));
+    },
+    onError() {
+      errorNotification(t("ticket_new_failed"));
+    },
   });
 }

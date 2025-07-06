@@ -23,8 +23,8 @@ type Config struct {
 	DBUser           string `mapstructure:"db_user"`
 	DBPassword       string `mapstructure:"db_password"`
 	AdminGroup       string `mapstructure:"admin_group"`
-	MaxFiles         string `mapstructure:"max_files"`
-	MaxSizes         string `mapstructure:"max_sizes"`
+	MaxFiles         uint8  `mapstructure:"max_files"`
+	MaxSizes         int64  `mapstructure:"max_sizes"`
 	FilesDir         string `mapstructure:"files_dir"`
 
 	DefaultExpiryDaysSinceLastDownload uint8 `mapstructure:"default_expiry_days_since_last_download"`

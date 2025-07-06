@@ -1,8 +1,9 @@
+import { partial } from "filesize";
 import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
-
 import LanguageDetector from "i18next-browser-languagedetector";
+import { initReactI18next, useTranslation } from "react-i18next";
 
+import { useMemo } from "react";
 import resources from "virtual:i18next-loader";
 
 export const availableLanguages = [
@@ -34,6 +35,14 @@ export const availableLanguagesLabels: Record<AvailableLanguage, string> = {
   ru: "RU",
   zh: "ZH",
 };
+
+export function useFileSizeFormatter() {
+  const { i18n } = useTranslation();
+  return useMemo(
+    () => partial({ locale: i18n.languages[0] }),
+    [i18n.languages[0]],
+  );
+}
 
 i18n
   .use(LanguageDetector)
