@@ -26,7 +26,9 @@ import { FormDebugInfo } from "~/components/FormDebugInfo";
 import { FilesInput } from "~/components/inputs/FilesInput";
 import { NullTextarea } from "~/components/inputs/NullTextarea";
 import { NullTextInput } from "~/components/inputs/NullTextInput";
+import { ProgressBar } from "~/components/ProgressBar";
 import i18n from "~/i18n";
+import { useProgressHandle } from "~/util/progress";
 export const Route = createFileRoute("/")({
   component: Index,
 });
@@ -65,7 +67,8 @@ function NewTicketForm() {
     },
     validate: zod4Resolver(createTicketSchema),
   });
-  const createTicketMutation = useCreateTicketMutation();
+  const progressHandle = useProgressHandle();
+  const createTicketMutation = useCreateTicketMutation(progressHandle);
   const { data: me } = useQuery(meQueryOptions);
 
   return (
@@ -163,6 +166,7 @@ function NewTicketForm() {
               {t("reset", { ns: "translation" })}
             </Button>
           </Flex>
+          <ProgressBar state={progressHandle.state} />
           <FilesInput {...form.getInputProps("files")} />
           <FormDebugInfo form={form} />
         </SimpleGrid>

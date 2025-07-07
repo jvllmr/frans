@@ -1,9 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod/v4";
 import i18n from "~/i18n";
 import { errorNotification, successNotification } from "~/util/notifications";
+import { ProgressHandle } from "~/util/progress";
 import { FetchError, v1Url } from ".";
 import { fileSchema } from "./file";
 import { userSchema } from "./user";
@@ -40,18 +42,30 @@ export const ticketSchema = z.object({
 
 export type Ticket = z.infer<typeof ticketSchema>;
 
-export async function createTicket(data: CreateTicket) {
-  const resp = await axios.postForm(v1TicketUrl(""), data);
+export async function createTicket(
+  data: CreateTicket,
+  progressHandle?: ProgressHandle,
+) {
+  const resp = await axios.postForm(v1TicketUrl(""), data, {
+    onUploadProgress(progressEvent) {
+      progressHandle?.updateProgressState(progressEvent);
+    },
+  });
 
   return ticketSchema.parse(resp.data);
 }
 
-export function useCreateTicketMutation() {
+export function useCreateTicketMutation(progressHandle?: ProgressHandle) {
   const { t } = useTranslation("notifications");
+  const partialCreateTicket = useCallback(
+    (data: CreateTicket) => createTicket(data, progressHandle),
+    [progressHandle],
+  );
   return useMutation<Ticket, FetchError, CreateTicket>({
-    mutationFn: createTicket,
+    mutationFn: partialCreateTicket,
     onSuccess() {
       successNotification(t("ticket_new_success"));
+      progressHandle?.setFinished();
     },
     onError() {
       errorNotification(t("ticket_new_failed"));
