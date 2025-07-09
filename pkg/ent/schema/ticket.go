@@ -24,8 +24,6 @@ func (Ticket) Fields() []ent.Field {
 		field.String("salt"),
 		field.Time("created_at").
 			Default(time.Now),
-		field.Time("last_download").Nillable().Optional(),
-		field.Uint64("times_downloaded").Default(0),
 		field.Uint8("expiry_total_days"),
 		field.Uint8("expiry_days_since_last_download"),
 		field.Uint8("expiry_total_downloads"),

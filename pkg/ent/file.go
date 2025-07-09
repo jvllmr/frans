@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -23,6 +24,10 @@ type File struct {
 	Size uint64 `json:"size,omitempty"`
 	// Sha512 holds the value of the "sha512" field.
 	Sha512 string `json:"sha512,omitempty"`
+	// LastDownload holds the value of the "last_download" field.
+	LastDownload *time.Time `json:"last_download,omitempty"`
+	// TimesDownloaded holds the value of the "times_downloaded" field.
+	TimesDownloaded uint64 `json:"times_downloaded,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FileQuery when eager-loading is set.
 	Edges        FileEdges `json:"edges"`
@@ -52,10 +57,12 @@ func (*File) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case file.FieldSize:
+		case file.FieldSize, file.FieldTimesDownloaded:
 			values[i] = new(sql.NullInt64)
 		case file.FieldName, file.FieldSha512:
 			values[i] = new(sql.NullString)
+		case file.FieldLastDownload:
+			values[i] = new(sql.NullTime)
 		case file.FieldID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -96,6 +103,19 @@ func (f *File) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field sha512", values[i])
 			} else if value.Valid {
 				f.Sha512 = value.String
+			}
+		case file.FieldLastDownload:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_download", values[i])
+			} else if value.Valid {
+				f.LastDownload = new(time.Time)
+				*f.LastDownload = value.Time
+			}
+		case file.FieldTimesDownloaded:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field times_downloaded", values[i])
+			} else if value.Valid {
+				f.TimesDownloaded = uint64(value.Int64)
 			}
 		default:
 			f.selectValues.Set(columns[i], values[i])
@@ -146,6 +166,14 @@ func (f *File) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("sha512=")
 	builder.WriteString(f.Sha512)
+	builder.WriteString(", ")
+	if v := f.LastDownload; v != nil {
+		builder.WriteString("last_download=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	builder.WriteString("times_downloaded=")
+	builder.WriteString(fmt.Sprintf("%v", f.TimesDownloaded))
 	builder.WriteByte(')')
 	return builder.String()
 }

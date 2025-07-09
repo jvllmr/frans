@@ -37,20 +37,23 @@ const (
 // FileMutation represents an operation that mutates the File nodes in the graph.
 type FileMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *uuid.UUID
-	name           *string
-	size           *uint64
-	addsize        *int64
-	sha512         *string
-	clearedFields  map[string]struct{}
-	tickets        map[uuid.UUID]struct{}
-	removedtickets map[uuid.UUID]struct{}
-	clearedtickets bool
-	done           bool
-	oldValue       func(context.Context) (*File, error)
-	predicates     []predicate.File
+	op                  Op
+	typ                 string
+	id                  *uuid.UUID
+	name                *string
+	size                *uint64
+	addsize             *int64
+	sha512              *string
+	last_download       *time.Time
+	times_downloaded    *uint64
+	addtimes_downloaded *int64
+	clearedFields       map[string]struct{}
+	tickets             map[uuid.UUID]struct{}
+	removedtickets      map[uuid.UUID]struct{}
+	clearedtickets      bool
+	done                bool
+	oldValue            func(context.Context) (*File, error)
+	predicates          []predicate.File
 }
 
 var _ ent.Mutation = (*FileMutation)(nil)
@@ -285,6 +288,111 @@ func (m *FileMutation) ResetSha512() {
 	m.sha512 = nil
 }
 
+// SetLastDownload sets the "last_download" field.
+func (m *FileMutation) SetLastDownload(t time.Time) {
+	m.last_download = &t
+}
+
+// LastDownload returns the value of the "last_download" field in the mutation.
+func (m *FileMutation) LastDownload() (r time.Time, exists bool) {
+	v := m.last_download
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastDownload returns the old "last_download" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldLastDownload(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastDownload is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastDownload requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastDownload: %w", err)
+	}
+	return oldValue.LastDownload, nil
+}
+
+// ClearLastDownload clears the value of the "last_download" field.
+func (m *FileMutation) ClearLastDownload() {
+	m.last_download = nil
+	m.clearedFields[file.FieldLastDownload] = struct{}{}
+}
+
+// LastDownloadCleared returns if the "last_download" field was cleared in this mutation.
+func (m *FileMutation) LastDownloadCleared() bool {
+	_, ok := m.clearedFields[file.FieldLastDownload]
+	return ok
+}
+
+// ResetLastDownload resets all changes to the "last_download" field.
+func (m *FileMutation) ResetLastDownload() {
+	m.last_download = nil
+	delete(m.clearedFields, file.FieldLastDownload)
+}
+
+// SetTimesDownloaded sets the "times_downloaded" field.
+func (m *FileMutation) SetTimesDownloaded(u uint64) {
+	m.times_downloaded = &u
+	m.addtimes_downloaded = nil
+}
+
+// TimesDownloaded returns the value of the "times_downloaded" field in the mutation.
+func (m *FileMutation) TimesDownloaded() (r uint64, exists bool) {
+	v := m.times_downloaded
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimesDownloaded returns the old "times_downloaded" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldTimesDownloaded(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimesDownloaded is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimesDownloaded requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimesDownloaded: %w", err)
+	}
+	return oldValue.TimesDownloaded, nil
+}
+
+// AddTimesDownloaded adds u to the "times_downloaded" field.
+func (m *FileMutation) AddTimesDownloaded(u int64) {
+	if m.addtimes_downloaded != nil {
+		*m.addtimes_downloaded += u
+	} else {
+		m.addtimes_downloaded = &u
+	}
+}
+
+// AddedTimesDownloaded returns the value that was added to the "times_downloaded" field in this mutation.
+func (m *FileMutation) AddedTimesDownloaded() (r int64, exists bool) {
+	v := m.addtimes_downloaded
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTimesDownloaded resets all changes to the "times_downloaded" field.
+func (m *FileMutation) ResetTimesDownloaded() {
+	m.times_downloaded = nil
+	m.addtimes_downloaded = nil
+}
+
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by ids.
 func (m *FileMutation) AddTicketIDs(ids ...uuid.UUID) {
 	if m.tickets == nil {
@@ -373,7 +481,7 @@ func (m *FileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FileMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
 	if m.name != nil {
 		fields = append(fields, file.FieldName)
 	}
@@ -382,6 +490,12 @@ func (m *FileMutation) Fields() []string {
 	}
 	if m.sha512 != nil {
 		fields = append(fields, file.FieldSha512)
+	}
+	if m.last_download != nil {
+		fields = append(fields, file.FieldLastDownload)
+	}
+	if m.times_downloaded != nil {
+		fields = append(fields, file.FieldTimesDownloaded)
 	}
 	return fields
 }
@@ -397,6 +511,10 @@ func (m *FileMutation) Field(name string) (ent.Value, bool) {
 		return m.Size()
 	case file.FieldSha512:
 		return m.Sha512()
+	case file.FieldLastDownload:
+		return m.LastDownload()
+	case file.FieldTimesDownloaded:
+		return m.TimesDownloaded()
 	}
 	return nil, false
 }
@@ -412,6 +530,10 @@ func (m *FileMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldSize(ctx)
 	case file.FieldSha512:
 		return m.OldSha512(ctx)
+	case file.FieldLastDownload:
+		return m.OldLastDownload(ctx)
+	case file.FieldTimesDownloaded:
+		return m.OldTimesDownloaded(ctx)
 	}
 	return nil, fmt.Errorf("unknown File field %s", name)
 }
@@ -442,6 +564,20 @@ func (m *FileMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSha512(v)
 		return nil
+	case file.FieldLastDownload:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastDownload(v)
+		return nil
+	case file.FieldTimesDownloaded:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimesDownloaded(v)
+		return nil
 	}
 	return fmt.Errorf("unknown File field %s", name)
 }
@@ -453,6 +589,9 @@ func (m *FileMutation) AddedFields() []string {
 	if m.addsize != nil {
 		fields = append(fields, file.FieldSize)
 	}
+	if m.addtimes_downloaded != nil {
+		fields = append(fields, file.FieldTimesDownloaded)
+	}
 	return fields
 }
 
@@ -463,6 +602,8 @@ func (m *FileMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case file.FieldSize:
 		return m.AddedSize()
+	case file.FieldTimesDownloaded:
+		return m.AddedTimesDownloaded()
 	}
 	return nil, false
 }
@@ -479,6 +620,13 @@ func (m *FileMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddSize(v)
 		return nil
+	case file.FieldTimesDownloaded:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTimesDownloaded(v)
+		return nil
 	}
 	return fmt.Errorf("unknown File numeric field %s", name)
 }
@@ -486,7 +634,11 @@ func (m *FileMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *FileMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(file.FieldLastDownload) {
+		fields = append(fields, file.FieldLastDownload)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -499,6 +651,11 @@ func (m *FileMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *FileMutation) ClearField(name string) error {
+	switch name {
+	case file.FieldLastDownload:
+		m.ClearLastDownload()
+		return nil
+	}
 	return fmt.Errorf("unknown File nullable field %s", name)
 }
 
@@ -514,6 +671,12 @@ func (m *FileMutation) ResetField(name string) error {
 		return nil
 	case file.FieldSha512:
 		m.ResetSha512()
+		return nil
+	case file.FieldLastDownload:
+		m.ResetLastDownload()
+		return nil
+	case file.FieldTimesDownloaded:
+		m.ResetTimesDownloaded()
 		return nil
 	}
 	return fmt.Errorf("unknown File field %s", name)
@@ -1115,9 +1278,6 @@ type TicketMutation struct {
 	hashed_password                    *string
 	salt                               *string
 	created_at                         *time.Time
-	last_download                      *time.Time
-	times_downloaded                   *uint64
-	addtimes_downloaded                *int64
 	expiry_total_days                  *uint8
 	addexpiry_total_days               *int8
 	expiry_days_since_last_download    *uint8
@@ -1431,111 +1591,6 @@ func (m *TicketMutation) OldCreatedAt(ctx context.Context) (v time.Time, err err
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *TicketMutation) ResetCreatedAt() {
 	m.created_at = nil
-}
-
-// SetLastDownload sets the "last_download" field.
-func (m *TicketMutation) SetLastDownload(t time.Time) {
-	m.last_download = &t
-}
-
-// LastDownload returns the value of the "last_download" field in the mutation.
-func (m *TicketMutation) LastDownload() (r time.Time, exists bool) {
-	v := m.last_download
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldLastDownload returns the old "last_download" field's value of the Ticket entity.
-// If the Ticket object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TicketMutation) OldLastDownload(ctx context.Context) (v *time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLastDownload is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLastDownload requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLastDownload: %w", err)
-	}
-	return oldValue.LastDownload, nil
-}
-
-// ClearLastDownload clears the value of the "last_download" field.
-func (m *TicketMutation) ClearLastDownload() {
-	m.last_download = nil
-	m.clearedFields[ticket.FieldLastDownload] = struct{}{}
-}
-
-// LastDownloadCleared returns if the "last_download" field was cleared in this mutation.
-func (m *TicketMutation) LastDownloadCleared() bool {
-	_, ok := m.clearedFields[ticket.FieldLastDownload]
-	return ok
-}
-
-// ResetLastDownload resets all changes to the "last_download" field.
-func (m *TicketMutation) ResetLastDownload() {
-	m.last_download = nil
-	delete(m.clearedFields, ticket.FieldLastDownload)
-}
-
-// SetTimesDownloaded sets the "times_downloaded" field.
-func (m *TicketMutation) SetTimesDownloaded(u uint64) {
-	m.times_downloaded = &u
-	m.addtimes_downloaded = nil
-}
-
-// TimesDownloaded returns the value of the "times_downloaded" field in the mutation.
-func (m *TicketMutation) TimesDownloaded() (r uint64, exists bool) {
-	v := m.times_downloaded
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTimesDownloaded returns the old "times_downloaded" field's value of the Ticket entity.
-// If the Ticket object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TicketMutation) OldTimesDownloaded(ctx context.Context) (v uint64, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTimesDownloaded is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTimesDownloaded requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTimesDownloaded: %w", err)
-	}
-	return oldValue.TimesDownloaded, nil
-}
-
-// AddTimesDownloaded adds u to the "times_downloaded" field.
-func (m *TicketMutation) AddTimesDownloaded(u int64) {
-	if m.addtimes_downloaded != nil {
-		*m.addtimes_downloaded += u
-	} else {
-		m.addtimes_downloaded = &u
-	}
-}
-
-// AddedTimesDownloaded returns the value that was added to the "times_downloaded" field in this mutation.
-func (m *TicketMutation) AddedTimesDownloaded() (r int64, exists bool) {
-	v := m.addtimes_downloaded
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetTimesDownloaded resets all changes to the "times_downloaded" field.
-func (m *TicketMutation) ResetTimesDownloaded() {
-	m.times_downloaded = nil
-	m.addtimes_downloaded = nil
 }
 
 // SetExpiryTotalDays sets the "expiry_total_days" field.
@@ -1882,7 +1937,7 @@ func (m *TicketMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TicketMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 9)
 	if m.comment != nil {
 		fields = append(fields, ticket.FieldComment)
 	}
@@ -1897,12 +1952,6 @@ func (m *TicketMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, ticket.FieldCreatedAt)
-	}
-	if m.last_download != nil {
-		fields = append(fields, ticket.FieldLastDownload)
-	}
-	if m.times_downloaded != nil {
-		fields = append(fields, ticket.FieldTimesDownloaded)
 	}
 	if m.expiry_total_days != nil {
 		fields = append(fields, ticket.FieldExpiryTotalDays)
@@ -1934,10 +1983,6 @@ func (m *TicketMutation) Field(name string) (ent.Value, bool) {
 		return m.Salt()
 	case ticket.FieldCreatedAt:
 		return m.CreatedAt()
-	case ticket.FieldLastDownload:
-		return m.LastDownload()
-	case ticket.FieldTimesDownloaded:
-		return m.TimesDownloaded()
 	case ticket.FieldExpiryTotalDays:
 		return m.ExpiryTotalDays()
 	case ticket.FieldExpiryDaysSinceLastDownload:
@@ -1965,10 +2010,6 @@ func (m *TicketMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldSalt(ctx)
 	case ticket.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case ticket.FieldLastDownload:
-		return m.OldLastDownload(ctx)
-	case ticket.FieldTimesDownloaded:
-		return m.OldTimesDownloaded(ctx)
 	case ticket.FieldExpiryTotalDays:
 		return m.OldExpiryTotalDays(ctx)
 	case ticket.FieldExpiryDaysSinceLastDownload:
@@ -2021,20 +2062,6 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case ticket.FieldLastDownload:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetLastDownload(v)
-		return nil
-	case ticket.FieldTimesDownloaded:
-		v, ok := value.(uint64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTimesDownloaded(v)
-		return nil
 	case ticket.FieldExpiryTotalDays:
 		v, ok := value.(uint8)
 		if !ok {
@@ -2071,9 +2098,6 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TicketMutation) AddedFields() []string {
 	var fields []string
-	if m.addtimes_downloaded != nil {
-		fields = append(fields, ticket.FieldTimesDownloaded)
-	}
 	if m.addexpiry_total_days != nil {
 		fields = append(fields, ticket.FieldExpiryTotalDays)
 	}
@@ -2091,8 +2115,6 @@ func (m *TicketMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TicketMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case ticket.FieldTimesDownloaded:
-		return m.AddedTimesDownloaded()
 	case ticket.FieldExpiryTotalDays:
 		return m.AddedExpiryTotalDays()
 	case ticket.FieldExpiryDaysSinceLastDownload:
@@ -2108,13 +2130,6 @@ func (m *TicketMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TicketMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case ticket.FieldTimesDownloaded:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddTimesDownloaded(v)
-		return nil
 	case ticket.FieldExpiryTotalDays:
 		v, ok := value.(int8)
 		if !ok {
@@ -2147,9 +2162,6 @@ func (m *TicketMutation) ClearedFields() []string {
 	if m.FieldCleared(ticket.FieldComment) {
 		fields = append(fields, ticket.FieldComment)
 	}
-	if m.FieldCleared(ticket.FieldLastDownload) {
-		fields = append(fields, ticket.FieldLastDownload)
-	}
 	if m.FieldCleared(ticket.FieldEmailOnDownload) {
 		fields = append(fields, ticket.FieldEmailOnDownload)
 	}
@@ -2169,9 +2181,6 @@ func (m *TicketMutation) ClearField(name string) error {
 	switch name {
 	case ticket.FieldComment:
 		m.ClearComment()
-		return nil
-	case ticket.FieldLastDownload:
-		m.ClearLastDownload()
 		return nil
 	case ticket.FieldEmailOnDownload:
 		m.ClearEmailOnDownload()
@@ -2198,12 +2207,6 @@ func (m *TicketMutation) ResetField(name string) error {
 		return nil
 	case ticket.FieldCreatedAt:
 		m.ResetCreatedAt()
-		return nil
-	case ticket.FieldLastDownload:
-		m.ResetLastDownload()
-		return nil
-	case ticket.FieldTimesDownloaded:
-		m.ResetTimesDownloaded()
 		return nil
 	case ticket.FieldExpiryTotalDays:
 		m.ResetExpiryTotalDays()

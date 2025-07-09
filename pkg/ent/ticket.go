@@ -29,10 +29,6 @@ type Ticket struct {
 	Salt string `json:"salt,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	// LastDownload holds the value of the "last_download" field.
-	LastDownload *time.Time `json:"last_download,omitempty"`
-	// TimesDownloaded holds the value of the "times_downloaded" field.
-	TimesDownloaded uint64 `json:"times_downloaded,omitempty"`
 	// ExpiryTotalDays holds the value of the "expiry_total_days" field.
 	ExpiryTotalDays uint8 `json:"expiry_total_days,omitempty"`
 	// ExpiryDaysSinceLastDownload holds the value of the "expiry_days_since_last_download" field.
@@ -84,11 +80,11 @@ func (*Ticket) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case ticket.FieldTimesDownloaded, ticket.FieldExpiryTotalDays, ticket.FieldExpiryDaysSinceLastDownload, ticket.FieldExpiryTotalDownloads:
+		case ticket.FieldExpiryTotalDays, ticket.FieldExpiryDaysSinceLastDownload, ticket.FieldExpiryTotalDownloads:
 			values[i] = new(sql.NullInt64)
 		case ticket.FieldComment, ticket.FieldExpiryType, ticket.FieldHashedPassword, ticket.FieldSalt, ticket.FieldEmailOnDownload:
 			values[i] = new(sql.NullString)
-		case ticket.FieldCreatedAt, ticket.FieldLastDownload:
+		case ticket.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		case ticket.FieldID:
 			values[i] = new(uuid.UUID)
@@ -145,19 +141,6 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				t.CreatedAt = value.Time
-			}
-		case ticket.FieldLastDownload:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field last_download", values[i])
-			} else if value.Valid {
-				t.LastDownload = new(time.Time)
-				*t.LastDownload = value.Time
-			}
-		case ticket.FieldTimesDownloaded:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field times_downloaded", values[i])
-			} else if value.Valid {
-				t.TimesDownloaded = uint64(value.Int64)
 			}
 		case ticket.FieldExpiryTotalDays:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -253,14 +236,6 @@ func (t *Ticket) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := t.LastDownload; v != nil {
-		builder.WriteString("last_download=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
-	builder.WriteString(", ")
-	builder.WriteString("times_downloaded=")
-	builder.WriteString(fmt.Sprintf("%v", t.TimesDownloaded))
 	builder.WriteString(", ")
 	builder.WriteString("expiry_total_days=")
 	builder.WriteString(fmt.Sprintf("%v", t.ExpiryTotalDays))

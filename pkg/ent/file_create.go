@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -39,6 +40,34 @@ func (fc *FileCreate) SetSha512(s string) *FileCreate {
 	return fc
 }
 
+// SetLastDownload sets the "last_download" field.
+func (fc *FileCreate) SetLastDownload(t time.Time) *FileCreate {
+	fc.mutation.SetLastDownload(t)
+	return fc
+}
+
+// SetNillableLastDownload sets the "last_download" field if the given value is not nil.
+func (fc *FileCreate) SetNillableLastDownload(t *time.Time) *FileCreate {
+	if t != nil {
+		fc.SetLastDownload(*t)
+	}
+	return fc
+}
+
+// SetTimesDownloaded sets the "times_downloaded" field.
+func (fc *FileCreate) SetTimesDownloaded(u uint64) *FileCreate {
+	fc.mutation.SetTimesDownloaded(u)
+	return fc
+}
+
+// SetNillableTimesDownloaded sets the "times_downloaded" field if the given value is not nil.
+func (fc *FileCreate) SetNillableTimesDownloaded(u *uint64) *FileCreate {
+	if u != nil {
+		fc.SetTimesDownloaded(*u)
+	}
+	return fc
+}
+
 // SetID sets the "id" field.
 func (fc *FileCreate) SetID(u uuid.UUID) *FileCreate {
 	fc.mutation.SetID(u)
@@ -67,6 +96,7 @@ func (fc *FileCreate) Mutation() *FileMutation {
 
 // Save creates the File in the database.
 func (fc *FileCreate) Save(ctx context.Context) (*File, error) {
+	fc.defaults()
 	return withHooks(ctx, fc.sqlSave, fc.mutation, fc.hooks)
 }
 
@@ -92,6 +122,14 @@ func (fc *FileCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (fc *FileCreate) defaults() {
+	if _, ok := fc.mutation.TimesDownloaded(); !ok {
+		v := file.DefaultTimesDownloaded
+		fc.mutation.SetTimesDownloaded(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (fc *FileCreate) check() error {
 	if _, ok := fc.mutation.Name(); !ok {
@@ -102,6 +140,9 @@ func (fc *FileCreate) check() error {
 	}
 	if _, ok := fc.mutation.Sha512(); !ok {
 		return &ValidationError{Name: "sha512", err: errors.New(`ent: missing required field "File.sha512"`)}
+	}
+	if _, ok := fc.mutation.TimesDownloaded(); !ok {
+		return &ValidationError{Name: "times_downloaded", err: errors.New(`ent: missing required field "File.times_downloaded"`)}
 	}
 	return nil
 }
@@ -150,6 +191,14 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		_spec.SetField(file.FieldSha512, field.TypeString, value)
 		_node.Sha512 = value
 	}
+	if value, ok := fc.mutation.LastDownload(); ok {
+		_spec.SetField(file.FieldLastDownload, field.TypeTime, value)
+		_node.LastDownload = &value
+	}
+	if value, ok := fc.mutation.TimesDownloaded(); ok {
+		_spec.SetField(file.FieldTimesDownloaded, field.TypeUint64, value)
+		_node.TimesDownloaded = value
+	}
 	if nodes := fc.mutation.TicketsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -187,6 +236,7 @@ func (fcb *FileCreateBulk) Save(ctx context.Context) ([]*File, error) {
 	for i := range fcb.builders {
 		func(i int, root context.Context) {
 			builder := fcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*FileMutation)
 				if !ok {

@@ -14,6 +14,8 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "size", Type: field.TypeUint64},
 		{Name: "sha512", Type: field.TypeString},
+		{Name: "last_download", Type: field.TypeTime, Nullable: true},
+		{Name: "times_downloaded", Type: field.TypeUint64, Default: 0},
 	}
 	// FilesTable holds the schema information for the "files" table.
 	FilesTable = &schema.Table{
@@ -51,8 +53,6 @@ var (
 		{Name: "hashed_password", Type: field.TypeString},
 		{Name: "salt", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "last_download", Type: field.TypeTime, Nullable: true},
-		{Name: "times_downloaded", Type: field.TypeUint64, Default: 0},
 		{Name: "expiry_total_days", Type: field.TypeUint8},
 		{Name: "expiry_days_since_last_download", Type: field.TypeUint8},
 		{Name: "expiry_total_downloads", Type: field.TypeUint8},
@@ -67,7 +67,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tickets_users_tickets",
-				Columns:    []*schema.Column{TicketsColumns[12]},
+				Columns:    []*schema.Column{TicketsColumns[10]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

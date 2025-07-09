@@ -81,16 +81,6 @@ func CreatedAt(v time.Time) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// LastDownload applies equality check predicate on the "last_download" field. It's identical to LastDownloadEQ.
-func LastDownload(v time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEQ(FieldLastDownload, v))
-}
-
-// TimesDownloaded applies equality check predicate on the "times_downloaded" field. It's identical to TimesDownloadedEQ.
-func TimesDownloaded(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEQ(FieldTimesDownloaded, v))
-}
-
 // ExpiryTotalDays applies equality check predicate on the "expiry_total_days" field. It's identical to ExpiryTotalDaysEQ.
 func ExpiryTotalDays(v uint8) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldExpiryTotalDays, v))
@@ -419,96 +409,6 @@ func CreatedAtLT(v time.Time) predicate.Ticket {
 // CreatedAtLTE applies the LTE predicate on the "created_at" field.
 func CreatedAtLTE(v time.Time) predicate.Ticket {
 	return predicate.Ticket(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// LastDownloadEQ applies the EQ predicate on the "last_download" field.
-func LastDownloadEQ(v time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEQ(FieldLastDownload, v))
-}
-
-// LastDownloadNEQ applies the NEQ predicate on the "last_download" field.
-func LastDownloadNEQ(v time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldNEQ(FieldLastDownload, v))
-}
-
-// LastDownloadIn applies the In predicate on the "last_download" field.
-func LastDownloadIn(vs ...time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldIn(FieldLastDownload, vs...))
-}
-
-// LastDownloadNotIn applies the NotIn predicate on the "last_download" field.
-func LastDownloadNotIn(vs ...time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldNotIn(FieldLastDownload, vs...))
-}
-
-// LastDownloadGT applies the GT predicate on the "last_download" field.
-func LastDownloadGT(v time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldGT(FieldLastDownload, v))
-}
-
-// LastDownloadGTE applies the GTE predicate on the "last_download" field.
-func LastDownloadGTE(v time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldGTE(FieldLastDownload, v))
-}
-
-// LastDownloadLT applies the LT predicate on the "last_download" field.
-func LastDownloadLT(v time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldLT(FieldLastDownload, v))
-}
-
-// LastDownloadLTE applies the LTE predicate on the "last_download" field.
-func LastDownloadLTE(v time.Time) predicate.Ticket {
-	return predicate.Ticket(sql.FieldLTE(FieldLastDownload, v))
-}
-
-// LastDownloadIsNil applies the IsNil predicate on the "last_download" field.
-func LastDownloadIsNil() predicate.Ticket {
-	return predicate.Ticket(sql.FieldIsNull(FieldLastDownload))
-}
-
-// LastDownloadNotNil applies the NotNil predicate on the "last_download" field.
-func LastDownloadNotNil() predicate.Ticket {
-	return predicate.Ticket(sql.FieldNotNull(FieldLastDownload))
-}
-
-// TimesDownloadedEQ applies the EQ predicate on the "times_downloaded" field.
-func TimesDownloadedEQ(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEQ(FieldTimesDownloaded, v))
-}
-
-// TimesDownloadedNEQ applies the NEQ predicate on the "times_downloaded" field.
-func TimesDownloadedNEQ(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldNEQ(FieldTimesDownloaded, v))
-}
-
-// TimesDownloadedIn applies the In predicate on the "times_downloaded" field.
-func TimesDownloadedIn(vs ...uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldIn(FieldTimesDownloaded, vs...))
-}
-
-// TimesDownloadedNotIn applies the NotIn predicate on the "times_downloaded" field.
-func TimesDownloadedNotIn(vs ...uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldNotIn(FieldTimesDownloaded, vs...))
-}
-
-// TimesDownloadedGT applies the GT predicate on the "times_downloaded" field.
-func TimesDownloadedGT(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldGT(FieldTimesDownloaded, v))
-}
-
-// TimesDownloadedGTE applies the GTE predicate on the "times_downloaded" field.
-func TimesDownloadedGTE(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldGTE(FieldTimesDownloaded, v))
-}
-
-// TimesDownloadedLT applies the LT predicate on the "times_downloaded" field.
-func TimesDownloadedLT(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldLT(FieldTimesDownloaded, v))
-}
-
-// TimesDownloadedLTE applies the LTE predicate on the "times_downloaded" field.
-func TimesDownloadedLTE(v uint64) predicate.Ticket {
-	return predicate.Ticket(sql.FieldLTE(FieldTimesDownloaded, v))
 }
 
 // ExpiryTotalDaysEQ applies the EQ predicate on the "expiry_total_days" field.

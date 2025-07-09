@@ -107,47 +107,6 @@ func (tu *TicketUpdate) SetNillableCreatedAt(t *time.Time) *TicketUpdate {
 	return tu
 }
 
-// SetLastDownload sets the "last_download" field.
-func (tu *TicketUpdate) SetLastDownload(t time.Time) *TicketUpdate {
-	tu.mutation.SetLastDownload(t)
-	return tu
-}
-
-// SetNillableLastDownload sets the "last_download" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableLastDownload(t *time.Time) *TicketUpdate {
-	if t != nil {
-		tu.SetLastDownload(*t)
-	}
-	return tu
-}
-
-// ClearLastDownload clears the value of the "last_download" field.
-func (tu *TicketUpdate) ClearLastDownload() *TicketUpdate {
-	tu.mutation.ClearLastDownload()
-	return tu
-}
-
-// SetTimesDownloaded sets the "times_downloaded" field.
-func (tu *TicketUpdate) SetTimesDownloaded(u uint64) *TicketUpdate {
-	tu.mutation.ResetTimesDownloaded()
-	tu.mutation.SetTimesDownloaded(u)
-	return tu
-}
-
-// SetNillableTimesDownloaded sets the "times_downloaded" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableTimesDownloaded(u *uint64) *TicketUpdate {
-	if u != nil {
-		tu.SetTimesDownloaded(*u)
-	}
-	return tu
-}
-
-// AddTimesDownloaded adds u to the "times_downloaded" field.
-func (tu *TicketUpdate) AddTimesDownloaded(u int64) *TicketUpdate {
-	tu.mutation.AddTimesDownloaded(u)
-	return tu
-}
-
 // SetExpiryTotalDays sets the "expiry_total_days" field.
 func (tu *TicketUpdate) SetExpiryTotalDays(u uint8) *TicketUpdate {
 	tu.mutation.ResetExpiryTotalDays()
@@ -351,18 +310,6 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.CreatedAt(); ok {
 		_spec.SetField(ticket.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := tu.mutation.LastDownload(); ok {
-		_spec.SetField(ticket.FieldLastDownload, field.TypeTime, value)
-	}
-	if tu.mutation.LastDownloadCleared() {
-		_spec.ClearField(ticket.FieldLastDownload, field.TypeTime)
-	}
-	if value, ok := tu.mutation.TimesDownloaded(); ok {
-		_spec.SetField(ticket.FieldTimesDownloaded, field.TypeUint64, value)
-	}
-	if value, ok := tu.mutation.AddedTimesDownloaded(); ok {
-		_spec.AddField(ticket.FieldTimesDownloaded, field.TypeUint64, value)
-	}
 	if value, ok := tu.mutation.ExpiryTotalDays(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDays, field.TypeUint8, value)
 	}
@@ -554,47 +501,6 @@ func (tuo *TicketUpdateOne) SetNillableCreatedAt(t *time.Time) *TicketUpdateOne 
 	if t != nil {
 		tuo.SetCreatedAt(*t)
 	}
-	return tuo
-}
-
-// SetLastDownload sets the "last_download" field.
-func (tuo *TicketUpdateOne) SetLastDownload(t time.Time) *TicketUpdateOne {
-	tuo.mutation.SetLastDownload(t)
-	return tuo
-}
-
-// SetNillableLastDownload sets the "last_download" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableLastDownload(t *time.Time) *TicketUpdateOne {
-	if t != nil {
-		tuo.SetLastDownload(*t)
-	}
-	return tuo
-}
-
-// ClearLastDownload clears the value of the "last_download" field.
-func (tuo *TicketUpdateOne) ClearLastDownload() *TicketUpdateOne {
-	tuo.mutation.ClearLastDownload()
-	return tuo
-}
-
-// SetTimesDownloaded sets the "times_downloaded" field.
-func (tuo *TicketUpdateOne) SetTimesDownloaded(u uint64) *TicketUpdateOne {
-	tuo.mutation.ResetTimesDownloaded()
-	tuo.mutation.SetTimesDownloaded(u)
-	return tuo
-}
-
-// SetNillableTimesDownloaded sets the "times_downloaded" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableTimesDownloaded(u *uint64) *TicketUpdateOne {
-	if u != nil {
-		tuo.SetTimesDownloaded(*u)
-	}
-	return tuo
-}
-
-// AddTimesDownloaded adds u to the "times_downloaded" field.
-func (tuo *TicketUpdateOne) AddTimesDownloaded(u int64) *TicketUpdateOne {
-	tuo.mutation.AddTimesDownloaded(u)
 	return tuo
 }
 
@@ -830,18 +736,6 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 	}
 	if value, ok := tuo.mutation.CreatedAt(); ok {
 		_spec.SetField(ticket.FieldCreatedAt, field.TypeTime, value)
-	}
-	if value, ok := tuo.mutation.LastDownload(); ok {
-		_spec.SetField(ticket.FieldLastDownload, field.TypeTime, value)
-	}
-	if tuo.mutation.LastDownloadCleared() {
-		_spec.ClearField(ticket.FieldLastDownload, field.TypeTime)
-	}
-	if value, ok := tuo.mutation.TimesDownloaded(); ok {
-		_spec.SetField(ticket.FieldTimesDownloaded, field.TypeUint64, value)
-	}
-	if value, ok := tuo.mutation.AddedTimesDownloaded(); ok {
-		_spec.AddField(ticket.FieldTimesDownloaded, field.TypeUint64, value)
 	}
 	if value, ok := tuo.mutation.ExpiryTotalDays(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDays, field.TypeUint8, value)

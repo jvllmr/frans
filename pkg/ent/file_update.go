@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -75,6 +76,47 @@ func (fu *FileUpdate) SetNillableSha512(s *string) *FileUpdate {
 	if s != nil {
 		fu.SetSha512(*s)
 	}
+	return fu
+}
+
+// SetLastDownload sets the "last_download" field.
+func (fu *FileUpdate) SetLastDownload(t time.Time) *FileUpdate {
+	fu.mutation.SetLastDownload(t)
+	return fu
+}
+
+// SetNillableLastDownload sets the "last_download" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableLastDownload(t *time.Time) *FileUpdate {
+	if t != nil {
+		fu.SetLastDownload(*t)
+	}
+	return fu
+}
+
+// ClearLastDownload clears the value of the "last_download" field.
+func (fu *FileUpdate) ClearLastDownload() *FileUpdate {
+	fu.mutation.ClearLastDownload()
+	return fu
+}
+
+// SetTimesDownloaded sets the "times_downloaded" field.
+func (fu *FileUpdate) SetTimesDownloaded(u uint64) *FileUpdate {
+	fu.mutation.ResetTimesDownloaded()
+	fu.mutation.SetTimesDownloaded(u)
+	return fu
+}
+
+// SetNillableTimesDownloaded sets the "times_downloaded" field if the given value is not nil.
+func (fu *FileUpdate) SetNillableTimesDownloaded(u *uint64) *FileUpdate {
+	if u != nil {
+		fu.SetTimesDownloaded(*u)
+	}
+	return fu
+}
+
+// AddTimesDownloaded adds u to the "times_downloaded" field.
+func (fu *FileUpdate) AddTimesDownloaded(u int64) *FileUpdate {
+	fu.mutation.AddTimesDownloaded(u)
 	return fu
 }
 
@@ -166,6 +208,18 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := fu.mutation.Sha512(); ok {
 		_spec.SetField(file.FieldSha512, field.TypeString, value)
+	}
+	if value, ok := fu.mutation.LastDownload(); ok {
+		_spec.SetField(file.FieldLastDownload, field.TypeTime, value)
+	}
+	if fu.mutation.LastDownloadCleared() {
+		_spec.ClearField(file.FieldLastDownload, field.TypeTime)
+	}
+	if value, ok := fu.mutation.TimesDownloaded(); ok {
+		_spec.SetField(file.FieldTimesDownloaded, field.TypeUint64, value)
+	}
+	if value, ok := fu.mutation.AddedTimesDownloaded(); ok {
+		_spec.AddField(file.FieldTimesDownloaded, field.TypeUint64, value)
 	}
 	if fu.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -278,6 +332,47 @@ func (fuo *FileUpdateOne) SetNillableSha512(s *string) *FileUpdateOne {
 	if s != nil {
 		fuo.SetSha512(*s)
 	}
+	return fuo
+}
+
+// SetLastDownload sets the "last_download" field.
+func (fuo *FileUpdateOne) SetLastDownload(t time.Time) *FileUpdateOne {
+	fuo.mutation.SetLastDownload(t)
+	return fuo
+}
+
+// SetNillableLastDownload sets the "last_download" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableLastDownload(t *time.Time) *FileUpdateOne {
+	if t != nil {
+		fuo.SetLastDownload(*t)
+	}
+	return fuo
+}
+
+// ClearLastDownload clears the value of the "last_download" field.
+func (fuo *FileUpdateOne) ClearLastDownload() *FileUpdateOne {
+	fuo.mutation.ClearLastDownload()
+	return fuo
+}
+
+// SetTimesDownloaded sets the "times_downloaded" field.
+func (fuo *FileUpdateOne) SetTimesDownloaded(u uint64) *FileUpdateOne {
+	fuo.mutation.ResetTimesDownloaded()
+	fuo.mutation.SetTimesDownloaded(u)
+	return fuo
+}
+
+// SetNillableTimesDownloaded sets the "times_downloaded" field if the given value is not nil.
+func (fuo *FileUpdateOne) SetNillableTimesDownloaded(u *uint64) *FileUpdateOne {
+	if u != nil {
+		fuo.SetTimesDownloaded(*u)
+	}
+	return fuo
+}
+
+// AddTimesDownloaded adds u to the "times_downloaded" field.
+func (fuo *FileUpdateOne) AddTimesDownloaded(u int64) *FileUpdateOne {
+	fuo.mutation.AddTimesDownloaded(u)
 	return fuo
 }
 
@@ -399,6 +494,18 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 	}
 	if value, ok := fuo.mutation.Sha512(); ok {
 		_spec.SetField(file.FieldSha512, field.TypeString, value)
+	}
+	if value, ok := fuo.mutation.LastDownload(); ok {
+		_spec.SetField(file.FieldLastDownload, field.TypeTime, value)
+	}
+	if fuo.mutation.LastDownloadCleared() {
+		_spec.ClearField(file.FieldLastDownload, field.TypeTime)
+	}
+	if value, ok := fuo.mutation.TimesDownloaded(); ok {
+		_spec.SetField(file.FieldTimesDownloaded, field.TypeUint64, value)
+	}
+	if value, ok := fuo.mutation.AddedTimesDownloaded(); ok {
+		_spec.AddField(file.FieldTimesDownloaded, field.TypeUint64, value)
 	}
 	if fuo.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -18,6 +18,10 @@ const (
 	FieldSize = "size"
 	// FieldSha512 holds the string denoting the sha512 field in the database.
 	FieldSha512 = "sha512"
+	// FieldLastDownload holds the string denoting the last_download field in the database.
+	FieldLastDownload = "last_download"
+	// FieldTimesDownloaded holds the string denoting the times_downloaded field in the database.
+	FieldTimesDownloaded = "times_downloaded"
 	// EdgeTickets holds the string denoting the tickets edge name in mutations.
 	EdgeTickets = "tickets"
 	// Table holds the table name of the file in the database.
@@ -35,6 +39,8 @@ var Columns = []string{
 	FieldName,
 	FieldSize,
 	FieldSha512,
+	FieldLastDownload,
+	FieldTimesDownloaded,
 }
 
 var (
@@ -52,6 +58,11 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultTimesDownloaded holds the default value on creation for the "times_downloaded" field.
+	DefaultTimesDownloaded uint64
+)
 
 // OrderOption defines the ordering options for the File queries.
 type OrderOption func(*sql.Selector)
@@ -74,6 +85,16 @@ func BySize(opts ...sql.OrderTermOption) OrderOption {
 // BySha512 orders the results by the sha512 field.
 func BySha512(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSha512, opts...).ToFunc()
+}
+
+// ByLastDownload orders the results by the last_download field.
+func ByLastDownload(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastDownload, opts...).ToFunc()
+}
+
+// ByTimesDownloaded orders the results by the times_downloaded field.
+func ByTimesDownloaded(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimesDownloaded, opts...).ToFunc()
 }
 
 // ByTicketsCount orders the results by tickets count.

@@ -19,6 +19,8 @@ func (File) Fields() []ent.Field {
 		field.String("name"),
 		field.Uint64("size"),
 		field.String("sha512"),
+		field.Time("last_download").Nillable().Optional(),
+		field.Uint64("times_downloaded").Default(0),
 	}
 }
 

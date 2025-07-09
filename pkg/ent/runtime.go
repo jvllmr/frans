@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/jvllmr/frans/pkg/ent/file"
 	"github.com/jvllmr/frans/pkg/ent/schema"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
@@ -14,16 +15,18 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	fileFields := schema.File{}.Fields()
+	_ = fileFields
+	// fileDescTimesDownloaded is the schema descriptor for times_downloaded field.
+	fileDescTimesDownloaded := fileFields[5].Descriptor()
+	// file.DefaultTimesDownloaded holds the default value on creation for the times_downloaded field.
+	file.DefaultTimesDownloaded = fileDescTimesDownloaded.Default.(uint64)
 	ticketFields := schema.Ticket{}.Fields()
 	_ = ticketFields
 	// ticketDescCreatedAt is the schema descriptor for created_at field.
 	ticketDescCreatedAt := ticketFields[5].Descriptor()
 	// ticket.DefaultCreatedAt holds the default value on creation for the created_at field.
 	ticket.DefaultCreatedAt = ticketDescCreatedAt.Default.(func() time.Time)
-	// ticketDescTimesDownloaded is the schema descriptor for times_downloaded field.
-	ticketDescTimesDownloaded := ticketFields[7].Descriptor()
-	// ticket.DefaultTimesDownloaded holds the default value on creation for the times_downloaded field.
-	ticket.DefaultTimesDownloaded = ticketDescTimesDownloaded.Default.(uint64)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

@@ -69,34 +69,6 @@ func (tc *TicketCreate) SetNillableCreatedAt(t *time.Time) *TicketCreate {
 	return tc
 }
 
-// SetLastDownload sets the "last_download" field.
-func (tc *TicketCreate) SetLastDownload(t time.Time) *TicketCreate {
-	tc.mutation.SetLastDownload(t)
-	return tc
-}
-
-// SetNillableLastDownload sets the "last_download" field if the given value is not nil.
-func (tc *TicketCreate) SetNillableLastDownload(t *time.Time) *TicketCreate {
-	if t != nil {
-		tc.SetLastDownload(*t)
-	}
-	return tc
-}
-
-// SetTimesDownloaded sets the "times_downloaded" field.
-func (tc *TicketCreate) SetTimesDownloaded(u uint64) *TicketCreate {
-	tc.mutation.SetTimesDownloaded(u)
-	return tc
-}
-
-// SetNillableTimesDownloaded sets the "times_downloaded" field if the given value is not nil.
-func (tc *TicketCreate) SetNillableTimesDownloaded(u *uint64) *TicketCreate {
-	if u != nil {
-		tc.SetTimesDownloaded(*u)
-	}
-	return tc
-}
-
 // SetExpiryTotalDays sets the "expiry_total_days" field.
 func (tc *TicketCreate) SetExpiryTotalDays(u uint8) *TicketCreate {
 	tc.mutation.SetExpiryTotalDays(u)
@@ -208,10 +180,6 @@ func (tc *TicketCreate) defaults() {
 		v := ticket.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := tc.mutation.TimesDownloaded(); !ok {
-		v := ticket.DefaultTimesDownloaded
-		tc.mutation.SetTimesDownloaded(v)
-	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -227,9 +195,6 @@ func (tc *TicketCreate) check() error {
 	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Ticket.created_at"`)}
-	}
-	if _, ok := tc.mutation.TimesDownloaded(); !ok {
-		return &ValidationError{Name: "times_downloaded", err: errors.New(`ent: missing required field "Ticket.times_downloaded"`)}
 	}
 	if _, ok := tc.mutation.ExpiryTotalDays(); !ok {
 		return &ValidationError{Name: "expiry_total_days", err: errors.New(`ent: missing required field "Ticket.expiry_total_days"`)}
@@ -294,14 +259,6 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.CreatedAt(); ok {
 		_spec.SetField(ticket.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
-	}
-	if value, ok := tc.mutation.LastDownload(); ok {
-		_spec.SetField(ticket.FieldLastDownload, field.TypeTime, value)
-		_node.LastDownload = &value
-	}
-	if value, ok := tc.mutation.TimesDownloaded(); ok {
-		_spec.SetField(ticket.FieldTimesDownloaded, field.TypeUint64, value)
-		_node.TimesDownloaded = value
 	}
 	if value, ok := tc.mutation.ExpiryTotalDays(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDays, field.TypeUint8, value)

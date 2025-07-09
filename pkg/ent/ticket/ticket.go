@@ -24,10 +24,6 @@ const (
 	FieldSalt = "salt"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// FieldLastDownload holds the string denoting the last_download field in the database.
-	FieldLastDownload = "last_download"
-	// FieldTimesDownloaded holds the string denoting the times_downloaded field in the database.
-	FieldTimesDownloaded = "times_downloaded"
 	// FieldExpiryTotalDays holds the string denoting the expiry_total_days field in the database.
 	FieldExpiryTotalDays = "expiry_total_days"
 	// FieldExpiryDaysSinceLastDownload holds the string denoting the expiry_days_since_last_download field in the database.
@@ -64,8 +60,6 @@ var Columns = []string{
 	FieldHashedPassword,
 	FieldSalt,
 	FieldCreatedAt,
-	FieldLastDownload,
-	FieldTimesDownloaded,
 	FieldExpiryTotalDays,
 	FieldExpiryDaysSinceLastDownload,
 	FieldExpiryTotalDownloads,
@@ -102,8 +96,6 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
-	// DefaultTimesDownloaded holds the default value on creation for the "times_downloaded" field.
-	DefaultTimesDownloaded uint64
 )
 
 // OrderOption defines the ordering options for the Ticket queries.
@@ -137,16 +129,6 @@ func BySalt(opts ...sql.OrderTermOption) OrderOption {
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByLastDownload orders the results by the last_download field.
-func ByLastDownload(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLastDownload, opts...).ToFunc()
-}
-
-// ByTimesDownloaded orders the results by the times_downloaded field.
-func ByTimesDownloaded(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTimesDownloaded, opts...).ToFunc()
 }
 
 // ByExpiryTotalDays orders the results by the expiry_total_days field.

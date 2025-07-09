@@ -3,6 +3,8 @@
 package file
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
@@ -67,6 +69,16 @@ func Size(v uint64) predicate.File {
 // Sha512 applies equality check predicate on the "sha512" field. It's identical to Sha512EQ.
 func Sha512(v string) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldSha512, v))
+}
+
+// LastDownload applies equality check predicate on the "last_download" field. It's identical to LastDownloadEQ.
+func LastDownload(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldLastDownload, v))
+}
+
+// TimesDownloaded applies equality check predicate on the "times_downloaded" field. It's identical to TimesDownloadedEQ.
+func TimesDownloaded(v uint64) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldTimesDownloaded, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -237,6 +249,96 @@ func Sha512EqualFold(v string) predicate.File {
 // Sha512ContainsFold applies the ContainsFold predicate on the "sha512" field.
 func Sha512ContainsFold(v string) predicate.File {
 	return predicate.File(sql.FieldContainsFold(FieldSha512, v))
+}
+
+// LastDownloadEQ applies the EQ predicate on the "last_download" field.
+func LastDownloadEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldLastDownload, v))
+}
+
+// LastDownloadNEQ applies the NEQ predicate on the "last_download" field.
+func LastDownloadNEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldLastDownload, v))
+}
+
+// LastDownloadIn applies the In predicate on the "last_download" field.
+func LastDownloadIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldIn(FieldLastDownload, vs...))
+}
+
+// LastDownloadNotIn applies the NotIn predicate on the "last_download" field.
+func LastDownloadNotIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldLastDownload, vs...))
+}
+
+// LastDownloadGT applies the GT predicate on the "last_download" field.
+func LastDownloadGT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGT(FieldLastDownload, v))
+}
+
+// LastDownloadGTE applies the GTE predicate on the "last_download" field.
+func LastDownloadGTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldLastDownload, v))
+}
+
+// LastDownloadLT applies the LT predicate on the "last_download" field.
+func LastDownloadLT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLT(FieldLastDownload, v))
+}
+
+// LastDownloadLTE applies the LTE predicate on the "last_download" field.
+func LastDownloadLTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldLastDownload, v))
+}
+
+// LastDownloadIsNil applies the IsNil predicate on the "last_download" field.
+func LastDownloadIsNil() predicate.File {
+	return predicate.File(sql.FieldIsNull(FieldLastDownload))
+}
+
+// LastDownloadNotNil applies the NotNil predicate on the "last_download" field.
+func LastDownloadNotNil() predicate.File {
+	return predicate.File(sql.FieldNotNull(FieldLastDownload))
+}
+
+// TimesDownloadedEQ applies the EQ predicate on the "times_downloaded" field.
+func TimesDownloadedEQ(v uint64) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldTimesDownloaded, v))
+}
+
+// TimesDownloadedNEQ applies the NEQ predicate on the "times_downloaded" field.
+func TimesDownloadedNEQ(v uint64) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldTimesDownloaded, v))
+}
+
+// TimesDownloadedIn applies the In predicate on the "times_downloaded" field.
+func TimesDownloadedIn(vs ...uint64) predicate.File {
+	return predicate.File(sql.FieldIn(FieldTimesDownloaded, vs...))
+}
+
+// TimesDownloadedNotIn applies the NotIn predicate on the "times_downloaded" field.
+func TimesDownloadedNotIn(vs ...uint64) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldTimesDownloaded, vs...))
+}
+
+// TimesDownloadedGT applies the GT predicate on the "times_downloaded" field.
+func TimesDownloadedGT(v uint64) predicate.File {
+	return predicate.File(sql.FieldGT(FieldTimesDownloaded, v))
+}
+
+// TimesDownloadedGTE applies the GTE predicate on the "times_downloaded" field.
+func TimesDownloadedGTE(v uint64) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldTimesDownloaded, v))
+}
+
+// TimesDownloadedLT applies the LT predicate on the "times_downloaded" field.
+func TimesDownloadedLT(v uint64) predicate.File {
+	return predicate.File(sql.FieldLT(FieldTimesDownloaded, v))
+}
+
+// TimesDownloadedLTE applies the LTE predicate on the "times_downloaded" field.
+func TimesDownloadedLTE(v uint64) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldTimesDownloaded, v))
 }
 
 // HasTickets applies the HasEdge predicate on the "tickets" edge.
