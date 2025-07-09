@@ -36,4 +36,10 @@ export async function baseFetchJSON<T>(
   return schema.parseAsync(resp.data);
 }
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 120_000, // 2 minutes
+    },
+  },
+});
