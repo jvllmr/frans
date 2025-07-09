@@ -1,9 +1,14 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { PendingComponent } from "./components/routing/PendingComponent";
 import { routeTree } from "./routeTree.gen";
 
-const router = createRouter({ routeTree, basepath: window.fransRootPath });
+const router = createRouter({
+  routeTree,
+  basepath: window.fransRootPath,
+  defaultPendingComponent: PendingComponent,
+});
 
 declare module "@tanstack/react-router" {
   interface Register {
