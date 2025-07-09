@@ -1,0 +1,7 @@
+{
+  "table_title_file": "Ticket",
+  "table_title_created_at": "Datum",
+  "table_title_expiration": "Verfallsfrist",
+  "file_downloaded_success": "Erfolgreich heruntergeladen",
+  "ticket_expiration_type_none": "Nie"
+}

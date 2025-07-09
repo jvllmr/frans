@@ -40,7 +40,20 @@ export function useFileSizeFormatter() {
   const { i18n } = useTranslation();
   return useMemo(
     () => partial({ locale: i18n.languages[0] }),
-    [i18n.languages[0]],
+    [i18n.languages],
+  );
+}
+
+export function useDateFormatter() {
+  const { i18n } = useTranslation();
+  return useMemo(() => new Intl.DateTimeFormat(i18n.language), [i18n.language]);
+}
+
+export function useRelativeDateFormatter() {
+  const { i18n } = useTranslation();
+  return useMemo(
+    () => new Intl.RelativeTimeFormat(i18n.language),
+    [i18n.language],
   );
 }
 

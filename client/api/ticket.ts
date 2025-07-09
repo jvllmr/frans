@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { queryOptions, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,9 +6,11 @@ import { z } from "zod/v4";
 import i18n from "~/i18n";
 import { errorNotification, successNotification } from "~/util/notifications";
 import { ProgressHandle } from "~/util/progress";
-import { FetchError, v1Url } from ".";
+import { baseFetchJSON, FetchError, v1Url } from ".";
 import { fileSchema } from "./file";
 import { userSchema } from "./user";
+
+export const ticketsKey = ["TICKET"];
 
 function v1TicketUrl(url: string) {
   return v1Url("/ticket" + url);
@@ -37,7 +39,7 @@ export const ticketSchema = z.object({
   owner: userSchema,
   files: fileSchema.array(),
   createdAt: z.coerce.date(),
-  estimatedExpiry: z.coerce.date(),
+  estimatedExpiry: z.coerce.date().nullable(),
 });
 
 export type Ticket = z.infer<typeof ticketSchema>;
@@ -72,3 +74,12 @@ export function useCreateTicketMutation(progressHandle?: ProgressHandle) {
     },
   });
 }
+
+export async function fetchTickets() {
+  return baseFetchJSON(v1TicketUrl(""), ticketSchema.array());
+}
+
+export const ticketQueryOptions = queryOptions({
+  queryKey: ticketsKey,
+  queryFn: fetchTickets,
+});

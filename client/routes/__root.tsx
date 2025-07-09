@@ -4,6 +4,7 @@ import {
   Container,
   Divider,
   Flex,
+  Loader,
   MantineProvider,
   Paper,
   SegmentedControl,
@@ -22,7 +23,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
 import i18n, { availableLanguages, availableLanguagesLabels } from "~/i18n";
@@ -135,7 +136,15 @@ function RootRoute() {
                 <TabTitle />
                 <Divider />
               </Box>
-              <Outlet />
+              <Suspense
+                fallback={
+                  <Flex h="60vh" w="100%" justify="center" align="center">
+                    <Loader />
+                  </Flex>
+                }
+              >
+                <Outlet />
+              </Suspense>
             </Paper>
           </Container>
           <DevTools />

@@ -7,7 +7,11 @@ import (
 	"github.com/jvllmr/frans/pkg/ent"
 )
 
-func GetEstimatedExpiry(configValue config.Config, ticket *ent.Ticket) time.Time {
+func GetEstimatedExpiry(configValue config.Config, ticket *ent.Ticket) *time.Time {
+	if ticket.ExpiryType == "none" {
+		return nil
+	}
+
 	expiryTotalDays := configValue.DefaultExpiryTotalDays
 	expiryDaysSinceLastDownload := configValue.DefaultExpiryDaysSinceLastDownload
 	if ticket.ExpiryType == "custom" {
@@ -15,7 +19,7 @@ func GetEstimatedExpiry(configValue config.Config, ticket *ent.Ticket) time.Time
 		expiryDaysSinceLastDownload = ticket.ExpiryDaysSinceLastDownload
 	}
 
-	totalLimit := ticket.CreatedAt.Add(time.Hour * 24 * time.Duration(expiryTotalDays))
+	totalLimit := ticket.CreatedAt.Add(time.Hour * 24 * time.Duration(expiryTotalDays)).UTC()
 	var latestDownload *time.Time = nil
 	for _, file := range ticket.Edges.Files {
 		if latestDownload == nil ||
@@ -24,16 +28,16 @@ func GetEstimatedExpiry(configValue config.Config, ticket *ent.Ticket) time.Time
 		}
 	}
 	if latestDownload == nil {
-		return totalLimit.UTC()
+		return &totalLimit
 	}
 
 	lastDownloadLimit := latestDownload.Add(
 		time.Hour * 24 * time.Duration(expiryDaysSinceLastDownload),
-	)
+	).UTC()
 
 	if lastDownloadLimit.Before(totalLimit) {
-		return lastDownloadLimit.UTC()
+		return &lastDownloadLimit
 	}
 
-	return totalLimit.UTC()
+	return &totalLimit
 }

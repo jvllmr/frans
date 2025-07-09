@@ -12,13 +12,14 @@ import (
 	"github.com/jvllmr/frans/pkg/config"
 	"github.com/jvllmr/frans/pkg/ent"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
+	"github.com/jvllmr/frans/pkg/ent/user"
 	"github.com/jvllmr/frans/pkg/util"
 )
 
 type PublicTicket struct {
 	Id              uuid.UUID    `json:"id"`
 	Comment         *string      `json:"comment"`
-	EstimatedExpiry string       `json:"estimatedExpiry"`
+	EstimatedExpiry *string      `json:"estimatedExpiry"`
 	User            PublicUser   `json:"owner"`
 	Files           []PublicFile `json:"files"`
 	CreatedAt       string       `json:"createdAt"`
@@ -29,12 +30,18 @@ func ToPublicTicket(configValue config.Config, ticket *ent.Ticket) PublicTicket 
 	for _, file := range ticket.Edges.Files {
 		files = append(files, ToPublicFile(file))
 	}
+	var estimatedExpiryValue *string = nil
+
+	if estimatedExpiryResult := util.GetEstimatedExpiry(configValue, ticket); estimatedExpiryResult != nil {
+		estimatedExpiry := estimatedExpiryResult.Format(http.TimeFormat)
+		estimatedExpiryValue = &estimatedExpiry
+	}
 
 	return PublicTicket{
 		Id:              ticket.ID,
 		Comment:         ticket.Comment,
 		User:            ToPublicUser(ticket.Edges.Owner),
-		EstimatedExpiry: util.GetEstimatedExpiry(configValue, ticket).Format(http.TimeFormat),
+		EstimatedExpiry: estimatedExpiryValue,
 		Files:           files,
 		CreatedAt:       ticket.CreatedAt.UTC().Format(http.TimeFormat),
 	}
@@ -54,7 +61,7 @@ type ticketForm struct {
 
 func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user := c.MustGet(config.UserGinContext).(*ent.User)
+		currentUser := c.MustGet(config.UserGinContext).(*ent.User)
 		var form ticketForm
 		tx, err := config.DBClient.Tx(c.Request.Context())
 		if err != nil {
@@ -74,7 +81,7 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 				SetExpiryTotalDownloads(form.ExpiryTotalDownloads).
 				SetHashedPassword(hashedPassword).
 				SetSalt(hex.EncodeToString(salt)).
-				SetOwner(user)
+				SetOwner(currentUser)
 
 			if form.Comment != nil {
 				ticketBuilder = ticketBuilder.SetComment(*form.Comment)
@@ -155,6 +162,28 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 	}
 }
 
+func fetchTicketsFactory(configValue config.Config) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		currentUser := c.MustGet(config.UserGinContext).(*ent.User)
+		query := config.DBClient.Ticket.Query().WithFiles().WithOwner()
+
+		if !currentUser.IsAdmin {
+			query = query.Where(ticket.HasOwnerWith(user.ID(currentUser.ID)))
+		}
+
+		tickets, err := query.All(c.Request.Context())
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
+		publicTickets := make([]PublicTicket, 0)
+		for _, ticketValue := range tickets {
+			publicTickets = append(publicTickets, ToPublicTicket(configValue, ticketValue))
+		}
+		c.JSON(http.StatusOK, publicTickets)
+	}
+}
+
 func setupTicketGroup(r *gin.RouterGroup, configValue config.Config) {
 	r.POST("", createTicketFactory(configValue))
+	r.GET("", fetchTicketsFactory(configValue))
 }
