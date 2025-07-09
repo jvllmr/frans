@@ -60,6 +60,7 @@ const hiddenTabTitles: TabTitles = { ...tabTitles };
 
 function TabControls() {
   const { t } = useTranslation("tabs");
+  const deepestMatch = useChildMatches({ select: (m) => m.at(-1) });
   const data = useMemo(
     () =>
       Object.entries(tabTitles).map(([value, label]) => ({
@@ -72,6 +73,7 @@ function TabControls() {
   return (
     <SegmentedControl
       data={data}
+      value={deepestMatch!.id}
       onChange={(value) => {
         navigate({ to: value });
       }}
