@@ -11,9 +11,11 @@ func SetupAPIRoutes(r *gin.RouterGroup, configValue config.Config) {
 	apiGroup := r.Group("/api")
 	setupAuthRoutes(apiGroup, configValue)
 
-	v1Group := apiGroup.Group("/v1", routesUtil.AuthMiddleware(configValue, false))
-	userGroup := v1Group.Group("/user")
+	v1Group := apiGroup.Group("/v1")
+	userGroup := v1Group.Group("/user", routesUtil.AuthMiddleware(configValue, false))
 	setupUserGroup(userGroup)
-	ticketGroup := v1Group.Group("/ticket")
+	ticketGroup := v1Group.Group("/ticket", routesUtil.AuthMiddleware(configValue, false))
 	setupTicketGroup(ticketGroup, configValue)
+	fileGroup := v1Group.Group("/file", routesUtil.AuthMiddleware(configValue, false))
+	setupFileGroup(fileGroup, configValue)
 }

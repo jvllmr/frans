@@ -1,4 +1,4 @@
-import { ActionIcon, Table, Text } from "@mantine/core";
+import { ActionIcon, Anchor, Table, Text } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -49,10 +49,9 @@ function RouteComponent() {
                 ) : null}
               </Table.Td>
               <Table.Td>
-                {
-                  // TODO: link to file download
-                  file.name
-                }
+                <Anchor href={`${window.fransRootPath}/api/v1/file/${file.id}`}>
+                  {file.name}
+                </Anchor>
               </Table.Td>
               {index === 0 ? (
                 <Table.Td rowSpan={ticket.files.length}>
