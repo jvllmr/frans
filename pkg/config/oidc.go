@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -121,10 +122,12 @@ func InitOIDC(config Config) {
 	var err error
 	OidcProvider, err = oidc.NewProvider(context.Background(), config.OidcIssuer)
 	if err != nil {
-		log.Fatalf("Failed to create OIDC provider: %v", err)
+		slog.Error("Failed to create OIDC provider: %v", err)
+		os.Exit(1)
 	}
 	if err := OidcProvider.Claims(&OidcProviderExtraEndpoints); err != nil {
-		log.Fatalf("Failed to find extra endpoints in OIDC Provider: %v", err)
+		slog.Error("Failed to find extra endpoints in OIDC Provider: %v", err)
+		os.Exit(1)
 	}
 
 }

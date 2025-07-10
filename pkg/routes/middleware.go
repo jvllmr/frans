@@ -1,7 +1,7 @@
 package routesUtil
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/config"
 	"github.com/jvllmr/frans/pkg/ent/session"
+
 	"golang.org/x/oauth2"
 )
 
@@ -31,7 +32,7 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 
 		accessTokenCookie, err := c.Request.Cookie(config.AccessTokenCookieName)
 		if err != nil {
-			log.Printf("Not authenticated: %v", err)
+			slog.Debug("Not authenticated", "err", err)
 			missingAuthResponse(c, oauth2Config, redirect)
 			c.Abort()
 			return
@@ -42,7 +43,7 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 			accessTokenCookie.Value,
 		)
 		if err != nil {
-			log.Printf("Not authenticated: %v", err)
+			slog.Debug("Not authenticated", "err", err)
 			missingAuthResponse(c, oauth2Config, redirect)
 			c.Abort()
 			return
@@ -51,7 +52,7 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 		if !introspectionResponse.Active {
 			idTokenCookie, err := c.Request.Cookie(config.IdTokenCookieName)
 			if err != nil {
-				log.Printf("Not authenticated: %v", err)
+				slog.Debug("Not authenticated", "err", err)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
@@ -61,7 +62,7 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 				Where(session.IDToken(idTokenCookie.Value)).
 				Only(c.Request.Context())
 			if err != nil {
-				log.Printf("Not authenticated: %v", err)
+				slog.Debug("Not authenticated", "err", err)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
@@ -72,7 +73,7 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 				session.RefreshToken,
 			)
 			if err != nil {
-				log.Printf("Not authenticated: %v", err)
+				slog.Debug("Not authenticated: %v", err)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
@@ -83,15 +84,17 @@ func AuthMiddleware(configValue config.Config, redirect bool) gin.HandlerFunc {
 				tokenRefreshmentResponse.AccessToken,
 			)
 			if err != nil {
-				log.Printf("Not authenticated: %v", err)
+				slog.Debug("Not authenticated: %v", err)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
 			}
 			if introspectionResponse.Sub != session.Edges.User.ID.String() {
-				log.Printf(
-					"Not authenticated: Introspection sub did not match user id - %s != %s",
+				slog.Warn(
+					"Not authenticated: Introspection sub did not match user id",
+					"introspection_sub",
 					introspectionResponse.Sub,
+					"user_id",
 					session.Edges.User.ID,
 				)
 				missingAuthResponse(c, oauth2Config, redirect)

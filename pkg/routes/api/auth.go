@@ -2,7 +2,7 @@ package apiRoutes
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"slices"
@@ -23,13 +23,13 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 		oauth2Config := config.CreateOauth2Config(configValue, c.Request)
 		oauth2Token, err := oauth2Config.Exchange(c.Request.Context(), code)
 		if err != nil {
-			log.Printf("Error :Failed at OAuth2 token exchange: %v", err)
+			slog.Error("Failed at OAuth2 token exchange", "err", err)
 			c.Redirect(http.StatusTemporaryRedirect, oauth2Config.AuthCodeURL(""))
 			return
 		}
 		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
 		if !ok {
-			log.Printf("Error: Failed to retrieve id_token from access token: %s", err)
+			slog.Error("Failed to retrieve id_token from access token", "err", err)
 			c.Redirect(http.StatusTemporaryRedirect, oauth2Config.AuthCodeURL(""))
 			return
 		}
@@ -37,14 +37,14 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 		verifier := config.OidcProvider.Verifier(&oidc.Config{ClientID: configValue.OidcClientID})
 		idToken, err := verifier.Verify(c.Request.Context(), rawIDToken)
 		if err != nil {
-			log.Printf("Error: Failed to verify id token: %v", err)
+			slog.Error("Failed to verify id token", "err", err)
 			c.Redirect(http.StatusTemporaryRedirect, oauth2Config.AuthCodeURL(""))
 			return
 		}
 		tokenSource := oauth2Config.TokenSource(c.Request.Context(), oauth2Token)
 		userInfo, err := config.OidcProvider.UserInfo(c.Request.Context(), tokenSource)
 		if err != nil {
-			log.Printf("Error: Failed to retrieve user info: %v", err)
+			slog.Error("Failed to retrieve user info", "err", err)
 			c.Redirect(http.StatusTemporaryRedirect, oauth2Config.AuthCodeURL(""))
 			return
 		}
@@ -54,7 +54,7 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 
 		userId, err := uuid.Parse(claimsData["sub"].(string))
 		if err != nil {
-			log.Printf("Error: Could not access user id from claims: %v", err)
+			slog.Error("Could not access user id from claims", "err", err)
 			c.Redirect(http.StatusTemporaryRedirect, oauth2Config.AuthCodeURL(""))
 			return
 		}
@@ -74,16 +74,16 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 				SetID(userId).
 				Save(c.Request.Context())
 			if err != nil {
-				log.Printf("Error: Could not create User %s", err)
+				slog.Error("Could not create User", "err", err)
 				c.AbortWithError(http.StatusInternalServerError, err)
 				return
 			} else {
-				log.Printf("Info: Created user %s", user.Username)
+				slog.Info(fmt.Sprintf("Created user %s", user.Username))
 			}
 
 		} else {
 			_ = config.DBClient.User.UpdateOne(user).SetGroups(groups).SetIsAdmin(isAdmin).SetUsername(username).SetFullName(fullName).SetEmail(email).Exec(c.Request.Context())
-			log.Printf("Info: Updated user %s", username)
+			slog.Info(fmt.Sprintf("Updated user %s", username))
 		}
 		config.SetIdTokenCookie(c, rawIDToken)
 		config.SetAccessTokenCookie(c, oauth2Token.AccessToken)
@@ -94,7 +94,7 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 			SetRefreshToken(oauth2Token.RefreshToken).
 			Exec(c.Request.Context())
 		if err != nil {
-			log.Printf("Error: could not store session: %v", err)
+			slog.Error("could not store session", "err", err)
 		}
 		authOrigin, err := c.Request.Cookie(config.AuthOriginCookieName)
 
@@ -123,7 +123,7 @@ func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config) {
 		}
 		ctx.SetCookie(config.IdTokenCookieName, "", 5, "", "", true, true)
 		redirectURI := ctx.Query("redirect_uri")
-		log.Printf("redirect %s", redirectURI)
+		slog.Debug(fmt.Sprintf("logout redirect %s", redirectURI))
 		ctx.Redirect(
 			http.StatusTemporaryRedirect,
 			fmt.Sprintf(

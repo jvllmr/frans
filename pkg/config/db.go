@@ -3,7 +3,9 @@ package config
 import (
 	"context"
 	"fmt"
-	"log"
+	"os"
+
+	"log/slog"
 
 	"github.com/jvllmr/frans/pkg/ent"
 )
@@ -43,16 +45,19 @@ func InitDB(configValue Config) {
 		}
 		connString = fmt.Sprintf("file:%s?cache=shared&_fk=1", configValue.DBHost)
 	default:
-		log.Fatalf("Error: Database type %s is not supported by frans", configValue.DBType)
+		slog.Error(fmt.Sprintf("Database type %s is not supported by frans", configValue.DBType))
+		os.Exit(1)
 	}
 
 	client, err := ent.Open(configValue.DBType, connString)
 	if err != nil {
-		log.Fatalf("failed opening connection to database: %v", err)
+		slog.Error("failed opening connection to database", "err", err)
+		os.Exit(1)
 	}
 	if configValue.DevMode {
 		if err := client.Schema.Create(context.Background()); err != nil {
-			log.Fatalf("failed creating schema resources: %v", err)
+			slog.Error("failed creating schema resources", "err", err)
+			os.Exit(1)
 		}
 	}
 	DBClient = client

@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"strings"
+
+	"log/slog"
 
 	"github.com/spf13/viper"
 )
@@ -30,6 +31,8 @@ type Config struct {
 	DefaultExpiryDaysSinceLastDownload uint8 `mapstructure:"default_expiry_days_since_last_download"`
 	DefaultExpiryTotalDownloads        uint8 `mapstructure:"default_expiry_total_downloads"`
 	DefaultExpiryTotalDays             uint8 `mapstructure:"default_expiry_total_days"`
+
+	LogJSON bool `mapstructure:"log_json"`
 }
 
 func GetConfig() (Config, error) {
@@ -67,7 +70,7 @@ func GetConfig() (Config, error) {
 	fransConf.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	if err := fransConf.ReadInConfig(); err != nil {
-		log.Println("Warning: No config file found, falling back to environment variables.")
+		slog.Warn("No config file found, falling back to environment variables.")
 	}
 
 	// Unmarshal into the struct
