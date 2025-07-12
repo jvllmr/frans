@@ -8,7 +8,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/config"
+	"github.com/jvllmr/frans/pkg/ent/ticket"
 	routesUtil "github.com/jvllmr/frans/pkg/routes"
 	"github.com/tidwall/gjson"
 )
@@ -103,6 +105,25 @@ func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 }
 
 func SetupClientRoutes(r *gin.Engine, rGroup *gin.RouterGroup, configValue config.Config) {
+	rGroup.GET("/s/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		uuid, err := uuid.Parse(id)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+		}
+		targetTicket, _ := config.DBClient.Ticket.Query().
+			Where(ticket.ID(uuid)).
+			First(c.Request.Context())
+		if targetTicket != nil {
+			c.Redirect(
+				http.StatusPermanentRedirect,
+				fmt.Sprintf("/share/ticket/%s", targetTicket.ID.String()),
+			)
+			return
+		}
+
+	})
+
 	setIndexTemplate(r, configValue)
 	staticFiles, _ := fs.Sub(clientFiles, "assets")
 	rGroup.StaticFS("/static", http.FS(staticFiles))

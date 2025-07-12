@@ -1,11 +1,25 @@
-import { ActionIcon, Anchor, Table, Text } from "@mantine/core";
-import { IconCheck } from "@tabler/icons-react";
+import {
+  ActionIcon,
+  Anchor,
+  CopyButton,
+  Group,
+  Table,
+  Text,
+} from "@mantine/core";
+import {
+  IconCheck,
+  IconCopy,
+  IconCopyCheck,
+  IconFolderOpen,
+} from "@tabler/icons-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { differenceInDays } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { ticketQueryOptions } from "~/api/ticket";
+import { ActionIconLink } from "~/components/Link";
 import { useDateFormatter, useRelativeDateFormatter } from "~/i18n";
+import { getShareLink } from "~/util/link";
 export const Route = createFileRoute("/tickets/")({
   component: RouteComponent,
 });
@@ -33,11 +47,26 @@ function RouteComponent() {
             <Table.Tr key={file.id}>
               {index === 0 ? (
                 <Table.Td rowSpan={ticket.files.length}>
-                  <ActionIcon>
-                    {
-                      // TODO: Link somewhere
-                    }
-                  </ActionIcon>
+                  <Group>
+                    <ActionIconLink
+                      to="/s/$shareId"
+                      params={{ shareId: ticket.id }}
+                      target="_blank"
+                    >
+                      <IconFolderOpen />
+                    </ActionIconLink>
+                    <CopyButton value={getShareLink(ticket.id)}>
+                      {({ copied, copy }) => (
+                        <ActionIcon
+                          onClick={() => {
+                            copy();
+                          }}
+                        >
+                          {copied ? <IconCopyCheck /> : <IconCopy />}
+                        </ActionIcon>
+                      )}
+                    </CopyButton>
+                  </Group>
                 </Table.Td>
               ) : null}
 

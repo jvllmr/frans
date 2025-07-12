@@ -9,44 +9,14 @@ import (
 	"github.com/jvllmr/frans/pkg/ent"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
+	apiTypes "github.com/jvllmr/frans/pkg/routes/api/types"
 	"github.com/jvllmr/frans/pkg/util"
 )
-
-type PublicFile struct {
-	Id              uuid.UUID `json:"id"`
-	Sha512          string    `json:"sha512"`
-	Size            uint64    `json:"size"`
-	Name            string    `json:"name"`
-	TimesDownloaded uint64    `json:"timesDownloaded"`
-	LastDownloaded  *string   `json:"lastDownloaded"`
-}
-
-func ToPublicFile(file *ent.File) PublicFile {
-	var lastDownloadedValue *string = nil
-	if file.LastDownload != nil {
-		formattedValue := file.LastDownload.UTC().Format(http.TimeFormat)
-		lastDownloadedValue = &formattedValue
-	}
-
-	return PublicFile{
-		Id:              file.ID,
-		Sha512:          file.Sha512,
-		Size:            file.Size,
-		Name:            file.Name,
-		TimesDownloaded: file.TimesDownloaded,
-		LastDownloaded:  lastDownloadedValue,
-	}
-
-}
-
-type RequestedFile struct {
-	ID string `uri:"fileId" binding:"required,uuid"`
-}
 
 func fetchFileRouteFactory(configValue config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		var requestedFile RequestedFile
+		var requestedFile apiTypes.RequestedFileParam
 		if err := c.ShouldBindUri(&requestedFile); err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 			return

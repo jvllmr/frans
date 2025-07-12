@@ -13,39 +13,9 @@ import (
 	"github.com/jvllmr/frans/pkg/ent"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
+	apiTypes "github.com/jvllmr/frans/pkg/routes/api/types"
 	"github.com/jvllmr/frans/pkg/util"
 )
-
-type PublicTicket struct {
-	Id              uuid.UUID    `json:"id"`
-	Comment         *string      `json:"comment"`
-	EstimatedExpiry *string      `json:"estimatedExpiry"`
-	User            PublicUser   `json:"owner"`
-	Files           []PublicFile `json:"files"`
-	CreatedAt       string       `json:"createdAt"`
-}
-
-func ToPublicTicket(configValue config.Config, ticket *ent.Ticket) PublicTicket {
-	files := []PublicFile{}
-	for _, file := range ticket.Edges.Files {
-		files = append(files, ToPublicFile(file))
-	}
-	var estimatedExpiryValue *string = nil
-
-	if estimatedExpiryResult := util.GetEstimatedExpiry(configValue, ticket); estimatedExpiryResult != nil {
-		estimatedExpiry := estimatedExpiryResult.Format(http.TimeFormat)
-		estimatedExpiryValue = &estimatedExpiry
-	}
-
-	return PublicTicket{
-		Id:              ticket.ID,
-		Comment:         ticket.Comment,
-		User:            ToPublicUser(ticket.Edges.Owner),
-		EstimatedExpiry: estimatedExpiryValue,
-		Files:           files,
-		CreatedAt:       ticket.CreatedAt.UTC().Format(http.TimeFormat),
-	}
-}
 
 type ticketForm struct {
 	Comment                     *string `form:"comment"`
@@ -153,7 +123,7 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 				WithOwner().
 				OnlyX(c.Request.Context())
 
-			c.JSON(http.StatusCreated, ToPublicTicket(configValue, ticketValue))
+			c.JSON(http.StatusCreated, apiTypes.ToPublicTicket(configValue, ticketValue))
 			tx.Commit()
 		} else {
 			c.AbortWithError(422, err)
@@ -175,9 +145,9 @@ func fetchTicketsFactory(configValue config.Config) gin.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 		}
-		publicTickets := make([]PublicTicket, 0)
+		publicTickets := make([]apiTypes.PublicTicket, 0)
 		for _, ticketValue := range tickets {
-			publicTickets = append(publicTickets, ToPublicTicket(configValue, ticketValue))
+			publicTickets = append(publicTickets, apiTypes.ToPublicTicket(configValue, ticketValue))
 		}
 		c.JSON(http.StatusOK, publicTickets)
 	}

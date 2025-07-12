@@ -16,6 +16,8 @@ type Tx struct {
 	File *FileClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
+	// ShareAccessToken is the client for interacting with the ShareAccessToken builders.
+	ShareAccessToken *ShareAccessTokenClient
 	// Ticket is the client for interacting with the Ticket builders.
 	Ticket *TicketClient
 	// User is the client for interacting with the User builders.
@@ -153,6 +155,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.File = NewFileClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
+	tx.ShareAccessToken = NewShareAccessTokenClient(tx.config)
 	tx.Ticket = NewTicketClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

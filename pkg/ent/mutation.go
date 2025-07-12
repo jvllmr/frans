@@ -15,6 +15,7 @@ import (
 	"github.com/jvllmr/frans/pkg/ent/file"
 	"github.com/jvllmr/frans/pkg/ent/predicate"
 	"github.com/jvllmr/frans/pkg/ent/session"
+	"github.com/jvllmr/frans/pkg/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
 )
@@ -28,10 +29,11 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeFile    = "File"
-	TypeSession = "Session"
-	TypeTicket  = "Ticket"
-	TypeUser    = "User"
+	TypeFile             = "File"
+	TypeSession          = "Session"
+	TypeShareAccessToken = "ShareAccessToken"
+	TypeTicket           = "Ticket"
+	TypeUser             = "User"
 )
 
 // FileMutation represents an operation that mutates the File nodes in the graph.
@@ -1267,6 +1269,405 @@ func (m *SessionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Session edge %s", name)
 }
 
+// ShareAccessTokenMutation represents an operation that mutates the ShareAccessToken nodes in the graph.
+type ShareAccessTokenMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *string
+	expiry        *time.Time
+	clearedFields map[string]struct{}
+	ticket        *uuid.UUID
+	clearedticket bool
+	done          bool
+	oldValue      func(context.Context) (*ShareAccessToken, error)
+	predicates    []predicate.ShareAccessToken
+}
+
+var _ ent.Mutation = (*ShareAccessTokenMutation)(nil)
+
+// shareaccesstokenOption allows management of the mutation configuration using functional options.
+type shareaccesstokenOption func(*ShareAccessTokenMutation)
+
+// newShareAccessTokenMutation creates new mutation for the ShareAccessToken entity.
+func newShareAccessTokenMutation(c config, op Op, opts ...shareaccesstokenOption) *ShareAccessTokenMutation {
+	m := &ShareAccessTokenMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeShareAccessToken,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withShareAccessTokenID sets the ID field of the mutation.
+func withShareAccessTokenID(id string) shareaccesstokenOption {
+	return func(m *ShareAccessTokenMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ShareAccessToken
+		)
+		m.oldValue = func(ctx context.Context) (*ShareAccessToken, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ShareAccessToken.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withShareAccessToken sets the old ShareAccessToken of the mutation.
+func withShareAccessToken(node *ShareAccessToken) shareaccesstokenOption {
+	return func(m *ShareAccessTokenMutation) {
+		m.oldValue = func(context.Context) (*ShareAccessToken, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ShareAccessTokenMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ShareAccessTokenMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ShareAccessToken entities.
+func (m *ShareAccessTokenMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ShareAccessTokenMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ShareAccessTokenMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ShareAccessToken.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetExpiry sets the "expiry" field.
+func (m *ShareAccessTokenMutation) SetExpiry(t time.Time) {
+	m.expiry = &t
+}
+
+// Expiry returns the value of the "expiry" field in the mutation.
+func (m *ShareAccessTokenMutation) Expiry() (r time.Time, exists bool) {
+	v := m.expiry
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiry returns the old "expiry" field's value of the ShareAccessToken entity.
+// If the ShareAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShareAccessTokenMutation) OldExpiry(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiry is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiry requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiry: %w", err)
+	}
+	return oldValue.Expiry, nil
+}
+
+// ResetExpiry resets all changes to the "expiry" field.
+func (m *ShareAccessTokenMutation) ResetExpiry() {
+	m.expiry = nil
+}
+
+// SetTicketID sets the "ticket" edge to the Ticket entity by id.
+func (m *ShareAccessTokenMutation) SetTicketID(id uuid.UUID) {
+	m.ticket = &id
+}
+
+// ClearTicket clears the "ticket" edge to the Ticket entity.
+func (m *ShareAccessTokenMutation) ClearTicket() {
+	m.clearedticket = true
+}
+
+// TicketCleared reports if the "ticket" edge to the Ticket entity was cleared.
+func (m *ShareAccessTokenMutation) TicketCleared() bool {
+	return m.clearedticket
+}
+
+// TicketID returns the "ticket" edge ID in the mutation.
+func (m *ShareAccessTokenMutation) TicketID() (id uuid.UUID, exists bool) {
+	if m.ticket != nil {
+		return *m.ticket, true
+	}
+	return
+}
+
+// TicketIDs returns the "ticket" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TicketID instead. It exists only for internal usage by the builders.
+func (m *ShareAccessTokenMutation) TicketIDs() (ids []uuid.UUID) {
+	if id := m.ticket; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTicket resets all changes to the "ticket" edge.
+func (m *ShareAccessTokenMutation) ResetTicket() {
+	m.ticket = nil
+	m.clearedticket = false
+}
+
+// Where appends a list predicates to the ShareAccessTokenMutation builder.
+func (m *ShareAccessTokenMutation) Where(ps ...predicate.ShareAccessToken) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ShareAccessTokenMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ShareAccessTokenMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ShareAccessToken, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ShareAccessTokenMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ShareAccessTokenMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ShareAccessToken).
+func (m *ShareAccessTokenMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ShareAccessTokenMutation) Fields() []string {
+	fields := make([]string, 0, 1)
+	if m.expiry != nil {
+		fields = append(fields, shareaccesstoken.FieldExpiry)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ShareAccessTokenMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case shareaccesstoken.FieldExpiry:
+		return m.Expiry()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ShareAccessTokenMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case shareaccesstoken.FieldExpiry:
+		return m.OldExpiry(ctx)
+	}
+	return nil, fmt.Errorf("unknown ShareAccessToken field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ShareAccessTokenMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case shareaccesstoken.FieldExpiry:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiry(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ShareAccessToken field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ShareAccessTokenMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ShareAccessTokenMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ShareAccessTokenMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown ShareAccessToken numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ShareAccessTokenMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ShareAccessTokenMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ShareAccessTokenMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ShareAccessToken nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ShareAccessTokenMutation) ResetField(name string) error {
+	switch name {
+	case shareaccesstoken.FieldExpiry:
+		m.ResetExpiry()
+		return nil
+	}
+	return fmt.Errorf("unknown ShareAccessToken field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ShareAccessTokenMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.ticket != nil {
+		edges = append(edges, shareaccesstoken.EdgeTicket)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ShareAccessTokenMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case shareaccesstoken.EdgeTicket:
+		if id := m.ticket; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ShareAccessTokenMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ShareAccessTokenMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ShareAccessTokenMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedticket {
+		edges = append(edges, shareaccesstoken.EdgeTicket)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ShareAccessTokenMutation) EdgeCleared(name string) bool {
+	switch name {
+	case shareaccesstoken.EdgeTicket:
+		return m.clearedticket
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ShareAccessTokenMutation) ClearEdge(name string) error {
+	switch name {
+	case shareaccesstoken.EdgeTicket:
+		m.ClearTicket()
+		return nil
+	}
+	return fmt.Errorf("unknown ShareAccessToken unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ShareAccessTokenMutation) ResetEdge(name string) error {
+	switch name {
+	case shareaccesstoken.EdgeTicket:
+		m.ResetTicket()
+		return nil
+	}
+	return fmt.Errorf("unknown ShareAccessToken edge %s", name)
+}
+
 // TicketMutation represents an operation that mutates the Ticket nodes in the graph.
 type TicketMutation struct {
 	config
@@ -1291,6 +1692,9 @@ type TicketMutation struct {
 	clearedfiles                       bool
 	owner                              *uuid.UUID
 	clearedowner                       bool
+	shareaccesstokens                  map[string]struct{}
+	removedshareaccesstokens           map[string]struct{}
+	clearedshareaccesstokens           bool
 	done                               bool
 	oldValue                           func(context.Context) (*Ticket, error)
 	predicates                         []predicate.Ticket
@@ -1903,6 +2307,60 @@ func (m *TicketMutation) ResetOwner() {
 	m.clearedowner = false
 }
 
+// AddShareaccesstokenIDs adds the "shareaccesstokens" edge to the ShareAccessToken entity by ids.
+func (m *TicketMutation) AddShareaccesstokenIDs(ids ...string) {
+	if m.shareaccesstokens == nil {
+		m.shareaccesstokens = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.shareaccesstokens[ids[i]] = struct{}{}
+	}
+}
+
+// ClearShareaccesstokens clears the "shareaccesstokens" edge to the ShareAccessToken entity.
+func (m *TicketMutation) ClearShareaccesstokens() {
+	m.clearedshareaccesstokens = true
+}
+
+// ShareaccesstokensCleared reports if the "shareaccesstokens" edge to the ShareAccessToken entity was cleared.
+func (m *TicketMutation) ShareaccesstokensCleared() bool {
+	return m.clearedshareaccesstokens
+}
+
+// RemoveShareaccesstokenIDs removes the "shareaccesstokens" edge to the ShareAccessToken entity by IDs.
+func (m *TicketMutation) RemoveShareaccesstokenIDs(ids ...string) {
+	if m.removedshareaccesstokens == nil {
+		m.removedshareaccesstokens = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.shareaccesstokens, ids[i])
+		m.removedshareaccesstokens[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedShareaccesstokens returns the removed IDs of the "shareaccesstokens" edge to the ShareAccessToken entity.
+func (m *TicketMutation) RemovedShareaccesstokensIDs() (ids []string) {
+	for id := range m.removedshareaccesstokens {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ShareaccesstokensIDs returns the "shareaccesstokens" edge IDs in the mutation.
+func (m *TicketMutation) ShareaccesstokensIDs() (ids []string) {
+	for id := range m.shareaccesstokens {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetShareaccesstokens resets all changes to the "shareaccesstokens" edge.
+func (m *TicketMutation) ResetShareaccesstokens() {
+	m.shareaccesstokens = nil
+	m.clearedshareaccesstokens = false
+	m.removedshareaccesstokens = nil
+}
+
 // Where appends a list predicates to the TicketMutation builder.
 func (m *TicketMutation) Where(ps ...predicate.Ticket) {
 	m.predicates = append(m.predicates, ps...)
@@ -2226,12 +2684,15 @@ func (m *TicketMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TicketMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.files != nil {
 		edges = append(edges, ticket.EdgeFiles)
 	}
 	if m.owner != nil {
 		edges = append(edges, ticket.EdgeOwner)
+	}
+	if m.shareaccesstokens != nil {
+		edges = append(edges, ticket.EdgeShareaccesstokens)
 	}
 	return edges
 }
@@ -2250,15 +2711,24 @@ func (m *TicketMutation) AddedIDs(name string) []ent.Value {
 		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
+	case ticket.EdgeShareaccesstokens:
+		ids := make([]ent.Value, 0, len(m.shareaccesstokens))
+		for id := range m.shareaccesstokens {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TicketMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedfiles != nil {
 		edges = append(edges, ticket.EdgeFiles)
+	}
+	if m.removedshareaccesstokens != nil {
+		edges = append(edges, ticket.EdgeShareaccesstokens)
 	}
 	return edges
 }
@@ -2273,18 +2743,27 @@ func (m *TicketMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case ticket.EdgeShareaccesstokens:
+		ids := make([]ent.Value, 0, len(m.removedshareaccesstokens))
+		for id := range m.removedshareaccesstokens {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TicketMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedfiles {
 		edges = append(edges, ticket.EdgeFiles)
 	}
 	if m.clearedowner {
 		edges = append(edges, ticket.EdgeOwner)
+	}
+	if m.clearedshareaccesstokens {
+		edges = append(edges, ticket.EdgeShareaccesstokens)
 	}
 	return edges
 }
@@ -2297,6 +2776,8 @@ func (m *TicketMutation) EdgeCleared(name string) bool {
 		return m.clearedfiles
 	case ticket.EdgeOwner:
 		return m.clearedowner
+	case ticket.EdgeShareaccesstokens:
+		return m.clearedshareaccesstokens
 	}
 	return false
 }
@@ -2321,6 +2802,9 @@ func (m *TicketMutation) ResetEdge(name string) error {
 		return nil
 	case ticket.EdgeOwner:
 		m.ResetOwner()
+		return nil
+	case ticket.EdgeShareaccesstokens:
+		m.ResetShareaccesstokens()
 		return nil
 	}
 	return fmt.Errorf("unknown Ticket edge %s", name)

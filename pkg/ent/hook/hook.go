@@ -33,6 +33,18 @@ func (f SessionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SessionMutation", m)
 }
 
+// The ShareAccessTokenFunc type is an adapter to allow the use of ordinary
+// function as ShareAccessToken mutator.
+type ShareAccessTokenFunc func(context.Context, *ent.ShareAccessTokenMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ShareAccessTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ShareAccessTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ShareAccessTokenMutation", m)
+}
+
 // The TicketFunc type is an adapter to allow the use of ordinary
 // function as Ticket mutator.
 type TicketFunc func(context.Context, *ent.TicketMutation) (ent.Value, error)

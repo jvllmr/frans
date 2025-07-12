@@ -12,7 +12,7 @@ import {
 import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRoute,
@@ -25,6 +25,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
+import { meQueryOptions } from "~/api/user";
 import i18n, { availableLanguages, availableLanguagesLabels } from "~/i18n";
 function LanguageControls() {
   const [language, setLanguage] = useState(i18n.language);
@@ -56,7 +57,11 @@ const tabTitles = {
   "/grants/": "grants",
 } satisfies Partial<TabTitles>;
 
-const hiddenTabTitles: TabTitles = { ...tabTitles };
+const hiddenTabTitles: TabTitles = {
+  ...tabTitles,
+  "/s/$shareId": "share",
+  "/share/ticket/$ticketId": "ticketShare",
+};
 
 function TabControls() {
   const { t } = useTranslation("tabs");
@@ -70,6 +75,15 @@ function TabControls() {
     [t],
   );
   const navigate = useNavigate();
+  const { data: me } = useQuery(meQueryOptions);
+  if (
+    !me &&
+    deepestMatch &&
+    !Object.keys(tabTitles).includes(deepestMatch.id)
+  ) {
+    return null;
+  }
+
   return (
     <SegmentedControl
       data={data}

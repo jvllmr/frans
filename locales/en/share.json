@@ -1,0 +1,6 @@
+{
+  "ticket_prompt": "Enter your password for access to the shared files",
+  "ticket_submit": "Access shared files",
+  "ticket_message": "has shared the following files with you",
+  "comment": "Comment"
+}

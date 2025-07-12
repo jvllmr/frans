@@ -36,5 +36,6 @@ func (Ticket) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("files", File.Type),
 		edge.From("owner", User.Type).Ref("tickets").Unique(),
+		edge.To("shareaccesstokens", ShareAccessToken.Type),
 	}
 }

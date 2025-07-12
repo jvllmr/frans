@@ -36,6 +36,8 @@ const (
 	EdgeFiles = "files"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
+	// EdgeShareaccesstokens holds the string denoting the shareaccesstokens edge name in mutations.
+	EdgeShareaccesstokens = "shareaccesstokens"
 	// Table holds the table name of the ticket in the database.
 	Table = "tickets"
 	// FilesTable is the table that holds the files relation/edge. The primary key declared below.
@@ -50,6 +52,13 @@ const (
 	OwnerInverseTable = "users"
 	// OwnerColumn is the table column denoting the owner relation/edge.
 	OwnerColumn = "user_tickets"
+	// ShareaccesstokensTable is the table that holds the shareaccesstokens relation/edge.
+	ShareaccesstokensTable = "share_access_tokens"
+	// ShareaccesstokensInverseTable is the table name for the ShareAccessToken entity.
+	// It exists in this package in order to avoid circular dependency with the "shareaccesstoken" package.
+	ShareaccesstokensInverseTable = "share_access_tokens"
+	// ShareaccesstokensColumn is the table column denoting the shareaccesstokens relation/edge.
+	ShareaccesstokensColumn = "ticket_shareaccesstokens"
 )
 
 // Columns holds all SQL columns for ticket fields.
@@ -171,6 +180,20 @@ func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByShareaccesstokensCount orders the results by shareaccesstokens count.
+func ByShareaccesstokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newShareaccesstokensStep(), opts...)
+	}
+}
+
+// ByShareaccesstokens orders the results by shareaccesstokens terms.
+func ByShareaccesstokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newShareaccesstokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newFilesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -183,5 +206,12 @@ func newOwnerStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OwnerInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+	)
+}
+func newShareaccesstokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ShareaccesstokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ShareaccesstokensTable, ShareaccesstokensColumn),
 	)
 }

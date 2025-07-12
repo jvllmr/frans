@@ -5,12 +5,11 @@ import (
 	"log/slog"
 	"os"
 
-	ginlogger "github.com/FabienMht/ginslog/logger"
-	ginrecovery "github.com/FabienMht/ginslog/recovery"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"github.com/jvllmr/frans/pkg/config"
+	logging "github.com/jvllmr/frans/pkg/logger"
 	apiRoutes "github.com/jvllmr/frans/pkg/routes/api"
 	clientRoutes "github.com/jvllmr/frans/pkg/routes/client"
 	_ "github.com/lib/pq"
@@ -31,7 +30,7 @@ func setupRouter(configValue config.Config) *gin.Engine {
 	}
 	logger := slog.New(slogmulti.Fanout(otelslog.NewHandler("frans"), stdoutHandler))
 	slog.SetDefault(logger)
-	r.Use(ginlogger.New(logger), ginrecovery.New(logger))
+	r.Use(logging.GinLogger(logger), logging.RecoveryLogger(logger))
 
 	defaultGroup := r.Group(configValue.RootPath)
 	clientRoutes.SetupClientRoutes(r, defaultGroup, configValue)

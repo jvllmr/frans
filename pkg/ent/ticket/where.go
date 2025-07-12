@@ -652,6 +652,29 @@ func HasOwnerWith(preds ...predicate.User) predicate.Ticket {
 	})
 }
 
+// HasShareaccesstokens applies the HasEdge predicate on the "shareaccesstokens" edge.
+func HasShareaccesstokens() predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ShareaccesstokensTable, ShareaccesstokensColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasShareaccesstokensWith applies the HasEdge predicate on the "shareaccesstokens" edge with a given conditions (other predicates).
+func HasShareaccesstokensWith(preds ...predicate.ShareAccessToken) predicate.Ticket {
+	return predicate.Ticket(func(s *sql.Selector) {
+		step := newShareaccesstokensStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Ticket) predicate.Ticket {
 	return predicate.Ticket(sql.AndPredicates(predicates...))

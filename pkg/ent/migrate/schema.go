@@ -45,6 +45,26 @@ var (
 			},
 		},
 	}
+	// ShareAccessTokensColumns holds the columns for the "share_access_tokens" table.
+	ShareAccessTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "expiry", Type: field.TypeTime},
+		{Name: "ticket_shareaccesstokens", Type: field.TypeUUID, Nullable: true},
+	}
+	// ShareAccessTokensTable holds the schema information for the "share_access_tokens" table.
+	ShareAccessTokensTable = &schema.Table{
+		Name:       "share_access_tokens",
+		Columns:    ShareAccessTokensColumns,
+		PrimaryKey: []*schema.Column{ShareAccessTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "share_access_tokens_tickets_shareaccesstokens",
+				Columns:    []*schema.Column{ShareAccessTokensColumns[2]},
+				RefColumns: []*schema.Column{TicketsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// TicketsColumns holds the columns for the "tickets" table.
 	TicketsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -121,6 +141,7 @@ var (
 	Tables = []*schema.Table{
 		FilesTable,
 		SessionsTable,
+		ShareAccessTokensTable,
 		TicketsTable,
 		UsersTable,
 		TicketFilesTable,
@@ -129,6 +150,7 @@ var (
 
 func init() {
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
+	ShareAccessTokensTable.ForeignKeys[0].RefTable = TicketsTable
 	TicketsTable.ForeignKeys[0].RefTable = UsersTable
 	TicketFilesTable.ForeignKeys[0].RefTable = TicketsTable
 	TicketFilesTable.ForeignKeys[1].RefTable = FilesTable

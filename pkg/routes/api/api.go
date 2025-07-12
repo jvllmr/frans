@@ -5,6 +5,7 @@ import (
 
 	"github.com/jvllmr/frans/pkg/config"
 	routesUtil "github.com/jvllmr/frans/pkg/routes"
+	shareRoutes "github.com/jvllmr/frans/pkg/routes/api/share"
 )
 
 func SetupAPIRoutes(r *gin.RouterGroup, configValue config.Config) {
@@ -18,4 +19,6 @@ func SetupAPIRoutes(r *gin.RouterGroup, configValue config.Config) {
 	setupTicketGroup(ticketGroup, configValue)
 	fileGroup := v1Group.Group("/file", routesUtil.AuthMiddleware(configValue, false))
 	setupFileGroup(fileGroup, configValue)
+	shareGroup := v1Group.Group("/share")
+	shareRoutes.SetupShareRoutes(shareGroup, configValue)
 }

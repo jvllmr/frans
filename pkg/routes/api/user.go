@@ -6,28 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/pkg/config"
 	"github.com/jvllmr/frans/pkg/ent"
+	apiTypes "github.com/jvllmr/frans/pkg/routes/api/types"
 )
-
-type PublicUser struct {
-	ID       string `json:"id"`
-	FullName string `json:"name"`
-	IsAdmin  bool   `json:"isAdmin"`
-	Email    string `json:"email"`
-}
-
-func ToPublicUser(user *ent.User) PublicUser {
-	return PublicUser{
-		ID:       user.ID.String(),
-		FullName: user.FullName,
-		IsAdmin:  user.IsAdmin,
-		Email:    user.Email,
-	}
-}
 
 func fetchMe(ctx *gin.Context) {
 	user := ctx.MustGet(config.UserGinContext).(*ent.User)
-
-	ctx.JSON(http.StatusOK, ToPublicUser(user))
+	ctx.JSON(http.StatusOK, apiTypes.ToPublicUser(user))
 }
 
 func setupUserGroup(r *gin.RouterGroup) {

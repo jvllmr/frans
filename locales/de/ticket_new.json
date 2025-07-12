@@ -2,7 +2,7 @@
   "label_comment": "Anmerkung",
   "label_email": "Link an folgende E-Mail Adresse verschicken",
   "label_password": "Passwort",
-  "label_password_email": "Versende Passwort im Klartext mit Benachrichtigungen",
+  "label_password_email": "Versende Passwort im Klartext mit Benachrichtigung",
   "label_password_email_highlight": "Klartext",
   "label_expiry": "Ticket-Verfall",
   "expiry_automatic": "Automatisch",

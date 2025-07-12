@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/ent/file"
+	"github.com/jvllmr/frans/pkg/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
 )
@@ -139,6 +140,21 @@ func (tc *TicketCreate) SetNillableOwnerID(id *uuid.UUID) *TicketCreate {
 // SetOwner sets the "owner" edge to the User entity.
 func (tc *TicketCreate) SetOwner(u *User) *TicketCreate {
 	return tc.SetOwnerID(u.ID)
+}
+
+// AddShareaccesstokenIDs adds the "shareaccesstokens" edge to the ShareAccessToken entity by IDs.
+func (tc *TicketCreate) AddShareaccesstokenIDs(ids ...string) *TicketCreate {
+	tc.mutation.AddShareaccesstokenIDs(ids...)
+	return tc
+}
+
+// AddShareaccesstokens adds the "shareaccesstokens" edges to the ShareAccessToken entity.
+func (tc *TicketCreate) AddShareaccesstokens(s ...*ShareAccessToken) *TicketCreate {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tc.AddShareaccesstokenIDs(ids...)
 }
 
 // Mutation returns the TicketMutation object of the builder.
@@ -307,6 +323,22 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.user_tickets = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ticket.ShareaccesstokensTable,
+			Columns: []string{ticket.ShareaccesstokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -15,6 +15,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/ent/file"
 	"github.com/jvllmr/frans/pkg/ent/predicate"
+	"github.com/jvllmr/frans/pkg/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
 )
@@ -22,13 +23,14 @@ import (
 // TicketQuery is the builder for querying Ticket entities.
 type TicketQuery struct {
 	config
-	ctx        *QueryContext
-	order      []ticket.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Ticket
-	withFiles  *FileQuery
-	withOwner  *UserQuery
-	withFKs    bool
+	ctx                   *QueryContext
+	order                 []ticket.OrderOption
+	inters                []Interceptor
+	predicates            []predicate.Ticket
+	withFiles             *FileQuery
+	withOwner             *UserQuery
+	withShareaccesstokens *ShareAccessTokenQuery
+	withFKs               bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -102,6 +104,28 @@ func (tq *TicketQuery) QueryOwner() *UserQuery {
 			sqlgraph.From(ticket.Table, ticket.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, ticket.OwnerTable, ticket.OwnerColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryShareaccesstokens chains the current query on the "shareaccesstokens" edge.
+func (tq *TicketQuery) QueryShareaccesstokens() *ShareAccessTokenQuery {
+	query := (&ShareAccessTokenClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ticket.Table, ticket.FieldID, selector),
+			sqlgraph.To(shareaccesstoken.Table, shareaccesstoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ticket.ShareaccesstokensTable, ticket.ShareaccesstokensColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -296,13 +320,14 @@ func (tq *TicketQuery) Clone() *TicketQuery {
 		return nil
 	}
 	return &TicketQuery{
-		config:     tq.config,
-		ctx:        tq.ctx.Clone(),
-		order:      append([]ticket.OrderOption{}, tq.order...),
-		inters:     append([]Interceptor{}, tq.inters...),
-		predicates: append([]predicate.Ticket{}, tq.predicates...),
-		withFiles:  tq.withFiles.Clone(),
-		withOwner:  tq.withOwner.Clone(),
+		config:                tq.config,
+		ctx:                   tq.ctx.Clone(),
+		order:                 append([]ticket.OrderOption{}, tq.order...),
+		inters:                append([]Interceptor{}, tq.inters...),
+		predicates:            append([]predicate.Ticket{}, tq.predicates...),
+		withFiles:             tq.withFiles.Clone(),
+		withOwner:             tq.withOwner.Clone(),
+		withShareaccesstokens: tq.withShareaccesstokens.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
@@ -328,6 +353,17 @@ func (tq *TicketQuery) WithOwner(opts ...func(*UserQuery)) *TicketQuery {
 		opt(query)
 	}
 	tq.withOwner = query
+	return tq
+}
+
+// WithShareaccesstokens tells the query-builder to eager-load the nodes that are connected to
+// the "shareaccesstokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TicketQuery) WithShareaccesstokens(opts ...func(*ShareAccessTokenQuery)) *TicketQuery {
+	query := (&ShareAccessTokenClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withShareaccesstokens = query
 	return tq
 }
 
@@ -410,9 +446,10 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 		nodes       = []*Ticket{}
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			tq.withFiles != nil,
 			tq.withOwner != nil,
+			tq.withShareaccesstokens != nil,
 		}
 	)
 	if tq.withOwner != nil {
@@ -449,6 +486,13 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	if query := tq.withOwner; query != nil {
 		if err := tq.loadOwner(ctx, query, nodes, nil,
 			func(n *Ticket, e *User) { n.Edges.Owner = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withShareaccesstokens; query != nil {
+		if err := tq.loadShareaccesstokens(ctx, query, nodes,
+			func(n *Ticket) { n.Edges.Shareaccesstokens = []*ShareAccessToken{} },
+			func(n *Ticket, e *ShareAccessToken) { n.Edges.Shareaccesstokens = append(n.Edges.Shareaccesstokens, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -545,6 +589,37 @@ func (tq *TicketQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (tq *TicketQuery) loadShareaccesstokens(ctx context.Context, query *ShareAccessTokenQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *ShareAccessToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Ticket)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.ShareAccessToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(ticket.ShareaccesstokensColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ticket_shareaccesstokens
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "ticket_shareaccesstokens" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "ticket_shareaccesstokens" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

@@ -16,9 +16,11 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { I18nextProvider, useTranslation } from "react-i18next";
+import { queryClient } from "~/api";
 import {
   CreateTicket,
   createTicketSchema,
+  ticketsKey,
   useCreateTicketMutation,
 } from "~/api/ticket";
 import { meQueryOptions } from "~/api/user";
@@ -77,6 +79,7 @@ function NewTicketForm() {
         createTicketMutation.mutate(values, {
           onSuccess() {
             form.reset();
+            queryClient.invalidateQueries({ queryKey: ticketsKey });
           },
         });
       })}

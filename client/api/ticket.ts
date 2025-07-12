@@ -40,6 +40,7 @@ export const ticketSchema = z.object({
   files: fileSchema.array(),
   createdAt: z.coerce.date(),
   estimatedExpiry: z.coerce.date().nullable(),
+  comment: z.string().nullable(),
 });
 
 export type Ticket = z.infer<typeof ticketSchema>;
@@ -83,3 +84,41 @@ export const ticketQueryOptions = queryOptions({
   queryKey: ticketsKey,
   queryFn: fetchTickets,
 });
+
+export async function fetchTicketShare({
+  ticketId,
+  password,
+}: {
+  ticketId: string;
+  password: string;
+}) {
+  return baseFetchJSON(v1Url(`/share/ticket/${ticketId}`), ticketSchema, {
+    auth: { username: ticketId, password: password },
+  });
+}
+
+export async function fetchTicketShareAccessToken({
+  ticketId,
+  password,
+}: {
+  ticketId: string;
+  password: string;
+}) {
+  return baseFetchJSON(
+    v1Url(`/share/ticket/${ticketId}/token`),
+    z.object({ token: z.string() }),
+    {
+      auth: { username: ticketId, password: password },
+    },
+  );
+}
+
+export function getTicketShareFileUrl({
+  fileId,
+  ticketId,
+}: {
+  ticketId: string;
+  fileId: string;
+}) {
+  return v1Url(`/share/ticket/${ticketId}/file/${fileId}`);
+}

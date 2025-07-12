@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/pkg/ent/file"
 	"github.com/jvllmr/frans/pkg/ent/predicate"
+	"github.com/jvllmr/frans/pkg/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
 )
@@ -224,6 +225,21 @@ func (tu *TicketUpdate) SetOwner(u *User) *TicketUpdate {
 	return tu.SetOwnerID(u.ID)
 }
 
+// AddShareaccesstokenIDs adds the "shareaccesstokens" edge to the ShareAccessToken entity by IDs.
+func (tu *TicketUpdate) AddShareaccesstokenIDs(ids ...string) *TicketUpdate {
+	tu.mutation.AddShareaccesstokenIDs(ids...)
+	return tu
+}
+
+// AddShareaccesstokens adds the "shareaccesstokens" edges to the ShareAccessToken entity.
+func (tu *TicketUpdate) AddShareaccesstokens(s ...*ShareAccessToken) *TicketUpdate {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.AddShareaccesstokenIDs(ids...)
+}
+
 // Mutation returns the TicketMutation object of the builder.
 func (tu *TicketUpdate) Mutation() *TicketMutation {
 	return tu.mutation
@@ -254,6 +270,27 @@ func (tu *TicketUpdate) RemoveFiles(f ...*File) *TicketUpdate {
 func (tu *TicketUpdate) ClearOwner() *TicketUpdate {
 	tu.mutation.ClearOwner()
 	return tu
+}
+
+// ClearShareaccesstokens clears all "shareaccesstokens" edges to the ShareAccessToken entity.
+func (tu *TicketUpdate) ClearShareaccesstokens() *TicketUpdate {
+	tu.mutation.ClearShareaccesstokens()
+	return tu
+}
+
+// RemoveShareaccesstokenIDs removes the "shareaccesstokens" edge to ShareAccessToken entities by IDs.
+func (tu *TicketUpdate) RemoveShareaccesstokenIDs(ids ...string) *TicketUpdate {
+	tu.mutation.RemoveShareaccesstokenIDs(ids...)
+	return tu
+}
+
+// RemoveShareaccesstokens removes "shareaccesstokens" edges to ShareAccessToken entities.
+func (tu *TicketUpdate) RemoveShareaccesstokens(s ...*ShareAccessToken) *TicketUpdate {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.RemoveShareaccesstokenIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -401,6 +438,51 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.ShareaccesstokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ticket.ShareaccesstokensTable,
+			Columns: []string{ticket.ShareaccesstokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedShareaccesstokensIDs(); len(nodes) > 0 && !tu.mutation.ShareaccesstokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ticket.ShareaccesstokensTable,
+			Columns: []string{ticket.ShareaccesstokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ticket.ShareaccesstokensTable,
+			Columns: []string{ticket.ShareaccesstokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -621,6 +703,21 @@ func (tuo *TicketUpdateOne) SetOwner(u *User) *TicketUpdateOne {
 	return tuo.SetOwnerID(u.ID)
 }
 
+// AddShareaccesstokenIDs adds the "shareaccesstokens" edge to the ShareAccessToken entity by IDs.
+func (tuo *TicketUpdateOne) AddShareaccesstokenIDs(ids ...string) *TicketUpdateOne {
+	tuo.mutation.AddShareaccesstokenIDs(ids...)
+	return tuo
+}
+
+// AddShareaccesstokens adds the "shareaccesstokens" edges to the ShareAccessToken entity.
+func (tuo *TicketUpdateOne) AddShareaccesstokens(s ...*ShareAccessToken) *TicketUpdateOne {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.AddShareaccesstokenIDs(ids...)
+}
+
 // Mutation returns the TicketMutation object of the builder.
 func (tuo *TicketUpdateOne) Mutation() *TicketMutation {
 	return tuo.mutation
@@ -651,6 +748,27 @@ func (tuo *TicketUpdateOne) RemoveFiles(f ...*File) *TicketUpdateOne {
 func (tuo *TicketUpdateOne) ClearOwner() *TicketUpdateOne {
 	tuo.mutation.ClearOwner()
 	return tuo
+}
+
+// ClearShareaccesstokens clears all "shareaccesstokens" edges to the ShareAccessToken entity.
+func (tuo *TicketUpdateOne) ClearShareaccesstokens() *TicketUpdateOne {
+	tuo.mutation.ClearShareaccesstokens()
+	return tuo
+}
+
+// RemoveShareaccesstokenIDs removes the "shareaccesstokens" edge to ShareAccessToken entities by IDs.
+func (tuo *TicketUpdateOne) RemoveShareaccesstokenIDs(ids ...string) *TicketUpdateOne {
+	tuo.mutation.RemoveShareaccesstokenIDs(ids...)
+	return tuo
+}
+
+// RemoveShareaccesstokens removes "shareaccesstokens" edges to ShareAccessToken entities.
+func (tuo *TicketUpdateOne) RemoveShareaccesstokens(s ...*ShareAccessToken) *TicketUpdateOne {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.RemoveShareaccesstokenIDs(ids...)
 }
 
 // Where appends a list predicates to the TicketUpdate builder.
@@ -828,6 +946,51 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.ShareaccesstokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ticket.ShareaccesstokensTable,
+			Columns: []string{ticket.ShareaccesstokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedShareaccesstokensIDs(); len(nodes) > 0 && !tuo.mutation.ShareaccesstokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ticket.ShareaccesstokensTable,
+			Columns: []string{ticket.ShareaccesstokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   ticket.ShareaccesstokensTable,
+			Columns: []string{ticket.ShareaccesstokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

@@ -1,4 +1,5 @@
 {
   "email": "Eingabe muss eine E-Mail Adresse sein",
-  "min_length": "Eingabe muss mindestens # Zeichen haben"
+  "min_length": "Eingabe muss mindestens # Zeichen haben",
+  "password": "Das angegebene Passwort ist falsch"
 }

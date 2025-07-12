@@ -2,7 +2,7 @@
   "label_comment": "Comment",
   "label_email": "Send link to e-mail",
   "label_password": "Password",
-  "label_password_email": "Send in clear with notifications",
+  "label_password_email": "Send in clear with notification",
   "label_password_email_highlight": "clear",
   "label_expiry": "Ticket expiry",
   "expiry_automatic": "Automatic",

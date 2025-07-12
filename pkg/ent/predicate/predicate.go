@@ -12,6 +12,9 @@ type File func(*sql.Selector)
 // Session is the predicate function for session builders.
 type Session func(*sql.Selector)
 
+// ShareAccessToken is the predicate function for shareaccesstoken builders.
+type ShareAccessToken func(*sql.Selector)
+
 // Ticket is the predicate function for ticket builders.
 type Ticket func(*sql.Selector)
 

@@ -50,9 +50,11 @@ type TicketEdges struct {
 	Files []*File `json:"files,omitempty"`
 	// Owner holds the value of the owner edge.
 	Owner *User `json:"owner,omitempty"`
+	// Shareaccesstokens holds the value of the shareaccesstokens edge.
+	Shareaccesstokens []*ShareAccessToken `json:"shareaccesstokens,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // FilesOrErr returns the Files value or an error if the edge
@@ -73,6 +75,15 @@ func (e TicketEdges) OwnerOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "owner"}
+}
+
+// ShareaccesstokensOrErr returns the Shareaccesstokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e TicketEdges) ShareaccesstokensOrErr() ([]*ShareAccessToken, error) {
+	if e.loadedTypes[2] {
+		return e.Shareaccesstokens, nil
+	}
+	return nil, &NotLoadedError{edge: "shareaccesstokens"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -195,6 +206,11 @@ func (t *Ticket) QueryFiles() *FileQuery {
 // QueryOwner queries the "owner" edge of the Ticket entity.
 func (t *Ticket) QueryOwner() *UserQuery {
 	return NewTicketClient(t.config).QueryOwner(t)
+}
+
+// QueryShareaccesstokens queries the "shareaccesstokens" edge of the Ticket entity.
+func (t *Ticket) QueryShareaccesstokens() *ShareAccessTokenQuery {
+	return NewTicketClient(t.config).QueryShareaccesstokens(t)
 }
 
 // Update returns a builder for updating this Ticket.

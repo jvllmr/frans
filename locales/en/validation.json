@@ -1,4 +1,5 @@
 {
   "email": "Input must be an e-mail address",
-  "min_length": "Input must have at least # symbols"
+  "min_length": "Input must have at least # symbols",
+  "password": "Given password is incorrect"
 }

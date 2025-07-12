@@ -18,6 +18,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/jvllmr/frans/pkg/ent/file"
 	"github.com/jvllmr/frans/pkg/ent/session"
+	"github.com/jvllmr/frans/pkg/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
 )
@@ -31,6 +32,8 @@ type Client struct {
 	File *FileClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
+	// ShareAccessToken is the client for interacting with the ShareAccessToken builders.
+	ShareAccessToken *ShareAccessTokenClient
 	// Ticket is the client for interacting with the Ticket builders.
 	Ticket *TicketClient
 	// User is the client for interacting with the User builders.
@@ -48,6 +51,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.File = NewFileClient(c.config)
 	c.Session = NewSessionClient(c.config)
+	c.ShareAccessToken = NewShareAccessTokenClient(c.config)
 	c.Ticket = NewTicketClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -140,12 +144,13 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:     ctx,
-		config:  cfg,
-		File:    NewFileClient(cfg),
-		Session: NewSessionClient(cfg),
-		Ticket:  NewTicketClient(cfg),
-		User:    NewUserClient(cfg),
+		ctx:              ctx,
+		config:           cfg,
+		File:             NewFileClient(cfg),
+		Session:          NewSessionClient(cfg),
+		ShareAccessToken: NewShareAccessTokenClient(cfg),
+		Ticket:           NewTicketClient(cfg),
+		User:             NewUserClient(cfg),
 	}, nil
 }
 
@@ -163,12 +168,13 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:     ctx,
-		config:  cfg,
-		File:    NewFileClient(cfg),
-		Session: NewSessionClient(cfg),
-		Ticket:  NewTicketClient(cfg),
-		User:    NewUserClient(cfg),
+		ctx:              ctx,
+		config:           cfg,
+		File:             NewFileClient(cfg),
+		Session:          NewSessionClient(cfg),
+		ShareAccessToken: NewShareAccessTokenClient(cfg),
+		Ticket:           NewTicketClient(cfg),
+		User:             NewUserClient(cfg),
 	}, nil
 }
 
@@ -199,6 +205,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.File.Use(hooks...)
 	c.Session.Use(hooks...)
+	c.ShareAccessToken.Use(hooks...)
 	c.Ticket.Use(hooks...)
 	c.User.Use(hooks...)
 }
@@ -208,6 +215,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.File.Intercept(interceptors...)
 	c.Session.Intercept(interceptors...)
+	c.ShareAccessToken.Intercept(interceptors...)
 	c.Ticket.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
@@ -219,6 +227,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.File.mutate(ctx, m)
 	case *SessionMutation:
 		return c.Session.mutate(ctx, m)
+	case *ShareAccessTokenMutation:
+		return c.ShareAccessToken.mutate(ctx, m)
 	case *TicketMutation:
 		return c.Ticket.mutate(ctx, m)
 	case *UserMutation:
@@ -526,6 +536,155 @@ func (c *SessionClient) mutate(ctx context.Context, m *SessionMutation) (Value, 
 	}
 }
 
+// ShareAccessTokenClient is a client for the ShareAccessToken schema.
+type ShareAccessTokenClient struct {
+	config
+}
+
+// NewShareAccessTokenClient returns a client for the ShareAccessToken from the given config.
+func NewShareAccessTokenClient(c config) *ShareAccessTokenClient {
+	return &ShareAccessTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `shareaccesstoken.Hooks(f(g(h())))`.
+func (c *ShareAccessTokenClient) Use(hooks ...Hook) {
+	c.hooks.ShareAccessToken = append(c.hooks.ShareAccessToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `shareaccesstoken.Intercept(f(g(h())))`.
+func (c *ShareAccessTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ShareAccessToken = append(c.inters.ShareAccessToken, interceptors...)
+}
+
+// Create returns a builder for creating a ShareAccessToken entity.
+func (c *ShareAccessTokenClient) Create() *ShareAccessTokenCreate {
+	mutation := newShareAccessTokenMutation(c.config, OpCreate)
+	return &ShareAccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ShareAccessToken entities.
+func (c *ShareAccessTokenClient) CreateBulk(builders ...*ShareAccessTokenCreate) *ShareAccessTokenCreateBulk {
+	return &ShareAccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ShareAccessTokenClient) MapCreateBulk(slice any, setFunc func(*ShareAccessTokenCreate, int)) *ShareAccessTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ShareAccessTokenCreateBulk{err: fmt.Errorf("calling to ShareAccessTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ShareAccessTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ShareAccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ShareAccessToken.
+func (c *ShareAccessTokenClient) Update() *ShareAccessTokenUpdate {
+	mutation := newShareAccessTokenMutation(c.config, OpUpdate)
+	return &ShareAccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ShareAccessTokenClient) UpdateOne(sat *ShareAccessToken) *ShareAccessTokenUpdateOne {
+	mutation := newShareAccessTokenMutation(c.config, OpUpdateOne, withShareAccessToken(sat))
+	return &ShareAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ShareAccessTokenClient) UpdateOneID(id string) *ShareAccessTokenUpdateOne {
+	mutation := newShareAccessTokenMutation(c.config, OpUpdateOne, withShareAccessTokenID(id))
+	return &ShareAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ShareAccessToken.
+func (c *ShareAccessTokenClient) Delete() *ShareAccessTokenDelete {
+	mutation := newShareAccessTokenMutation(c.config, OpDelete)
+	return &ShareAccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ShareAccessTokenClient) DeleteOne(sat *ShareAccessToken) *ShareAccessTokenDeleteOne {
+	return c.DeleteOneID(sat.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ShareAccessTokenClient) DeleteOneID(id string) *ShareAccessTokenDeleteOne {
+	builder := c.Delete().Where(shareaccesstoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ShareAccessTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for ShareAccessToken.
+func (c *ShareAccessTokenClient) Query() *ShareAccessTokenQuery {
+	return &ShareAccessTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeShareAccessToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ShareAccessToken entity by its id.
+func (c *ShareAccessTokenClient) Get(ctx context.Context, id string) (*ShareAccessToken, error) {
+	return c.Query().Where(shareaccesstoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ShareAccessTokenClient) GetX(ctx context.Context, id string) *ShareAccessToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTicket queries the ticket edge of a ShareAccessToken.
+func (c *ShareAccessTokenClient) QueryTicket(sat *ShareAccessToken) *TicketQuery {
+	query := (&TicketClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sat.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(shareaccesstoken.Table, shareaccesstoken.FieldID, id),
+			sqlgraph.To(ticket.Table, ticket.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, shareaccesstoken.TicketTable, shareaccesstoken.TicketColumn),
+		)
+		fromV = sqlgraph.Neighbors(sat.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ShareAccessTokenClient) Hooks() []Hook {
+	return c.hooks.ShareAccessToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *ShareAccessTokenClient) Interceptors() []Interceptor {
+	return c.inters.ShareAccessToken
+}
+
+func (c *ShareAccessTokenClient) mutate(ctx context.Context, m *ShareAccessTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ShareAccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ShareAccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ShareAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ShareAccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ShareAccessToken mutation op: %q", m.Op())
+	}
+}
+
 // TicketClient is a client for the Ticket schema.
 type TicketClient struct {
 	config
@@ -659,6 +818,22 @@ func (c *TicketClient) QueryOwner(t *Ticket) *UserQuery {
 			sqlgraph.From(ticket.Table, ticket.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, ticket.OwnerTable, ticket.OwnerColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryShareaccesstokens queries the shareaccesstokens edge of a Ticket.
+func (c *TicketClient) QueryShareaccesstokens(t *Ticket) *ShareAccessTokenQuery {
+	query := (&ShareAccessTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(ticket.Table, ticket.FieldID, id),
+			sqlgraph.To(shareaccesstoken.Table, shareaccesstoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ticket.ShareaccesstokensTable, ticket.ShareaccesstokensColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -859,9 +1034,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		File, Session, Ticket, User []ent.Hook
+		File, Session, ShareAccessToken, Ticket, User []ent.Hook
 	}
 	inters struct {
-		File, Session, Ticket, User []ent.Interceptor
+		File, Session, ShareAccessToken, Ticket, User []ent.Interceptor
 	}
 )
