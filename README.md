@@ -4,15 +4,32 @@ Frans is a simple file-sharing service intended to be ready for cloud native.
 
 It took heavy inspiration from [DownloadTicketService](https://www.thregr.org/wavexx/software/dl/). You could also call it a more modern or v2 version of `DownloadTicketService`.
 
-## Authentication
+## Installation
 
-### Requirements
+TODO...
 
-The used OIDC provider needs to:
+## Requirements
+
+### Database
+
+`frans` supports three types of databases. `PostgreSQL`, `mysql` / `mariadb` and `sqlite`
+
+### Authentication
+
+`frans` does not handle user management by itself, but rather uses OpenID Connect (OIDC) to delegate this task to an OIDC provider. One of the more well known open source examples for an OIDC provider is `Keycloak` which was initially developed by RedHat and has to a CNCF project. Therefore, `frans` is optimized for usage with `Keycloak`.
+If you want to try your luck with another OIDC provider, I have a checklist ready for you. The used OIDC provider needs to:
 
 - provide an introspection endpoint that includes the `sub` claim
 - allow usage of refresh tokens
 - an `end_session_endpoint`
+
+### SMTP Server
+
+`frans` requires a SMTP server to send mail notifications.
+
+## Configuration
+
+TODO...
 
 ## Development
 
