@@ -6,3 +6,6 @@ oidc_client_secret: Xaxmu1Ufw5ee2okQoVN9fEla7JIjTiw9
 db_type: sqlite3
 port: 8081
 files_dir: files
+smtp_server: 127.0.0.1
+smtp_port: 2525
+smtp_from: frans@vllmr.dev

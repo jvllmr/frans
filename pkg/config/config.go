@@ -33,6 +33,12 @@ type Config struct {
 	DefaultExpiryTotalDays             uint8 `mapstructure:"default_expiry_total_days"`
 
 	LogJSON bool `mapstructure:"log_json"`
+
+	SMTPServer   string  `mapstructure:"smtp_server"`
+	SMTPPort     int     `mapstructure:"smtp_port"`
+	SMTPFrom     string  `mapstructure:"smtp_from"`
+	SMTPUsername *string `mapstructure:"smtp_username"`
+	SMTPPassword *string `mapstructure:"smtp_password"`
 }
 
 func GetConfig() (Config, error) {
@@ -61,6 +67,12 @@ func GetConfig() (Config, error) {
 	fransConf.SetDefault("db_password", "")
 
 	fransConf.SetDefault("admin_group", "admin")
+
+	fransConf.SetDefault("log_json", false)
+
+	fransConf.SetDefault("smtp_port", 25)
+	fransConf.SetDefault("smtp_username", nil)
+	fransConf.SetDefault("smtp_password", nil)
 
 	fransConf.SetConfigName("frans")
 	fransConf.SetConfigType("yaml")
