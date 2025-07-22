@@ -16,7 +16,7 @@ func TicketsLifecycleTask(configValue config.Config) {
 		estimatedExpiry := util.GetEstimatedExpiry(configValue, ticketValue)
 		now := time.Now()
 		if len(ticketValue.Edges.Files) > 0 &&
-			(estimatedExpiry == nil || estimatedExpiry.Before(now)) {
+			(estimatedExpiry == nil || estimatedExpiry.After(now)) {
 			continue
 		}
 		config.DBClient.Ticket.DeleteOne(ticketValue).ExecX(context.Background())
