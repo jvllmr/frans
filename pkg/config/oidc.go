@@ -122,11 +122,11 @@ func InitOIDC(config Config) {
 	var err error
 	OidcProvider, err = oidc.NewProvider(context.Background(), config.OidcIssuer)
 	if err != nil {
-		slog.Error("Failed to create OIDC provider: %v", err)
+		slog.Error("Failed to create OIDC provider", "err", err)
 		os.Exit(1)
 	}
 	if err := OidcProvider.Claims(&OidcProviderExtraEndpoints); err != nil {
-		slog.Error("Failed to find extra endpoints in OIDC Provider: %v", err)
+		slog.Error("Failed to find extra endpoints in OIDC Provider", "err", err)
 		os.Exit(1)
 	}
 
