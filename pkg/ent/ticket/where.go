@@ -101,6 +101,11 @@ func EmailOnDownload(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldEmailOnDownload, v))
 }
 
+// CreatorLang applies equality check predicate on the "creator_lang" field. It's identical to CreatorLangEQ.
+func CreatorLang(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldEQ(FieldCreatorLang, v))
+}
+
 // CommentEQ applies the EQ predicate on the "comment" field.
 func CommentEQ(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldComment, v))
@@ -604,6 +609,71 @@ func EmailOnDownloadEqualFold(v string) predicate.Ticket {
 // EmailOnDownloadContainsFold applies the ContainsFold predicate on the "email_on_download" field.
 func EmailOnDownloadContainsFold(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldContainsFold(FieldEmailOnDownload, v))
+}
+
+// CreatorLangEQ applies the EQ predicate on the "creator_lang" field.
+func CreatorLangEQ(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldEQ(FieldCreatorLang, v))
+}
+
+// CreatorLangNEQ applies the NEQ predicate on the "creator_lang" field.
+func CreatorLangNEQ(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldNEQ(FieldCreatorLang, v))
+}
+
+// CreatorLangIn applies the In predicate on the "creator_lang" field.
+func CreatorLangIn(vs ...string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldIn(FieldCreatorLang, vs...))
+}
+
+// CreatorLangNotIn applies the NotIn predicate on the "creator_lang" field.
+func CreatorLangNotIn(vs ...string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldNotIn(FieldCreatorLang, vs...))
+}
+
+// CreatorLangGT applies the GT predicate on the "creator_lang" field.
+func CreatorLangGT(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldGT(FieldCreatorLang, v))
+}
+
+// CreatorLangGTE applies the GTE predicate on the "creator_lang" field.
+func CreatorLangGTE(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldGTE(FieldCreatorLang, v))
+}
+
+// CreatorLangLT applies the LT predicate on the "creator_lang" field.
+func CreatorLangLT(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldLT(FieldCreatorLang, v))
+}
+
+// CreatorLangLTE applies the LTE predicate on the "creator_lang" field.
+func CreatorLangLTE(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldLTE(FieldCreatorLang, v))
+}
+
+// CreatorLangContains applies the Contains predicate on the "creator_lang" field.
+func CreatorLangContains(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldContains(FieldCreatorLang, v))
+}
+
+// CreatorLangHasPrefix applies the HasPrefix predicate on the "creator_lang" field.
+func CreatorLangHasPrefix(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldHasPrefix(FieldCreatorLang, v))
+}
+
+// CreatorLangHasSuffix applies the HasSuffix predicate on the "creator_lang" field.
+func CreatorLangHasSuffix(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldHasSuffix(FieldCreatorLang, v))
+}
+
+// CreatorLangEqualFold applies the EqualFold predicate on the "creator_lang" field.
+func CreatorLangEqualFold(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldEqualFold(FieldCreatorLang, v))
+}
+
+// CreatorLangContainsFold applies the ContainsFold predicate on the "creator_lang" field.
+func CreatorLangContainsFold(v string) predicate.Ticket {
+	return predicate.Ticket(sql.FieldContainsFold(FieldCreatorLang, v))
 }
 
 // HasFiles applies the HasEdge predicate on the "files" edge.

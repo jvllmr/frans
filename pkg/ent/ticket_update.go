@@ -191,6 +191,20 @@ func (tu *TicketUpdate) ClearEmailOnDownload() *TicketUpdate {
 	return tu
 }
 
+// SetCreatorLang sets the "creator_lang" field.
+func (tu *TicketUpdate) SetCreatorLang(s string) *TicketUpdate {
+	tu.mutation.SetCreatorLang(s)
+	return tu
+}
+
+// SetNillableCreatorLang sets the "creator_lang" field if the given value is not nil.
+func (tu *TicketUpdate) SetNillableCreatorLang(s *string) *TicketUpdate {
+	if s != nil {
+		tu.SetCreatorLang(*s)
+	}
+	return tu
+}
+
 // AddFileIDs adds the "files" edge to the File entity by IDs.
 func (tu *TicketUpdate) AddFileIDs(ids ...uuid.UUID) *TicketUpdate {
 	tu.mutation.AddFileIDs(ids...)
@@ -370,6 +384,9 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.EmailOnDownloadCleared() {
 		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeString)
+	}
+	if value, ok := tu.mutation.CreatorLang(); ok {
+		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)
 	}
 	if tu.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -669,6 +686,20 @@ func (tuo *TicketUpdateOne) ClearEmailOnDownload() *TicketUpdateOne {
 	return tuo
 }
 
+// SetCreatorLang sets the "creator_lang" field.
+func (tuo *TicketUpdateOne) SetCreatorLang(s string) *TicketUpdateOne {
+	tuo.mutation.SetCreatorLang(s)
+	return tuo
+}
+
+// SetNillableCreatorLang sets the "creator_lang" field if the given value is not nil.
+func (tuo *TicketUpdateOne) SetNillableCreatorLang(s *string) *TicketUpdateOne {
+	if s != nil {
+		tuo.SetCreatorLang(*s)
+	}
+	return tuo
+}
+
 // AddFileIDs adds the "files" edge to the File entity by IDs.
 func (tuo *TicketUpdateOne) AddFileIDs(ids ...uuid.UUID) *TicketUpdateOne {
 	tuo.mutation.AddFileIDs(ids...)
@@ -878,6 +909,9 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 	}
 	if tuo.mutation.EmailOnDownloadCleared() {
 		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeString)
+	}
+	if value, ok := tuo.mutation.CreatorLang(); ok {
+		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)
 	}
 	if tuo.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{

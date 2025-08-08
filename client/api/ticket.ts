@@ -3,7 +3,7 @@ import axios from "axios";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod/v4";
-import i18n from "~/i18n";
+import i18n, { availableLanguages } from "~/i18n";
 import { errorNotification, successNotification } from "~/util/notifications";
 import { ProgressHandle } from "~/util/progress";
 import { baseFetchJSON, FetchError, v1Url } from ".";
@@ -31,6 +31,8 @@ export const createTicketSchema = z.object({
   expiryTotalDownloads: z.int(),
   emailOnDownload: z.email(i18n.t("email", { ns: "validation" })).nullable(),
   files: z.file().array().min(1),
+  creatorLang: z.enum(availableLanguages),
+  receiverLang: z.enum(availableLanguages),
 });
 export type CreateTicket = z.infer<typeof createTicketSchema>;
 

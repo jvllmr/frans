@@ -1,6 +1,6 @@
 ci:
   skip:
-    - golines
+    - eslint
 
 repos:
   - repo: https://github.com/jvllmr/pre-commit-prettier
@@ -10,12 +10,25 @@ repos:
         additional_dependencies:
           - prettier@latest
           - prettier-plugin-organize-imports@latest
-  - repo: local
+  - repo: https://github.com/segmentio/golines
+    rev: v0.12.2
     hooks:
       - id: golines
-        name: format go files
-        entry: pnpm golines -w
+  - repo: local
+    hooks:
+      - id: eslint
+        name: lint typescript
+        entry: pnpm eslint
         language: system
         pass_filenames: true
-        types:
-          - go
+        types_or:
+          - ts
+          - tsx
+      - id: gotidy
+        name: tidy go mod
+        entry: go mod tidy
+        language: system
+        pass_filenames: false
+        types_or:
+          - go-sum
+          - go-mod

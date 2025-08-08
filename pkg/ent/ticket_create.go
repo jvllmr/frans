@@ -102,6 +102,20 @@ func (tc *TicketCreate) SetNillableEmailOnDownload(s *string) *TicketCreate {
 	return tc
 }
 
+// SetCreatorLang sets the "creator_lang" field.
+func (tc *TicketCreate) SetCreatorLang(s string) *TicketCreate {
+	tc.mutation.SetCreatorLang(s)
+	return tc
+}
+
+// SetNillableCreatorLang sets the "creator_lang" field if the given value is not nil.
+func (tc *TicketCreate) SetNillableCreatorLang(s *string) *TicketCreate {
+	if s != nil {
+		tc.SetCreatorLang(*s)
+	}
+	return tc
+}
+
 // SetID sets the "id" field.
 func (tc *TicketCreate) SetID(u uuid.UUID) *TicketCreate {
 	tc.mutation.SetID(u)
@@ -196,6 +210,10 @@ func (tc *TicketCreate) defaults() {
 		v := ticket.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := tc.mutation.CreatorLang(); !ok {
+		v := ticket.DefaultCreatorLang
+		tc.mutation.SetCreatorLang(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -220,6 +238,9 @@ func (tc *TicketCreate) check() error {
 	}
 	if _, ok := tc.mutation.ExpiryTotalDownloads(); !ok {
 		return &ValidationError{Name: "expiry_total_downloads", err: errors.New(`ent: missing required field "Ticket.expiry_total_downloads"`)}
+	}
+	if _, ok := tc.mutation.CreatorLang(); !ok {
+		return &ValidationError{Name: "creator_lang", err: errors.New(`ent: missing required field "Ticket.creator_lang"`)}
 	}
 	return nil
 }
@@ -291,6 +312,10 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.EmailOnDownload(); ok {
 		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
 		_node.EmailOnDownload = &value
+	}
+	if value, ok := tc.mutation.CreatorLang(); ok {
+		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)
+		_node.CreatorLang = value
 	}
 	if nodes := tc.mutation.FilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

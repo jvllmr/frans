@@ -1,8 +1,10 @@
 package util
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/pkg/config"
 	"github.com/jvllmr/frans/pkg/ent"
 )
@@ -40,4 +42,8 @@ func GetEstimatedExpiry(configValue config.Config, ticket *ent.Ticket) *time.Tim
 	}
 
 	return &totalLimit
+}
+
+func GetTicketShareLink(ctx *gin.Context, configValue config.Config, ticket *ent.Ticket) string {
+	return fmt.Sprintf("%s/s/%s", config.GetBaseURL(configValue, ctx.Request), ticket.ID.String())
 }

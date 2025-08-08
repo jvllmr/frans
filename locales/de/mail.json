@@ -1,0 +1,9 @@
+{
+  "comment": "Anmerkung",
+  "contents": "Inhalte des Tickets",
+  "url": "URL",
+  "password": "Passwort",
+  "subject_ticket": "Download-Link für {{.FileName}}",
+  "subject_download": "Download-Benachrichtigung für Ticket",
+  "notification_download": "Die Datei {{.FileName}} (Ticket {{.Ticket}}) wurde durch {{.Address}} heruntergeladen"
+}

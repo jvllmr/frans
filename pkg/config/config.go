@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"log/slog"
@@ -91,4 +92,17 @@ func GetConfig() (Config, error) {
 	}
 
 	return config, nil
+}
+
+func GetBaseURL(configValue Config, request *http.Request) string {
+	proto := "http"
+	if request.TLS != nil {
+		proto = "https"
+	}
+	host := request.Host
+	patchedRootPath := configValue.RootPath
+	if len(patchedRootPath) == 0 {
+		patchedRootPath = "/"
+	}
+	return fmt.Sprintf("%s://%s%s", proto, host, patchedRootPath)
 }

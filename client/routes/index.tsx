@@ -26,10 +26,11 @@ import {
 import { meQueryOptions } from "~/api/user";
 import { FormDebugInfo } from "~/components/FormDebugInfo";
 import { FilesInput } from "~/components/inputs/FilesInput";
+import { LangInput } from "~/components/inputs/LangInput";
 import { NullTextarea } from "~/components/inputs/NullTextarea";
 import { NullTextInput } from "~/components/inputs/NullTextInput";
 import { ProgressBar } from "~/components/ProgressBar";
-import i18n from "~/i18n";
+import i18n, { AvailableLanguage } from "~/i18n";
 import { useProgressHandle } from "~/util/progress";
 export const Route = createFileRoute("/")({
   component: Index,
@@ -52,11 +53,13 @@ const selectData: { label: string; value: CreateTicket["expiryType"] }[] = [
 ] as const;
 
 function NewTicketForm() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
   const form = useForm<CreateTicket>({
     initialValues: {
       comment: null,
       email: null,
+      receiverLang: i18n.language as AvailableLanguage,
       password: "",
       emailPassword: false,
       expiryType: "auto",
@@ -65,6 +68,7 @@ function NewTicketForm() {
         window.fransDefaultExpiryDaysSinceLastDownload,
       expiryTotalDownloads: window.fransDefaultExpiryTotalDownloads,
       emailOnDownload: null,
+      creatorLang: i18n.language as AvailableLanguage,
       files: [],
     },
     validate: zod4Resolver(createTicketSchema),
@@ -94,6 +98,7 @@ function NewTicketForm() {
             {...form.getInputProps("email")}
             label={t("label_email")}
           />
+          <LangInput {...form.getInputProps("receiverLang")} />
           <PasswordInput
             {...form.getInputProps("password")}
             label={t("label_password")}
@@ -157,6 +162,7 @@ function NewTicketForm() {
           >
             {t("label_own_email")}
           </Button>
+          <LangInput {...form.getInputProps("receiverLang")} />
           <Flex justify="space-evenly">
             <Button type="submit" loading={createTicketMutation.isPending}>
               {t("upload", { ns: "translation" })}

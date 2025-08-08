@@ -13,5 +13,7 @@
   "label_expiry_last_download": "Verfall # Tage nach dem letzten Download",
   "label_expiry_total_downloads": "Verfall nach # Downloads",
   "label_notify_email": "Bei Download folgende E-Mail Adresse benachrichtigen",
-  "label_own_email": "Meine E-Mail benutzen"
+  "label_own_email": "Meine E-Mail benutzen",
+  "label_your_lang": "Deine Sprache",
+  "label_receiver_lang": "Sprache des Empfängers"
 }

@@ -28,6 +28,7 @@ func (Ticket) Fields() []ent.Field {
 		field.Uint8("expiry_days_since_last_download"),
 		field.Uint8("expiry_total_downloads"),
 		field.String("email_on_download").Nillable().Optional(),
+		field.String("creator_lang").Default("en"),
 	}
 }
 

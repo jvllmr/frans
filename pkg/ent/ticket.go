@@ -37,6 +37,8 @@ type Ticket struct {
 	ExpiryTotalDownloads uint8 `json:"expiry_total_downloads,omitempty"`
 	// EmailOnDownload holds the value of the "email_on_download" field.
 	EmailOnDownload *string `json:"email_on_download,omitempty"`
+	// CreatorLang holds the value of the "creator_lang" field.
+	CreatorLang string `json:"creator_lang,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TicketQuery when eager-loading is set.
 	Edges        TicketEdges `json:"edges"`
@@ -93,7 +95,7 @@ func (*Ticket) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case ticket.FieldExpiryTotalDays, ticket.FieldExpiryDaysSinceLastDownload, ticket.FieldExpiryTotalDownloads:
 			values[i] = new(sql.NullInt64)
-		case ticket.FieldComment, ticket.FieldExpiryType, ticket.FieldHashedPassword, ticket.FieldSalt, ticket.FieldEmailOnDownload:
+		case ticket.FieldComment, ticket.FieldExpiryType, ticket.FieldHashedPassword, ticket.FieldSalt, ticket.FieldEmailOnDownload, ticket.FieldCreatorLang:
 			values[i] = new(sql.NullString)
 		case ticket.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -177,6 +179,12 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.EmailOnDownload = new(string)
 				*t.EmailOnDownload = value.String
+			}
+		case ticket.FieldCreatorLang:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field creator_lang", values[i])
+			} else if value.Valid {
+				t.CreatorLang = value.String
 			}
 		case ticket.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -266,6 +274,9 @@ func (t *Ticket) String() string {
 		builder.WriteString("email_on_download=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("creator_lang=")
+	builder.WriteString(t.CreatorLang)
 	builder.WriteByte(')')
 	return builder.String()
 }

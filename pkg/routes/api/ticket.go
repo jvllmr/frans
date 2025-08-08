@@ -13,6 +13,7 @@ import (
 	"github.com/jvllmr/frans/pkg/ent"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
 	"github.com/jvllmr/frans/pkg/ent/user"
+	"github.com/jvllmr/frans/pkg/mail"
 	apiTypes "github.com/jvllmr/frans/pkg/routes/api/types"
 	"github.com/jvllmr/frans/pkg/util"
 )
@@ -27,6 +28,8 @@ type ticketForm struct {
 	ExpiryDaysSinceLastDownload uint8   `form:"expiryDaysSinceLastDownload" binding:"required"`
 	ExpiryTotalDownloads        uint8   `form:"expiryTotalDownloads"        binding:"required"`
 	EmailOnDownload             *string `form:"emailOnDownload"`
+	CreatorLang                 string  `form:"creatorLang"                 binding:"required"`
+	ReceiverLang                string  `form:"receiverLang"                binding:"required"`
 }
 
 func createTicketFactory(configValue config.Config) gin.HandlerFunc {
@@ -51,7 +54,8 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 				SetExpiryTotalDownloads(form.ExpiryTotalDownloads).
 				SetHashedPassword(hashedPassword).
 				SetSalt(hex.EncodeToString(salt)).
-				SetOwner(currentUser)
+				SetOwner(currentUser).
+				SetCreatorLang(form.CreatorLang)
 
 			if form.Comment != nil {
 				ticketBuilder = ticketBuilder.SetComment(*form.Comment)
@@ -124,6 +128,21 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 				OnlyX(c.Request.Context())
 
 			c.JSON(http.StatusCreated, apiTypes.ToPublicTicket(configValue, ticketValue))
+			if form.Email != nil {
+				var toBeEmailedPassword *string = nil
+				if form.EmailPassword {
+					toBeEmailedPassword = &form.Password
+				}
+				mail.SendFileSharedNotification(
+					c,
+					configValue,
+					*form.Email,
+					form.ReceiverLang,
+					ticketValue,
+					toBeEmailedPassword,
+				)
+			}
+
 			tx.Commit()
 		} else {
 			c.AbortWithError(422, err)

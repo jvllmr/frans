@@ -77,6 +77,7 @@ var (
 		{Name: "expiry_days_since_last_download", Type: field.TypeUint8},
 		{Name: "expiry_total_downloads", Type: field.TypeUint8},
 		{Name: "email_on_download", Type: field.TypeString, Nullable: true},
+		{Name: "creator_lang", Type: field.TypeString, Default: "en"},
 		{Name: "user_tickets", Type: field.TypeUUID, Nullable: true},
 	}
 	// TicketsTable holds the schema information for the "tickets" table.
@@ -87,7 +88,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tickets_users_tickets",
-				Columns:    []*schema.Column{TicketsColumns[10]},
+				Columns:    []*schema.Column{TicketsColumns[11]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

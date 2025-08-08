@@ -1,3 +1,5 @@
 
 [build]
-exclude_dir = ["assets", "tmp", "vendor", "testdata", "client", "public", "build", "scripts", "dist", "node_modules"]
+pre_cmd = ["cp -r locales/ pkg/mail/"]
+exclude_dir = ["assets", "tmp", "vendor", "testdata", "client", "public", "build", "scripts", "dist", "node_modules", "pkg/mail/locales"]
+include_ext = ["go", "tpl", "tmpl", "html", "json"]

@@ -1686,6 +1686,7 @@ type TicketMutation struct {
 	expiry_total_downloads             *uint8
 	addexpiry_total_downloads          *int8
 	email_on_download                  *string
+	creator_lang                       *string
 	clearedFields                      map[string]struct{}
 	files                              map[uuid.UUID]struct{}
 	removedfiles                       map[uuid.UUID]struct{}
@@ -2214,6 +2215,42 @@ func (m *TicketMutation) ResetEmailOnDownload() {
 	delete(m.clearedFields, ticket.FieldEmailOnDownload)
 }
 
+// SetCreatorLang sets the "creator_lang" field.
+func (m *TicketMutation) SetCreatorLang(s string) {
+	m.creator_lang = &s
+}
+
+// CreatorLang returns the value of the "creator_lang" field in the mutation.
+func (m *TicketMutation) CreatorLang() (r string, exists bool) {
+	v := m.creator_lang
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatorLang returns the old "creator_lang" field's value of the Ticket entity.
+// If the Ticket object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TicketMutation) OldCreatorLang(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatorLang is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatorLang requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatorLang: %w", err)
+	}
+	return oldValue.CreatorLang, nil
+}
+
+// ResetCreatorLang resets all changes to the "creator_lang" field.
+func (m *TicketMutation) ResetCreatorLang() {
+	m.creator_lang = nil
+}
+
 // AddFileIDs adds the "files" edge to the File entity by ids.
 func (m *TicketMutation) AddFileIDs(ids ...uuid.UUID) {
 	if m.files == nil {
@@ -2395,7 +2432,7 @@ func (m *TicketMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TicketMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.comment != nil {
 		fields = append(fields, ticket.FieldComment)
 	}
@@ -2423,6 +2460,9 @@ func (m *TicketMutation) Fields() []string {
 	if m.email_on_download != nil {
 		fields = append(fields, ticket.FieldEmailOnDownload)
 	}
+	if m.creator_lang != nil {
+		fields = append(fields, ticket.FieldCreatorLang)
+	}
 	return fields
 }
 
@@ -2449,6 +2489,8 @@ func (m *TicketMutation) Field(name string) (ent.Value, bool) {
 		return m.ExpiryTotalDownloads()
 	case ticket.FieldEmailOnDownload:
 		return m.EmailOnDownload()
+	case ticket.FieldCreatorLang:
+		return m.CreatorLang()
 	}
 	return nil, false
 }
@@ -2476,6 +2518,8 @@ func (m *TicketMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldExpiryTotalDownloads(ctx)
 	case ticket.FieldEmailOnDownload:
 		return m.OldEmailOnDownload(ctx)
+	case ticket.FieldCreatorLang:
+		return m.OldCreatorLang(ctx)
 	}
 	return nil, fmt.Errorf("unknown Ticket field %s", name)
 }
@@ -2547,6 +2591,13 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmailOnDownload(v)
+		return nil
+	case ticket.FieldCreatorLang:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatorLang(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Ticket field %s", name)
@@ -2677,6 +2728,9 @@ func (m *TicketMutation) ResetField(name string) error {
 		return nil
 	case ticket.FieldEmailOnDownload:
 		m.ResetEmailOnDownload()
+		return nil
+	case ticket.FieldCreatorLang:
+		m.ResetCreatorLang()
 		return nil
 	}
 	return fmt.Errorf("unknown Ticket field %s", name)

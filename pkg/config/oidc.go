@@ -133,16 +133,7 @@ func InitOIDC(config Config) {
 }
 
 func buildRedirectURL(config Config, request *http.Request) string {
-	proto := "http"
-	if request.TLS != nil {
-		proto = "https"
-	}
-	host := request.Host
-	patchedRootPath := config.RootPath
-	if len(patchedRootPath) == 0 {
-		patchedRootPath = "/"
-	}
-	return fmt.Sprintf("%s://%s%s/api/auth/callback", proto, host, patchedRootPath)
+	return fmt.Sprintf("%s/api/auth/callback", GetBaseURL(config, request))
 }
 
 func CreateOauth2Config(configValue Config, request *http.Request) oauth2.Config {

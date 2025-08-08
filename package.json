@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && go build",
+    "build": "tsc -b && vite build && cp -r locales/ pkg/mail/ && go build",
     "lint": "eslint .",
     "preview": "vite preview",
     "dev:go": "go run -mod=mod github.com/air-verse/air",

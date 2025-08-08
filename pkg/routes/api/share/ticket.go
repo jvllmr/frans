@@ -11,6 +11,7 @@ import (
 	"github.com/jvllmr/frans/pkg/config"
 	"github.com/jvllmr/frans/pkg/ent"
 	"github.com/jvllmr/frans/pkg/ent/ticket"
+	"github.com/jvllmr/frans/pkg/mail"
 	apiTypes "github.com/jvllmr/frans/pkg/routes/api/types"
 
 	"github.com/jvllmr/frans/pkg/util"
@@ -99,6 +100,17 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config) {
 			SaveX(c.Request.Context())
 		filePath := util.GetFilesFilePath(configValue, fileValue.Sha512)
 		c.FileAttachment(filePath, fileValue.Name)
+		ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
+		if ticketValue.EmailOnDownload != nil &&
+			(fileValue.LastDownload == nil || fileValue.LastDownload.Before(ticketValue.CreatedAt)) {
+			mail.SendFileDownloadNotification(
+				c,
+				configValue,
+				*ticketValue.EmailOnDownload,
+				ticketValue,
+				fileValue,
+			)
+		}
 	})
 
 }

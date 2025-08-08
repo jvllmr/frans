@@ -31,7 +31,11 @@ func FileLifecycleTask(configValue config.Config) {
 		}
 		if !skip {
 			filePath := util.GetFilesFilePath(configValue, fileValue.Sha512)
-			_ = os.Remove(filePath)
+			err := os.Remove(filePath)
+			if err != nil {
+				slog.Error("Could not delete file", "file", filePath, "err", err)
+				continue
+			}
 			config.DBClient.File.DeleteOne(fileValue).ExecX(context.Background())
 			deletedCount += 1
 		}

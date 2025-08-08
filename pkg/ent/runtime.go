@@ -27,6 +27,10 @@ func init() {
 	ticketDescCreatedAt := ticketFields[5].Descriptor()
 	// ticket.DefaultCreatedAt holds the default value on creation for the created_at field.
 	ticket.DefaultCreatedAt = ticketDescCreatedAt.Default.(func() time.Time)
+	// ticketDescCreatorLang is the schema descriptor for creator_lang field.
+	ticketDescCreatorLang := ticketFields[10].Descriptor()
+	// ticket.DefaultCreatorLang holds the default value on creation for the creator_lang field.
+	ticket.DefaultCreatorLang = ticketDescCreatorLang.Default.(string)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

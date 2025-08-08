@@ -32,6 +32,8 @@ const (
 	FieldExpiryTotalDownloads = "expiry_total_downloads"
 	// FieldEmailOnDownload holds the string denoting the email_on_download field in the database.
 	FieldEmailOnDownload = "email_on_download"
+	// FieldCreatorLang holds the string denoting the creator_lang field in the database.
+	FieldCreatorLang = "creator_lang"
 	// EdgeFiles holds the string denoting the files edge name in mutations.
 	EdgeFiles = "files"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
@@ -73,6 +75,7 @@ var Columns = []string{
 	FieldExpiryDaysSinceLastDownload,
 	FieldExpiryTotalDownloads,
 	FieldEmailOnDownload,
+	FieldCreatorLang,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tickets"
@@ -105,6 +108,8 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultCreatorLang holds the default value on creation for the "creator_lang" field.
+	DefaultCreatorLang string
 )
 
 // OrderOption defines the ordering options for the Ticket queries.
@@ -158,6 +163,11 @@ func ByExpiryTotalDownloads(opts ...sql.OrderTermOption) OrderOption {
 // ByEmailOnDownload orders the results by the email_on_download field.
 func ByEmailOnDownload(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmailOnDownload, opts...).ToFunc()
+}
+
+// ByCreatorLang orders the results by the creator_lang field.
+func ByCreatorLang(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatorLang, opts...).ToFunc()
 }
 
 // ByFilesCount orders the results by files count.
