@@ -1,18 +1,24 @@
 import {
   Box,
   Button,
+  Center,
   Container,
   Divider,
   Flex,
   MantineProvider,
   Paper,
   SegmentedControl,
+  Text,
   Title,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-import { QueryClientProvider, useQuery } from "@tanstack/react-query";
+import {
+  QueryClientProvider,
+  queryOptions,
+  useQuery,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRoute,
@@ -22,6 +28,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { isAxiosError } from "axios";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
@@ -63,9 +70,51 @@ const hiddenTabTitles: TabTitles = {
   "/share/ticket/$ticketId": "ticketShare",
 };
 
+const cyclicMeQueryOptions = queryOptions({
+  ...meQueryOptions,
+  refetchInterval: 30_000, // 30 seconds
+  refetchIntervalInBackground: true,
+});
+
+function useDeepestMatch() {
+  return useChildMatches({ select: (m) => m.at(-1) });
+}
+
+function useAuthRequired() {
+  const deepestMatch = useDeepestMatch();
+  return !!deepestMatch && Object.keys(tabTitles).includes(deepestMatch.id);
+}
+
+function AuthGuard({ children }: { children: React.ReactNode }) {
+  const authRequired = useAuthRequired();
+  const { t } = useTranslation();
+  const { error } = useQuery(cyclicMeQueryOptions);
+
+  if (authRequired && error && isAxiosError(error) && error.status === 401) {
+    return (
+      <>
+        <Center>
+          <Text fw="bold">{t("session_expired")}</Text>
+        </Center>
+        <Center>
+          <Button
+            onClick={() => {
+              window.location.reload();
+            }}
+          >
+            {t("session_renew")}
+          </Button>
+        </Center>
+      </>
+    );
+  }
+
+  return children;
+}
+
 function TabControls() {
   const { t } = useTranslation("tabs");
-  const deepestMatch = useChildMatches({ select: (m) => m.at(-1) });
+  const authRequired = useAuthRequired();
   const data = useMemo(
     () =>
       Object.entries(tabTitles).map(([value, label]) => ({
@@ -75,12 +124,9 @@ function TabControls() {
     [t],
   );
   const navigate = useNavigate();
+  const deepestMatch = useDeepestMatch();
   const { data: me } = useQuery(meQueryOptions);
-  if (
-    !me &&
-    deepestMatch &&
-    !Object.keys(tabTitles).includes(deepestMatch.id)
-  ) {
+  if (!me && !authRequired) {
     return null;
   }
 
@@ -140,19 +186,20 @@ function RootRoute() {
         <QueryClientProvider client={queryClient}>
           <Container pt={50}>
             <Paper withBorder p="lg" mb="xs">
-              <Flex justify="space-between" p={3}>
-                <LanguageControls />
-                <LogoutButton />
-              </Flex>
-              <Flex p={3}>
-                <TabControls />
-              </Flex>
-              <Box py="sm">
-                <TabTitle />
-                <Divider />
-              </Box>
-
-              <Outlet />
+              <AuthGuard>
+                <Flex justify="space-between" p={3}>
+                  <LanguageControls />
+                  <LogoutButton />
+                </Flex>
+                <Flex p={3}>
+                  <TabControls />
+                </Flex>
+                <Box py="sm">
+                  <TabTitle />
+                  <Divider />
+                </Box>
+                <Outlet />
+              </AuthGuard>
             </Paper>
           </Container>
           <DevTools />

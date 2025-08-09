@@ -2,5 +2,7 @@
   "logout": "Abmelden",
   "upload": "Hochladen",
   "reset": "Zurücksetzen",
-  "generate": "Generieren"
+  "generate": "Generieren",
+  "session_expired": "Ihre Sitzung ist abgelaufen",
+  "session_renew": "Neu anmelden"
 }

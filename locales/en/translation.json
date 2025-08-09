@@ -2,5 +2,7 @@
   "logout": "Logout",
   "upload": "Upload",
   "reset": "Reset",
-  "generate": "Generate"
+  "generate": "Generate",
+  "session_expired": "Your login session expired",
+  "session_renew": "Login again"
 }
