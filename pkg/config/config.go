@@ -11,35 +11,39 @@ import (
 )
 
 type Config struct {
-	DevMode          bool   `mapstructure:"dev_mode"`
-	RootPath         string `mapstructure:"root_path"`
-	Host             string `mapstructure:"host"`
-	Port             uint16 `mapstructure:"port"`
+	DevMode bool `mapstructure:"dev_mode"`
+
+	Host     string `mapstructure:"host"`
+	Port     uint16 `mapstructure:"port"`
+	RootPath string `mapstructure:"root_path"`
+
 	OidcIssuer       string `mapstructure:"oidc_issuer"`
 	OidcClientID     string `mapstructure:"oidc_client_id"`
 	OidcClientSecret string `mapstructure:"oidc_client_secret"`
-	DBType           string `mapstructure:"db_type"`
-	DBHost           string `mapstructure:"db_host"`
-	DBPort           uint16 `mapstructure:"db_port"`
-	DBName           string `mapstructure:"db_name"`
-	DBUser           string `mapstructure:"db_user"`
-	DBPassword       string `mapstructure:"db_password"`
-	AdminGroup       string `mapstructure:"admin_group"`
-	MaxFiles         uint8  `mapstructure:"max_files"`
-	MaxSizes         int64  `mapstructure:"max_sizes"`
-	FilesDir         string `mapstructure:"files_dir"`
+	OidcAdminGroup   string `mapstructure:"oidc_admin_group"`
 
-	DefaultExpiryDaysSinceLastDownload uint8 `mapstructure:"default_expiry_days_since_last_download"`
-	DefaultExpiryTotalDownloads        uint8 `mapstructure:"default_expiry_total_downloads"`
-	DefaultExpiryTotalDays             uint8 `mapstructure:"default_expiry_total_days"`
+	DBType     string `mapstructure:"db_type"`
+	DBHost     string `mapstructure:"db_host"`
+	DBPort     uint16 `mapstructure:"db_port"`
+	DBName     string `mapstructure:"db_name"`
+	DBUser     string `mapstructure:"db_user"`
+	DBPassword string `mapstructure:"db_password"`
 
-	LogJSON bool `mapstructure:"log_json"`
+	FilesDir string `mapstructure:"files_dir"`
+	MaxSizes int64  `mapstructure:"max_sizes"`
+	MaxFiles uint8  `mapstructure:"max_files"`
+
+	DefaultExpiryDaysSinceLastDownload uint8 `mapstructure:"expiry_days_since"`
+	DefaultExpiryTotalDownloads        uint8 `mapstructure:"expiry_total_dl"`
+	DefaultExpiryTotalDays             uint8 `mapstructure:"expiry_total_days"`
 
 	SMTPServer   string  `mapstructure:"smtp_server"`
 	SMTPPort     int     `mapstructure:"smtp_port"`
 	SMTPFrom     string  `mapstructure:"smtp_from"`
 	SMTPUsername *string `mapstructure:"smtp_username"`
 	SMTPPassword *string `mapstructure:"smtp_password"`
+
+	LogJSON bool `mapstructure:"log_json"`
 }
 
 func GetConfig() (Config, error) {
@@ -56,9 +60,9 @@ func GetConfig() (Config, error) {
 	fransConf.SetDefault("max_files", 20)
 	fransConf.SetDefault("max_sizes", 2_000_000_000) // 2GB
 
-	fransConf.SetDefault("default_expiry_days_since_last_download", 7)
-	fransConf.SetDefault("default_expiry_total_downloads", 10)
-	fransConf.SetDefault("default_expiry_total_days", 30)
+	fransConf.SetDefault("expiry_days_since", 7)
+	fransConf.SetDefault("expiry_total_dl", 10)
+	fransConf.SetDefault("expiry_total_days", 30)
 
 	fransConf.SetDefault("db_type", "postgres")
 	fransConf.SetDefault("db_host", "localhost")
@@ -67,7 +71,7 @@ func GetConfig() (Config, error) {
 	fransConf.SetDefault("db_user", "frans")
 	fransConf.SetDefault("db_password", "")
 
-	fransConf.SetDefault("admin_group", "admin")
+	fransConf.SetDefault("oidc_admin_group", "admin")
 
 	fransConf.SetDefault("log_json", false)
 
