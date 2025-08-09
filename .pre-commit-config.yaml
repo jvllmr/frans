@@ -24,7 +24,20 @@ repos:
         types_or:
           - ts
           - tsx
-      - id: gotidy
+      - id: go-fmt
+        name: go fmt
+        entry: go fmt
+        language: system
+        pass_filenames: true
+        types:
+          - go
+      - id: go-vet
+        name: go vet
+        entry: go vet
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: go-tidy
         name: tidy go mod
         entry: go mod tidy
         language: system
