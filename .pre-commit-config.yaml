@@ -1,7 +1,11 @@
 ci:
   skip:
     - eslint
-
+    - prettier
+    - eslint
+    - go-fmt
+    - go-vet
+    - go-tidy
 repos:
   - repo: https://github.com/woodruffw/zizmor-pre-commit
     rev: v1.11.0
