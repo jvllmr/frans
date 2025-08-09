@@ -2,7 +2,10 @@ import {
   Box,
   Button,
   Checkbox,
+  Fieldset,
   Flex,
+  Grid,
+  Group,
   Highlight,
   NumberInput,
   PasswordInput,
@@ -15,11 +18,12 @@ import passwordGenerator from "generate-password-browser";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { zod4Resolver } from "mantine-form-zod-resolver";
+import { useMemo } from "react";
 import { I18nextProvider, useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
 import {
   CreateTicket,
-  createTicketSchema,
+  createTicketSchemaFactory,
   ticketsKey,
   useCreateTicketMutation,
 } from "~/api/ticket";
@@ -36,24 +40,35 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const selectData: { label: string; value: CreateTicket["expiryType"] }[] = [
-  { value: "auto", label: i18n.t("expiry_automatic", { ns: "ticket_new" }) },
-  {
-    value: "single",
-    label: i18n.t("expiry_single_use", { ns: "ticket_new" }),
-  },
-  {
-    value: "none",
-    label: i18n.t("expiry_none", { ns: "ticket_new" }),
-  },
-  {
-    value: "custom",
-    label: i18n.t("expiry_custom", { ns: "ticket_new" }),
-  },
-] as const;
-
 function NewTicketForm() {
   const { t, i18n } = useTranslation();
+
+  const expiryChoices: { label: string; value: CreateTicket["expiryType"] }[] =
+    useMemo(
+      () => [
+        {
+          value: "auto",
+          label: t("expiry_automatic", { ns: "ticket_new" }),
+        },
+        {
+          value: "single",
+          label: t("expiry_single_use", { ns: "ticket_new" }),
+        },
+        {
+          value: "none",
+          label: t("expiry_none", { ns: "ticket_new" }),
+        },
+        {
+          value: "custom",
+          label: t("expiry_custom", { ns: "ticket_new" }),
+        },
+      ],
+      [t],
+    );
+  const translatedCreateTicketSchema = useMemo(
+    () => createTicketSchemaFactory(t),
+    [t],
+  );
 
   const form = useForm<CreateTicket>({
     initialValues: {
@@ -71,7 +86,7 @@ function NewTicketForm() {
       creatorLang: i18n.language as AvailableLanguage,
       files: [],
     },
-    validate: zod4Resolver(createTicketSchema),
+    validate: zod4Resolver(translatedCreateTicketSchema),
   });
   const progressHandle = useProgressHandle();
   const createTicketMutation = useCreateTicketMutation(progressHandle);
@@ -89,80 +104,119 @@ function NewTicketForm() {
       })}
     >
       <Box p="lg">
-        <SimpleGrid>
+        <SimpleGrid spacing="xl">
+          <Box mb="sm">
+            <FilesInput {...form.getInputProps("files")} />
+          </Box>
           <NullTextarea
             {...form.getInputProps("comment")}
             label={t("label_comment")}
+            resize="vertical"
           />
-          <NullTextInput
-            {...form.getInputProps("email")}
-            label={t("label_email")}
-          />
-          <LangInput {...form.getInputProps("receiverLang")} />
-          <PasswordInput
-            {...form.getInputProps("password")}
-            label={t("label_password")}
-            withAsterisk
-            required
-          />
-          <Button
-            onClick={() => {
-              form.setFieldValue(
-                "password",
-                passwordGenerator.generate({
-                  length: 12,
-                  strict: true,
-                  numbers: true,
-                  excludeSimilarCharacters: true,
-                }),
-              );
-            }}
-          >
-            {t("generate", { ns: "translation" })}
-          </Button>
-          <Checkbox
-            {...form.getInputProps("emailPassword", { type: "checkbox" })}
-            label={
-              <Highlight highlight={t("label_password_email_highlight")}>
-                {t("label_password_email")}
-              </Highlight>
-            }
-          />
-          <Select
-            {...form.getInputProps("expiryType")}
-            data={selectData}
-            label={t("label_expiry")}
-          />
-          {form.values.expiryType === "custom" ? (
-            <>
-              <NumberInput
-                {...form.getInputProps("expiryTotalDays")}
-                label={t("label_expiry_total_days")}
+          <Fieldset>
+            <Group w="100%" align="start">
+              <NullTextInput
+                {...form.getInputProps("email")}
+                label={t("label_email")}
+                w="50%"
               />
-              <NumberInput
-                {...form.getInputProps("expiryTotalDays")}
-                label={t("label_expiry_last_download")}
+              <LangInput
+                {...form.getInputProps("receiverLang")}
+                label={t("label_receiver_lang")}
+                required
+                w="25%"
               />
-              <NumberInput
-                {...form.getInputProps("expiryTotalDownloads")}
-                label={t("label_expiry_total_downloads")}
+            </Group>
+          </Fieldset>
+          <Fieldset>
+            <Group w="100%" mb="xs" align="start">
+              <PasswordInput
+                {...form.getInputProps("password")}
+                label={t("label_password")}
+                withAsterisk
+                required
+                w="50%"
               />
-            </>
-          ) : null}
-          <NullTextInput
-            {...form.getInputProps("emailOnDownload")}
-            label={t("label_notify_email")}
-          />
-          <Button
-            onClick={() => {
-              if (me) {
-                form.setFieldValue("emailOnDownload", me.email);
+              <Button
+                mt="lg"
+                onClick={() => {
+                  form.setFieldValue(
+                    "password",
+                    passwordGenerator.generate({
+                      length: 12,
+                      strict: true,
+                      numbers: true,
+                      excludeSimilarCharacters: true,
+                    }),
+                  );
+                }}
+              >
+                {t("generate", { ns: "translation" })}
+              </Button>
+            </Group>
+            <Checkbox
+              {...form.getInputProps("emailPassword", { type: "checkbox" })}
+              label={
+                <Highlight highlight={t("label_password_email_highlight")}>
+                  {t("label_password_email")}
+                </Highlight>
               }
-            }}
-          >
-            {t("label_own_email")}
-          </Button>
-          <LangInput {...form.getInputProps("receiverLang")} />
+            />
+          </Fieldset>
+
+          <Fieldset>
+            <Select
+              {...form.getInputProps("expiryType")}
+              data={expiryChoices}
+              label={t("label_expiry")}
+            />
+            {form.values.expiryType === "custom" ? (
+              <Group mt="xs" align="end" grow>
+                <NumberInput
+                  {...form.getInputProps("expiryTotalDays")}
+                  label={t("label_expiry_total_days")}
+                />
+                <NumberInput
+                  {...form.getInputProps("expiryDaysSinceLastDownload")}
+                  label={t("label_expiry_last_download")}
+                />
+                <NumberInput
+                  {...form.getInputProps("expiryTotalDownloads")}
+                  label={t("label_expiry_total_downloads")}
+                />
+              </Group>
+            ) : null}
+          </Fieldset>
+          <Fieldset>
+            <Grid>
+              <Grid.Col span={12}>
+                <NullTextInput
+                  {...form.getInputProps("emailOnDownload")}
+                  label={t("label_notify_email")}
+                />
+              </Grid.Col>
+              <Grid.Col span={6}>
+                <Button
+                  fullWidth
+                  onClick={() => {
+                    if (me) {
+                      form.setFieldValue("emailOnDownload", me.email);
+                    }
+                  }}
+                  mt="lg"
+                >
+                  {t("label_own_email")}
+                </Button>
+              </Grid.Col>
+              <Grid.Col span={6}>
+                <LangInput
+                  {...form.getInputProps("creatorLang")}
+                  label={t("label_your_lang")}
+                  required
+                />
+              </Grid.Col>
+            </Grid>
+          </Fieldset>
           <Flex justify="space-evenly">
             <Button type="submit" loading={createTicketMutation.isPending}>
               {t("upload", { ns: "translation" })}
@@ -176,7 +230,7 @@ function NewTicketForm() {
             </Button>
           </Flex>
           <ProgressBar state={progressHandle.state} />
-          <FilesInput {...form.getInputProps("files")} />
+
           <FormDebugInfo form={form} />
         </SimpleGrid>
       </Box>

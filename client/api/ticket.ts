@@ -18,22 +18,25 @@ function v1TicketUrl(url: string) {
 
 export const ticketExpiryType = z.enum(["auto", "single", "none", "custom"]);
 
-export const createTicketSchema = z.object({
-  comment: z.string().nullable(),
-  email: z.email(i18n.t("email", { ns: "validation" })).nullable(),
-  password: z
-    .string()
-    .min(12, i18n.t("min_length", { ns: "validation" }).replace("#", "12")),
-  emailPassword: z.boolean(),
-  expiryType: ticketExpiryType,
-  expiryTotalDays: z.int(),
-  expiryDaysSinceLastDownload: z.int(),
-  expiryTotalDownloads: z.int(),
-  emailOnDownload: z.email(i18n.t("email", { ns: "validation" })).nullable(),
-  files: z.file().array().min(1),
-  creatorLang: z.enum(availableLanguages),
-  receiverLang: z.enum(availableLanguages),
-});
+export const createTicketSchemaFactory = (t: typeof i18n.t) =>
+  z.object({
+    comment: z.string().nullable(),
+    email: z.email(t("email", { ns: "validation" })).nullable(),
+    password: z
+      .string()
+      .min(12, i18n.t("min_length", { ns: "validation" }).replace("#", "12")),
+    emailPassword: z.boolean(),
+    expiryType: ticketExpiryType,
+    expiryTotalDays: z.int(),
+    expiryDaysSinceLastDownload: z.int(),
+    expiryTotalDownloads: z.int(),
+    emailOnDownload: z.email(i18n.t("email", { ns: "validation" })).nullable(),
+    files: z.file().array().min(1),
+    creatorLang: z.enum(availableLanguages),
+    receiverLang: z.enum(availableLanguages),
+  });
+
+export const createTicketSchema = createTicketSchemaFactory(i18n.t);
 export type CreateTicket = z.infer<typeof createTicketSchema>;
 
 export const ticketSchema = z.object({

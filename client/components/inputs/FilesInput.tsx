@@ -1,4 +1,12 @@
-import { Center, Flex, Grid, Paper, Stack, Text } from "@mantine/core";
+import {
+  Center,
+  CloseButton,
+  Flex,
+  Grid,
+  Paper,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { Dropzone, FileWithPath } from "@mantine/dropzone";
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -38,8 +46,9 @@ export function FilesInput({ onChange, value }: FilesInputProps) {
         onChange(files);
         setFilesCache(files);
       }}
+      mih={200}
     >
-      <Paper withBorder mih={150} p="xl">
+      <Paper withBorder mih={150} p="xs">
         <Dropzone.Idle>
           {value?.length === 0 ? (
             <Flex w="100%" h="100%" justify="center" align="center">
@@ -48,9 +57,21 @@ export function FilesInput({ onChange, value }: FilesInputProps) {
           ) : null}
         </Dropzone.Idle>
         <Grid gutter="xl">
-          {value?.map((fileWithPath) => (
+          {value?.map((fileWithPath, filesIndex) => (
             <Grid.Col span={3} key={fileWithPath.path}>
               <FileCard>
+                <Flex direction="row-reverse">
+                  <CloseButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const newFiles = filesCache.filter(
+                        (_, index) => index !== filesIndex,
+                      );
+                      onChange(newFiles);
+                      setFilesCache(newFiles);
+                    }}
+                  />
+                </Flex>
                 <Stack gap={5}>
                   <Center>
                     <FileIcon size={32} filename={fileWithPath.name} />

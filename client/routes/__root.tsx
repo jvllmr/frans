@@ -138,7 +138,7 @@ function RootRoute() {
     <>
       <MantineProvider>
         <QueryClientProvider client={queryClient}>
-          <Container pt={100}>
+          <Container pt={50}>
             <Paper withBorder p="lg" mb="xs">
               <Flex justify="space-between" p={3}>
                 <LanguageControls />
