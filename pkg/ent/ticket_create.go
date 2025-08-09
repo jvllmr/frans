@@ -25,166 +25,166 @@ type TicketCreate struct {
 }
 
 // SetComment sets the "comment" field.
-func (tc *TicketCreate) SetComment(s string) *TicketCreate {
-	tc.mutation.SetComment(s)
-	return tc
+func (_c *TicketCreate) SetComment(v string) *TicketCreate {
+	_c.mutation.SetComment(v)
+	return _c
 }
 
 // SetNillableComment sets the "comment" field if the given value is not nil.
-func (tc *TicketCreate) SetNillableComment(s *string) *TicketCreate {
-	if s != nil {
-		tc.SetComment(*s)
+func (_c *TicketCreate) SetNillableComment(v *string) *TicketCreate {
+	if v != nil {
+		_c.SetComment(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetExpiryType sets the "expiryType" field.
-func (tc *TicketCreate) SetExpiryType(s string) *TicketCreate {
-	tc.mutation.SetExpiryType(s)
-	return tc
+func (_c *TicketCreate) SetExpiryType(v string) *TicketCreate {
+	_c.mutation.SetExpiryType(v)
+	return _c
 }
 
 // SetHashedPassword sets the "hashed_password" field.
-func (tc *TicketCreate) SetHashedPassword(s string) *TicketCreate {
-	tc.mutation.SetHashedPassword(s)
-	return tc
+func (_c *TicketCreate) SetHashedPassword(v string) *TicketCreate {
+	_c.mutation.SetHashedPassword(v)
+	return _c
 }
 
 // SetSalt sets the "salt" field.
-func (tc *TicketCreate) SetSalt(s string) *TicketCreate {
-	tc.mutation.SetSalt(s)
-	return tc
+func (_c *TicketCreate) SetSalt(v string) *TicketCreate {
+	_c.mutation.SetSalt(v)
+	return _c
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (tc *TicketCreate) SetCreatedAt(t time.Time) *TicketCreate {
-	tc.mutation.SetCreatedAt(t)
-	return tc
+func (_c *TicketCreate) SetCreatedAt(v time.Time) *TicketCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tc *TicketCreate) SetNillableCreatedAt(t *time.Time) *TicketCreate {
-	if t != nil {
-		tc.SetCreatedAt(*t)
+func (_c *TicketCreate) SetNillableCreatedAt(v *time.Time) *TicketCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetExpiryTotalDays sets the "expiry_total_days" field.
-func (tc *TicketCreate) SetExpiryTotalDays(u uint8) *TicketCreate {
-	tc.mutation.SetExpiryTotalDays(u)
-	return tc
+func (_c *TicketCreate) SetExpiryTotalDays(v uint8) *TicketCreate {
+	_c.mutation.SetExpiryTotalDays(v)
+	return _c
 }
 
 // SetExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field.
-func (tc *TicketCreate) SetExpiryDaysSinceLastDownload(u uint8) *TicketCreate {
-	tc.mutation.SetExpiryDaysSinceLastDownload(u)
-	return tc
+func (_c *TicketCreate) SetExpiryDaysSinceLastDownload(v uint8) *TicketCreate {
+	_c.mutation.SetExpiryDaysSinceLastDownload(v)
+	return _c
 }
 
 // SetExpiryTotalDownloads sets the "expiry_total_downloads" field.
-func (tc *TicketCreate) SetExpiryTotalDownloads(u uint8) *TicketCreate {
-	tc.mutation.SetExpiryTotalDownloads(u)
-	return tc
+func (_c *TicketCreate) SetExpiryTotalDownloads(v uint8) *TicketCreate {
+	_c.mutation.SetExpiryTotalDownloads(v)
+	return _c
 }
 
 // SetEmailOnDownload sets the "email_on_download" field.
-func (tc *TicketCreate) SetEmailOnDownload(s string) *TicketCreate {
-	tc.mutation.SetEmailOnDownload(s)
-	return tc
+func (_c *TicketCreate) SetEmailOnDownload(v string) *TicketCreate {
+	_c.mutation.SetEmailOnDownload(v)
+	return _c
 }
 
 // SetNillableEmailOnDownload sets the "email_on_download" field if the given value is not nil.
-func (tc *TicketCreate) SetNillableEmailOnDownload(s *string) *TicketCreate {
-	if s != nil {
-		tc.SetEmailOnDownload(*s)
+func (_c *TicketCreate) SetNillableEmailOnDownload(v *string) *TicketCreate {
+	if v != nil {
+		_c.SetEmailOnDownload(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetCreatorLang sets the "creator_lang" field.
-func (tc *TicketCreate) SetCreatorLang(s string) *TicketCreate {
-	tc.mutation.SetCreatorLang(s)
-	return tc
+func (_c *TicketCreate) SetCreatorLang(v string) *TicketCreate {
+	_c.mutation.SetCreatorLang(v)
+	return _c
 }
 
 // SetNillableCreatorLang sets the "creator_lang" field if the given value is not nil.
-func (tc *TicketCreate) SetNillableCreatorLang(s *string) *TicketCreate {
-	if s != nil {
-		tc.SetCreatorLang(*s)
+func (_c *TicketCreate) SetNillableCreatorLang(v *string) *TicketCreate {
+	if v != nil {
+		_c.SetCreatorLang(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (tc *TicketCreate) SetID(u uuid.UUID) *TicketCreate {
-	tc.mutation.SetID(u)
-	return tc
+func (_c *TicketCreate) SetID(v uuid.UUID) *TicketCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // AddFileIDs adds the "files" edge to the File entity by IDs.
-func (tc *TicketCreate) AddFileIDs(ids ...uuid.UUID) *TicketCreate {
-	tc.mutation.AddFileIDs(ids...)
-	return tc
+func (_c *TicketCreate) AddFileIDs(ids ...uuid.UUID) *TicketCreate {
+	_c.mutation.AddFileIDs(ids...)
+	return _c
 }
 
 // AddFiles adds the "files" edges to the File entity.
-func (tc *TicketCreate) AddFiles(f ...*File) *TicketCreate {
-	ids := make([]uuid.UUID, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+func (_c *TicketCreate) AddFiles(v ...*File) *TicketCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tc.AddFileIDs(ids...)
+	return _c.AddFileIDs(ids...)
 }
 
 // SetOwnerID sets the "owner" edge to the User entity by ID.
-func (tc *TicketCreate) SetOwnerID(id uuid.UUID) *TicketCreate {
-	tc.mutation.SetOwnerID(id)
-	return tc
+func (_c *TicketCreate) SetOwnerID(id uuid.UUID) *TicketCreate {
+	_c.mutation.SetOwnerID(id)
+	return _c
 }
 
 // SetNillableOwnerID sets the "owner" edge to the User entity by ID if the given value is not nil.
-func (tc *TicketCreate) SetNillableOwnerID(id *uuid.UUID) *TicketCreate {
+func (_c *TicketCreate) SetNillableOwnerID(id *uuid.UUID) *TicketCreate {
 	if id != nil {
-		tc = tc.SetOwnerID(*id)
+		_c = _c.SetOwnerID(*id)
 	}
-	return tc
+	return _c
 }
 
 // SetOwner sets the "owner" edge to the User entity.
-func (tc *TicketCreate) SetOwner(u *User) *TicketCreate {
-	return tc.SetOwnerID(u.ID)
+func (_c *TicketCreate) SetOwner(v *User) *TicketCreate {
+	return _c.SetOwnerID(v.ID)
 }
 
 // AddShareaccesstokenIDs adds the "shareaccesstokens" edge to the ShareAccessToken entity by IDs.
-func (tc *TicketCreate) AddShareaccesstokenIDs(ids ...string) *TicketCreate {
-	tc.mutation.AddShareaccesstokenIDs(ids...)
-	return tc
+func (_c *TicketCreate) AddShareaccesstokenIDs(ids ...string) *TicketCreate {
+	_c.mutation.AddShareaccesstokenIDs(ids...)
+	return _c
 }
 
 // AddShareaccesstokens adds the "shareaccesstokens" edges to the ShareAccessToken entity.
-func (tc *TicketCreate) AddShareaccesstokens(s ...*ShareAccessToken) *TicketCreate {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_c *TicketCreate) AddShareaccesstokens(v ...*ShareAccessToken) *TicketCreate {
+	ids := make([]string, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tc.AddShareaccesstokenIDs(ids...)
+	return _c.AddShareaccesstokenIDs(ids...)
 }
 
 // Mutation returns the TicketMutation object of the builder.
-func (tc *TicketCreate) Mutation() *TicketMutation {
-	return tc.mutation
+func (_c *TicketCreate) Mutation() *TicketMutation {
+	return _c.mutation
 }
 
 // Save creates the Ticket in the database.
-func (tc *TicketCreate) Save(ctx context.Context) (*Ticket, error) {
-	tc.defaults()
-	return withHooks(ctx, tc.sqlSave, tc.mutation, tc.hooks)
+func (_c *TicketCreate) Save(ctx context.Context) (*Ticket, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (tc *TicketCreate) SaveX(ctx context.Context) *Ticket {
-	v, err := tc.Save(ctx)
+func (_c *TicketCreate) SaveX(ctx context.Context) *Ticket {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -192,65 +192,65 @@ func (tc *TicketCreate) SaveX(ctx context.Context) *Ticket {
 }
 
 // Exec executes the query.
-func (tc *TicketCreate) Exec(ctx context.Context) error {
-	_, err := tc.Save(ctx)
+func (_c *TicketCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tc *TicketCreate) ExecX(ctx context.Context) {
-	if err := tc.Exec(ctx); err != nil {
+func (_c *TicketCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tc *TicketCreate) defaults() {
-	if _, ok := tc.mutation.CreatedAt(); !ok {
+func (_c *TicketCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := ticket.DefaultCreatedAt()
-		tc.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := tc.mutation.CreatorLang(); !ok {
+	if _, ok := _c.mutation.CreatorLang(); !ok {
 		v := ticket.DefaultCreatorLang
-		tc.mutation.SetCreatorLang(v)
+		_c.mutation.SetCreatorLang(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tc *TicketCreate) check() error {
-	if _, ok := tc.mutation.ExpiryType(); !ok {
+func (_c *TicketCreate) check() error {
+	if _, ok := _c.mutation.ExpiryType(); !ok {
 		return &ValidationError{Name: "expiryType", err: errors.New(`ent: missing required field "Ticket.expiryType"`)}
 	}
-	if _, ok := tc.mutation.HashedPassword(); !ok {
+	if _, ok := _c.mutation.HashedPassword(); !ok {
 		return &ValidationError{Name: "hashed_password", err: errors.New(`ent: missing required field "Ticket.hashed_password"`)}
 	}
-	if _, ok := tc.mutation.Salt(); !ok {
+	if _, ok := _c.mutation.Salt(); !ok {
 		return &ValidationError{Name: "salt", err: errors.New(`ent: missing required field "Ticket.salt"`)}
 	}
-	if _, ok := tc.mutation.CreatedAt(); !ok {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Ticket.created_at"`)}
 	}
-	if _, ok := tc.mutation.ExpiryTotalDays(); !ok {
+	if _, ok := _c.mutation.ExpiryTotalDays(); !ok {
 		return &ValidationError{Name: "expiry_total_days", err: errors.New(`ent: missing required field "Ticket.expiry_total_days"`)}
 	}
-	if _, ok := tc.mutation.ExpiryDaysSinceLastDownload(); !ok {
+	if _, ok := _c.mutation.ExpiryDaysSinceLastDownload(); !ok {
 		return &ValidationError{Name: "expiry_days_since_last_download", err: errors.New(`ent: missing required field "Ticket.expiry_days_since_last_download"`)}
 	}
-	if _, ok := tc.mutation.ExpiryTotalDownloads(); !ok {
+	if _, ok := _c.mutation.ExpiryTotalDownloads(); !ok {
 		return &ValidationError{Name: "expiry_total_downloads", err: errors.New(`ent: missing required field "Ticket.expiry_total_downloads"`)}
 	}
-	if _, ok := tc.mutation.CreatorLang(); !ok {
+	if _, ok := _c.mutation.CreatorLang(); !ok {
 		return &ValidationError{Name: "creator_lang", err: errors.New(`ent: missing required field "Ticket.creator_lang"`)}
 	}
 	return nil
 }
 
-func (tc *TicketCreate) sqlSave(ctx context.Context) (*Ticket, error) {
-	if err := tc.check(); err != nil {
+func (_c *TicketCreate) sqlSave(ctx context.Context) (*Ticket, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := tc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, tc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -263,61 +263,61 @@ func (tc *TicketCreate) sqlSave(ctx context.Context) (*Ticket, error) {
 			return nil, err
 		}
 	}
-	tc.mutation.id = &_node.ID
-	tc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
+func (_c *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Ticket{config: tc.config}
+		_node = &Ticket{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(ticket.Table, sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID))
 	)
-	if id, ok := tc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := tc.mutation.Comment(); ok {
+	if value, ok := _c.mutation.Comment(); ok {
 		_spec.SetField(ticket.FieldComment, field.TypeString, value)
 		_node.Comment = &value
 	}
-	if value, ok := tc.mutation.ExpiryType(); ok {
+	if value, ok := _c.mutation.ExpiryType(); ok {
 		_spec.SetField(ticket.FieldExpiryType, field.TypeString, value)
 		_node.ExpiryType = value
 	}
-	if value, ok := tc.mutation.HashedPassword(); ok {
+	if value, ok := _c.mutation.HashedPassword(); ok {
 		_spec.SetField(ticket.FieldHashedPassword, field.TypeString, value)
 		_node.HashedPassword = value
 	}
-	if value, ok := tc.mutation.Salt(); ok {
+	if value, ok := _c.mutation.Salt(); ok {
 		_spec.SetField(ticket.FieldSalt, field.TypeString, value)
 		_node.Salt = value
 	}
-	if value, ok := tc.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(ticket.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := tc.mutation.ExpiryTotalDays(); ok {
+	if value, ok := _c.mutation.ExpiryTotalDays(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDays, field.TypeUint8, value)
 		_node.ExpiryTotalDays = value
 	}
-	if value, ok := tc.mutation.ExpiryDaysSinceLastDownload(); ok {
+	if value, ok := _c.mutation.ExpiryDaysSinceLastDownload(); ok {
 		_spec.SetField(ticket.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
 		_node.ExpiryDaysSinceLastDownload = value
 	}
-	if value, ok := tc.mutation.ExpiryTotalDownloads(); ok {
+	if value, ok := _c.mutation.ExpiryTotalDownloads(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDownloads, field.TypeUint8, value)
 		_node.ExpiryTotalDownloads = value
 	}
-	if value, ok := tc.mutation.EmailOnDownload(); ok {
+	if value, ok := _c.mutation.EmailOnDownload(); ok {
 		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
 		_node.EmailOnDownload = &value
 	}
-	if value, ok := tc.mutation.CreatorLang(); ok {
+	if value, ok := _c.mutation.CreatorLang(); ok {
 		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)
 		_node.CreatorLang = value
 	}
-	if nodes := tc.mutation.FilesIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.FilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -333,7 +333,7 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := tc.mutation.OwnerIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -350,7 +350,7 @@ func (tc *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 		_node.user_tickets = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := tc.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -377,16 +377,16 @@ type TicketCreateBulk struct {
 }
 
 // Save creates the Ticket entities in the database.
-func (tcb *TicketCreateBulk) Save(ctx context.Context) ([]*Ticket, error) {
-	if tcb.err != nil {
-		return nil, tcb.err
+func (_c *TicketCreateBulk) Save(ctx context.Context) ([]*Ticket, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(tcb.builders))
-	nodes := make([]*Ticket, len(tcb.builders))
-	mutators := make([]Mutator, len(tcb.builders))
-	for i := range tcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Ticket, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := tcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*TicketMutation)
@@ -400,11 +400,11 @@ func (tcb *TicketCreateBulk) Save(ctx context.Context) ([]*Ticket, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, tcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, tcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -424,7 +424,7 @@ func (tcb *TicketCreateBulk) Save(ctx context.Context) ([]*Ticket, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, tcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -432,8 +432,8 @@ func (tcb *TicketCreateBulk) Save(ctx context.Context) ([]*Ticket, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tcb *TicketCreateBulk) SaveX(ctx context.Context) []*Ticket {
-	v, err := tcb.Save(ctx)
+func (_c *TicketCreateBulk) SaveX(ctx context.Context) []*Ticket {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -441,14 +441,14 @@ func (tcb *TicketCreateBulk) SaveX(ctx context.Context) []*Ticket {
 }
 
 // Exec executes the query.
-func (tcb *TicketCreateBulk) Exec(ctx context.Context) error {
-	_, err := tcb.Save(ctx)
+func (_c *TicketCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcb *TicketCreateBulk) ExecX(ctx context.Context) {
-	if err := tcb.Exec(ctx); err != nil {
+func (_c *TicketCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

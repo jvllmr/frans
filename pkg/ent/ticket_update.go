@@ -27,294 +27,294 @@ type TicketUpdate struct {
 }
 
 // Where appends a list predicates to the TicketUpdate builder.
-func (tu *TicketUpdate) Where(ps ...predicate.Ticket) *TicketUpdate {
-	tu.mutation.Where(ps...)
-	return tu
+func (_u *TicketUpdate) Where(ps ...predicate.Ticket) *TicketUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetComment sets the "comment" field.
-func (tu *TicketUpdate) SetComment(s string) *TicketUpdate {
-	tu.mutation.SetComment(s)
-	return tu
+func (_u *TicketUpdate) SetComment(v string) *TicketUpdate {
+	_u.mutation.SetComment(v)
+	return _u
 }
 
 // SetNillableComment sets the "comment" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableComment(s *string) *TicketUpdate {
-	if s != nil {
-		tu.SetComment(*s)
+func (_u *TicketUpdate) SetNillableComment(v *string) *TicketUpdate {
+	if v != nil {
+		_u.SetComment(*v)
 	}
-	return tu
+	return _u
 }
 
 // ClearComment clears the value of the "comment" field.
-func (tu *TicketUpdate) ClearComment() *TicketUpdate {
-	tu.mutation.ClearComment()
-	return tu
+func (_u *TicketUpdate) ClearComment() *TicketUpdate {
+	_u.mutation.ClearComment()
+	return _u
 }
 
 // SetExpiryType sets the "expiryType" field.
-func (tu *TicketUpdate) SetExpiryType(s string) *TicketUpdate {
-	tu.mutation.SetExpiryType(s)
-	return tu
+func (_u *TicketUpdate) SetExpiryType(v string) *TicketUpdate {
+	_u.mutation.SetExpiryType(v)
+	return _u
 }
 
 // SetNillableExpiryType sets the "expiryType" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableExpiryType(s *string) *TicketUpdate {
-	if s != nil {
-		tu.SetExpiryType(*s)
+func (_u *TicketUpdate) SetNillableExpiryType(v *string) *TicketUpdate {
+	if v != nil {
+		_u.SetExpiryType(*v)
 	}
-	return tu
+	return _u
 }
 
 // SetHashedPassword sets the "hashed_password" field.
-func (tu *TicketUpdate) SetHashedPassword(s string) *TicketUpdate {
-	tu.mutation.SetHashedPassword(s)
-	return tu
+func (_u *TicketUpdate) SetHashedPassword(v string) *TicketUpdate {
+	_u.mutation.SetHashedPassword(v)
+	return _u
 }
 
 // SetNillableHashedPassword sets the "hashed_password" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableHashedPassword(s *string) *TicketUpdate {
-	if s != nil {
-		tu.SetHashedPassword(*s)
+func (_u *TicketUpdate) SetNillableHashedPassword(v *string) *TicketUpdate {
+	if v != nil {
+		_u.SetHashedPassword(*v)
 	}
-	return tu
+	return _u
 }
 
 // SetSalt sets the "salt" field.
-func (tu *TicketUpdate) SetSalt(s string) *TicketUpdate {
-	tu.mutation.SetSalt(s)
-	return tu
+func (_u *TicketUpdate) SetSalt(v string) *TicketUpdate {
+	_u.mutation.SetSalt(v)
+	return _u
 }
 
 // SetNillableSalt sets the "salt" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableSalt(s *string) *TicketUpdate {
-	if s != nil {
-		tu.SetSalt(*s)
+func (_u *TicketUpdate) SetNillableSalt(v *string) *TicketUpdate {
+	if v != nil {
+		_u.SetSalt(*v)
 	}
-	return tu
+	return _u
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (tu *TicketUpdate) SetCreatedAt(t time.Time) *TicketUpdate {
-	tu.mutation.SetCreatedAt(t)
-	return tu
+func (_u *TicketUpdate) SetCreatedAt(v time.Time) *TicketUpdate {
+	_u.mutation.SetCreatedAt(v)
+	return _u
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableCreatedAt(t *time.Time) *TicketUpdate {
-	if t != nil {
-		tu.SetCreatedAt(*t)
+func (_u *TicketUpdate) SetNillableCreatedAt(v *time.Time) *TicketUpdate {
+	if v != nil {
+		_u.SetCreatedAt(*v)
 	}
-	return tu
+	return _u
 }
 
 // SetExpiryTotalDays sets the "expiry_total_days" field.
-func (tu *TicketUpdate) SetExpiryTotalDays(u uint8) *TicketUpdate {
-	tu.mutation.ResetExpiryTotalDays()
-	tu.mutation.SetExpiryTotalDays(u)
-	return tu
+func (_u *TicketUpdate) SetExpiryTotalDays(v uint8) *TicketUpdate {
+	_u.mutation.ResetExpiryTotalDays()
+	_u.mutation.SetExpiryTotalDays(v)
+	return _u
 }
 
 // SetNillableExpiryTotalDays sets the "expiry_total_days" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableExpiryTotalDays(u *uint8) *TicketUpdate {
-	if u != nil {
-		tu.SetExpiryTotalDays(*u)
+func (_u *TicketUpdate) SetNillableExpiryTotalDays(v *uint8) *TicketUpdate {
+	if v != nil {
+		_u.SetExpiryTotalDays(*v)
 	}
-	return tu
+	return _u
 }
 
-// AddExpiryTotalDays adds u to the "expiry_total_days" field.
-func (tu *TicketUpdate) AddExpiryTotalDays(u int8) *TicketUpdate {
-	tu.mutation.AddExpiryTotalDays(u)
-	return tu
+// AddExpiryTotalDays adds value to the "expiry_total_days" field.
+func (_u *TicketUpdate) AddExpiryTotalDays(v int8) *TicketUpdate {
+	_u.mutation.AddExpiryTotalDays(v)
+	return _u
 }
 
 // SetExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field.
-func (tu *TicketUpdate) SetExpiryDaysSinceLastDownload(u uint8) *TicketUpdate {
-	tu.mutation.ResetExpiryDaysSinceLastDownload()
-	tu.mutation.SetExpiryDaysSinceLastDownload(u)
-	return tu
+func (_u *TicketUpdate) SetExpiryDaysSinceLastDownload(v uint8) *TicketUpdate {
+	_u.mutation.ResetExpiryDaysSinceLastDownload()
+	_u.mutation.SetExpiryDaysSinceLastDownload(v)
+	return _u
 }
 
 // SetNillableExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableExpiryDaysSinceLastDownload(u *uint8) *TicketUpdate {
-	if u != nil {
-		tu.SetExpiryDaysSinceLastDownload(*u)
+func (_u *TicketUpdate) SetNillableExpiryDaysSinceLastDownload(v *uint8) *TicketUpdate {
+	if v != nil {
+		_u.SetExpiryDaysSinceLastDownload(*v)
 	}
-	return tu
+	return _u
 }
 
-// AddExpiryDaysSinceLastDownload adds u to the "expiry_days_since_last_download" field.
-func (tu *TicketUpdate) AddExpiryDaysSinceLastDownload(u int8) *TicketUpdate {
-	tu.mutation.AddExpiryDaysSinceLastDownload(u)
-	return tu
+// AddExpiryDaysSinceLastDownload adds value to the "expiry_days_since_last_download" field.
+func (_u *TicketUpdate) AddExpiryDaysSinceLastDownload(v int8) *TicketUpdate {
+	_u.mutation.AddExpiryDaysSinceLastDownload(v)
+	return _u
 }
 
 // SetExpiryTotalDownloads sets the "expiry_total_downloads" field.
-func (tu *TicketUpdate) SetExpiryTotalDownloads(u uint8) *TicketUpdate {
-	tu.mutation.ResetExpiryTotalDownloads()
-	tu.mutation.SetExpiryTotalDownloads(u)
-	return tu
+func (_u *TicketUpdate) SetExpiryTotalDownloads(v uint8) *TicketUpdate {
+	_u.mutation.ResetExpiryTotalDownloads()
+	_u.mutation.SetExpiryTotalDownloads(v)
+	return _u
 }
 
 // SetNillableExpiryTotalDownloads sets the "expiry_total_downloads" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableExpiryTotalDownloads(u *uint8) *TicketUpdate {
-	if u != nil {
-		tu.SetExpiryTotalDownloads(*u)
+func (_u *TicketUpdate) SetNillableExpiryTotalDownloads(v *uint8) *TicketUpdate {
+	if v != nil {
+		_u.SetExpiryTotalDownloads(*v)
 	}
-	return tu
+	return _u
 }
 
-// AddExpiryTotalDownloads adds u to the "expiry_total_downloads" field.
-func (tu *TicketUpdate) AddExpiryTotalDownloads(u int8) *TicketUpdate {
-	tu.mutation.AddExpiryTotalDownloads(u)
-	return tu
+// AddExpiryTotalDownloads adds value to the "expiry_total_downloads" field.
+func (_u *TicketUpdate) AddExpiryTotalDownloads(v int8) *TicketUpdate {
+	_u.mutation.AddExpiryTotalDownloads(v)
+	return _u
 }
 
 // SetEmailOnDownload sets the "email_on_download" field.
-func (tu *TicketUpdate) SetEmailOnDownload(s string) *TicketUpdate {
-	tu.mutation.SetEmailOnDownload(s)
-	return tu
+func (_u *TicketUpdate) SetEmailOnDownload(v string) *TicketUpdate {
+	_u.mutation.SetEmailOnDownload(v)
+	return _u
 }
 
 // SetNillableEmailOnDownload sets the "email_on_download" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableEmailOnDownload(s *string) *TicketUpdate {
-	if s != nil {
-		tu.SetEmailOnDownload(*s)
+func (_u *TicketUpdate) SetNillableEmailOnDownload(v *string) *TicketUpdate {
+	if v != nil {
+		_u.SetEmailOnDownload(*v)
 	}
-	return tu
+	return _u
 }
 
 // ClearEmailOnDownload clears the value of the "email_on_download" field.
-func (tu *TicketUpdate) ClearEmailOnDownload() *TicketUpdate {
-	tu.mutation.ClearEmailOnDownload()
-	return tu
+func (_u *TicketUpdate) ClearEmailOnDownload() *TicketUpdate {
+	_u.mutation.ClearEmailOnDownload()
+	return _u
 }
 
 // SetCreatorLang sets the "creator_lang" field.
-func (tu *TicketUpdate) SetCreatorLang(s string) *TicketUpdate {
-	tu.mutation.SetCreatorLang(s)
-	return tu
+func (_u *TicketUpdate) SetCreatorLang(v string) *TicketUpdate {
+	_u.mutation.SetCreatorLang(v)
+	return _u
 }
 
 // SetNillableCreatorLang sets the "creator_lang" field if the given value is not nil.
-func (tu *TicketUpdate) SetNillableCreatorLang(s *string) *TicketUpdate {
-	if s != nil {
-		tu.SetCreatorLang(*s)
+func (_u *TicketUpdate) SetNillableCreatorLang(v *string) *TicketUpdate {
+	if v != nil {
+		_u.SetCreatorLang(*v)
 	}
-	return tu
+	return _u
 }
 
 // AddFileIDs adds the "files" edge to the File entity by IDs.
-func (tu *TicketUpdate) AddFileIDs(ids ...uuid.UUID) *TicketUpdate {
-	tu.mutation.AddFileIDs(ids...)
-	return tu
+func (_u *TicketUpdate) AddFileIDs(ids ...uuid.UUID) *TicketUpdate {
+	_u.mutation.AddFileIDs(ids...)
+	return _u
 }
 
 // AddFiles adds the "files" edges to the File entity.
-func (tu *TicketUpdate) AddFiles(f ...*File) *TicketUpdate {
-	ids := make([]uuid.UUID, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+func (_u *TicketUpdate) AddFiles(v ...*File) *TicketUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tu.AddFileIDs(ids...)
+	return _u.AddFileIDs(ids...)
 }
 
 // SetOwnerID sets the "owner" edge to the User entity by ID.
-func (tu *TicketUpdate) SetOwnerID(id uuid.UUID) *TicketUpdate {
-	tu.mutation.SetOwnerID(id)
-	return tu
+func (_u *TicketUpdate) SetOwnerID(id uuid.UUID) *TicketUpdate {
+	_u.mutation.SetOwnerID(id)
+	return _u
 }
 
 // SetNillableOwnerID sets the "owner" edge to the User entity by ID if the given value is not nil.
-func (tu *TicketUpdate) SetNillableOwnerID(id *uuid.UUID) *TicketUpdate {
+func (_u *TicketUpdate) SetNillableOwnerID(id *uuid.UUID) *TicketUpdate {
 	if id != nil {
-		tu = tu.SetOwnerID(*id)
+		_u = _u.SetOwnerID(*id)
 	}
-	return tu
+	return _u
 }
 
 // SetOwner sets the "owner" edge to the User entity.
-func (tu *TicketUpdate) SetOwner(u *User) *TicketUpdate {
-	return tu.SetOwnerID(u.ID)
+func (_u *TicketUpdate) SetOwner(v *User) *TicketUpdate {
+	return _u.SetOwnerID(v.ID)
 }
 
 // AddShareaccesstokenIDs adds the "shareaccesstokens" edge to the ShareAccessToken entity by IDs.
-func (tu *TicketUpdate) AddShareaccesstokenIDs(ids ...string) *TicketUpdate {
-	tu.mutation.AddShareaccesstokenIDs(ids...)
-	return tu
+func (_u *TicketUpdate) AddShareaccesstokenIDs(ids ...string) *TicketUpdate {
+	_u.mutation.AddShareaccesstokenIDs(ids...)
+	return _u
 }
 
 // AddShareaccesstokens adds the "shareaccesstokens" edges to the ShareAccessToken entity.
-func (tu *TicketUpdate) AddShareaccesstokens(s ...*ShareAccessToken) *TicketUpdate {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_u *TicketUpdate) AddShareaccesstokens(v ...*ShareAccessToken) *TicketUpdate {
+	ids := make([]string, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tu.AddShareaccesstokenIDs(ids...)
+	return _u.AddShareaccesstokenIDs(ids...)
 }
 
 // Mutation returns the TicketMutation object of the builder.
-func (tu *TicketUpdate) Mutation() *TicketMutation {
-	return tu.mutation
+func (_u *TicketUpdate) Mutation() *TicketMutation {
+	return _u.mutation
 }
 
 // ClearFiles clears all "files" edges to the File entity.
-func (tu *TicketUpdate) ClearFiles() *TicketUpdate {
-	tu.mutation.ClearFiles()
-	return tu
+func (_u *TicketUpdate) ClearFiles() *TicketUpdate {
+	_u.mutation.ClearFiles()
+	return _u
 }
 
 // RemoveFileIDs removes the "files" edge to File entities by IDs.
-func (tu *TicketUpdate) RemoveFileIDs(ids ...uuid.UUID) *TicketUpdate {
-	tu.mutation.RemoveFileIDs(ids...)
-	return tu
+func (_u *TicketUpdate) RemoveFileIDs(ids ...uuid.UUID) *TicketUpdate {
+	_u.mutation.RemoveFileIDs(ids...)
+	return _u
 }
 
 // RemoveFiles removes "files" edges to File entities.
-func (tu *TicketUpdate) RemoveFiles(f ...*File) *TicketUpdate {
-	ids := make([]uuid.UUID, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+func (_u *TicketUpdate) RemoveFiles(v ...*File) *TicketUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tu.RemoveFileIDs(ids...)
+	return _u.RemoveFileIDs(ids...)
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
-func (tu *TicketUpdate) ClearOwner() *TicketUpdate {
-	tu.mutation.ClearOwner()
-	return tu
+func (_u *TicketUpdate) ClearOwner() *TicketUpdate {
+	_u.mutation.ClearOwner()
+	return _u
 }
 
 // ClearShareaccesstokens clears all "shareaccesstokens" edges to the ShareAccessToken entity.
-func (tu *TicketUpdate) ClearShareaccesstokens() *TicketUpdate {
-	tu.mutation.ClearShareaccesstokens()
-	return tu
+func (_u *TicketUpdate) ClearShareaccesstokens() *TicketUpdate {
+	_u.mutation.ClearShareaccesstokens()
+	return _u
 }
 
 // RemoveShareaccesstokenIDs removes the "shareaccesstokens" edge to ShareAccessToken entities by IDs.
-func (tu *TicketUpdate) RemoveShareaccesstokenIDs(ids ...string) *TicketUpdate {
-	tu.mutation.RemoveShareaccesstokenIDs(ids...)
-	return tu
+func (_u *TicketUpdate) RemoveShareaccesstokenIDs(ids ...string) *TicketUpdate {
+	_u.mutation.RemoveShareaccesstokenIDs(ids...)
+	return _u
 }
 
 // RemoveShareaccesstokens removes "shareaccesstokens" edges to ShareAccessToken entities.
-func (tu *TicketUpdate) RemoveShareaccesstokens(s ...*ShareAccessToken) *TicketUpdate {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_u *TicketUpdate) RemoveShareaccesstokens(v ...*ShareAccessToken) *TicketUpdate {
+	ids := make([]string, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tu.RemoveShareaccesstokenIDs(ids...)
+	return _u.RemoveShareaccesstokenIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (tu *TicketUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, tu.sqlSave, tu.mutation, tu.hooks)
+func (_u *TicketUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tu *TicketUpdate) SaveX(ctx context.Context) int {
-	affected, err := tu.Save(ctx)
+func (_u *TicketUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -322,73 +322,73 @@ func (tu *TicketUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (tu *TicketUpdate) Exec(ctx context.Context) error {
-	_, err := tu.Save(ctx)
+func (_u *TicketUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tu *TicketUpdate) ExecX(ctx context.Context) {
-	if err := tu.Exec(ctx); err != nil {
+func (_u *TicketUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (_u *TicketUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(ticket.Table, ticket.Columns, sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID))
-	if ps := tu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := tu.mutation.Comment(); ok {
+	if value, ok := _u.mutation.Comment(); ok {
 		_spec.SetField(ticket.FieldComment, field.TypeString, value)
 	}
-	if tu.mutation.CommentCleared() {
+	if _u.mutation.CommentCleared() {
 		_spec.ClearField(ticket.FieldComment, field.TypeString)
 	}
-	if value, ok := tu.mutation.ExpiryType(); ok {
+	if value, ok := _u.mutation.ExpiryType(); ok {
 		_spec.SetField(ticket.FieldExpiryType, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.HashedPassword(); ok {
+	if value, ok := _u.mutation.HashedPassword(); ok {
 		_spec.SetField(ticket.FieldHashedPassword, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.Salt(); ok {
+	if value, ok := _u.mutation.Salt(); ok {
 		_spec.SetField(ticket.FieldSalt, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.CreatedAt(); ok {
+	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(ticket.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := tu.mutation.ExpiryTotalDays(); ok {
+	if value, ok := _u.mutation.ExpiryTotalDays(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDays, field.TypeUint8, value)
 	}
-	if value, ok := tu.mutation.AddedExpiryTotalDays(); ok {
+	if value, ok := _u.mutation.AddedExpiryTotalDays(); ok {
 		_spec.AddField(ticket.FieldExpiryTotalDays, field.TypeUint8, value)
 	}
-	if value, ok := tu.mutation.ExpiryDaysSinceLastDownload(); ok {
+	if value, ok := _u.mutation.ExpiryDaysSinceLastDownload(); ok {
 		_spec.SetField(ticket.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
 	}
-	if value, ok := tu.mutation.AddedExpiryDaysSinceLastDownload(); ok {
+	if value, ok := _u.mutation.AddedExpiryDaysSinceLastDownload(); ok {
 		_spec.AddField(ticket.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
 	}
-	if value, ok := tu.mutation.ExpiryTotalDownloads(); ok {
+	if value, ok := _u.mutation.ExpiryTotalDownloads(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
-	if value, ok := tu.mutation.AddedExpiryTotalDownloads(); ok {
+	if value, ok := _u.mutation.AddedExpiryTotalDownloads(); ok {
 		_spec.AddField(ticket.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
-	if value, ok := tu.mutation.EmailOnDownload(); ok {
+	if value, ok := _u.mutation.EmailOnDownload(); ok {
 		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
 	}
-	if tu.mutation.EmailOnDownloadCleared() {
+	if _u.mutation.EmailOnDownloadCleared() {
 		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeString)
 	}
-	if value, ok := tu.mutation.CreatorLang(); ok {
+	if value, ok := _u.mutation.CreatorLang(); ok {
 		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)
 	}
-	if tu.mutation.FilesCleared() {
+	if _u.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -401,7 +401,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.RemovedFilesIDs(); len(nodes) > 0 && !tu.mutation.FilesCleared() {
+	if nodes := _u.mutation.RemovedFilesIDs(); len(nodes) > 0 && !_u.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -417,7 +417,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.FilesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.FilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -433,7 +433,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tu.mutation.OwnerCleared() {
+	if _u.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -446,7 +446,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.OwnerIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -462,7 +462,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tu.mutation.ShareaccesstokensCleared() {
+	if _u.mutation.ShareaccesstokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -475,7 +475,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.RemovedShareaccesstokensIDs(); len(nodes) > 0 && !tu.mutation.ShareaccesstokensCleared() {
+	if nodes := _u.mutation.RemovedShareaccesstokensIDs(); len(nodes) > 0 && !_u.mutation.ShareaccesstokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -491,7 +491,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -507,7 +507,7 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{ticket.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -515,8 +515,8 @@ func (tu *TicketUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	tu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // TicketUpdateOne is the builder for updating a single Ticket entity.
@@ -528,301 +528,301 @@ type TicketUpdateOne struct {
 }
 
 // SetComment sets the "comment" field.
-func (tuo *TicketUpdateOne) SetComment(s string) *TicketUpdateOne {
-	tuo.mutation.SetComment(s)
-	return tuo
+func (_u *TicketUpdateOne) SetComment(v string) *TicketUpdateOne {
+	_u.mutation.SetComment(v)
+	return _u
 }
 
 // SetNillableComment sets the "comment" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableComment(s *string) *TicketUpdateOne {
-	if s != nil {
-		tuo.SetComment(*s)
+func (_u *TicketUpdateOne) SetNillableComment(v *string) *TicketUpdateOne {
+	if v != nil {
+		_u.SetComment(*v)
 	}
-	return tuo
+	return _u
 }
 
 // ClearComment clears the value of the "comment" field.
-func (tuo *TicketUpdateOne) ClearComment() *TicketUpdateOne {
-	tuo.mutation.ClearComment()
-	return tuo
+func (_u *TicketUpdateOne) ClearComment() *TicketUpdateOne {
+	_u.mutation.ClearComment()
+	return _u
 }
 
 // SetExpiryType sets the "expiryType" field.
-func (tuo *TicketUpdateOne) SetExpiryType(s string) *TicketUpdateOne {
-	tuo.mutation.SetExpiryType(s)
-	return tuo
+func (_u *TicketUpdateOne) SetExpiryType(v string) *TicketUpdateOne {
+	_u.mutation.SetExpiryType(v)
+	return _u
 }
 
 // SetNillableExpiryType sets the "expiryType" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableExpiryType(s *string) *TicketUpdateOne {
-	if s != nil {
-		tuo.SetExpiryType(*s)
+func (_u *TicketUpdateOne) SetNillableExpiryType(v *string) *TicketUpdateOne {
+	if v != nil {
+		_u.SetExpiryType(*v)
 	}
-	return tuo
+	return _u
 }
 
 // SetHashedPassword sets the "hashed_password" field.
-func (tuo *TicketUpdateOne) SetHashedPassword(s string) *TicketUpdateOne {
-	tuo.mutation.SetHashedPassword(s)
-	return tuo
+func (_u *TicketUpdateOne) SetHashedPassword(v string) *TicketUpdateOne {
+	_u.mutation.SetHashedPassword(v)
+	return _u
 }
 
 // SetNillableHashedPassword sets the "hashed_password" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableHashedPassword(s *string) *TicketUpdateOne {
-	if s != nil {
-		tuo.SetHashedPassword(*s)
+func (_u *TicketUpdateOne) SetNillableHashedPassword(v *string) *TicketUpdateOne {
+	if v != nil {
+		_u.SetHashedPassword(*v)
 	}
-	return tuo
+	return _u
 }
 
 // SetSalt sets the "salt" field.
-func (tuo *TicketUpdateOne) SetSalt(s string) *TicketUpdateOne {
-	tuo.mutation.SetSalt(s)
-	return tuo
+func (_u *TicketUpdateOne) SetSalt(v string) *TicketUpdateOne {
+	_u.mutation.SetSalt(v)
+	return _u
 }
 
 // SetNillableSalt sets the "salt" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableSalt(s *string) *TicketUpdateOne {
-	if s != nil {
-		tuo.SetSalt(*s)
+func (_u *TicketUpdateOne) SetNillableSalt(v *string) *TicketUpdateOne {
+	if v != nil {
+		_u.SetSalt(*v)
 	}
-	return tuo
+	return _u
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (tuo *TicketUpdateOne) SetCreatedAt(t time.Time) *TicketUpdateOne {
-	tuo.mutation.SetCreatedAt(t)
-	return tuo
+func (_u *TicketUpdateOne) SetCreatedAt(v time.Time) *TicketUpdateOne {
+	_u.mutation.SetCreatedAt(v)
+	return _u
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableCreatedAt(t *time.Time) *TicketUpdateOne {
-	if t != nil {
-		tuo.SetCreatedAt(*t)
+func (_u *TicketUpdateOne) SetNillableCreatedAt(v *time.Time) *TicketUpdateOne {
+	if v != nil {
+		_u.SetCreatedAt(*v)
 	}
-	return tuo
+	return _u
 }
 
 // SetExpiryTotalDays sets the "expiry_total_days" field.
-func (tuo *TicketUpdateOne) SetExpiryTotalDays(u uint8) *TicketUpdateOne {
-	tuo.mutation.ResetExpiryTotalDays()
-	tuo.mutation.SetExpiryTotalDays(u)
-	return tuo
+func (_u *TicketUpdateOne) SetExpiryTotalDays(v uint8) *TicketUpdateOne {
+	_u.mutation.ResetExpiryTotalDays()
+	_u.mutation.SetExpiryTotalDays(v)
+	return _u
 }
 
 // SetNillableExpiryTotalDays sets the "expiry_total_days" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableExpiryTotalDays(u *uint8) *TicketUpdateOne {
-	if u != nil {
-		tuo.SetExpiryTotalDays(*u)
+func (_u *TicketUpdateOne) SetNillableExpiryTotalDays(v *uint8) *TicketUpdateOne {
+	if v != nil {
+		_u.SetExpiryTotalDays(*v)
 	}
-	return tuo
+	return _u
 }
 
-// AddExpiryTotalDays adds u to the "expiry_total_days" field.
-func (tuo *TicketUpdateOne) AddExpiryTotalDays(u int8) *TicketUpdateOne {
-	tuo.mutation.AddExpiryTotalDays(u)
-	return tuo
+// AddExpiryTotalDays adds value to the "expiry_total_days" field.
+func (_u *TicketUpdateOne) AddExpiryTotalDays(v int8) *TicketUpdateOne {
+	_u.mutation.AddExpiryTotalDays(v)
+	return _u
 }
 
 // SetExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field.
-func (tuo *TicketUpdateOne) SetExpiryDaysSinceLastDownload(u uint8) *TicketUpdateOne {
-	tuo.mutation.ResetExpiryDaysSinceLastDownload()
-	tuo.mutation.SetExpiryDaysSinceLastDownload(u)
-	return tuo
+func (_u *TicketUpdateOne) SetExpiryDaysSinceLastDownload(v uint8) *TicketUpdateOne {
+	_u.mutation.ResetExpiryDaysSinceLastDownload()
+	_u.mutation.SetExpiryDaysSinceLastDownload(v)
+	return _u
 }
 
 // SetNillableExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableExpiryDaysSinceLastDownload(u *uint8) *TicketUpdateOne {
-	if u != nil {
-		tuo.SetExpiryDaysSinceLastDownload(*u)
+func (_u *TicketUpdateOne) SetNillableExpiryDaysSinceLastDownload(v *uint8) *TicketUpdateOne {
+	if v != nil {
+		_u.SetExpiryDaysSinceLastDownload(*v)
 	}
-	return tuo
+	return _u
 }
 
-// AddExpiryDaysSinceLastDownload adds u to the "expiry_days_since_last_download" field.
-func (tuo *TicketUpdateOne) AddExpiryDaysSinceLastDownload(u int8) *TicketUpdateOne {
-	tuo.mutation.AddExpiryDaysSinceLastDownload(u)
-	return tuo
+// AddExpiryDaysSinceLastDownload adds value to the "expiry_days_since_last_download" field.
+func (_u *TicketUpdateOne) AddExpiryDaysSinceLastDownload(v int8) *TicketUpdateOne {
+	_u.mutation.AddExpiryDaysSinceLastDownload(v)
+	return _u
 }
 
 // SetExpiryTotalDownloads sets the "expiry_total_downloads" field.
-func (tuo *TicketUpdateOne) SetExpiryTotalDownloads(u uint8) *TicketUpdateOne {
-	tuo.mutation.ResetExpiryTotalDownloads()
-	tuo.mutation.SetExpiryTotalDownloads(u)
-	return tuo
+func (_u *TicketUpdateOne) SetExpiryTotalDownloads(v uint8) *TicketUpdateOne {
+	_u.mutation.ResetExpiryTotalDownloads()
+	_u.mutation.SetExpiryTotalDownloads(v)
+	return _u
 }
 
 // SetNillableExpiryTotalDownloads sets the "expiry_total_downloads" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableExpiryTotalDownloads(u *uint8) *TicketUpdateOne {
-	if u != nil {
-		tuo.SetExpiryTotalDownloads(*u)
+func (_u *TicketUpdateOne) SetNillableExpiryTotalDownloads(v *uint8) *TicketUpdateOne {
+	if v != nil {
+		_u.SetExpiryTotalDownloads(*v)
 	}
-	return tuo
+	return _u
 }
 
-// AddExpiryTotalDownloads adds u to the "expiry_total_downloads" field.
-func (tuo *TicketUpdateOne) AddExpiryTotalDownloads(u int8) *TicketUpdateOne {
-	tuo.mutation.AddExpiryTotalDownloads(u)
-	return tuo
+// AddExpiryTotalDownloads adds value to the "expiry_total_downloads" field.
+func (_u *TicketUpdateOne) AddExpiryTotalDownloads(v int8) *TicketUpdateOne {
+	_u.mutation.AddExpiryTotalDownloads(v)
+	return _u
 }
 
 // SetEmailOnDownload sets the "email_on_download" field.
-func (tuo *TicketUpdateOne) SetEmailOnDownload(s string) *TicketUpdateOne {
-	tuo.mutation.SetEmailOnDownload(s)
-	return tuo
+func (_u *TicketUpdateOne) SetEmailOnDownload(v string) *TicketUpdateOne {
+	_u.mutation.SetEmailOnDownload(v)
+	return _u
 }
 
 // SetNillableEmailOnDownload sets the "email_on_download" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableEmailOnDownload(s *string) *TicketUpdateOne {
-	if s != nil {
-		tuo.SetEmailOnDownload(*s)
+func (_u *TicketUpdateOne) SetNillableEmailOnDownload(v *string) *TicketUpdateOne {
+	if v != nil {
+		_u.SetEmailOnDownload(*v)
 	}
-	return tuo
+	return _u
 }
 
 // ClearEmailOnDownload clears the value of the "email_on_download" field.
-func (tuo *TicketUpdateOne) ClearEmailOnDownload() *TicketUpdateOne {
-	tuo.mutation.ClearEmailOnDownload()
-	return tuo
+func (_u *TicketUpdateOne) ClearEmailOnDownload() *TicketUpdateOne {
+	_u.mutation.ClearEmailOnDownload()
+	return _u
 }
 
 // SetCreatorLang sets the "creator_lang" field.
-func (tuo *TicketUpdateOne) SetCreatorLang(s string) *TicketUpdateOne {
-	tuo.mutation.SetCreatorLang(s)
-	return tuo
+func (_u *TicketUpdateOne) SetCreatorLang(v string) *TicketUpdateOne {
+	_u.mutation.SetCreatorLang(v)
+	return _u
 }
 
 // SetNillableCreatorLang sets the "creator_lang" field if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableCreatorLang(s *string) *TicketUpdateOne {
-	if s != nil {
-		tuo.SetCreatorLang(*s)
+func (_u *TicketUpdateOne) SetNillableCreatorLang(v *string) *TicketUpdateOne {
+	if v != nil {
+		_u.SetCreatorLang(*v)
 	}
-	return tuo
+	return _u
 }
 
 // AddFileIDs adds the "files" edge to the File entity by IDs.
-func (tuo *TicketUpdateOne) AddFileIDs(ids ...uuid.UUID) *TicketUpdateOne {
-	tuo.mutation.AddFileIDs(ids...)
-	return tuo
+func (_u *TicketUpdateOne) AddFileIDs(ids ...uuid.UUID) *TicketUpdateOne {
+	_u.mutation.AddFileIDs(ids...)
+	return _u
 }
 
 // AddFiles adds the "files" edges to the File entity.
-func (tuo *TicketUpdateOne) AddFiles(f ...*File) *TicketUpdateOne {
-	ids := make([]uuid.UUID, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+func (_u *TicketUpdateOne) AddFiles(v ...*File) *TicketUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tuo.AddFileIDs(ids...)
+	return _u.AddFileIDs(ids...)
 }
 
 // SetOwnerID sets the "owner" edge to the User entity by ID.
-func (tuo *TicketUpdateOne) SetOwnerID(id uuid.UUID) *TicketUpdateOne {
-	tuo.mutation.SetOwnerID(id)
-	return tuo
+func (_u *TicketUpdateOne) SetOwnerID(id uuid.UUID) *TicketUpdateOne {
+	_u.mutation.SetOwnerID(id)
+	return _u
 }
 
 // SetNillableOwnerID sets the "owner" edge to the User entity by ID if the given value is not nil.
-func (tuo *TicketUpdateOne) SetNillableOwnerID(id *uuid.UUID) *TicketUpdateOne {
+func (_u *TicketUpdateOne) SetNillableOwnerID(id *uuid.UUID) *TicketUpdateOne {
 	if id != nil {
-		tuo = tuo.SetOwnerID(*id)
+		_u = _u.SetOwnerID(*id)
 	}
-	return tuo
+	return _u
 }
 
 // SetOwner sets the "owner" edge to the User entity.
-func (tuo *TicketUpdateOne) SetOwner(u *User) *TicketUpdateOne {
-	return tuo.SetOwnerID(u.ID)
+func (_u *TicketUpdateOne) SetOwner(v *User) *TicketUpdateOne {
+	return _u.SetOwnerID(v.ID)
 }
 
 // AddShareaccesstokenIDs adds the "shareaccesstokens" edge to the ShareAccessToken entity by IDs.
-func (tuo *TicketUpdateOne) AddShareaccesstokenIDs(ids ...string) *TicketUpdateOne {
-	tuo.mutation.AddShareaccesstokenIDs(ids...)
-	return tuo
+func (_u *TicketUpdateOne) AddShareaccesstokenIDs(ids ...string) *TicketUpdateOne {
+	_u.mutation.AddShareaccesstokenIDs(ids...)
+	return _u
 }
 
 // AddShareaccesstokens adds the "shareaccesstokens" edges to the ShareAccessToken entity.
-func (tuo *TicketUpdateOne) AddShareaccesstokens(s ...*ShareAccessToken) *TicketUpdateOne {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_u *TicketUpdateOne) AddShareaccesstokens(v ...*ShareAccessToken) *TicketUpdateOne {
+	ids := make([]string, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tuo.AddShareaccesstokenIDs(ids...)
+	return _u.AddShareaccesstokenIDs(ids...)
 }
 
 // Mutation returns the TicketMutation object of the builder.
-func (tuo *TicketUpdateOne) Mutation() *TicketMutation {
-	return tuo.mutation
+func (_u *TicketUpdateOne) Mutation() *TicketMutation {
+	return _u.mutation
 }
 
 // ClearFiles clears all "files" edges to the File entity.
-func (tuo *TicketUpdateOne) ClearFiles() *TicketUpdateOne {
-	tuo.mutation.ClearFiles()
-	return tuo
+func (_u *TicketUpdateOne) ClearFiles() *TicketUpdateOne {
+	_u.mutation.ClearFiles()
+	return _u
 }
 
 // RemoveFileIDs removes the "files" edge to File entities by IDs.
-func (tuo *TicketUpdateOne) RemoveFileIDs(ids ...uuid.UUID) *TicketUpdateOne {
-	tuo.mutation.RemoveFileIDs(ids...)
-	return tuo
+func (_u *TicketUpdateOne) RemoveFileIDs(ids ...uuid.UUID) *TicketUpdateOne {
+	_u.mutation.RemoveFileIDs(ids...)
+	return _u
 }
 
 // RemoveFiles removes "files" edges to File entities.
-func (tuo *TicketUpdateOne) RemoveFiles(f ...*File) *TicketUpdateOne {
-	ids := make([]uuid.UUID, len(f))
-	for i := range f {
-		ids[i] = f[i].ID
+func (_u *TicketUpdateOne) RemoveFiles(v ...*File) *TicketUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tuo.RemoveFileIDs(ids...)
+	return _u.RemoveFileIDs(ids...)
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
-func (tuo *TicketUpdateOne) ClearOwner() *TicketUpdateOne {
-	tuo.mutation.ClearOwner()
-	return tuo
+func (_u *TicketUpdateOne) ClearOwner() *TicketUpdateOne {
+	_u.mutation.ClearOwner()
+	return _u
 }
 
 // ClearShareaccesstokens clears all "shareaccesstokens" edges to the ShareAccessToken entity.
-func (tuo *TicketUpdateOne) ClearShareaccesstokens() *TicketUpdateOne {
-	tuo.mutation.ClearShareaccesstokens()
-	return tuo
+func (_u *TicketUpdateOne) ClearShareaccesstokens() *TicketUpdateOne {
+	_u.mutation.ClearShareaccesstokens()
+	return _u
 }
 
 // RemoveShareaccesstokenIDs removes the "shareaccesstokens" edge to ShareAccessToken entities by IDs.
-func (tuo *TicketUpdateOne) RemoveShareaccesstokenIDs(ids ...string) *TicketUpdateOne {
-	tuo.mutation.RemoveShareaccesstokenIDs(ids...)
-	return tuo
+func (_u *TicketUpdateOne) RemoveShareaccesstokenIDs(ids ...string) *TicketUpdateOne {
+	_u.mutation.RemoveShareaccesstokenIDs(ids...)
+	return _u
 }
 
 // RemoveShareaccesstokens removes "shareaccesstokens" edges to ShareAccessToken entities.
-func (tuo *TicketUpdateOne) RemoveShareaccesstokens(s ...*ShareAccessToken) *TicketUpdateOne {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_u *TicketUpdateOne) RemoveShareaccesstokens(v ...*ShareAccessToken) *TicketUpdateOne {
+	ids := make([]string, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tuo.RemoveShareaccesstokenIDs(ids...)
+	return _u.RemoveShareaccesstokenIDs(ids...)
 }
 
 // Where appends a list predicates to the TicketUpdate builder.
-func (tuo *TicketUpdateOne) Where(ps ...predicate.Ticket) *TicketUpdateOne {
-	tuo.mutation.Where(ps...)
-	return tuo
+func (_u *TicketUpdateOne) Where(ps ...predicate.Ticket) *TicketUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (tuo *TicketUpdateOne) Select(field string, fields ...string) *TicketUpdateOne {
-	tuo.fields = append([]string{field}, fields...)
-	return tuo
+func (_u *TicketUpdateOne) Select(field string, fields ...string) *TicketUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Ticket entity.
-func (tuo *TicketUpdateOne) Save(ctx context.Context) (*Ticket, error) {
-	return withHooks(ctx, tuo.sqlSave, tuo.mutation, tuo.hooks)
+func (_u *TicketUpdateOne) Save(ctx context.Context) (*Ticket, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tuo *TicketUpdateOne) SaveX(ctx context.Context) *Ticket {
-	node, err := tuo.Save(ctx)
+func (_u *TicketUpdateOne) SaveX(ctx context.Context) *Ticket {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -830,26 +830,26 @@ func (tuo *TicketUpdateOne) SaveX(ctx context.Context) *Ticket {
 }
 
 // Exec executes the query on the entity.
-func (tuo *TicketUpdateOne) Exec(ctx context.Context) error {
-	_, err := tuo.Save(ctx)
+func (_u *TicketUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tuo *TicketUpdateOne) ExecX(ctx context.Context) {
-	if err := tuo.Exec(ctx); err != nil {
+func (_u *TicketUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err error) {
+func (_u *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err error) {
 	_spec := sqlgraph.NewUpdateSpec(ticket.Table, ticket.Columns, sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID))
-	id, ok := tuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Ticket.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := tuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, ticket.FieldID)
 		for _, f := range fields {
@@ -861,59 +861,59 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 			}
 		}
 	}
-	if ps := tuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := tuo.mutation.Comment(); ok {
+	if value, ok := _u.mutation.Comment(); ok {
 		_spec.SetField(ticket.FieldComment, field.TypeString, value)
 	}
-	if tuo.mutation.CommentCleared() {
+	if _u.mutation.CommentCleared() {
 		_spec.ClearField(ticket.FieldComment, field.TypeString)
 	}
-	if value, ok := tuo.mutation.ExpiryType(); ok {
+	if value, ok := _u.mutation.ExpiryType(); ok {
 		_spec.SetField(ticket.FieldExpiryType, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.HashedPassword(); ok {
+	if value, ok := _u.mutation.HashedPassword(); ok {
 		_spec.SetField(ticket.FieldHashedPassword, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.Salt(); ok {
+	if value, ok := _u.mutation.Salt(); ok {
 		_spec.SetField(ticket.FieldSalt, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.CreatedAt(); ok {
+	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(ticket.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := tuo.mutation.ExpiryTotalDays(); ok {
+	if value, ok := _u.mutation.ExpiryTotalDays(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDays, field.TypeUint8, value)
 	}
-	if value, ok := tuo.mutation.AddedExpiryTotalDays(); ok {
+	if value, ok := _u.mutation.AddedExpiryTotalDays(); ok {
 		_spec.AddField(ticket.FieldExpiryTotalDays, field.TypeUint8, value)
 	}
-	if value, ok := tuo.mutation.ExpiryDaysSinceLastDownload(); ok {
+	if value, ok := _u.mutation.ExpiryDaysSinceLastDownload(); ok {
 		_spec.SetField(ticket.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
 	}
-	if value, ok := tuo.mutation.AddedExpiryDaysSinceLastDownload(); ok {
+	if value, ok := _u.mutation.AddedExpiryDaysSinceLastDownload(); ok {
 		_spec.AddField(ticket.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
 	}
-	if value, ok := tuo.mutation.ExpiryTotalDownloads(); ok {
+	if value, ok := _u.mutation.ExpiryTotalDownloads(); ok {
 		_spec.SetField(ticket.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
-	if value, ok := tuo.mutation.AddedExpiryTotalDownloads(); ok {
+	if value, ok := _u.mutation.AddedExpiryTotalDownloads(); ok {
 		_spec.AddField(ticket.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
-	if value, ok := tuo.mutation.EmailOnDownload(); ok {
+	if value, ok := _u.mutation.EmailOnDownload(); ok {
 		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
 	}
-	if tuo.mutation.EmailOnDownloadCleared() {
+	if _u.mutation.EmailOnDownloadCleared() {
 		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeString)
 	}
-	if value, ok := tuo.mutation.CreatorLang(); ok {
+	if value, ok := _u.mutation.CreatorLang(); ok {
 		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)
 	}
-	if tuo.mutation.FilesCleared() {
+	if _u.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -926,7 +926,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.RemovedFilesIDs(); len(nodes) > 0 && !tuo.mutation.FilesCleared() {
+	if nodes := _u.mutation.RemovedFilesIDs(); len(nodes) > 0 && !_u.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -942,7 +942,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.FilesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.FilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -958,7 +958,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tuo.mutation.OwnerCleared() {
+	if _u.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -971,7 +971,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.OwnerIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -987,7 +987,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tuo.mutation.ShareaccesstokensCleared() {
+	if _u.mutation.ShareaccesstokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1000,7 +1000,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.RemovedShareaccesstokensIDs(); len(nodes) > 0 && !tuo.mutation.ShareaccesstokensCleared() {
+	if nodes := _u.mutation.RemovedShareaccesstokensIDs(); len(nodes) > 0 && !_u.mutation.ShareaccesstokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1016,7 +1016,7 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ShareaccesstokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1032,10 +1032,10 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Ticket{config: tuo.config}
+	_node = &Ticket{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, tuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{ticket.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -1043,6 +1043,6 @@ func (tuo *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err err
 		}
 		return nil, err
 	}
-	tuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

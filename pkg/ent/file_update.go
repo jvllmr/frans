@@ -25,150 +25,150 @@ type FileUpdate struct {
 }
 
 // Where appends a list predicates to the FileUpdate builder.
-func (fu *FileUpdate) Where(ps ...predicate.File) *FileUpdate {
-	fu.mutation.Where(ps...)
-	return fu
+func (_u *FileUpdate) Where(ps ...predicate.File) *FileUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (fu *FileUpdate) SetName(s string) *FileUpdate {
-	fu.mutation.SetName(s)
-	return fu
+func (_u *FileUpdate) SetName(v string) *FileUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (fu *FileUpdate) SetNillableName(s *string) *FileUpdate {
-	if s != nil {
-		fu.SetName(*s)
+func (_u *FileUpdate) SetNillableName(v *string) *FileUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return fu
+	return _u
 }
 
 // SetSize sets the "size" field.
-func (fu *FileUpdate) SetSize(u uint64) *FileUpdate {
-	fu.mutation.ResetSize()
-	fu.mutation.SetSize(u)
-	return fu
+func (_u *FileUpdate) SetSize(v uint64) *FileUpdate {
+	_u.mutation.ResetSize()
+	_u.mutation.SetSize(v)
+	return _u
 }
 
 // SetNillableSize sets the "size" field if the given value is not nil.
-func (fu *FileUpdate) SetNillableSize(u *uint64) *FileUpdate {
-	if u != nil {
-		fu.SetSize(*u)
+func (_u *FileUpdate) SetNillableSize(v *uint64) *FileUpdate {
+	if v != nil {
+		_u.SetSize(*v)
 	}
-	return fu
+	return _u
 }
 
-// AddSize adds u to the "size" field.
-func (fu *FileUpdate) AddSize(u int64) *FileUpdate {
-	fu.mutation.AddSize(u)
-	return fu
+// AddSize adds value to the "size" field.
+func (_u *FileUpdate) AddSize(v int64) *FileUpdate {
+	_u.mutation.AddSize(v)
+	return _u
 }
 
 // SetSha512 sets the "sha512" field.
-func (fu *FileUpdate) SetSha512(s string) *FileUpdate {
-	fu.mutation.SetSha512(s)
-	return fu
+func (_u *FileUpdate) SetSha512(v string) *FileUpdate {
+	_u.mutation.SetSha512(v)
+	return _u
 }
 
 // SetNillableSha512 sets the "sha512" field if the given value is not nil.
-func (fu *FileUpdate) SetNillableSha512(s *string) *FileUpdate {
-	if s != nil {
-		fu.SetSha512(*s)
+func (_u *FileUpdate) SetNillableSha512(v *string) *FileUpdate {
+	if v != nil {
+		_u.SetSha512(*v)
 	}
-	return fu
+	return _u
 }
 
 // SetLastDownload sets the "last_download" field.
-func (fu *FileUpdate) SetLastDownload(t time.Time) *FileUpdate {
-	fu.mutation.SetLastDownload(t)
-	return fu
+func (_u *FileUpdate) SetLastDownload(v time.Time) *FileUpdate {
+	_u.mutation.SetLastDownload(v)
+	return _u
 }
 
 // SetNillableLastDownload sets the "last_download" field if the given value is not nil.
-func (fu *FileUpdate) SetNillableLastDownload(t *time.Time) *FileUpdate {
-	if t != nil {
-		fu.SetLastDownload(*t)
+func (_u *FileUpdate) SetNillableLastDownload(v *time.Time) *FileUpdate {
+	if v != nil {
+		_u.SetLastDownload(*v)
 	}
-	return fu
+	return _u
 }
 
 // ClearLastDownload clears the value of the "last_download" field.
-func (fu *FileUpdate) ClearLastDownload() *FileUpdate {
-	fu.mutation.ClearLastDownload()
-	return fu
+func (_u *FileUpdate) ClearLastDownload() *FileUpdate {
+	_u.mutation.ClearLastDownload()
+	return _u
 }
 
 // SetTimesDownloaded sets the "times_downloaded" field.
-func (fu *FileUpdate) SetTimesDownloaded(u uint64) *FileUpdate {
-	fu.mutation.ResetTimesDownloaded()
-	fu.mutation.SetTimesDownloaded(u)
-	return fu
+func (_u *FileUpdate) SetTimesDownloaded(v uint64) *FileUpdate {
+	_u.mutation.ResetTimesDownloaded()
+	_u.mutation.SetTimesDownloaded(v)
+	return _u
 }
 
 // SetNillableTimesDownloaded sets the "times_downloaded" field if the given value is not nil.
-func (fu *FileUpdate) SetNillableTimesDownloaded(u *uint64) *FileUpdate {
-	if u != nil {
-		fu.SetTimesDownloaded(*u)
+func (_u *FileUpdate) SetNillableTimesDownloaded(v *uint64) *FileUpdate {
+	if v != nil {
+		_u.SetTimesDownloaded(*v)
 	}
-	return fu
+	return _u
 }
 
-// AddTimesDownloaded adds u to the "times_downloaded" field.
-func (fu *FileUpdate) AddTimesDownloaded(u int64) *FileUpdate {
-	fu.mutation.AddTimesDownloaded(u)
-	return fu
+// AddTimesDownloaded adds value to the "times_downloaded" field.
+func (_u *FileUpdate) AddTimesDownloaded(v int64) *FileUpdate {
+	_u.mutation.AddTimesDownloaded(v)
+	return _u
 }
 
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
-func (fu *FileUpdate) AddTicketIDs(ids ...uuid.UUID) *FileUpdate {
-	fu.mutation.AddTicketIDs(ids...)
-	return fu
+func (_u *FileUpdate) AddTicketIDs(ids ...uuid.UUID) *FileUpdate {
+	_u.mutation.AddTicketIDs(ids...)
+	return _u
 }
 
 // AddTickets adds the "tickets" edges to the Ticket entity.
-func (fu *FileUpdate) AddTickets(t ...*Ticket) *FileUpdate {
-	ids := make([]uuid.UUID, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *FileUpdate) AddTickets(v ...*Ticket) *FileUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return fu.AddTicketIDs(ids...)
+	return _u.AddTicketIDs(ids...)
 }
 
 // Mutation returns the FileMutation object of the builder.
-func (fu *FileUpdate) Mutation() *FileMutation {
-	return fu.mutation
+func (_u *FileUpdate) Mutation() *FileMutation {
+	return _u.mutation
 }
 
 // ClearTickets clears all "tickets" edges to the Ticket entity.
-func (fu *FileUpdate) ClearTickets() *FileUpdate {
-	fu.mutation.ClearTickets()
-	return fu
+func (_u *FileUpdate) ClearTickets() *FileUpdate {
+	_u.mutation.ClearTickets()
+	return _u
 }
 
 // RemoveTicketIDs removes the "tickets" edge to Ticket entities by IDs.
-func (fu *FileUpdate) RemoveTicketIDs(ids ...uuid.UUID) *FileUpdate {
-	fu.mutation.RemoveTicketIDs(ids...)
-	return fu
+func (_u *FileUpdate) RemoveTicketIDs(ids ...uuid.UUID) *FileUpdate {
+	_u.mutation.RemoveTicketIDs(ids...)
+	return _u
 }
 
 // RemoveTickets removes "tickets" edges to Ticket entities.
-func (fu *FileUpdate) RemoveTickets(t ...*Ticket) *FileUpdate {
-	ids := make([]uuid.UUID, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *FileUpdate) RemoveTickets(v ...*Ticket) *FileUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return fu.RemoveTicketIDs(ids...)
+	return _u.RemoveTicketIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (fu *FileUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, fu.sqlSave, fu.mutation, fu.hooks)
+func (_u *FileUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (fu *FileUpdate) SaveX(ctx context.Context) int {
-	affected, err := fu.Save(ctx)
+func (_u *FileUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -176,52 +176,52 @@ func (fu *FileUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (fu *FileUpdate) Exec(ctx context.Context) error {
-	_, err := fu.Save(ctx)
+func (_u *FileUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (fu *FileUpdate) ExecX(ctx context.Context) {
-	if err := fu.Exec(ctx); err != nil {
+func (_u *FileUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID))
-	if ps := fu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := fu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(file.FieldName, field.TypeString, value)
 	}
-	if value, ok := fu.mutation.Size(); ok {
+	if value, ok := _u.mutation.Size(); ok {
 		_spec.SetField(file.FieldSize, field.TypeUint64, value)
 	}
-	if value, ok := fu.mutation.AddedSize(); ok {
+	if value, ok := _u.mutation.AddedSize(); ok {
 		_spec.AddField(file.FieldSize, field.TypeUint64, value)
 	}
-	if value, ok := fu.mutation.Sha512(); ok {
+	if value, ok := _u.mutation.Sha512(); ok {
 		_spec.SetField(file.FieldSha512, field.TypeString, value)
 	}
-	if value, ok := fu.mutation.LastDownload(); ok {
+	if value, ok := _u.mutation.LastDownload(); ok {
 		_spec.SetField(file.FieldLastDownload, field.TypeTime, value)
 	}
-	if fu.mutation.LastDownloadCleared() {
+	if _u.mutation.LastDownloadCleared() {
 		_spec.ClearField(file.FieldLastDownload, field.TypeTime)
 	}
-	if value, ok := fu.mutation.TimesDownloaded(); ok {
+	if value, ok := _u.mutation.TimesDownloaded(); ok {
 		_spec.SetField(file.FieldTimesDownloaded, field.TypeUint64, value)
 	}
-	if value, ok := fu.mutation.AddedTimesDownloaded(); ok {
+	if value, ok := _u.mutation.AddedTimesDownloaded(); ok {
 		_spec.AddField(file.FieldTimesDownloaded, field.TypeUint64, value)
 	}
-	if fu.mutation.TicketsCleared() {
+	if _u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -234,7 +234,7 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fu.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !fu.mutation.TicketsCleared() {
+	if nodes := _u.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !_u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -250,7 +250,7 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fu.mutation.TicketsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TicketsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -266,7 +266,7 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, fu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{file.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -274,8 +274,8 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	fu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // FileUpdateOne is the builder for updating a single File entity.
@@ -287,157 +287,157 @@ type FileUpdateOne struct {
 }
 
 // SetName sets the "name" field.
-func (fuo *FileUpdateOne) SetName(s string) *FileUpdateOne {
-	fuo.mutation.SetName(s)
-	return fuo
+func (_u *FileUpdateOne) SetName(v string) *FileUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (fuo *FileUpdateOne) SetNillableName(s *string) *FileUpdateOne {
-	if s != nil {
-		fuo.SetName(*s)
+func (_u *FileUpdateOne) SetNillableName(v *string) *FileUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return fuo
+	return _u
 }
 
 // SetSize sets the "size" field.
-func (fuo *FileUpdateOne) SetSize(u uint64) *FileUpdateOne {
-	fuo.mutation.ResetSize()
-	fuo.mutation.SetSize(u)
-	return fuo
+func (_u *FileUpdateOne) SetSize(v uint64) *FileUpdateOne {
+	_u.mutation.ResetSize()
+	_u.mutation.SetSize(v)
+	return _u
 }
 
 // SetNillableSize sets the "size" field if the given value is not nil.
-func (fuo *FileUpdateOne) SetNillableSize(u *uint64) *FileUpdateOne {
-	if u != nil {
-		fuo.SetSize(*u)
+func (_u *FileUpdateOne) SetNillableSize(v *uint64) *FileUpdateOne {
+	if v != nil {
+		_u.SetSize(*v)
 	}
-	return fuo
+	return _u
 }
 
-// AddSize adds u to the "size" field.
-func (fuo *FileUpdateOne) AddSize(u int64) *FileUpdateOne {
-	fuo.mutation.AddSize(u)
-	return fuo
+// AddSize adds value to the "size" field.
+func (_u *FileUpdateOne) AddSize(v int64) *FileUpdateOne {
+	_u.mutation.AddSize(v)
+	return _u
 }
 
 // SetSha512 sets the "sha512" field.
-func (fuo *FileUpdateOne) SetSha512(s string) *FileUpdateOne {
-	fuo.mutation.SetSha512(s)
-	return fuo
+func (_u *FileUpdateOne) SetSha512(v string) *FileUpdateOne {
+	_u.mutation.SetSha512(v)
+	return _u
 }
 
 // SetNillableSha512 sets the "sha512" field if the given value is not nil.
-func (fuo *FileUpdateOne) SetNillableSha512(s *string) *FileUpdateOne {
-	if s != nil {
-		fuo.SetSha512(*s)
+func (_u *FileUpdateOne) SetNillableSha512(v *string) *FileUpdateOne {
+	if v != nil {
+		_u.SetSha512(*v)
 	}
-	return fuo
+	return _u
 }
 
 // SetLastDownload sets the "last_download" field.
-func (fuo *FileUpdateOne) SetLastDownload(t time.Time) *FileUpdateOne {
-	fuo.mutation.SetLastDownload(t)
-	return fuo
+func (_u *FileUpdateOne) SetLastDownload(v time.Time) *FileUpdateOne {
+	_u.mutation.SetLastDownload(v)
+	return _u
 }
 
 // SetNillableLastDownload sets the "last_download" field if the given value is not nil.
-func (fuo *FileUpdateOne) SetNillableLastDownload(t *time.Time) *FileUpdateOne {
-	if t != nil {
-		fuo.SetLastDownload(*t)
+func (_u *FileUpdateOne) SetNillableLastDownload(v *time.Time) *FileUpdateOne {
+	if v != nil {
+		_u.SetLastDownload(*v)
 	}
-	return fuo
+	return _u
 }
 
 // ClearLastDownload clears the value of the "last_download" field.
-func (fuo *FileUpdateOne) ClearLastDownload() *FileUpdateOne {
-	fuo.mutation.ClearLastDownload()
-	return fuo
+func (_u *FileUpdateOne) ClearLastDownload() *FileUpdateOne {
+	_u.mutation.ClearLastDownload()
+	return _u
 }
 
 // SetTimesDownloaded sets the "times_downloaded" field.
-func (fuo *FileUpdateOne) SetTimesDownloaded(u uint64) *FileUpdateOne {
-	fuo.mutation.ResetTimesDownloaded()
-	fuo.mutation.SetTimesDownloaded(u)
-	return fuo
+func (_u *FileUpdateOne) SetTimesDownloaded(v uint64) *FileUpdateOne {
+	_u.mutation.ResetTimesDownloaded()
+	_u.mutation.SetTimesDownloaded(v)
+	return _u
 }
 
 // SetNillableTimesDownloaded sets the "times_downloaded" field if the given value is not nil.
-func (fuo *FileUpdateOne) SetNillableTimesDownloaded(u *uint64) *FileUpdateOne {
-	if u != nil {
-		fuo.SetTimesDownloaded(*u)
+func (_u *FileUpdateOne) SetNillableTimesDownloaded(v *uint64) *FileUpdateOne {
+	if v != nil {
+		_u.SetTimesDownloaded(*v)
 	}
-	return fuo
+	return _u
 }
 
-// AddTimesDownloaded adds u to the "times_downloaded" field.
-func (fuo *FileUpdateOne) AddTimesDownloaded(u int64) *FileUpdateOne {
-	fuo.mutation.AddTimesDownloaded(u)
-	return fuo
+// AddTimesDownloaded adds value to the "times_downloaded" field.
+func (_u *FileUpdateOne) AddTimesDownloaded(v int64) *FileUpdateOne {
+	_u.mutation.AddTimesDownloaded(v)
+	return _u
 }
 
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
-func (fuo *FileUpdateOne) AddTicketIDs(ids ...uuid.UUID) *FileUpdateOne {
-	fuo.mutation.AddTicketIDs(ids...)
-	return fuo
+func (_u *FileUpdateOne) AddTicketIDs(ids ...uuid.UUID) *FileUpdateOne {
+	_u.mutation.AddTicketIDs(ids...)
+	return _u
 }
 
 // AddTickets adds the "tickets" edges to the Ticket entity.
-func (fuo *FileUpdateOne) AddTickets(t ...*Ticket) *FileUpdateOne {
-	ids := make([]uuid.UUID, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *FileUpdateOne) AddTickets(v ...*Ticket) *FileUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return fuo.AddTicketIDs(ids...)
+	return _u.AddTicketIDs(ids...)
 }
 
 // Mutation returns the FileMutation object of the builder.
-func (fuo *FileUpdateOne) Mutation() *FileMutation {
-	return fuo.mutation
+func (_u *FileUpdateOne) Mutation() *FileMutation {
+	return _u.mutation
 }
 
 // ClearTickets clears all "tickets" edges to the Ticket entity.
-func (fuo *FileUpdateOne) ClearTickets() *FileUpdateOne {
-	fuo.mutation.ClearTickets()
-	return fuo
+func (_u *FileUpdateOne) ClearTickets() *FileUpdateOne {
+	_u.mutation.ClearTickets()
+	return _u
 }
 
 // RemoveTicketIDs removes the "tickets" edge to Ticket entities by IDs.
-func (fuo *FileUpdateOne) RemoveTicketIDs(ids ...uuid.UUID) *FileUpdateOne {
-	fuo.mutation.RemoveTicketIDs(ids...)
-	return fuo
+func (_u *FileUpdateOne) RemoveTicketIDs(ids ...uuid.UUID) *FileUpdateOne {
+	_u.mutation.RemoveTicketIDs(ids...)
+	return _u
 }
 
 // RemoveTickets removes "tickets" edges to Ticket entities.
-func (fuo *FileUpdateOne) RemoveTickets(t ...*Ticket) *FileUpdateOne {
-	ids := make([]uuid.UUID, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *FileUpdateOne) RemoveTickets(v ...*Ticket) *FileUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return fuo.RemoveTicketIDs(ids...)
+	return _u.RemoveTicketIDs(ids...)
 }
 
 // Where appends a list predicates to the FileUpdate builder.
-func (fuo *FileUpdateOne) Where(ps ...predicate.File) *FileUpdateOne {
-	fuo.mutation.Where(ps...)
-	return fuo
+func (_u *FileUpdateOne) Where(ps ...predicate.File) *FileUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (fuo *FileUpdateOne) Select(field string, fields ...string) *FileUpdateOne {
-	fuo.fields = append([]string{field}, fields...)
-	return fuo
+func (_u *FileUpdateOne) Select(field string, fields ...string) *FileUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated File entity.
-func (fuo *FileUpdateOne) Save(ctx context.Context) (*File, error) {
-	return withHooks(ctx, fuo.sqlSave, fuo.mutation, fuo.hooks)
+func (_u *FileUpdateOne) Save(ctx context.Context) (*File, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (fuo *FileUpdateOne) SaveX(ctx context.Context) *File {
-	node, err := fuo.Save(ctx)
+func (_u *FileUpdateOne) SaveX(ctx context.Context) *File {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -445,26 +445,26 @@ func (fuo *FileUpdateOne) SaveX(ctx context.Context) *File {
 }
 
 // Exec executes the query on the entity.
-func (fuo *FileUpdateOne) Exec(ctx context.Context) error {
-	_, err := fuo.Save(ctx)
+func (_u *FileUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (fuo *FileUpdateOne) ExecX(ctx context.Context) {
-	if err := fuo.Exec(ctx); err != nil {
+func (_u *FileUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
+func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID))
-	id, ok := fuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "File.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := fuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, file.FieldID)
 		for _, f := range fields {
@@ -476,38 +476,38 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 			}
 		}
 	}
-	if ps := fuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := fuo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(file.FieldName, field.TypeString, value)
 	}
-	if value, ok := fuo.mutation.Size(); ok {
+	if value, ok := _u.mutation.Size(); ok {
 		_spec.SetField(file.FieldSize, field.TypeUint64, value)
 	}
-	if value, ok := fuo.mutation.AddedSize(); ok {
+	if value, ok := _u.mutation.AddedSize(); ok {
 		_spec.AddField(file.FieldSize, field.TypeUint64, value)
 	}
-	if value, ok := fuo.mutation.Sha512(); ok {
+	if value, ok := _u.mutation.Sha512(); ok {
 		_spec.SetField(file.FieldSha512, field.TypeString, value)
 	}
-	if value, ok := fuo.mutation.LastDownload(); ok {
+	if value, ok := _u.mutation.LastDownload(); ok {
 		_spec.SetField(file.FieldLastDownload, field.TypeTime, value)
 	}
-	if fuo.mutation.LastDownloadCleared() {
+	if _u.mutation.LastDownloadCleared() {
 		_spec.ClearField(file.FieldLastDownload, field.TypeTime)
 	}
-	if value, ok := fuo.mutation.TimesDownloaded(); ok {
+	if value, ok := _u.mutation.TimesDownloaded(); ok {
 		_spec.SetField(file.FieldTimesDownloaded, field.TypeUint64, value)
 	}
-	if value, ok := fuo.mutation.AddedTimesDownloaded(); ok {
+	if value, ok := _u.mutation.AddedTimesDownloaded(); ok {
 		_spec.AddField(file.FieldTimesDownloaded, field.TypeUint64, value)
 	}
-	if fuo.mutation.TicketsCleared() {
+	if _u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -520,7 +520,7 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fuo.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !fuo.mutation.TicketsCleared() {
+	if nodes := _u.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !_u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -536,7 +536,7 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := fuo.mutation.TicketsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TicketsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -552,10 +552,10 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &File{config: fuo.config}
+	_node = &File{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, fuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{file.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -563,6 +563,6 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 		}
 		return nil, err
 	}
-	fuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

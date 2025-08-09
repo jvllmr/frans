@@ -68,7 +68,7 @@ func (*ShareAccessToken) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the ShareAccessToken fields.
-func (sat *ShareAccessToken) assignValues(columns []string, values []any) error {
+func (_m *ShareAccessToken) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -78,23 +78,23 @@ func (sat *ShareAccessToken) assignValues(columns []string, values []any) error 
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
-				sat.ID = value.String
+				_m.ID = value.String
 			}
 		case shareaccesstoken.FieldExpiry:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expiry", values[i])
 			} else if value.Valid {
-				sat.Expiry = value.Time
+				_m.Expiry = value.Time
 			}
 		case shareaccesstoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field ticket_shareaccesstokens", values[i])
 			} else if value.Valid {
-				sat.ticket_shareaccesstokens = new(uuid.UUID)
-				*sat.ticket_shareaccesstokens = *value.S.(*uuid.UUID)
+				_m.ticket_shareaccesstokens = new(uuid.UUID)
+				*_m.ticket_shareaccesstokens = *value.S.(*uuid.UUID)
 			}
 		default:
-			sat.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -102,40 +102,40 @@ func (sat *ShareAccessToken) assignValues(columns []string, values []any) error 
 
 // Value returns the ent.Value that was dynamically selected and assigned to the ShareAccessToken.
 // This includes values selected through modifiers, order, etc.
-func (sat *ShareAccessToken) Value(name string) (ent.Value, error) {
-	return sat.selectValues.Get(name)
+func (_m *ShareAccessToken) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryTicket queries the "ticket" edge of the ShareAccessToken entity.
-func (sat *ShareAccessToken) QueryTicket() *TicketQuery {
-	return NewShareAccessTokenClient(sat.config).QueryTicket(sat)
+func (_m *ShareAccessToken) QueryTicket() *TicketQuery {
+	return NewShareAccessTokenClient(_m.config).QueryTicket(_m)
 }
 
 // Update returns a builder for updating this ShareAccessToken.
 // Note that you need to call ShareAccessToken.Unwrap() before calling this method if this ShareAccessToken
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (sat *ShareAccessToken) Update() *ShareAccessTokenUpdateOne {
-	return NewShareAccessTokenClient(sat.config).UpdateOne(sat)
+func (_m *ShareAccessToken) Update() *ShareAccessTokenUpdateOne {
+	return NewShareAccessTokenClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the ShareAccessToken entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (sat *ShareAccessToken) Unwrap() *ShareAccessToken {
-	_tx, ok := sat.config.driver.(*txDriver)
+func (_m *ShareAccessToken) Unwrap() *ShareAccessToken {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: ShareAccessToken is not a transactional entity")
 	}
-	sat.config.driver = _tx.drv
-	return sat
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (sat *ShareAccessToken) String() string {
+func (_m *ShareAccessToken) String() string {
 	var builder strings.Builder
 	builder.WriteString("ShareAccessToken(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", sat.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("expiry=")
-	builder.WriteString(sat.Expiry.Format(time.ANSIC))
+	builder.WriteString(_m.Expiry.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

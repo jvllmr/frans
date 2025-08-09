@@ -27,241 +27,241 @@ type UserUpdate struct {
 }
 
 // Where appends a list predicates to the UserUpdate builder.
-func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
-	uu.mutation.Where(ps...)
-	return uu
+func (_u *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUsername sets the "username" field.
-func (uu *UserUpdate) SetUsername(s string) *UserUpdate {
-	uu.mutation.SetUsername(s)
-	return uu
+func (_u *UserUpdate) SetUsername(v string) *UserUpdate {
+	_u.mutation.SetUsername(v)
+	return _u
 }
 
 // SetNillableUsername sets the "username" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUsername(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetUsername(*s)
+func (_u *UserUpdate) SetNillableUsername(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetUsername(*v)
 	}
-	return uu
+	return _u
 }
 
 // SetFullName sets the "full_name" field.
-func (uu *UserUpdate) SetFullName(s string) *UserUpdate {
-	uu.mutation.SetFullName(s)
-	return uu
+func (_u *UserUpdate) SetFullName(v string) *UserUpdate {
+	_u.mutation.SetFullName(v)
+	return _u
 }
 
 // SetNillableFullName sets the "full_name" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableFullName(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetFullName(*s)
+func (_u *UserUpdate) SetNillableFullName(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetFullName(*v)
 	}
-	return uu
+	return _u
 }
 
 // SetEmail sets the "email" field.
-func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
-	uu.mutation.SetEmail(s)
-	return uu
+func (_u *UserUpdate) SetEmail(v string) *UserUpdate {
+	_u.mutation.SetEmail(v)
+	return _u
 }
 
 // SetNillableEmail sets the "email" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetEmail(*s)
+func (_u *UserUpdate) SetNillableEmail(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetEmail(*v)
 	}
-	return uu
+	return _u
 }
 
 // SetGroups sets the "groups" field.
-func (uu *UserUpdate) SetGroups(s []string) *UserUpdate {
-	uu.mutation.SetGroups(s)
-	return uu
+func (_u *UserUpdate) SetGroups(v []string) *UserUpdate {
+	_u.mutation.SetGroups(v)
+	return _u
 }
 
-// AppendGroups appends s to the "groups" field.
-func (uu *UserUpdate) AppendGroups(s []string) *UserUpdate {
-	uu.mutation.AppendGroups(s)
-	return uu
+// AppendGroups appends value to the "groups" field.
+func (_u *UserUpdate) AppendGroups(v []string) *UserUpdate {
+	_u.mutation.AppendGroups(v)
+	return _u
 }
 
 // SetIsAdmin sets the "is_admin" field.
-func (uu *UserUpdate) SetIsAdmin(b bool) *UserUpdate {
-	uu.mutation.SetIsAdmin(b)
-	return uu
+func (_u *UserUpdate) SetIsAdmin(v bool) *UserUpdate {
+	_u.mutation.SetIsAdmin(v)
+	return _u
 }
 
 // SetNillableIsAdmin sets the "is_admin" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsAdmin(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsAdmin(*b)
+func (_u *UserUpdate) SetNillableIsAdmin(v *bool) *UserUpdate {
+	if v != nil {
+		_u.SetIsAdmin(*v)
 	}
-	return uu
+	return _u
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetCreatedAt(t)
-	return uu
+func (_u *UserUpdate) SetCreatedAt(v time.Time) *UserUpdate {
+	_u.mutation.SetCreatedAt(v)
+	return _u
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetCreatedAt(*t)
+func (_u *UserUpdate) SetNillableCreatedAt(v *time.Time) *UserUpdate {
+	if v != nil {
+		_u.SetCreatedAt(*v)
 	}
-	return uu
+	return _u
 }
 
 // SetSubmittedTickets sets the "submitted_tickets" field.
-func (uu *UserUpdate) SetSubmittedTickets(i int) *UserUpdate {
-	uu.mutation.ResetSubmittedTickets()
-	uu.mutation.SetSubmittedTickets(i)
-	return uu
+func (_u *UserUpdate) SetSubmittedTickets(v int) *UserUpdate {
+	_u.mutation.ResetSubmittedTickets()
+	_u.mutation.SetSubmittedTickets(v)
+	return _u
 }
 
 // SetNillableSubmittedTickets sets the "submitted_tickets" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableSubmittedTickets(i *int) *UserUpdate {
-	if i != nil {
-		uu.SetSubmittedTickets(*i)
+func (_u *UserUpdate) SetNillableSubmittedTickets(v *int) *UserUpdate {
+	if v != nil {
+		_u.SetSubmittedTickets(*v)
 	}
-	return uu
+	return _u
 }
 
-// AddSubmittedTickets adds i to the "submitted_tickets" field.
-func (uu *UserUpdate) AddSubmittedTickets(i int) *UserUpdate {
-	uu.mutation.AddSubmittedTickets(i)
-	return uu
+// AddSubmittedTickets adds value to the "submitted_tickets" field.
+func (_u *UserUpdate) AddSubmittedTickets(v int) *UserUpdate {
+	_u.mutation.AddSubmittedTickets(v)
+	return _u
 }
 
 // SetSubmittedGrants sets the "submitted_grants" field.
-func (uu *UserUpdate) SetSubmittedGrants(i int) *UserUpdate {
-	uu.mutation.ResetSubmittedGrants()
-	uu.mutation.SetSubmittedGrants(i)
-	return uu
+func (_u *UserUpdate) SetSubmittedGrants(v int) *UserUpdate {
+	_u.mutation.ResetSubmittedGrants()
+	_u.mutation.SetSubmittedGrants(v)
+	return _u
 }
 
 // SetNillableSubmittedGrants sets the "submitted_grants" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableSubmittedGrants(i *int) *UserUpdate {
-	if i != nil {
-		uu.SetSubmittedGrants(*i)
+func (_u *UserUpdate) SetNillableSubmittedGrants(v *int) *UserUpdate {
+	if v != nil {
+		_u.SetSubmittedGrants(*v)
 	}
-	return uu
+	return _u
 }
 
-// AddSubmittedGrants adds i to the "submitted_grants" field.
-func (uu *UserUpdate) AddSubmittedGrants(i int) *UserUpdate {
-	uu.mutation.AddSubmittedGrants(i)
-	return uu
+// AddSubmittedGrants adds value to the "submitted_grants" field.
+func (_u *UserUpdate) AddSubmittedGrants(v int) *UserUpdate {
+	_u.mutation.AddSubmittedGrants(v)
+	return _u
 }
 
 // SetTotalDataSize sets the "totalDataSize" field.
-func (uu *UserUpdate) SetTotalDataSize(i int64) *UserUpdate {
-	uu.mutation.ResetTotalDataSize()
-	uu.mutation.SetTotalDataSize(i)
-	return uu
+func (_u *UserUpdate) SetTotalDataSize(v int64) *UserUpdate {
+	_u.mutation.ResetTotalDataSize()
+	_u.mutation.SetTotalDataSize(v)
+	return _u
 }
 
 // SetNillableTotalDataSize sets the "totalDataSize" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableTotalDataSize(i *int64) *UserUpdate {
-	if i != nil {
-		uu.SetTotalDataSize(*i)
+func (_u *UserUpdate) SetNillableTotalDataSize(v *int64) *UserUpdate {
+	if v != nil {
+		_u.SetTotalDataSize(*v)
 	}
-	return uu
+	return _u
 }
 
-// AddTotalDataSize adds i to the "totalDataSize" field.
-func (uu *UserUpdate) AddTotalDataSize(i int64) *UserUpdate {
-	uu.mutation.AddTotalDataSize(i)
-	return uu
+// AddTotalDataSize adds value to the "totalDataSize" field.
+func (_u *UserUpdate) AddTotalDataSize(v int64) *UserUpdate {
+	_u.mutation.AddTotalDataSize(v)
+	return _u
 }
 
 // AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
-func (uu *UserUpdate) AddSessionIDs(ids ...int) *UserUpdate {
-	uu.mutation.AddSessionIDs(ids...)
-	return uu
+func (_u *UserUpdate) AddSessionIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddSessionIDs(ids...)
+	return _u
 }
 
 // AddSessions adds the "sessions" edges to the Session entity.
-func (uu *UserUpdate) AddSessions(s ...*Session) *UserUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_u *UserUpdate) AddSessions(v ...*Session) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uu.AddSessionIDs(ids...)
+	return _u.AddSessionIDs(ids...)
 }
 
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
-func (uu *UserUpdate) AddTicketIDs(ids ...uuid.UUID) *UserUpdate {
-	uu.mutation.AddTicketIDs(ids...)
-	return uu
+func (_u *UserUpdate) AddTicketIDs(ids ...uuid.UUID) *UserUpdate {
+	_u.mutation.AddTicketIDs(ids...)
+	return _u
 }
 
 // AddTickets adds the "tickets" edges to the Ticket entity.
-func (uu *UserUpdate) AddTickets(t ...*Ticket) *UserUpdate {
-	ids := make([]uuid.UUID, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *UserUpdate) AddTickets(v ...*Ticket) *UserUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uu.AddTicketIDs(ids...)
+	return _u.AddTicketIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
-func (uu *UserUpdate) Mutation() *UserMutation {
-	return uu.mutation
+func (_u *UserUpdate) Mutation() *UserMutation {
+	return _u.mutation
 }
 
 // ClearSessions clears all "sessions" edges to the Session entity.
-func (uu *UserUpdate) ClearSessions() *UserUpdate {
-	uu.mutation.ClearSessions()
-	return uu
+func (_u *UserUpdate) ClearSessions() *UserUpdate {
+	_u.mutation.ClearSessions()
+	return _u
 }
 
 // RemoveSessionIDs removes the "sessions" edge to Session entities by IDs.
-func (uu *UserUpdate) RemoveSessionIDs(ids ...int) *UserUpdate {
-	uu.mutation.RemoveSessionIDs(ids...)
-	return uu
+func (_u *UserUpdate) RemoveSessionIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveSessionIDs(ids...)
+	return _u
 }
 
 // RemoveSessions removes "sessions" edges to Session entities.
-func (uu *UserUpdate) RemoveSessions(s ...*Session) *UserUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_u *UserUpdate) RemoveSessions(v ...*Session) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uu.RemoveSessionIDs(ids...)
+	return _u.RemoveSessionIDs(ids...)
 }
 
 // ClearTickets clears all "tickets" edges to the Ticket entity.
-func (uu *UserUpdate) ClearTickets() *UserUpdate {
-	uu.mutation.ClearTickets()
-	return uu
+func (_u *UserUpdate) ClearTickets() *UserUpdate {
+	_u.mutation.ClearTickets()
+	return _u
 }
 
 // RemoveTicketIDs removes the "tickets" edge to Ticket entities by IDs.
-func (uu *UserUpdate) RemoveTicketIDs(ids ...uuid.UUID) *UserUpdate {
-	uu.mutation.RemoveTicketIDs(ids...)
-	return uu
+func (_u *UserUpdate) RemoveTicketIDs(ids ...uuid.UUID) *UserUpdate {
+	_u.mutation.RemoveTicketIDs(ids...)
+	return _u
 }
 
 // RemoveTickets removes "tickets" edges to Ticket entities.
-func (uu *UserUpdate) RemoveTickets(t ...*Ticket) *UserUpdate {
-	ids := make([]uuid.UUID, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *UserUpdate) RemoveTickets(v ...*Ticket) *UserUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uu.RemoveTicketIDs(ids...)
+	return _u.RemoveTicketIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, uu.sqlSave, uu.mutation, uu.hooks)
+func (_u *UserUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (uu *UserUpdate) SaveX(ctx context.Context) int {
-	affected, err := uu.Save(ctx)
+func (_u *UserUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -269,69 +269,69 @@ func (uu *UserUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (uu *UserUpdate) Exec(ctx context.Context) error {
-	_, err := uu.Save(ctx)
+func (_u *UserUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (uu *UserUpdate) ExecX(ctx context.Context) {
-	if err := uu.Exec(ctx); err != nil {
+func (_u *UserUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID))
-	if ps := uu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := uu.mutation.Username(); ok {
+	if value, ok := _u.mutation.Username(); ok {
 		_spec.SetField(user.FieldUsername, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.FullName(); ok {
+	if value, ok := _u.mutation.FullName(); ok {
 		_spec.SetField(user.FieldFullName, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.Email(); ok {
+	if value, ok := _u.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.Groups(); ok {
+	if value, ok := _u.mutation.Groups(); ok {
 		_spec.SetField(user.FieldGroups, field.TypeJSON, value)
 	}
-	if value, ok := uu.mutation.AppendedGroups(); ok {
+	if value, ok := _u.mutation.AppendedGroups(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, user.FieldGroups, value)
 		})
 	}
-	if value, ok := uu.mutation.IsAdmin(); ok {
+	if value, ok := _u.mutation.IsAdmin(); ok {
 		_spec.SetField(user.FieldIsAdmin, field.TypeBool, value)
 	}
-	if value, ok := uu.mutation.CreatedAt(); ok {
+	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := uu.mutation.SubmittedTickets(); ok {
+	if value, ok := _u.mutation.SubmittedTickets(); ok {
 		_spec.SetField(user.FieldSubmittedTickets, field.TypeInt, value)
 	}
-	if value, ok := uu.mutation.AddedSubmittedTickets(); ok {
+	if value, ok := _u.mutation.AddedSubmittedTickets(); ok {
 		_spec.AddField(user.FieldSubmittedTickets, field.TypeInt, value)
 	}
-	if value, ok := uu.mutation.SubmittedGrants(); ok {
+	if value, ok := _u.mutation.SubmittedGrants(); ok {
 		_spec.SetField(user.FieldSubmittedGrants, field.TypeInt, value)
 	}
-	if value, ok := uu.mutation.AddedSubmittedGrants(); ok {
+	if value, ok := _u.mutation.AddedSubmittedGrants(); ok {
 		_spec.AddField(user.FieldSubmittedGrants, field.TypeInt, value)
 	}
-	if value, ok := uu.mutation.TotalDataSize(); ok {
+	if value, ok := _u.mutation.TotalDataSize(); ok {
 		_spec.SetField(user.FieldTotalDataSize, field.TypeInt64, value)
 	}
-	if value, ok := uu.mutation.AddedTotalDataSize(); ok {
+	if value, ok := _u.mutation.AddedTotalDataSize(); ok {
 		_spec.AddField(user.FieldTotalDataSize, field.TypeInt64, value)
 	}
-	if uu.mutation.SessionsCleared() {
+	if _u.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -344,7 +344,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedSessionsIDs(); len(nodes) > 0 && !uu.mutation.SessionsCleared() {
+	if nodes := _u.mutation.RemovedSessionsIDs(); len(nodes) > 0 && !_u.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -360,7 +360,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.SessionsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.SessionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -376,7 +376,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.TicketsCleared() {
+	if _u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -389,7 +389,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !uu.mutation.TicketsCleared() {
+	if nodes := _u.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !_u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -405,7 +405,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.TicketsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TicketsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -421,7 +421,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -429,8 +429,8 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	uu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // UserUpdateOne is the builder for updating a single User entity.
@@ -442,248 +442,248 @@ type UserUpdateOne struct {
 }
 
 // SetUsername sets the "username" field.
-func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
-	uuo.mutation.SetUsername(s)
-	return uuo
+func (_u *UserUpdateOne) SetUsername(v string) *UserUpdateOne {
+	_u.mutation.SetUsername(v)
+	return _u
 }
 
 // SetNillableUsername sets the "username" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUsername(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetUsername(*s)
+func (_u *UserUpdateOne) SetNillableUsername(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetUsername(*v)
 	}
-	return uuo
+	return _u
 }
 
 // SetFullName sets the "full_name" field.
-func (uuo *UserUpdateOne) SetFullName(s string) *UserUpdateOne {
-	uuo.mutation.SetFullName(s)
-	return uuo
+func (_u *UserUpdateOne) SetFullName(v string) *UserUpdateOne {
+	_u.mutation.SetFullName(v)
+	return _u
 }
 
 // SetNillableFullName sets the "full_name" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableFullName(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetFullName(*s)
+func (_u *UserUpdateOne) SetNillableFullName(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetFullName(*v)
 	}
-	return uuo
+	return _u
 }
 
 // SetEmail sets the "email" field.
-func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
-	uuo.mutation.SetEmail(s)
-	return uuo
+func (_u *UserUpdateOne) SetEmail(v string) *UserUpdateOne {
+	_u.mutation.SetEmail(v)
+	return _u
 }
 
 // SetNillableEmail sets the "email" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetEmail(*s)
+func (_u *UserUpdateOne) SetNillableEmail(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetEmail(*v)
 	}
-	return uuo
+	return _u
 }
 
 // SetGroups sets the "groups" field.
-func (uuo *UserUpdateOne) SetGroups(s []string) *UserUpdateOne {
-	uuo.mutation.SetGroups(s)
-	return uuo
+func (_u *UserUpdateOne) SetGroups(v []string) *UserUpdateOne {
+	_u.mutation.SetGroups(v)
+	return _u
 }
 
-// AppendGroups appends s to the "groups" field.
-func (uuo *UserUpdateOne) AppendGroups(s []string) *UserUpdateOne {
-	uuo.mutation.AppendGroups(s)
-	return uuo
+// AppendGroups appends value to the "groups" field.
+func (_u *UserUpdateOne) AppendGroups(v []string) *UserUpdateOne {
+	_u.mutation.AppendGroups(v)
+	return _u
 }
 
 // SetIsAdmin sets the "is_admin" field.
-func (uuo *UserUpdateOne) SetIsAdmin(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsAdmin(b)
-	return uuo
+func (_u *UserUpdateOne) SetIsAdmin(v bool) *UserUpdateOne {
+	_u.mutation.SetIsAdmin(v)
+	return _u
 }
 
 // SetNillableIsAdmin sets the "is_admin" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsAdmin(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsAdmin(*b)
+func (_u *UserUpdateOne) SetNillableIsAdmin(v *bool) *UserUpdateOne {
+	if v != nil {
+		_u.SetIsAdmin(*v)
 	}
-	return uuo
+	return _u
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetCreatedAt(t)
-	return uuo
+func (_u *UserUpdateOne) SetCreatedAt(v time.Time) *UserUpdateOne {
+	_u.mutation.SetCreatedAt(v)
+	return _u
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetCreatedAt(*t)
+func (_u *UserUpdateOne) SetNillableCreatedAt(v *time.Time) *UserUpdateOne {
+	if v != nil {
+		_u.SetCreatedAt(*v)
 	}
-	return uuo
+	return _u
 }
 
 // SetSubmittedTickets sets the "submitted_tickets" field.
-func (uuo *UserUpdateOne) SetSubmittedTickets(i int) *UserUpdateOne {
-	uuo.mutation.ResetSubmittedTickets()
-	uuo.mutation.SetSubmittedTickets(i)
-	return uuo
+func (_u *UserUpdateOne) SetSubmittedTickets(v int) *UserUpdateOne {
+	_u.mutation.ResetSubmittedTickets()
+	_u.mutation.SetSubmittedTickets(v)
+	return _u
 }
 
 // SetNillableSubmittedTickets sets the "submitted_tickets" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableSubmittedTickets(i *int) *UserUpdateOne {
-	if i != nil {
-		uuo.SetSubmittedTickets(*i)
+func (_u *UserUpdateOne) SetNillableSubmittedTickets(v *int) *UserUpdateOne {
+	if v != nil {
+		_u.SetSubmittedTickets(*v)
 	}
-	return uuo
+	return _u
 }
 
-// AddSubmittedTickets adds i to the "submitted_tickets" field.
-func (uuo *UserUpdateOne) AddSubmittedTickets(i int) *UserUpdateOne {
-	uuo.mutation.AddSubmittedTickets(i)
-	return uuo
+// AddSubmittedTickets adds value to the "submitted_tickets" field.
+func (_u *UserUpdateOne) AddSubmittedTickets(v int) *UserUpdateOne {
+	_u.mutation.AddSubmittedTickets(v)
+	return _u
 }
 
 // SetSubmittedGrants sets the "submitted_grants" field.
-func (uuo *UserUpdateOne) SetSubmittedGrants(i int) *UserUpdateOne {
-	uuo.mutation.ResetSubmittedGrants()
-	uuo.mutation.SetSubmittedGrants(i)
-	return uuo
+func (_u *UserUpdateOne) SetSubmittedGrants(v int) *UserUpdateOne {
+	_u.mutation.ResetSubmittedGrants()
+	_u.mutation.SetSubmittedGrants(v)
+	return _u
 }
 
 // SetNillableSubmittedGrants sets the "submitted_grants" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableSubmittedGrants(i *int) *UserUpdateOne {
-	if i != nil {
-		uuo.SetSubmittedGrants(*i)
+func (_u *UserUpdateOne) SetNillableSubmittedGrants(v *int) *UserUpdateOne {
+	if v != nil {
+		_u.SetSubmittedGrants(*v)
 	}
-	return uuo
+	return _u
 }
 
-// AddSubmittedGrants adds i to the "submitted_grants" field.
-func (uuo *UserUpdateOne) AddSubmittedGrants(i int) *UserUpdateOne {
-	uuo.mutation.AddSubmittedGrants(i)
-	return uuo
+// AddSubmittedGrants adds value to the "submitted_grants" field.
+func (_u *UserUpdateOne) AddSubmittedGrants(v int) *UserUpdateOne {
+	_u.mutation.AddSubmittedGrants(v)
+	return _u
 }
 
 // SetTotalDataSize sets the "totalDataSize" field.
-func (uuo *UserUpdateOne) SetTotalDataSize(i int64) *UserUpdateOne {
-	uuo.mutation.ResetTotalDataSize()
-	uuo.mutation.SetTotalDataSize(i)
-	return uuo
+func (_u *UserUpdateOne) SetTotalDataSize(v int64) *UserUpdateOne {
+	_u.mutation.ResetTotalDataSize()
+	_u.mutation.SetTotalDataSize(v)
+	return _u
 }
 
 // SetNillableTotalDataSize sets the "totalDataSize" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableTotalDataSize(i *int64) *UserUpdateOne {
-	if i != nil {
-		uuo.SetTotalDataSize(*i)
+func (_u *UserUpdateOne) SetNillableTotalDataSize(v *int64) *UserUpdateOne {
+	if v != nil {
+		_u.SetTotalDataSize(*v)
 	}
-	return uuo
+	return _u
 }
 
-// AddTotalDataSize adds i to the "totalDataSize" field.
-func (uuo *UserUpdateOne) AddTotalDataSize(i int64) *UserUpdateOne {
-	uuo.mutation.AddTotalDataSize(i)
-	return uuo
+// AddTotalDataSize adds value to the "totalDataSize" field.
+func (_u *UserUpdateOne) AddTotalDataSize(v int64) *UserUpdateOne {
+	_u.mutation.AddTotalDataSize(v)
+	return _u
 }
 
 // AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
-func (uuo *UserUpdateOne) AddSessionIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.AddSessionIDs(ids...)
-	return uuo
+func (_u *UserUpdateOne) AddSessionIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddSessionIDs(ids...)
+	return _u
 }
 
 // AddSessions adds the "sessions" edges to the Session entity.
-func (uuo *UserUpdateOne) AddSessions(s ...*Session) *UserUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_u *UserUpdateOne) AddSessions(v ...*Session) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uuo.AddSessionIDs(ids...)
+	return _u.AddSessionIDs(ids...)
 }
 
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
-func (uuo *UserUpdateOne) AddTicketIDs(ids ...uuid.UUID) *UserUpdateOne {
-	uuo.mutation.AddTicketIDs(ids...)
-	return uuo
+func (_u *UserUpdateOne) AddTicketIDs(ids ...uuid.UUID) *UserUpdateOne {
+	_u.mutation.AddTicketIDs(ids...)
+	return _u
 }
 
 // AddTickets adds the "tickets" edges to the Ticket entity.
-func (uuo *UserUpdateOne) AddTickets(t ...*Ticket) *UserUpdateOne {
-	ids := make([]uuid.UUID, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *UserUpdateOne) AddTickets(v ...*Ticket) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uuo.AddTicketIDs(ids...)
+	return _u.AddTicketIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
-func (uuo *UserUpdateOne) Mutation() *UserMutation {
-	return uuo.mutation
+func (_u *UserUpdateOne) Mutation() *UserMutation {
+	return _u.mutation
 }
 
 // ClearSessions clears all "sessions" edges to the Session entity.
-func (uuo *UserUpdateOne) ClearSessions() *UserUpdateOne {
-	uuo.mutation.ClearSessions()
-	return uuo
+func (_u *UserUpdateOne) ClearSessions() *UserUpdateOne {
+	_u.mutation.ClearSessions()
+	return _u
 }
 
 // RemoveSessionIDs removes the "sessions" edge to Session entities by IDs.
-func (uuo *UserUpdateOne) RemoveSessionIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.RemoveSessionIDs(ids...)
-	return uuo
+func (_u *UserUpdateOne) RemoveSessionIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveSessionIDs(ids...)
+	return _u
 }
 
 // RemoveSessions removes "sessions" edges to Session entities.
-func (uuo *UserUpdateOne) RemoveSessions(s ...*Session) *UserUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+func (_u *UserUpdateOne) RemoveSessions(v ...*Session) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uuo.RemoveSessionIDs(ids...)
+	return _u.RemoveSessionIDs(ids...)
 }
 
 // ClearTickets clears all "tickets" edges to the Ticket entity.
-func (uuo *UserUpdateOne) ClearTickets() *UserUpdateOne {
-	uuo.mutation.ClearTickets()
-	return uuo
+func (_u *UserUpdateOne) ClearTickets() *UserUpdateOne {
+	_u.mutation.ClearTickets()
+	return _u
 }
 
 // RemoveTicketIDs removes the "tickets" edge to Ticket entities by IDs.
-func (uuo *UserUpdateOne) RemoveTicketIDs(ids ...uuid.UUID) *UserUpdateOne {
-	uuo.mutation.RemoveTicketIDs(ids...)
-	return uuo
+func (_u *UserUpdateOne) RemoveTicketIDs(ids ...uuid.UUID) *UserUpdateOne {
+	_u.mutation.RemoveTicketIDs(ids...)
+	return _u
 }
 
 // RemoveTickets removes "tickets" edges to Ticket entities.
-func (uuo *UserUpdateOne) RemoveTickets(t ...*Ticket) *UserUpdateOne {
-	ids := make([]uuid.UUID, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *UserUpdateOne) RemoveTickets(v ...*Ticket) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return uuo.RemoveTicketIDs(ids...)
+	return _u.RemoveTicketIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
-func (uuo *UserUpdateOne) Where(ps ...predicate.User) *UserUpdateOne {
-	uuo.mutation.Where(ps...)
-	return uuo
+func (_u *UserUpdateOne) Where(ps ...predicate.User) *UserUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (uuo *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne {
-	uuo.fields = append([]string{field}, fields...)
-	return uuo
+func (_u *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated User entity.
-func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
-	return withHooks(ctx, uuo.sqlSave, uuo.mutation, uuo.hooks)
+func (_u *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (uuo *UserUpdateOne) SaveX(ctx context.Context) *User {
-	node, err := uuo.Save(ctx)
+func (_u *UserUpdateOne) SaveX(ctx context.Context) *User {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -691,26 +691,26 @@ func (uuo *UserUpdateOne) SaveX(ctx context.Context) *User {
 }
 
 // Exec executes the query on the entity.
-func (uuo *UserUpdateOne) Exec(ctx context.Context) error {
-	_, err := uuo.Save(ctx)
+func (_u *UserUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
-	if err := uuo.Exec(ctx); err != nil {
+func (_u *UserUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
+func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID))
-	id, ok := uuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "User.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := uuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, user.FieldID)
 		for _, f := range fields {
@@ -722,55 +722,55 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
-	if ps := uuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := uuo.mutation.Username(); ok {
+	if value, ok := _u.mutation.Username(); ok {
 		_spec.SetField(user.FieldUsername, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.FullName(); ok {
+	if value, ok := _u.mutation.FullName(); ok {
 		_spec.SetField(user.FieldFullName, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.Email(); ok {
+	if value, ok := _u.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.Groups(); ok {
+	if value, ok := _u.mutation.Groups(); ok {
 		_spec.SetField(user.FieldGroups, field.TypeJSON, value)
 	}
-	if value, ok := uuo.mutation.AppendedGroups(); ok {
+	if value, ok := _u.mutation.AppendedGroups(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, user.FieldGroups, value)
 		})
 	}
-	if value, ok := uuo.mutation.IsAdmin(); ok {
+	if value, ok := _u.mutation.IsAdmin(); ok {
 		_spec.SetField(user.FieldIsAdmin, field.TypeBool, value)
 	}
-	if value, ok := uuo.mutation.CreatedAt(); ok {
+	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 	}
-	if value, ok := uuo.mutation.SubmittedTickets(); ok {
+	if value, ok := _u.mutation.SubmittedTickets(); ok {
 		_spec.SetField(user.FieldSubmittedTickets, field.TypeInt, value)
 	}
-	if value, ok := uuo.mutation.AddedSubmittedTickets(); ok {
+	if value, ok := _u.mutation.AddedSubmittedTickets(); ok {
 		_spec.AddField(user.FieldSubmittedTickets, field.TypeInt, value)
 	}
-	if value, ok := uuo.mutation.SubmittedGrants(); ok {
+	if value, ok := _u.mutation.SubmittedGrants(); ok {
 		_spec.SetField(user.FieldSubmittedGrants, field.TypeInt, value)
 	}
-	if value, ok := uuo.mutation.AddedSubmittedGrants(); ok {
+	if value, ok := _u.mutation.AddedSubmittedGrants(); ok {
 		_spec.AddField(user.FieldSubmittedGrants, field.TypeInt, value)
 	}
-	if value, ok := uuo.mutation.TotalDataSize(); ok {
+	if value, ok := _u.mutation.TotalDataSize(); ok {
 		_spec.SetField(user.FieldTotalDataSize, field.TypeInt64, value)
 	}
-	if value, ok := uuo.mutation.AddedTotalDataSize(); ok {
+	if value, ok := _u.mutation.AddedTotalDataSize(); ok {
 		_spec.AddField(user.FieldTotalDataSize, field.TypeInt64, value)
 	}
-	if uuo.mutation.SessionsCleared() {
+	if _u.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -783,7 +783,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedSessionsIDs(); len(nodes) > 0 && !uuo.mutation.SessionsCleared() {
+	if nodes := _u.mutation.RemovedSessionsIDs(); len(nodes) > 0 && !_u.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -799,7 +799,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.SessionsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.SessionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -815,7 +815,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.TicketsCleared() {
+	if _u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -828,7 +828,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !uuo.mutation.TicketsCleared() {
+	if nodes := _u.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !_u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -844,7 +844,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.TicketsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TicketsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -860,10 +860,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &User{config: uuo.config}
+	_node = &User{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, uuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -871,6 +871,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		return nil, err
 	}
-	uuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

@@ -20,56 +20,56 @@ type ShareAccessTokenDelete struct {
 }
 
 // Where appends a list predicates to the ShareAccessTokenDelete builder.
-func (satd *ShareAccessTokenDelete) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenDelete {
-	satd.mutation.Where(ps...)
-	return satd
+func (_d *ShareAccessTokenDelete) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenDelete {
+	_d.mutation.Where(ps...)
+	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (satd *ShareAccessTokenDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks(ctx, satd.sqlExec, satd.mutation, satd.hooks)
+func (_d *ShareAccessTokenDelete) Exec(ctx context.Context) (int, error) {
+	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (satd *ShareAccessTokenDelete) ExecX(ctx context.Context) int {
-	n, err := satd.Exec(ctx)
+func (_d *ShareAccessTokenDelete) ExecX(ctx context.Context) int {
+	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return n
 }
 
-func (satd *ShareAccessTokenDelete) sqlExec(ctx context.Context) (int, error) {
+func (_d *ShareAccessTokenDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(shareaccesstoken.Table, sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString))
-	if ps := satd.mutation.predicates; len(ps) > 0 {
+	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	affected, err := sqlgraph.DeleteNodes(ctx, satd.driver, _spec)
+	affected, err := sqlgraph.DeleteNodes(ctx, _d.driver, _spec)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
-	satd.mutation.done = true
+	_d.mutation.done = true
 	return affected, err
 }
 
 // ShareAccessTokenDeleteOne is the builder for deleting a single ShareAccessToken entity.
 type ShareAccessTokenDeleteOne struct {
-	satd *ShareAccessTokenDelete
+	_d *ShareAccessTokenDelete
 }
 
 // Where appends a list predicates to the ShareAccessTokenDelete builder.
-func (satdo *ShareAccessTokenDeleteOne) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenDeleteOne {
-	satdo.satd.mutation.Where(ps...)
-	return satdo
+func (_d *ShareAccessTokenDeleteOne) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenDeleteOne {
+	_d._d.mutation.Where(ps...)
+	return _d
 }
 
 // Exec executes the deletion query.
-func (satdo *ShareAccessTokenDeleteOne) Exec(ctx context.Context) error {
-	n, err := satdo.satd.Exec(ctx)
+func (_d *ShareAccessTokenDeleteOne) Exec(ctx context.Context) error {
+	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
@@ -81,8 +81,8 @@ func (satdo *ShareAccessTokenDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (satdo *ShareAccessTokenDeleteOne) ExecX(ctx context.Context) {
-	if err := satdo.Exec(ctx); err != nil {
+func (_d *ShareAccessTokenDeleteOne) ExecX(ctx context.Context) {
+	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

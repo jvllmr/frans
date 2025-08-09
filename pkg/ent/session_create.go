@@ -23,55 +23,55 @@ type SessionCreate struct {
 }
 
 // SetIDToken sets the "id_token" field.
-func (sc *SessionCreate) SetIDToken(s string) *SessionCreate {
-	sc.mutation.SetIDToken(s)
-	return sc
+func (_c *SessionCreate) SetIDToken(v string) *SessionCreate {
+	_c.mutation.SetIDToken(v)
+	return _c
 }
 
 // SetExpire sets the "expire" field.
-func (sc *SessionCreate) SetExpire(t time.Time) *SessionCreate {
-	sc.mutation.SetExpire(t)
-	return sc
+func (_c *SessionCreate) SetExpire(v time.Time) *SessionCreate {
+	_c.mutation.SetExpire(v)
+	return _c
 }
 
 // SetRefreshToken sets the "refresh_token" field.
-func (sc *SessionCreate) SetRefreshToken(s string) *SessionCreate {
-	sc.mutation.SetRefreshToken(s)
-	return sc
+func (_c *SessionCreate) SetRefreshToken(v string) *SessionCreate {
+	_c.mutation.SetRefreshToken(v)
+	return _c
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (sc *SessionCreate) SetUserID(id uuid.UUID) *SessionCreate {
-	sc.mutation.SetUserID(id)
-	return sc
+func (_c *SessionCreate) SetUserID(id uuid.UUID) *SessionCreate {
+	_c.mutation.SetUserID(id)
+	return _c
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (sc *SessionCreate) SetNillableUserID(id *uuid.UUID) *SessionCreate {
+func (_c *SessionCreate) SetNillableUserID(id *uuid.UUID) *SessionCreate {
 	if id != nil {
-		sc = sc.SetUserID(*id)
+		_c = _c.SetUserID(*id)
 	}
-	return sc
+	return _c
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (sc *SessionCreate) SetUser(u *User) *SessionCreate {
-	return sc.SetUserID(u.ID)
+func (_c *SessionCreate) SetUser(v *User) *SessionCreate {
+	return _c.SetUserID(v.ID)
 }
 
 // Mutation returns the SessionMutation object of the builder.
-func (sc *SessionCreate) Mutation() *SessionMutation {
-	return sc.mutation
+func (_c *SessionCreate) Mutation() *SessionMutation {
+	return _c.mutation
 }
 
 // Save creates the Session in the database.
-func (sc *SessionCreate) Save(ctx context.Context) (*Session, error) {
-	return withHooks(ctx, sc.sqlSave, sc.mutation, sc.hooks)
+func (_c *SessionCreate) Save(ctx context.Context) (*Session, error) {
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (sc *SessionCreate) SaveX(ctx context.Context) *Session {
-	v, err := sc.Save(ctx)
+func (_c *SessionCreate) SaveX(ctx context.Context) *Session {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -79,38 +79,38 @@ func (sc *SessionCreate) SaveX(ctx context.Context) *Session {
 }
 
 // Exec executes the query.
-func (sc *SessionCreate) Exec(ctx context.Context) error {
-	_, err := sc.Save(ctx)
+func (_c *SessionCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (sc *SessionCreate) ExecX(ctx context.Context) {
-	if err := sc.Exec(ctx); err != nil {
+func (_c *SessionCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (sc *SessionCreate) check() error {
-	if _, ok := sc.mutation.IDToken(); !ok {
+func (_c *SessionCreate) check() error {
+	if _, ok := _c.mutation.IDToken(); !ok {
 		return &ValidationError{Name: "id_token", err: errors.New(`ent: missing required field "Session.id_token"`)}
 	}
-	if _, ok := sc.mutation.Expire(); !ok {
+	if _, ok := _c.mutation.Expire(); !ok {
 		return &ValidationError{Name: "expire", err: errors.New(`ent: missing required field "Session.expire"`)}
 	}
-	if _, ok := sc.mutation.RefreshToken(); !ok {
+	if _, ok := _c.mutation.RefreshToken(); !ok {
 		return &ValidationError{Name: "refresh_token", err: errors.New(`ent: missing required field "Session.refresh_token"`)}
 	}
 	return nil
 }
 
-func (sc *SessionCreate) sqlSave(ctx context.Context) (*Session, error) {
-	if err := sc.check(); err != nil {
+func (_c *SessionCreate) sqlSave(ctx context.Context) (*Session, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := sc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, sc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -118,29 +118,29 @@ func (sc *SessionCreate) sqlSave(ctx context.Context) (*Session, error) {
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
-	sc.mutation.id = &_node.ID
-	sc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
+func (_c *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Session{config: sc.config}
+		_node = &Session{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(session.Table, sqlgraph.NewFieldSpec(session.FieldID, field.TypeInt))
 	)
-	if value, ok := sc.mutation.IDToken(); ok {
+	if value, ok := _c.mutation.IDToken(); ok {
 		_spec.SetField(session.FieldIDToken, field.TypeString, value)
 		_node.IDToken = value
 	}
-	if value, ok := sc.mutation.Expire(); ok {
+	if value, ok := _c.mutation.Expire(); ok {
 		_spec.SetField(session.FieldExpire, field.TypeTime, value)
 		_node.Expire = value
 	}
-	if value, ok := sc.mutation.RefreshToken(); ok {
+	if value, ok := _c.mutation.RefreshToken(); ok {
 		_spec.SetField(session.FieldRefreshToken, field.TypeString, value)
 		_node.RefreshToken = value
 	}
-	if nodes := sc.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -168,16 +168,16 @@ type SessionCreateBulk struct {
 }
 
 // Save creates the Session entities in the database.
-func (scb *SessionCreateBulk) Save(ctx context.Context) ([]*Session, error) {
-	if scb.err != nil {
-		return nil, scb.err
+func (_c *SessionCreateBulk) Save(ctx context.Context) ([]*Session, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(scb.builders))
-	nodes := make([]*Session, len(scb.builders))
-	mutators := make([]Mutator, len(scb.builders))
-	for i := range scb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Session, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := scb.builders[i]
+			builder := _c.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*SessionMutation)
 				if !ok {
@@ -190,11 +190,11 @@ func (scb *SessionCreateBulk) Save(ctx context.Context) ([]*Session, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, scb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, scb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -218,7 +218,7 @@ func (scb *SessionCreateBulk) Save(ctx context.Context) ([]*Session, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, scb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -226,8 +226,8 @@ func (scb *SessionCreateBulk) Save(ctx context.Context) ([]*Session, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (scb *SessionCreateBulk) SaveX(ctx context.Context) []*Session {
-	v, err := scb.Save(ctx)
+func (_c *SessionCreateBulk) SaveX(ctx context.Context) []*Session {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -235,14 +235,14 @@ func (scb *SessionCreateBulk) SaveX(ctx context.Context) []*Session {
 }
 
 // Exec executes the query.
-func (scb *SessionCreateBulk) Exec(ctx context.Context) error {
-	_, err := scb.Save(ctx)
+func (_c *SessionCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (scb *SessionCreateBulk) ExecX(ctx context.Context) {
-	if err := scb.Exec(ctx); err != nil {
+func (_c *SessionCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

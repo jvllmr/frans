@@ -32,44 +32,44 @@ type ShareAccessTokenQuery struct {
 }
 
 // Where adds a new predicate for the ShareAccessTokenQuery builder.
-func (satq *ShareAccessTokenQuery) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenQuery {
-	satq.predicates = append(satq.predicates, ps...)
-	return satq
+func (_q *ShareAccessTokenQuery) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenQuery {
+	_q.predicates = append(_q.predicates, ps...)
+	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (satq *ShareAccessTokenQuery) Limit(limit int) *ShareAccessTokenQuery {
-	satq.ctx.Limit = &limit
-	return satq
+func (_q *ShareAccessTokenQuery) Limit(limit int) *ShareAccessTokenQuery {
+	_q.ctx.Limit = &limit
+	return _q
 }
 
 // Offset to start from.
-func (satq *ShareAccessTokenQuery) Offset(offset int) *ShareAccessTokenQuery {
-	satq.ctx.Offset = &offset
-	return satq
+func (_q *ShareAccessTokenQuery) Offset(offset int) *ShareAccessTokenQuery {
+	_q.ctx.Offset = &offset
+	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (satq *ShareAccessTokenQuery) Unique(unique bool) *ShareAccessTokenQuery {
-	satq.ctx.Unique = &unique
-	return satq
+func (_q *ShareAccessTokenQuery) Unique(unique bool) *ShareAccessTokenQuery {
+	_q.ctx.Unique = &unique
+	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (satq *ShareAccessTokenQuery) Order(o ...shareaccesstoken.OrderOption) *ShareAccessTokenQuery {
-	satq.order = append(satq.order, o...)
-	return satq
+func (_q *ShareAccessTokenQuery) Order(o ...shareaccesstoken.OrderOption) *ShareAccessTokenQuery {
+	_q.order = append(_q.order, o...)
+	return _q
 }
 
 // QueryTicket chains the current query on the "ticket" edge.
-func (satq *ShareAccessTokenQuery) QueryTicket() *TicketQuery {
-	query := (&TicketClient{config: satq.config}).Query()
+func (_q *ShareAccessTokenQuery) QueryTicket() *TicketQuery {
+	query := (&TicketClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := satq.prepareQuery(ctx); err != nil {
+		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
-		selector := satq.sqlQuery(ctx)
+		selector := _q.sqlQuery(ctx)
 		if err := selector.Err(); err != nil {
 			return nil, err
 		}
@@ -78,7 +78,7 @@ func (satq *ShareAccessTokenQuery) QueryTicket() *TicketQuery {
 			sqlgraph.To(ticket.Table, ticket.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, shareaccesstoken.TicketTable, shareaccesstoken.TicketColumn),
 		)
-		fromU = sqlgraph.SetNeighbors(satq.driver.Dialect(), step)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
@@ -86,8 +86,8 @@ func (satq *ShareAccessTokenQuery) QueryTicket() *TicketQuery {
 
 // First returns the first ShareAccessToken entity from the query.
 // Returns a *NotFoundError when no ShareAccessToken was found.
-func (satq *ShareAccessTokenQuery) First(ctx context.Context) (*ShareAccessToken, error) {
-	nodes, err := satq.Limit(1).All(setContextOp(ctx, satq.ctx, ent.OpQueryFirst))
+func (_q *ShareAccessTokenQuery) First(ctx context.Context) (*ShareAccessToken, error) {
+	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +98,8 @@ func (satq *ShareAccessTokenQuery) First(ctx context.Context) (*ShareAccessToken
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (satq *ShareAccessTokenQuery) FirstX(ctx context.Context) *ShareAccessToken {
-	node, err := satq.First(ctx)
+func (_q *ShareAccessTokenQuery) FirstX(ctx context.Context) *ShareAccessToken {
+	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -108,9 +108,9 @@ func (satq *ShareAccessTokenQuery) FirstX(ctx context.Context) *ShareAccessToken
 
 // FirstID returns the first ShareAccessToken ID from the query.
 // Returns a *NotFoundError when no ShareAccessToken ID was found.
-func (satq *ShareAccessTokenQuery) FirstID(ctx context.Context) (id string, err error) {
+func (_q *ShareAccessTokenQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = satq.Limit(1).IDs(setContextOp(ctx, satq.ctx, ent.OpQueryFirstID)); err != nil {
+	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -121,8 +121,8 @@ func (satq *ShareAccessTokenQuery) FirstID(ctx context.Context) (id string, err 
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (satq *ShareAccessTokenQuery) FirstIDX(ctx context.Context) string {
-	id, err := satq.FirstID(ctx)
+func (_q *ShareAccessTokenQuery) FirstIDX(ctx context.Context) string {
+	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -132,8 +132,8 @@ func (satq *ShareAccessTokenQuery) FirstIDX(ctx context.Context) string {
 // Only returns a single ShareAccessToken entity found by the query, ensuring it only returns one.
 // Returns a *NotSingularError when more than one ShareAccessToken entity is found.
 // Returns a *NotFoundError when no ShareAccessToken entities are found.
-func (satq *ShareAccessTokenQuery) Only(ctx context.Context) (*ShareAccessToken, error) {
-	nodes, err := satq.Limit(2).All(setContextOp(ctx, satq.ctx, ent.OpQueryOnly))
+func (_q *ShareAccessTokenQuery) Only(ctx context.Context) (*ShareAccessToken, error) {
+	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -148,8 +148,8 @@ func (satq *ShareAccessTokenQuery) Only(ctx context.Context) (*ShareAccessToken,
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (satq *ShareAccessTokenQuery) OnlyX(ctx context.Context) *ShareAccessToken {
-	node, err := satq.Only(ctx)
+func (_q *ShareAccessTokenQuery) OnlyX(ctx context.Context) *ShareAccessToken {
+	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -159,9 +159,9 @@ func (satq *ShareAccessTokenQuery) OnlyX(ctx context.Context) *ShareAccessToken 
 // OnlyID is like Only, but returns the only ShareAccessToken ID in the query.
 // Returns a *NotSingularError when more than one ShareAccessToken ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (satq *ShareAccessTokenQuery) OnlyID(ctx context.Context) (id string, err error) {
+func (_q *ShareAccessTokenQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = satq.Limit(2).IDs(setContextOp(ctx, satq.ctx, ent.OpQueryOnlyID)); err != nil {
+	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -176,8 +176,8 @@ func (satq *ShareAccessTokenQuery) OnlyID(ctx context.Context) (id string, err e
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (satq *ShareAccessTokenQuery) OnlyIDX(ctx context.Context) string {
-	id, err := satq.OnlyID(ctx)
+func (_q *ShareAccessTokenQuery) OnlyIDX(ctx context.Context) string {
+	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -185,18 +185,18 @@ func (satq *ShareAccessTokenQuery) OnlyIDX(ctx context.Context) string {
 }
 
 // All executes the query and returns a list of ShareAccessTokens.
-func (satq *ShareAccessTokenQuery) All(ctx context.Context) ([]*ShareAccessToken, error) {
-	ctx = setContextOp(ctx, satq.ctx, ent.OpQueryAll)
-	if err := satq.prepareQuery(ctx); err != nil {
+func (_q *ShareAccessTokenQuery) All(ctx context.Context) ([]*ShareAccessToken, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
 	qr := querierAll[[]*ShareAccessToken, *ShareAccessTokenQuery]()
-	return withInterceptors[[]*ShareAccessToken](ctx, satq, qr, satq.inters)
+	return withInterceptors[[]*ShareAccessToken](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (satq *ShareAccessTokenQuery) AllX(ctx context.Context) []*ShareAccessToken {
-	nodes, err := satq.All(ctx)
+func (_q *ShareAccessTokenQuery) AllX(ctx context.Context) []*ShareAccessToken {
+	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -204,20 +204,20 @@ func (satq *ShareAccessTokenQuery) AllX(ctx context.Context) []*ShareAccessToken
 }
 
 // IDs executes the query and returns a list of ShareAccessToken IDs.
-func (satq *ShareAccessTokenQuery) IDs(ctx context.Context) (ids []string, err error) {
-	if satq.ctx.Unique == nil && satq.path != nil {
-		satq.Unique(true)
+func (_q *ShareAccessTokenQuery) IDs(ctx context.Context) (ids []string, err error) {
+	if _q.ctx.Unique == nil && _q.path != nil {
+		_q.Unique(true)
 	}
-	ctx = setContextOp(ctx, satq.ctx, ent.OpQueryIDs)
-	if err = satq.Select(shareaccesstoken.FieldID).Scan(ctx, &ids); err != nil {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
+	if err = _q.Select(shareaccesstoken.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (satq *ShareAccessTokenQuery) IDsX(ctx context.Context) []string {
-	ids, err := satq.IDs(ctx)
+func (_q *ShareAccessTokenQuery) IDsX(ctx context.Context) []string {
+	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -225,17 +225,17 @@ func (satq *ShareAccessTokenQuery) IDsX(ctx context.Context) []string {
 }
 
 // Count returns the count of the given query.
-func (satq *ShareAccessTokenQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, satq.ctx, ent.OpQueryCount)
-	if err := satq.prepareQuery(ctx); err != nil {
+func (_q *ShareAccessTokenQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, satq, querierCount[*ShareAccessTokenQuery](), satq.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*ShareAccessTokenQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (satq *ShareAccessTokenQuery) CountX(ctx context.Context) int {
-	count, err := satq.Count(ctx)
+func (_q *ShareAccessTokenQuery) CountX(ctx context.Context) int {
+	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -243,9 +243,9 @@ func (satq *ShareAccessTokenQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (satq *ShareAccessTokenQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, satq.ctx, ent.OpQueryExist)
-	switch _, err := satq.FirstID(ctx); {
+func (_q *ShareAccessTokenQuery) Exist(ctx context.Context) (bool, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
+	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
 	case err != nil:
@@ -256,8 +256,8 @@ func (satq *ShareAccessTokenQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (satq *ShareAccessTokenQuery) ExistX(ctx context.Context) bool {
-	exist, err := satq.Exist(ctx)
+func (_q *ShareAccessTokenQuery) ExistX(ctx context.Context) bool {
+	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -266,32 +266,32 @@ func (satq *ShareAccessTokenQuery) ExistX(ctx context.Context) bool {
 
 // Clone returns a duplicate of the ShareAccessTokenQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (satq *ShareAccessTokenQuery) Clone() *ShareAccessTokenQuery {
-	if satq == nil {
+func (_q *ShareAccessTokenQuery) Clone() *ShareAccessTokenQuery {
+	if _q == nil {
 		return nil
 	}
 	return &ShareAccessTokenQuery{
-		config:     satq.config,
-		ctx:        satq.ctx.Clone(),
-		order:      append([]shareaccesstoken.OrderOption{}, satq.order...),
-		inters:     append([]Interceptor{}, satq.inters...),
-		predicates: append([]predicate.ShareAccessToken{}, satq.predicates...),
-		withTicket: satq.withTicket.Clone(),
+		config:     _q.config,
+		ctx:        _q.ctx.Clone(),
+		order:      append([]shareaccesstoken.OrderOption{}, _q.order...),
+		inters:     append([]Interceptor{}, _q.inters...),
+		predicates: append([]predicate.ShareAccessToken{}, _q.predicates...),
+		withTicket: _q.withTicket.Clone(),
 		// clone intermediate query.
-		sql:  satq.sql.Clone(),
-		path: satq.path,
+		sql:  _q.sql.Clone(),
+		path: _q.path,
 	}
 }
 
 // WithTicket tells the query-builder to eager-load the nodes that are connected to
 // the "ticket" edge. The optional arguments are used to configure the query builder of the edge.
-func (satq *ShareAccessTokenQuery) WithTicket(opts ...func(*TicketQuery)) *ShareAccessTokenQuery {
-	query := (&TicketClient{config: satq.config}).Query()
+func (_q *ShareAccessTokenQuery) WithTicket(opts ...func(*TicketQuery)) *ShareAccessTokenQuery {
+	query := (&TicketClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	satq.withTicket = query
-	return satq
+	_q.withTicket = query
+	return _q
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -308,10 +308,10 @@ func (satq *ShareAccessTokenQuery) WithTicket(opts ...func(*TicketQuery)) *Share
 //		GroupBy(shareaccesstoken.FieldExpiry).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (satq *ShareAccessTokenQuery) GroupBy(field string, fields ...string) *ShareAccessTokenGroupBy {
-	satq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &ShareAccessTokenGroupBy{build: satq}
-	grbuild.flds = &satq.ctx.Fields
+func (_q *ShareAccessTokenQuery) GroupBy(field string, fields ...string) *ShareAccessTokenGroupBy {
+	_q.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &ShareAccessTokenGroupBy{build: _q}
+	grbuild.flds = &_q.ctx.Fields
 	grbuild.label = shareaccesstoken.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -329,55 +329,55 @@ func (satq *ShareAccessTokenQuery) GroupBy(field string, fields ...string) *Shar
 //	client.ShareAccessToken.Query().
 //		Select(shareaccesstoken.FieldExpiry).
 //		Scan(ctx, &v)
-func (satq *ShareAccessTokenQuery) Select(fields ...string) *ShareAccessTokenSelect {
-	satq.ctx.Fields = append(satq.ctx.Fields, fields...)
-	sbuild := &ShareAccessTokenSelect{ShareAccessTokenQuery: satq}
+func (_q *ShareAccessTokenQuery) Select(fields ...string) *ShareAccessTokenSelect {
+	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
+	sbuild := &ShareAccessTokenSelect{ShareAccessTokenQuery: _q}
 	sbuild.label = shareaccesstoken.Label
-	sbuild.flds, sbuild.scan = &satq.ctx.Fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
 // Aggregate returns a ShareAccessTokenSelect configured with the given aggregations.
-func (satq *ShareAccessTokenQuery) Aggregate(fns ...AggregateFunc) *ShareAccessTokenSelect {
-	return satq.Select().Aggregate(fns...)
+func (_q *ShareAccessTokenQuery) Aggregate(fns ...AggregateFunc) *ShareAccessTokenSelect {
+	return _q.Select().Aggregate(fns...)
 }
 
-func (satq *ShareAccessTokenQuery) prepareQuery(ctx context.Context) error {
-	for _, inter := range satq.inters {
+func (_q *ShareAccessTokenQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
 		}
 		if trv, ok := inter.(Traverser); ok {
-			if err := trv.Traverse(ctx, satq); err != nil {
+			if err := trv.Traverse(ctx, _q); err != nil {
 				return err
 			}
 		}
 	}
-	for _, f := range satq.ctx.Fields {
+	for _, f := range _q.ctx.Fields {
 		if !shareaccesstoken.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
-	if satq.path != nil {
-		prev, err := satq.path(ctx)
+	if _q.path != nil {
+		prev, err := _q.path(ctx)
 		if err != nil {
 			return err
 		}
-		satq.sql = prev
+		_q.sql = prev
 	}
 	return nil
 }
 
-func (satq *ShareAccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ShareAccessToken, error) {
+func (_q *ShareAccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ShareAccessToken, error) {
 	var (
 		nodes       = []*ShareAccessToken{}
-		withFKs     = satq.withFKs
-		_spec       = satq.querySpec()
+		withFKs     = _q.withFKs
+		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
-			satq.withTicket != nil,
+			_q.withTicket != nil,
 		}
 	)
-	if satq.withTicket != nil {
+	if _q.withTicket != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -387,7 +387,7 @@ func (satq *ShareAccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 		return (*ShareAccessToken).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &ShareAccessToken{config: satq.config}
+		node := &ShareAccessToken{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -395,14 +395,14 @@ func (satq *ShareAccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
-	if err := sqlgraph.QueryNodes(ctx, satq.driver, _spec); err != nil {
+	if err := sqlgraph.QueryNodes(ctx, _q.driver, _spec); err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := satq.withTicket; query != nil {
-		if err := satq.loadTicket(ctx, query, nodes, nil,
+	if query := _q.withTicket; query != nil {
+		if err := _q.loadTicket(ctx, query, nodes, nil,
 			func(n *ShareAccessToken, e *Ticket) { n.Edges.Ticket = e }); err != nil {
 			return nil, err
 		}
@@ -410,7 +410,7 @@ func (satq *ShareAccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHoo
 	return nodes, nil
 }
 
-func (satq *ShareAccessTokenQuery) loadTicket(ctx context.Context, query *TicketQuery, nodes []*ShareAccessToken, init func(*ShareAccessToken), assign func(*ShareAccessToken, *Ticket)) error {
+func (_q *ShareAccessTokenQuery) loadTicket(ctx context.Context, query *TicketQuery, nodes []*ShareAccessToken, init func(*ShareAccessToken), assign func(*ShareAccessToken, *Ticket)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*ShareAccessToken)
 	for i := range nodes {
@@ -443,24 +443,24 @@ func (satq *ShareAccessTokenQuery) loadTicket(ctx context.Context, query *Ticket
 	return nil
 }
 
-func (satq *ShareAccessTokenQuery) sqlCount(ctx context.Context) (int, error) {
-	_spec := satq.querySpec()
-	_spec.Node.Columns = satq.ctx.Fields
-	if len(satq.ctx.Fields) > 0 {
-		_spec.Unique = satq.ctx.Unique != nil && *satq.ctx.Unique
+func (_q *ShareAccessTokenQuery) sqlCount(ctx context.Context) (int, error) {
+	_spec := _q.querySpec()
+	_spec.Node.Columns = _q.ctx.Fields
+	if len(_q.ctx.Fields) > 0 {
+		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
 	}
-	return sqlgraph.CountNodes(ctx, satq.driver, _spec)
+	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (satq *ShareAccessTokenQuery) querySpec() *sqlgraph.QuerySpec {
+func (_q *ShareAccessTokenQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := sqlgraph.NewQuerySpec(shareaccesstoken.Table, shareaccesstoken.Columns, sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString))
-	_spec.From = satq.sql
-	if unique := satq.ctx.Unique; unique != nil {
+	_spec.From = _q.sql
+	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
-	} else if satq.path != nil {
+	} else if _q.path != nil {
 		_spec.Unique = true
 	}
-	if fields := satq.ctx.Fields; len(fields) > 0 {
+	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, shareaccesstoken.FieldID)
 		for i := range fields {
@@ -469,20 +469,20 @@ func (satq *ShareAccessTokenQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if ps := satq.predicates; len(ps) > 0 {
+	if ps := _q.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if limit := satq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := satq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
-	if ps := satq.order; len(ps) > 0 {
+	if ps := _q.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
@@ -492,33 +492,33 @@ func (satq *ShareAccessTokenQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (satq *ShareAccessTokenQuery) sqlQuery(ctx context.Context) *sql.Selector {
-	builder := sql.Dialect(satq.driver.Dialect())
+func (_q *ShareAccessTokenQuery) sqlQuery(ctx context.Context) *sql.Selector {
+	builder := sql.Dialect(_q.driver.Dialect())
 	t1 := builder.Table(shareaccesstoken.Table)
-	columns := satq.ctx.Fields
+	columns := _q.ctx.Fields
 	if len(columns) == 0 {
 		columns = shareaccesstoken.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
-	if satq.sql != nil {
-		selector = satq.sql
+	if _q.sql != nil {
+		selector = _q.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if satq.ctx.Unique != nil && *satq.ctx.Unique {
+	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
-	for _, p := range satq.predicates {
+	for _, p := range _q.predicates {
 		p(selector)
 	}
-	for _, p := range satq.order {
+	for _, p := range _q.order {
 		p(selector)
 	}
-	if offset := satq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := satq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -531,41 +531,41 @@ type ShareAccessTokenGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (satgb *ShareAccessTokenGroupBy) Aggregate(fns ...AggregateFunc) *ShareAccessTokenGroupBy {
-	satgb.fns = append(satgb.fns, fns...)
-	return satgb
+func (_g *ShareAccessTokenGroupBy) Aggregate(fns ...AggregateFunc) *ShareAccessTokenGroupBy {
+	_g.fns = append(_g.fns, fns...)
+	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (satgb *ShareAccessTokenGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, satgb.build.ctx, ent.OpQueryGroupBy)
-	if err := satgb.build.prepareQuery(ctx); err != nil {
+func (_g *ShareAccessTokenGroupBy) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
+	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ShareAccessTokenQuery, *ShareAccessTokenGroupBy](ctx, satgb.build, satgb, satgb.build.inters, v)
+	return scanWithInterceptors[*ShareAccessTokenQuery, *ShareAccessTokenGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (satgb *ShareAccessTokenGroupBy) sqlScan(ctx context.Context, root *ShareAccessTokenQuery, v any) error {
+func (_g *ShareAccessTokenGroupBy) sqlScan(ctx context.Context, root *ShareAccessTokenQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
-	aggregation := make([]string, 0, len(satgb.fns))
-	for _, fn := range satgb.fns {
+	aggregation := make([]string, 0, len(_g.fns))
+	for _, fn := range _g.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
 	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(*satgb.flds)+len(satgb.fns))
-		for _, f := range *satgb.flds {
+		columns := make([]string, 0, len(*_g.flds)+len(_g.fns))
+		for _, f := range *_g.flds {
 			columns = append(columns, selector.C(f))
 		}
 		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
-	selector.GroupBy(selector.Columns(*satgb.flds...)...)
+	selector.GroupBy(selector.Columns(*_g.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := satgb.build.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _g.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
@@ -579,27 +579,27 @@ type ShareAccessTokenSelect struct {
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (sats *ShareAccessTokenSelect) Aggregate(fns ...AggregateFunc) *ShareAccessTokenSelect {
-	sats.fns = append(sats.fns, fns...)
-	return sats
+func (_s *ShareAccessTokenSelect) Aggregate(fns ...AggregateFunc) *ShareAccessTokenSelect {
+	_s.fns = append(_s.fns, fns...)
+	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (sats *ShareAccessTokenSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, sats.ctx, ent.OpQuerySelect)
-	if err := sats.prepareQuery(ctx); err != nil {
+func (_s *ShareAccessTokenSelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
+	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*ShareAccessTokenQuery, *ShareAccessTokenSelect](ctx, sats.ShareAccessTokenQuery, sats, sats.inters, v)
+	return scanWithInterceptors[*ShareAccessTokenQuery, *ShareAccessTokenSelect](ctx, _s.ShareAccessTokenQuery, _s, _s.inters, v)
 }
 
-func (sats *ShareAccessTokenSelect) sqlScan(ctx context.Context, root *ShareAccessTokenQuery, v any) error {
+func (_s *ShareAccessTokenSelect) sqlScan(ctx context.Context, root *ShareAccessTokenQuery, v any) error {
 	selector := root.sqlQuery(ctx)
-	aggregation := make([]string, 0, len(sats.fns))
-	for _, fn := range sats.fns {
+	aggregation := make([]string, 0, len(_s.fns))
+	for _, fn := range _s.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	switch n := len(*sats.selector.flds); {
+	switch n := len(*_s.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
 		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
@@ -607,7 +607,7 @@ func (sats *ShareAccessTokenSelect) sqlScan(ctx context.Context, root *ShareAcce
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := sats.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _s.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()

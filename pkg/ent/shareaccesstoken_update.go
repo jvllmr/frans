@@ -25,63 +25,63 @@ type ShareAccessTokenUpdate struct {
 }
 
 // Where appends a list predicates to the ShareAccessTokenUpdate builder.
-func (satu *ShareAccessTokenUpdate) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenUpdate {
-	satu.mutation.Where(ps...)
-	return satu
+func (_u *ShareAccessTokenUpdate) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetExpiry sets the "expiry" field.
-func (satu *ShareAccessTokenUpdate) SetExpiry(t time.Time) *ShareAccessTokenUpdate {
-	satu.mutation.SetExpiry(t)
-	return satu
+func (_u *ShareAccessTokenUpdate) SetExpiry(v time.Time) *ShareAccessTokenUpdate {
+	_u.mutation.SetExpiry(v)
+	return _u
 }
 
 // SetNillableExpiry sets the "expiry" field if the given value is not nil.
-func (satu *ShareAccessTokenUpdate) SetNillableExpiry(t *time.Time) *ShareAccessTokenUpdate {
-	if t != nil {
-		satu.SetExpiry(*t)
+func (_u *ShareAccessTokenUpdate) SetNillableExpiry(v *time.Time) *ShareAccessTokenUpdate {
+	if v != nil {
+		_u.SetExpiry(*v)
 	}
-	return satu
+	return _u
 }
 
 // SetTicketID sets the "ticket" edge to the Ticket entity by ID.
-func (satu *ShareAccessTokenUpdate) SetTicketID(id uuid.UUID) *ShareAccessTokenUpdate {
-	satu.mutation.SetTicketID(id)
-	return satu
+func (_u *ShareAccessTokenUpdate) SetTicketID(id uuid.UUID) *ShareAccessTokenUpdate {
+	_u.mutation.SetTicketID(id)
+	return _u
 }
 
 // SetNillableTicketID sets the "ticket" edge to the Ticket entity by ID if the given value is not nil.
-func (satu *ShareAccessTokenUpdate) SetNillableTicketID(id *uuid.UUID) *ShareAccessTokenUpdate {
+func (_u *ShareAccessTokenUpdate) SetNillableTicketID(id *uuid.UUID) *ShareAccessTokenUpdate {
 	if id != nil {
-		satu = satu.SetTicketID(*id)
+		_u = _u.SetTicketID(*id)
 	}
-	return satu
+	return _u
 }
 
 // SetTicket sets the "ticket" edge to the Ticket entity.
-func (satu *ShareAccessTokenUpdate) SetTicket(t *Ticket) *ShareAccessTokenUpdate {
-	return satu.SetTicketID(t.ID)
+func (_u *ShareAccessTokenUpdate) SetTicket(v *Ticket) *ShareAccessTokenUpdate {
+	return _u.SetTicketID(v.ID)
 }
 
 // Mutation returns the ShareAccessTokenMutation object of the builder.
-func (satu *ShareAccessTokenUpdate) Mutation() *ShareAccessTokenMutation {
-	return satu.mutation
+func (_u *ShareAccessTokenUpdate) Mutation() *ShareAccessTokenMutation {
+	return _u.mutation
 }
 
 // ClearTicket clears the "ticket" edge to the Ticket entity.
-func (satu *ShareAccessTokenUpdate) ClearTicket() *ShareAccessTokenUpdate {
-	satu.mutation.ClearTicket()
-	return satu
+func (_u *ShareAccessTokenUpdate) ClearTicket() *ShareAccessTokenUpdate {
+	_u.mutation.ClearTicket()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (satu *ShareAccessTokenUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, satu.sqlSave, satu.mutation, satu.hooks)
+func (_u *ShareAccessTokenUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (satu *ShareAccessTokenUpdate) SaveX(ctx context.Context) int {
-	affected, err := satu.Save(ctx)
+func (_u *ShareAccessTokenUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -89,31 +89,31 @@ func (satu *ShareAccessTokenUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (satu *ShareAccessTokenUpdate) Exec(ctx context.Context) error {
-	_, err := satu.Save(ctx)
+func (_u *ShareAccessTokenUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (satu *ShareAccessTokenUpdate) ExecX(ctx context.Context) {
-	if err := satu.Exec(ctx); err != nil {
+func (_u *ShareAccessTokenUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (satu *ShareAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (_u *ShareAccessTokenUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(shareaccesstoken.Table, shareaccesstoken.Columns, sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString))
-	if ps := satu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := satu.mutation.Expiry(); ok {
+	if value, ok := _u.mutation.Expiry(); ok {
 		_spec.SetField(shareaccesstoken.FieldExpiry, field.TypeTime, value)
 	}
-	if satu.mutation.TicketCleared() {
+	if _u.mutation.TicketCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -126,7 +126,7 @@ func (satu *ShareAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := satu.mutation.TicketIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TicketIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -142,7 +142,7 @@ func (satu *ShareAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, satu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{shareaccesstoken.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -150,8 +150,8 @@ func (satu *ShareAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err err
 		}
 		return 0, err
 	}
-	satu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // ShareAccessTokenUpdateOne is the builder for updating a single ShareAccessToken entity.
@@ -163,70 +163,70 @@ type ShareAccessTokenUpdateOne struct {
 }
 
 // SetExpiry sets the "expiry" field.
-func (satuo *ShareAccessTokenUpdateOne) SetExpiry(t time.Time) *ShareAccessTokenUpdateOne {
-	satuo.mutation.SetExpiry(t)
-	return satuo
+func (_u *ShareAccessTokenUpdateOne) SetExpiry(v time.Time) *ShareAccessTokenUpdateOne {
+	_u.mutation.SetExpiry(v)
+	return _u
 }
 
 // SetNillableExpiry sets the "expiry" field if the given value is not nil.
-func (satuo *ShareAccessTokenUpdateOne) SetNillableExpiry(t *time.Time) *ShareAccessTokenUpdateOne {
-	if t != nil {
-		satuo.SetExpiry(*t)
+func (_u *ShareAccessTokenUpdateOne) SetNillableExpiry(v *time.Time) *ShareAccessTokenUpdateOne {
+	if v != nil {
+		_u.SetExpiry(*v)
 	}
-	return satuo
+	return _u
 }
 
 // SetTicketID sets the "ticket" edge to the Ticket entity by ID.
-func (satuo *ShareAccessTokenUpdateOne) SetTicketID(id uuid.UUID) *ShareAccessTokenUpdateOne {
-	satuo.mutation.SetTicketID(id)
-	return satuo
+func (_u *ShareAccessTokenUpdateOne) SetTicketID(id uuid.UUID) *ShareAccessTokenUpdateOne {
+	_u.mutation.SetTicketID(id)
+	return _u
 }
 
 // SetNillableTicketID sets the "ticket" edge to the Ticket entity by ID if the given value is not nil.
-func (satuo *ShareAccessTokenUpdateOne) SetNillableTicketID(id *uuid.UUID) *ShareAccessTokenUpdateOne {
+func (_u *ShareAccessTokenUpdateOne) SetNillableTicketID(id *uuid.UUID) *ShareAccessTokenUpdateOne {
 	if id != nil {
-		satuo = satuo.SetTicketID(*id)
+		_u = _u.SetTicketID(*id)
 	}
-	return satuo
+	return _u
 }
 
 // SetTicket sets the "ticket" edge to the Ticket entity.
-func (satuo *ShareAccessTokenUpdateOne) SetTicket(t *Ticket) *ShareAccessTokenUpdateOne {
-	return satuo.SetTicketID(t.ID)
+func (_u *ShareAccessTokenUpdateOne) SetTicket(v *Ticket) *ShareAccessTokenUpdateOne {
+	return _u.SetTicketID(v.ID)
 }
 
 // Mutation returns the ShareAccessTokenMutation object of the builder.
-func (satuo *ShareAccessTokenUpdateOne) Mutation() *ShareAccessTokenMutation {
-	return satuo.mutation
+func (_u *ShareAccessTokenUpdateOne) Mutation() *ShareAccessTokenMutation {
+	return _u.mutation
 }
 
 // ClearTicket clears the "ticket" edge to the Ticket entity.
-func (satuo *ShareAccessTokenUpdateOne) ClearTicket() *ShareAccessTokenUpdateOne {
-	satuo.mutation.ClearTicket()
-	return satuo
+func (_u *ShareAccessTokenUpdateOne) ClearTicket() *ShareAccessTokenUpdateOne {
+	_u.mutation.ClearTicket()
+	return _u
 }
 
 // Where appends a list predicates to the ShareAccessTokenUpdate builder.
-func (satuo *ShareAccessTokenUpdateOne) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenUpdateOne {
-	satuo.mutation.Where(ps...)
-	return satuo
+func (_u *ShareAccessTokenUpdateOne) Where(ps ...predicate.ShareAccessToken) *ShareAccessTokenUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (satuo *ShareAccessTokenUpdateOne) Select(field string, fields ...string) *ShareAccessTokenUpdateOne {
-	satuo.fields = append([]string{field}, fields...)
-	return satuo
+func (_u *ShareAccessTokenUpdateOne) Select(field string, fields ...string) *ShareAccessTokenUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated ShareAccessToken entity.
-func (satuo *ShareAccessTokenUpdateOne) Save(ctx context.Context) (*ShareAccessToken, error) {
-	return withHooks(ctx, satuo.sqlSave, satuo.mutation, satuo.hooks)
+func (_u *ShareAccessTokenUpdateOne) Save(ctx context.Context) (*ShareAccessToken, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (satuo *ShareAccessTokenUpdateOne) SaveX(ctx context.Context) *ShareAccessToken {
-	node, err := satuo.Save(ctx)
+func (_u *ShareAccessTokenUpdateOne) SaveX(ctx context.Context) *ShareAccessToken {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -234,26 +234,26 @@ func (satuo *ShareAccessTokenUpdateOne) SaveX(ctx context.Context) *ShareAccessT
 }
 
 // Exec executes the query on the entity.
-func (satuo *ShareAccessTokenUpdateOne) Exec(ctx context.Context) error {
-	_, err := satuo.Save(ctx)
+func (_u *ShareAccessTokenUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (satuo *ShareAccessTokenUpdateOne) ExecX(ctx context.Context) {
-	if err := satuo.Exec(ctx); err != nil {
+func (_u *ShareAccessTokenUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (satuo *ShareAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *ShareAccessToken, err error) {
+func (_u *ShareAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *ShareAccessToken, err error) {
 	_spec := sqlgraph.NewUpdateSpec(shareaccesstoken.Table, shareaccesstoken.Columns, sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString))
-	id, ok := satuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ShareAccessToken.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := satuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, shareaccesstoken.FieldID)
 		for _, f := range fields {
@@ -265,17 +265,17 @@ func (satuo *ShareAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *Sha
 			}
 		}
 	}
-	if ps := satuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := satuo.mutation.Expiry(); ok {
+	if value, ok := _u.mutation.Expiry(); ok {
 		_spec.SetField(shareaccesstoken.FieldExpiry, field.TypeTime, value)
 	}
-	if satuo.mutation.TicketCleared() {
+	if _u.mutation.TicketCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -288,7 +288,7 @@ func (satuo *ShareAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *Sha
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := satuo.mutation.TicketIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TicketIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -304,10 +304,10 @@ func (satuo *ShareAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *Sha
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &ShareAccessToken{config: satuo.config}
+	_node = &ShareAccessToken{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, satuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{shareaccesstoken.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -315,6 +315,6 @@ func (satuo *ShareAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *Sha
 		}
 		return nil, err
 	}
-	satuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

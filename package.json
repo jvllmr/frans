@@ -7,13 +7,13 @@
     "build": "tsc -b && vite build && cp -r locales/ pkg/mail/ && go build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev:go": "go run -mod=mod github.com/air-verse/air",
+    "dev:go": "go run github.com/air-verse/air@latest",
     "services": "docker compose -f docker-compose.dev.yaml up",
     "keycloak:export": "./keycloak/keycloak_export.sh",
-    "ent": "go run -mod=mod entgo.io/ent/cmd/ent",
-    "ent:generate": "go run -mod=mod entgo.io/ent/cmd/ent generate ./pkg/ent/schema",
-    "ent:new": "go run -mod=mod entgo.io/ent/cmd/ent new --target ./pkg/ent/schema",
-    "golines": "go run -mod=mod github.com/segmentio/golines"
+    "ent": "go run entgo.io/ent/cmd/ent@latest",
+    "ent:generate": "go run entgo.io/ent/cmd/ent@latest generate ./pkg/ent/schema",
+    "ent:new": "go run entgo.io/ent/cmd/ent@latest new --target ./pkg/ent/schema",
+    "golines": "go run github.com/segmentio/golines@latest"
   },
   "dependencies": {
     "@mantine/core": "^8.1.1",

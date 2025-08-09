@@ -23,49 +23,49 @@ type ShareAccessTokenCreate struct {
 }
 
 // SetExpiry sets the "expiry" field.
-func (satc *ShareAccessTokenCreate) SetExpiry(t time.Time) *ShareAccessTokenCreate {
-	satc.mutation.SetExpiry(t)
-	return satc
+func (_c *ShareAccessTokenCreate) SetExpiry(v time.Time) *ShareAccessTokenCreate {
+	_c.mutation.SetExpiry(v)
+	return _c
 }
 
 // SetID sets the "id" field.
-func (satc *ShareAccessTokenCreate) SetID(s string) *ShareAccessTokenCreate {
-	satc.mutation.SetID(s)
-	return satc
+func (_c *ShareAccessTokenCreate) SetID(v string) *ShareAccessTokenCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetTicketID sets the "ticket" edge to the Ticket entity by ID.
-func (satc *ShareAccessTokenCreate) SetTicketID(id uuid.UUID) *ShareAccessTokenCreate {
-	satc.mutation.SetTicketID(id)
-	return satc
+func (_c *ShareAccessTokenCreate) SetTicketID(id uuid.UUID) *ShareAccessTokenCreate {
+	_c.mutation.SetTicketID(id)
+	return _c
 }
 
 // SetNillableTicketID sets the "ticket" edge to the Ticket entity by ID if the given value is not nil.
-func (satc *ShareAccessTokenCreate) SetNillableTicketID(id *uuid.UUID) *ShareAccessTokenCreate {
+func (_c *ShareAccessTokenCreate) SetNillableTicketID(id *uuid.UUID) *ShareAccessTokenCreate {
 	if id != nil {
-		satc = satc.SetTicketID(*id)
+		_c = _c.SetTicketID(*id)
 	}
-	return satc
+	return _c
 }
 
 // SetTicket sets the "ticket" edge to the Ticket entity.
-func (satc *ShareAccessTokenCreate) SetTicket(t *Ticket) *ShareAccessTokenCreate {
-	return satc.SetTicketID(t.ID)
+func (_c *ShareAccessTokenCreate) SetTicket(v *Ticket) *ShareAccessTokenCreate {
+	return _c.SetTicketID(v.ID)
 }
 
 // Mutation returns the ShareAccessTokenMutation object of the builder.
-func (satc *ShareAccessTokenCreate) Mutation() *ShareAccessTokenMutation {
-	return satc.mutation
+func (_c *ShareAccessTokenCreate) Mutation() *ShareAccessTokenMutation {
+	return _c.mutation
 }
 
 // Save creates the ShareAccessToken in the database.
-func (satc *ShareAccessTokenCreate) Save(ctx context.Context) (*ShareAccessToken, error) {
-	return withHooks(ctx, satc.sqlSave, satc.mutation, satc.hooks)
+func (_c *ShareAccessTokenCreate) Save(ctx context.Context) (*ShareAccessToken, error) {
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (satc *ShareAccessTokenCreate) SaveX(ctx context.Context) *ShareAccessToken {
-	v, err := satc.Save(ctx)
+func (_c *ShareAccessTokenCreate) SaveX(ctx context.Context) *ShareAccessToken {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -73,32 +73,32 @@ func (satc *ShareAccessTokenCreate) SaveX(ctx context.Context) *ShareAccessToken
 }
 
 // Exec executes the query.
-func (satc *ShareAccessTokenCreate) Exec(ctx context.Context) error {
-	_, err := satc.Save(ctx)
+func (_c *ShareAccessTokenCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (satc *ShareAccessTokenCreate) ExecX(ctx context.Context) {
-	if err := satc.Exec(ctx); err != nil {
+func (_c *ShareAccessTokenCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (satc *ShareAccessTokenCreate) check() error {
-	if _, ok := satc.mutation.Expiry(); !ok {
+func (_c *ShareAccessTokenCreate) check() error {
+	if _, ok := _c.mutation.Expiry(); !ok {
 		return &ValidationError{Name: "expiry", err: errors.New(`ent: missing required field "ShareAccessToken.expiry"`)}
 	}
 	return nil
 }
 
-func (satc *ShareAccessTokenCreate) sqlSave(ctx context.Context) (*ShareAccessToken, error) {
-	if err := satc.check(); err != nil {
+func (_c *ShareAccessTokenCreate) sqlSave(ctx context.Context) (*ShareAccessToken, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := satc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, satc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -111,25 +111,25 @@ func (satc *ShareAccessTokenCreate) sqlSave(ctx context.Context) (*ShareAccessTo
 			return nil, fmt.Errorf("unexpected ShareAccessToken.ID type: %T", _spec.ID.Value)
 		}
 	}
-	satc.mutation.id = &_node.ID
-	satc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (satc *ShareAccessTokenCreate) createSpec() (*ShareAccessToken, *sqlgraph.CreateSpec) {
+func (_c *ShareAccessTokenCreate) createSpec() (*ShareAccessToken, *sqlgraph.CreateSpec) {
 	var (
-		_node = &ShareAccessToken{config: satc.config}
+		_node = &ShareAccessToken{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(shareaccesstoken.Table, sqlgraph.NewFieldSpec(shareaccesstoken.FieldID, field.TypeString))
 	)
-	if id, ok := satc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := satc.mutation.Expiry(); ok {
+	if value, ok := _c.mutation.Expiry(); ok {
 		_spec.SetField(shareaccesstoken.FieldExpiry, field.TypeTime, value)
 		_node.Expiry = value
 	}
-	if nodes := satc.mutation.TicketIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TicketIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -157,16 +157,16 @@ type ShareAccessTokenCreateBulk struct {
 }
 
 // Save creates the ShareAccessToken entities in the database.
-func (satcb *ShareAccessTokenCreateBulk) Save(ctx context.Context) ([]*ShareAccessToken, error) {
-	if satcb.err != nil {
-		return nil, satcb.err
+func (_c *ShareAccessTokenCreateBulk) Save(ctx context.Context) ([]*ShareAccessToken, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(satcb.builders))
-	nodes := make([]*ShareAccessToken, len(satcb.builders))
-	mutators := make([]Mutator, len(satcb.builders))
-	for i := range satcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*ShareAccessToken, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := satcb.builders[i]
+			builder := _c.builders[i]
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ShareAccessTokenMutation)
 				if !ok {
@@ -179,11 +179,11 @@ func (satcb *ShareAccessTokenCreateBulk) Save(ctx context.Context) ([]*ShareAcce
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, satcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, satcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -203,7 +203,7 @@ func (satcb *ShareAccessTokenCreateBulk) Save(ctx context.Context) ([]*ShareAcce
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, satcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -211,8 +211,8 @@ func (satcb *ShareAccessTokenCreateBulk) Save(ctx context.Context) ([]*ShareAcce
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (satcb *ShareAccessTokenCreateBulk) SaveX(ctx context.Context) []*ShareAccessToken {
-	v, err := satcb.Save(ctx)
+func (_c *ShareAccessTokenCreateBulk) SaveX(ctx context.Context) []*ShareAccessToken {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -220,14 +220,14 @@ func (satcb *ShareAccessTokenCreateBulk) SaveX(ctx context.Context) []*ShareAcce
 }
 
 // Exec executes the query.
-func (satcb *ShareAccessTokenCreateBulk) Exec(ctx context.Context) error {
-	_, err := satcb.Save(ctx)
+func (_c *ShareAccessTokenCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (satcb *ShareAccessTokenCreateBulk) ExecX(ctx context.Context) {
-	if err := satcb.Exec(ctx); err != nil {
+func (_c *ShareAccessTokenCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

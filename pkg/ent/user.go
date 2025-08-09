@@ -98,7 +98,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the User fields.
-func (u *User) assignValues(columns []string, values []any) error {
+func (_m *User) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -108,31 +108,31 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				u.ID = *value
+				_m.ID = *value
 			}
 		case user.FieldUsername:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field username", values[i])
 			} else if value.Valid {
-				u.Username = value.String
+				_m.Username = value.String
 			}
 		case user.FieldFullName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field full_name", values[i])
 			} else if value.Valid {
-				u.FullName = value.String
+				_m.FullName = value.String
 			}
 		case user.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
-				u.Email = value.String
+				_m.Email = value.String
 			}
 		case user.FieldGroups:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field groups", values[i])
 			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &u.Groups); err != nil {
+				if err := json.Unmarshal(*value, &_m.Groups); err != nil {
 					return fmt.Errorf("unmarshal field groups: %w", err)
 				}
 			}
@@ -140,34 +140,34 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_admin", values[i])
 			} else if value.Valid {
-				u.IsAdmin = value.Bool
+				_m.IsAdmin = value.Bool
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				u.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case user.FieldSubmittedTickets:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field submitted_tickets", values[i])
 			} else if value.Valid {
-				u.SubmittedTickets = int(value.Int64)
+				_m.SubmittedTickets = int(value.Int64)
 			}
 		case user.FieldSubmittedGrants:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field submitted_grants", values[i])
 			} else if value.Valid {
-				u.SubmittedGrants = int(value.Int64)
+				_m.SubmittedGrants = int(value.Int64)
 			}
 		case user.FieldTotalDataSize:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field totalDataSize", values[i])
 			} else if value.Valid {
-				u.TotalDataSize = value.Int64
+				_m.TotalDataSize = value.Int64
 			}
 		default:
-			u.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -175,69 +175,69 @@ func (u *User) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the User.
 // This includes values selected through modifiers, order, etc.
-func (u *User) Value(name string) (ent.Value, error) {
-	return u.selectValues.Get(name)
+func (_m *User) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QuerySessions queries the "sessions" edge of the User entity.
-func (u *User) QuerySessions() *SessionQuery {
-	return NewUserClient(u.config).QuerySessions(u)
+func (_m *User) QuerySessions() *SessionQuery {
+	return NewUserClient(_m.config).QuerySessions(_m)
 }
 
 // QueryTickets queries the "tickets" edge of the User entity.
-func (u *User) QueryTickets() *TicketQuery {
-	return NewUserClient(u.config).QueryTickets(u)
+func (_m *User) QueryTickets() *TicketQuery {
+	return NewUserClient(_m.config).QueryTickets(_m)
 }
 
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (u *User) Update() *UserUpdateOne {
-	return NewUserClient(u.config).UpdateOne(u)
+func (_m *User) Update() *UserUpdateOne {
+	return NewUserClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the User entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (u *User) Unwrap() *User {
-	_tx, ok := u.config.driver.(*txDriver)
+func (_m *User) Unwrap() *User {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: User is not a transactional entity")
 	}
-	u.config.driver = _tx.drv
-	return u
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (u *User) String() string {
+func (_m *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("username=")
-	builder.WriteString(u.Username)
+	builder.WriteString(_m.Username)
 	builder.WriteString(", ")
 	builder.WriteString("full_name=")
-	builder.WriteString(u.FullName)
+	builder.WriteString(_m.FullName)
 	builder.WriteString(", ")
 	builder.WriteString("email=")
-	builder.WriteString(u.Email)
+	builder.WriteString(_m.Email)
 	builder.WriteString(", ")
 	builder.WriteString("groups=")
-	builder.WriteString(fmt.Sprintf("%v", u.Groups))
+	builder.WriteString(fmt.Sprintf("%v", _m.Groups))
 	builder.WriteString(", ")
 	builder.WriteString("is_admin=")
-	builder.WriteString(fmt.Sprintf("%v", u.IsAdmin))
+	builder.WriteString(fmt.Sprintf("%v", _m.IsAdmin))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
-	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("submitted_tickets=")
-	builder.WriteString(fmt.Sprintf("%v", u.SubmittedTickets))
+	builder.WriteString(fmt.Sprintf("%v", _m.SubmittedTickets))
 	builder.WriteString(", ")
 	builder.WriteString("submitted_grants=")
-	builder.WriteString(fmt.Sprintf("%v", u.SubmittedGrants))
+	builder.WriteString(fmt.Sprintf("%v", _m.SubmittedGrants))
 	builder.WriteString(", ")
 	builder.WriteString("totalDataSize=")
-	builder.WriteString(fmt.Sprintf("%v", u.TotalDataSize))
+	builder.WriteString(fmt.Sprintf("%v", _m.TotalDataSize))
 	builder.WriteByte(')')
 	return builder.String()
 }

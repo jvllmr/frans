@@ -112,7 +112,7 @@ func (*Ticket) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Ticket fields.
-func (t *Ticket) assignValues(columns []string, values []any) error {
+func (_m *Ticket) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -122,79 +122,79 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				t.ID = *value
+				_m.ID = *value
 			}
 		case ticket.FieldComment:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field comment", values[i])
 			} else if value.Valid {
-				t.Comment = new(string)
-				*t.Comment = value.String
+				_m.Comment = new(string)
+				*_m.Comment = value.String
 			}
 		case ticket.FieldExpiryType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field expiryType", values[i])
 			} else if value.Valid {
-				t.ExpiryType = value.String
+				_m.ExpiryType = value.String
 			}
 		case ticket.FieldHashedPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field hashed_password", values[i])
 			} else if value.Valid {
-				t.HashedPassword = value.String
+				_m.HashedPassword = value.String
 			}
 		case ticket.FieldSalt:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field salt", values[i])
 			} else if value.Valid {
-				t.Salt = value.String
+				_m.Salt = value.String
 			}
 		case ticket.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				t.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case ticket.FieldExpiryTotalDays:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field expiry_total_days", values[i])
 			} else if value.Valid {
-				t.ExpiryTotalDays = uint8(value.Int64)
+				_m.ExpiryTotalDays = uint8(value.Int64)
 			}
 		case ticket.FieldExpiryDaysSinceLastDownload:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field expiry_days_since_last_download", values[i])
 			} else if value.Valid {
-				t.ExpiryDaysSinceLastDownload = uint8(value.Int64)
+				_m.ExpiryDaysSinceLastDownload = uint8(value.Int64)
 			}
 		case ticket.FieldExpiryTotalDownloads:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field expiry_total_downloads", values[i])
 			} else if value.Valid {
-				t.ExpiryTotalDownloads = uint8(value.Int64)
+				_m.ExpiryTotalDownloads = uint8(value.Int64)
 			}
 		case ticket.FieldEmailOnDownload:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email_on_download", values[i])
 			} else if value.Valid {
-				t.EmailOnDownload = new(string)
-				*t.EmailOnDownload = value.String
+				_m.EmailOnDownload = new(string)
+				*_m.EmailOnDownload = value.String
 			}
 		case ticket.FieldCreatorLang:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field creator_lang", values[i])
 			} else if value.Valid {
-				t.CreatorLang = value.String
+				_m.CreatorLang = value.String
 			}
 		case ticket.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field user_tickets", values[i])
 			} else if value.Valid {
-				t.user_tickets = new(uuid.UUID)
-				*t.user_tickets = *value.S.(*uuid.UUID)
+				_m.user_tickets = new(uuid.UUID)
+				*_m.user_tickets = *value.S.(*uuid.UUID)
 			}
 		default:
-			t.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -202,81 +202,81 @@ func (t *Ticket) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Ticket.
 // This includes values selected through modifiers, order, etc.
-func (t *Ticket) Value(name string) (ent.Value, error) {
-	return t.selectValues.Get(name)
+func (_m *Ticket) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryFiles queries the "files" edge of the Ticket entity.
-func (t *Ticket) QueryFiles() *FileQuery {
-	return NewTicketClient(t.config).QueryFiles(t)
+func (_m *Ticket) QueryFiles() *FileQuery {
+	return NewTicketClient(_m.config).QueryFiles(_m)
 }
 
 // QueryOwner queries the "owner" edge of the Ticket entity.
-func (t *Ticket) QueryOwner() *UserQuery {
-	return NewTicketClient(t.config).QueryOwner(t)
+func (_m *Ticket) QueryOwner() *UserQuery {
+	return NewTicketClient(_m.config).QueryOwner(_m)
 }
 
 // QueryShareaccesstokens queries the "shareaccesstokens" edge of the Ticket entity.
-func (t *Ticket) QueryShareaccesstokens() *ShareAccessTokenQuery {
-	return NewTicketClient(t.config).QueryShareaccesstokens(t)
+func (_m *Ticket) QueryShareaccesstokens() *ShareAccessTokenQuery {
+	return NewTicketClient(_m.config).QueryShareaccesstokens(_m)
 }
 
 // Update returns a builder for updating this Ticket.
 // Note that you need to call Ticket.Unwrap() before calling this method if this Ticket
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (t *Ticket) Update() *TicketUpdateOne {
-	return NewTicketClient(t.config).UpdateOne(t)
+func (_m *Ticket) Update() *TicketUpdateOne {
+	return NewTicketClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Ticket entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (t *Ticket) Unwrap() *Ticket {
-	_tx, ok := t.config.driver.(*txDriver)
+func (_m *Ticket) Unwrap() *Ticket {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Ticket is not a transactional entity")
 	}
-	t.config.driver = _tx.drv
-	return t
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (t *Ticket) String() string {
+func (_m *Ticket) String() string {
 	var builder strings.Builder
 	builder.WriteString("Ticket(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
-	if v := t.Comment; v != nil {
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	if v := _m.Comment; v != nil {
 		builder.WriteString("comment=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	builder.WriteString("expiryType=")
-	builder.WriteString(t.ExpiryType)
+	builder.WriteString(_m.ExpiryType)
 	builder.WriteString(", ")
 	builder.WriteString("hashed_password=")
-	builder.WriteString(t.HashedPassword)
+	builder.WriteString(_m.HashedPassword)
 	builder.WriteString(", ")
 	builder.WriteString("salt=")
-	builder.WriteString(t.Salt)
+	builder.WriteString(_m.Salt)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
-	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("expiry_total_days=")
-	builder.WriteString(fmt.Sprintf("%v", t.ExpiryTotalDays))
+	builder.WriteString(fmt.Sprintf("%v", _m.ExpiryTotalDays))
 	builder.WriteString(", ")
 	builder.WriteString("expiry_days_since_last_download=")
-	builder.WriteString(fmt.Sprintf("%v", t.ExpiryDaysSinceLastDownload))
+	builder.WriteString(fmt.Sprintf("%v", _m.ExpiryDaysSinceLastDownload))
 	builder.WriteString(", ")
 	builder.WriteString("expiry_total_downloads=")
-	builder.WriteString(fmt.Sprintf("%v", t.ExpiryTotalDownloads))
+	builder.WriteString(fmt.Sprintf("%v", _m.ExpiryTotalDownloads))
 	builder.WriteString(", ")
-	if v := t.EmailOnDownload; v != nil {
+	if v := _m.EmailOnDownload; v != nil {
 		builder.WriteString("email_on_download=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	builder.WriteString("creator_lang=")
-	builder.WriteString(t.CreatorLang)
+	builder.WriteString(_m.CreatorLang)
 	builder.WriteByte(')')
 	return builder.String()
 }

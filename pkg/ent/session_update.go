@@ -25,91 +25,91 @@ type SessionUpdate struct {
 }
 
 // Where appends a list predicates to the SessionUpdate builder.
-func (su *SessionUpdate) Where(ps ...predicate.Session) *SessionUpdate {
-	su.mutation.Where(ps...)
-	return su
+func (_u *SessionUpdate) Where(ps ...predicate.Session) *SessionUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetIDToken sets the "id_token" field.
-func (su *SessionUpdate) SetIDToken(s string) *SessionUpdate {
-	su.mutation.SetIDToken(s)
-	return su
+func (_u *SessionUpdate) SetIDToken(v string) *SessionUpdate {
+	_u.mutation.SetIDToken(v)
+	return _u
 }
 
 // SetNillableIDToken sets the "id_token" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableIDToken(s *string) *SessionUpdate {
-	if s != nil {
-		su.SetIDToken(*s)
+func (_u *SessionUpdate) SetNillableIDToken(v *string) *SessionUpdate {
+	if v != nil {
+		_u.SetIDToken(*v)
 	}
-	return su
+	return _u
 }
 
 // SetExpire sets the "expire" field.
-func (su *SessionUpdate) SetExpire(t time.Time) *SessionUpdate {
-	su.mutation.SetExpire(t)
-	return su
+func (_u *SessionUpdate) SetExpire(v time.Time) *SessionUpdate {
+	_u.mutation.SetExpire(v)
+	return _u
 }
 
 // SetNillableExpire sets the "expire" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableExpire(t *time.Time) *SessionUpdate {
-	if t != nil {
-		su.SetExpire(*t)
+func (_u *SessionUpdate) SetNillableExpire(v *time.Time) *SessionUpdate {
+	if v != nil {
+		_u.SetExpire(*v)
 	}
-	return su
+	return _u
 }
 
 // SetRefreshToken sets the "refresh_token" field.
-func (su *SessionUpdate) SetRefreshToken(s string) *SessionUpdate {
-	su.mutation.SetRefreshToken(s)
-	return su
+func (_u *SessionUpdate) SetRefreshToken(v string) *SessionUpdate {
+	_u.mutation.SetRefreshToken(v)
+	return _u
 }
 
 // SetNillableRefreshToken sets the "refresh_token" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableRefreshToken(s *string) *SessionUpdate {
-	if s != nil {
-		su.SetRefreshToken(*s)
+func (_u *SessionUpdate) SetNillableRefreshToken(v *string) *SessionUpdate {
+	if v != nil {
+		_u.SetRefreshToken(*v)
 	}
-	return su
+	return _u
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (su *SessionUpdate) SetUserID(id uuid.UUID) *SessionUpdate {
-	su.mutation.SetUserID(id)
-	return su
+func (_u *SessionUpdate) SetUserID(id uuid.UUID) *SessionUpdate {
+	_u.mutation.SetUserID(id)
+	return _u
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (su *SessionUpdate) SetNillableUserID(id *uuid.UUID) *SessionUpdate {
+func (_u *SessionUpdate) SetNillableUserID(id *uuid.UUID) *SessionUpdate {
 	if id != nil {
-		su = su.SetUserID(*id)
+		_u = _u.SetUserID(*id)
 	}
-	return su
+	return _u
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (su *SessionUpdate) SetUser(u *User) *SessionUpdate {
-	return su.SetUserID(u.ID)
+func (_u *SessionUpdate) SetUser(v *User) *SessionUpdate {
+	return _u.SetUserID(v.ID)
 }
 
 // Mutation returns the SessionMutation object of the builder.
-func (su *SessionUpdate) Mutation() *SessionMutation {
-	return su.mutation
+func (_u *SessionUpdate) Mutation() *SessionMutation {
+	return _u.mutation
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (su *SessionUpdate) ClearUser() *SessionUpdate {
-	su.mutation.ClearUser()
-	return su
+func (_u *SessionUpdate) ClearUser() *SessionUpdate {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (su *SessionUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, su.sqlSave, su.mutation, su.hooks)
+func (_u *SessionUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (su *SessionUpdate) SaveX(ctx context.Context) int {
-	affected, err := su.Save(ctx)
+func (_u *SessionUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -117,37 +117,37 @@ func (su *SessionUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (su *SessionUpdate) Exec(ctx context.Context) error {
-	_, err := su.Save(ctx)
+func (_u *SessionUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (su *SessionUpdate) ExecX(ctx context.Context) {
-	if err := su.Exec(ctx); err != nil {
+func (_u *SessionUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (_u *SessionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(session.Table, session.Columns, sqlgraph.NewFieldSpec(session.FieldID, field.TypeInt))
-	if ps := su.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := su.mutation.IDToken(); ok {
+	if value, ok := _u.mutation.IDToken(); ok {
 		_spec.SetField(session.FieldIDToken, field.TypeString, value)
 	}
-	if value, ok := su.mutation.Expire(); ok {
+	if value, ok := _u.mutation.Expire(); ok {
 		_spec.SetField(session.FieldExpire, field.TypeTime, value)
 	}
-	if value, ok := su.mutation.RefreshToken(); ok {
+	if value, ok := _u.mutation.RefreshToken(); ok {
 		_spec.SetField(session.FieldRefreshToken, field.TypeString, value)
 	}
-	if su.mutation.UserCleared() {
+	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -160,7 +160,7 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := su.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -176,7 +176,7 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{session.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -184,8 +184,8 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	su.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // SessionUpdateOne is the builder for updating a single Session entity.
@@ -197,98 +197,98 @@ type SessionUpdateOne struct {
 }
 
 // SetIDToken sets the "id_token" field.
-func (suo *SessionUpdateOne) SetIDToken(s string) *SessionUpdateOne {
-	suo.mutation.SetIDToken(s)
-	return suo
+func (_u *SessionUpdateOne) SetIDToken(v string) *SessionUpdateOne {
+	_u.mutation.SetIDToken(v)
+	return _u
 }
 
 // SetNillableIDToken sets the "id_token" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableIDToken(s *string) *SessionUpdateOne {
-	if s != nil {
-		suo.SetIDToken(*s)
+func (_u *SessionUpdateOne) SetNillableIDToken(v *string) *SessionUpdateOne {
+	if v != nil {
+		_u.SetIDToken(*v)
 	}
-	return suo
+	return _u
 }
 
 // SetExpire sets the "expire" field.
-func (suo *SessionUpdateOne) SetExpire(t time.Time) *SessionUpdateOne {
-	suo.mutation.SetExpire(t)
-	return suo
+func (_u *SessionUpdateOne) SetExpire(v time.Time) *SessionUpdateOne {
+	_u.mutation.SetExpire(v)
+	return _u
 }
 
 // SetNillableExpire sets the "expire" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableExpire(t *time.Time) *SessionUpdateOne {
-	if t != nil {
-		suo.SetExpire(*t)
+func (_u *SessionUpdateOne) SetNillableExpire(v *time.Time) *SessionUpdateOne {
+	if v != nil {
+		_u.SetExpire(*v)
 	}
-	return suo
+	return _u
 }
 
 // SetRefreshToken sets the "refresh_token" field.
-func (suo *SessionUpdateOne) SetRefreshToken(s string) *SessionUpdateOne {
-	suo.mutation.SetRefreshToken(s)
-	return suo
+func (_u *SessionUpdateOne) SetRefreshToken(v string) *SessionUpdateOne {
+	_u.mutation.SetRefreshToken(v)
+	return _u
 }
 
 // SetNillableRefreshToken sets the "refresh_token" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableRefreshToken(s *string) *SessionUpdateOne {
-	if s != nil {
-		suo.SetRefreshToken(*s)
+func (_u *SessionUpdateOne) SetNillableRefreshToken(v *string) *SessionUpdateOne {
+	if v != nil {
+		_u.SetRefreshToken(*v)
 	}
-	return suo
+	return _u
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (suo *SessionUpdateOne) SetUserID(id uuid.UUID) *SessionUpdateOne {
-	suo.mutation.SetUserID(id)
-	return suo
+func (_u *SessionUpdateOne) SetUserID(id uuid.UUID) *SessionUpdateOne {
+	_u.mutation.SetUserID(id)
+	return _u
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableUserID(id *uuid.UUID) *SessionUpdateOne {
+func (_u *SessionUpdateOne) SetNillableUserID(id *uuid.UUID) *SessionUpdateOne {
 	if id != nil {
-		suo = suo.SetUserID(*id)
+		_u = _u.SetUserID(*id)
 	}
-	return suo
+	return _u
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (suo *SessionUpdateOne) SetUser(u *User) *SessionUpdateOne {
-	return suo.SetUserID(u.ID)
+func (_u *SessionUpdateOne) SetUser(v *User) *SessionUpdateOne {
+	return _u.SetUserID(v.ID)
 }
 
 // Mutation returns the SessionMutation object of the builder.
-func (suo *SessionUpdateOne) Mutation() *SessionMutation {
-	return suo.mutation
+func (_u *SessionUpdateOne) Mutation() *SessionMutation {
+	return _u.mutation
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (suo *SessionUpdateOne) ClearUser() *SessionUpdateOne {
-	suo.mutation.ClearUser()
-	return suo
+func (_u *SessionUpdateOne) ClearUser() *SessionUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Where appends a list predicates to the SessionUpdate builder.
-func (suo *SessionUpdateOne) Where(ps ...predicate.Session) *SessionUpdateOne {
-	suo.mutation.Where(ps...)
-	return suo
+func (_u *SessionUpdateOne) Where(ps ...predicate.Session) *SessionUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (suo *SessionUpdateOne) Select(field string, fields ...string) *SessionUpdateOne {
-	suo.fields = append([]string{field}, fields...)
-	return suo
+func (_u *SessionUpdateOne) Select(field string, fields ...string) *SessionUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Session entity.
-func (suo *SessionUpdateOne) Save(ctx context.Context) (*Session, error) {
-	return withHooks(ctx, suo.sqlSave, suo.mutation, suo.hooks)
+func (_u *SessionUpdateOne) Save(ctx context.Context) (*Session, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (suo *SessionUpdateOne) SaveX(ctx context.Context) *Session {
-	node, err := suo.Save(ctx)
+func (_u *SessionUpdateOne) SaveX(ctx context.Context) *Session {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -296,26 +296,26 @@ func (suo *SessionUpdateOne) SaveX(ctx context.Context) *Session {
 }
 
 // Exec executes the query on the entity.
-func (suo *SessionUpdateOne) Exec(ctx context.Context) error {
-	_, err := suo.Save(ctx)
+func (_u *SessionUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (suo *SessionUpdateOne) ExecX(ctx context.Context) {
-	if err := suo.Exec(ctx); err != nil {
+func (_u *SessionUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
-func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err error) {
+func (_u *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err error) {
 	_spec := sqlgraph.NewUpdateSpec(session.Table, session.Columns, sqlgraph.NewFieldSpec(session.FieldID, field.TypeInt))
-	id, ok := suo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Session.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := suo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, session.FieldID)
 		for _, f := range fields {
@@ -327,23 +327,23 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 			}
 		}
 	}
-	if ps := suo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := suo.mutation.IDToken(); ok {
+	if value, ok := _u.mutation.IDToken(); ok {
 		_spec.SetField(session.FieldIDToken, field.TypeString, value)
 	}
-	if value, ok := suo.mutation.Expire(); ok {
+	if value, ok := _u.mutation.Expire(); ok {
 		_spec.SetField(session.FieldExpire, field.TypeTime, value)
 	}
-	if value, ok := suo.mutation.RefreshToken(); ok {
+	if value, ok := _u.mutation.RefreshToken(); ok {
 		_spec.SetField(session.FieldRefreshToken, field.TypeString, value)
 	}
-	if suo.mutation.UserCleared() {
+	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -356,7 +356,7 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := suo.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -372,10 +372,10 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Session{config: suo.config}
+	_node = &Session{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, suo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{session.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -383,6 +383,6 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 		}
 		return nil, err
 	}
-	suo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

@@ -37,44 +37,44 @@ type TicketQuery struct {
 }
 
 // Where adds a new predicate for the TicketQuery builder.
-func (tq *TicketQuery) Where(ps ...predicate.Ticket) *TicketQuery {
-	tq.predicates = append(tq.predicates, ps...)
-	return tq
+func (_q *TicketQuery) Where(ps ...predicate.Ticket) *TicketQuery {
+	_q.predicates = append(_q.predicates, ps...)
+	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (tq *TicketQuery) Limit(limit int) *TicketQuery {
-	tq.ctx.Limit = &limit
-	return tq
+func (_q *TicketQuery) Limit(limit int) *TicketQuery {
+	_q.ctx.Limit = &limit
+	return _q
 }
 
 // Offset to start from.
-func (tq *TicketQuery) Offset(offset int) *TicketQuery {
-	tq.ctx.Offset = &offset
-	return tq
+func (_q *TicketQuery) Offset(offset int) *TicketQuery {
+	_q.ctx.Offset = &offset
+	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (tq *TicketQuery) Unique(unique bool) *TicketQuery {
-	tq.ctx.Unique = &unique
-	return tq
+func (_q *TicketQuery) Unique(unique bool) *TicketQuery {
+	_q.ctx.Unique = &unique
+	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (tq *TicketQuery) Order(o ...ticket.OrderOption) *TicketQuery {
-	tq.order = append(tq.order, o...)
-	return tq
+func (_q *TicketQuery) Order(o ...ticket.OrderOption) *TicketQuery {
+	_q.order = append(_q.order, o...)
+	return _q
 }
 
 // QueryFiles chains the current query on the "files" edge.
-func (tq *TicketQuery) QueryFiles() *FileQuery {
-	query := (&FileClient{config: tq.config}).Query()
+func (_q *TicketQuery) QueryFiles() *FileQuery {
+	query := (&FileClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := tq.prepareQuery(ctx); err != nil {
+		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
-		selector := tq.sqlQuery(ctx)
+		selector := _q.sqlQuery(ctx)
 		if err := selector.Err(); err != nil {
 			return nil, err
 		}
@@ -83,20 +83,20 @@ func (tq *TicketQuery) QueryFiles() *FileQuery {
 			sqlgraph.To(file.Table, file.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, ticket.FilesTable, ticket.FilesPrimaryKey...),
 		)
-		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
 }
 
 // QueryOwner chains the current query on the "owner" edge.
-func (tq *TicketQuery) QueryOwner() *UserQuery {
-	query := (&UserClient{config: tq.config}).Query()
+func (_q *TicketQuery) QueryOwner() *UserQuery {
+	query := (&UserClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := tq.prepareQuery(ctx); err != nil {
+		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
-		selector := tq.sqlQuery(ctx)
+		selector := _q.sqlQuery(ctx)
 		if err := selector.Err(); err != nil {
 			return nil, err
 		}
@@ -105,20 +105,20 @@ func (tq *TicketQuery) QueryOwner() *UserQuery {
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, ticket.OwnerTable, ticket.OwnerColumn),
 		)
-		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
 }
 
 // QueryShareaccesstokens chains the current query on the "shareaccesstokens" edge.
-func (tq *TicketQuery) QueryShareaccesstokens() *ShareAccessTokenQuery {
-	query := (&ShareAccessTokenClient{config: tq.config}).Query()
+func (_q *TicketQuery) QueryShareaccesstokens() *ShareAccessTokenQuery {
+	query := (&ShareAccessTokenClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := tq.prepareQuery(ctx); err != nil {
+		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
-		selector := tq.sqlQuery(ctx)
+		selector := _q.sqlQuery(ctx)
 		if err := selector.Err(); err != nil {
 			return nil, err
 		}
@@ -127,7 +127,7 @@ func (tq *TicketQuery) QueryShareaccesstokens() *ShareAccessTokenQuery {
 			sqlgraph.To(shareaccesstoken.Table, shareaccesstoken.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, ticket.ShareaccesstokensTable, ticket.ShareaccesstokensColumn),
 		)
-		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
@@ -135,8 +135,8 @@ func (tq *TicketQuery) QueryShareaccesstokens() *ShareAccessTokenQuery {
 
 // First returns the first Ticket entity from the query.
 // Returns a *NotFoundError when no Ticket was found.
-func (tq *TicketQuery) First(ctx context.Context) (*Ticket, error) {
-	nodes, err := tq.Limit(1).All(setContextOp(ctx, tq.ctx, ent.OpQueryFirst))
+func (_q *TicketQuery) First(ctx context.Context) (*Ticket, error) {
+	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -147,8 +147,8 @@ func (tq *TicketQuery) First(ctx context.Context) (*Ticket, error) {
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (tq *TicketQuery) FirstX(ctx context.Context) *Ticket {
-	node, err := tq.First(ctx)
+func (_q *TicketQuery) FirstX(ctx context.Context) *Ticket {
+	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -157,9 +157,9 @@ func (tq *TicketQuery) FirstX(ctx context.Context) *Ticket {
 
 // FirstID returns the first Ticket ID from the query.
 // Returns a *NotFoundError when no Ticket ID was found.
-func (tq *TicketQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+func (_q *TicketQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = tq.Limit(1).IDs(setContextOp(ctx, tq.ctx, ent.OpQueryFirstID)); err != nil {
+	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -170,8 +170,8 @@ func (tq *TicketQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tq *TicketQuery) FirstIDX(ctx context.Context) uuid.UUID {
-	id, err := tq.FirstID(ctx)
+func (_q *TicketQuery) FirstIDX(ctx context.Context) uuid.UUID {
+	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -181,8 +181,8 @@ func (tq *TicketQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Only returns a single Ticket entity found by the query, ensuring it only returns one.
 // Returns a *NotSingularError when more than one Ticket entity is found.
 // Returns a *NotFoundError when no Ticket entities are found.
-func (tq *TicketQuery) Only(ctx context.Context) (*Ticket, error) {
-	nodes, err := tq.Limit(2).All(setContextOp(ctx, tq.ctx, ent.OpQueryOnly))
+func (_q *TicketQuery) Only(ctx context.Context) (*Ticket, error) {
+	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -197,8 +197,8 @@ func (tq *TicketQuery) Only(ctx context.Context) (*Ticket, error) {
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (tq *TicketQuery) OnlyX(ctx context.Context) *Ticket {
-	node, err := tq.Only(ctx)
+func (_q *TicketQuery) OnlyX(ctx context.Context) *Ticket {
+	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -208,9 +208,9 @@ func (tq *TicketQuery) OnlyX(ctx context.Context) *Ticket {
 // OnlyID is like Only, but returns the only Ticket ID in the query.
 // Returns a *NotSingularError when more than one Ticket ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tq *TicketQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+func (_q *TicketQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = tq.Limit(2).IDs(setContextOp(ctx, tq.ctx, ent.OpQueryOnlyID)); err != nil {
+	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -225,8 +225,8 @@ func (tq *TicketQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tq *TicketQuery) OnlyIDX(ctx context.Context) uuid.UUID {
-	id, err := tq.OnlyID(ctx)
+func (_q *TicketQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -234,18 +234,18 @@ func (tq *TicketQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 }
 
 // All executes the query and returns a list of Tickets.
-func (tq *TicketQuery) All(ctx context.Context) ([]*Ticket, error) {
-	ctx = setContextOp(ctx, tq.ctx, ent.OpQueryAll)
-	if err := tq.prepareQuery(ctx); err != nil {
+func (_q *TicketQuery) All(ctx context.Context) ([]*Ticket, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
 	qr := querierAll[[]*Ticket, *TicketQuery]()
-	return withInterceptors[[]*Ticket](ctx, tq, qr, tq.inters)
+	return withInterceptors[[]*Ticket](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (tq *TicketQuery) AllX(ctx context.Context) []*Ticket {
-	nodes, err := tq.All(ctx)
+func (_q *TicketQuery) AllX(ctx context.Context) []*Ticket {
+	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -253,20 +253,20 @@ func (tq *TicketQuery) AllX(ctx context.Context) []*Ticket {
 }
 
 // IDs executes the query and returns a list of Ticket IDs.
-func (tq *TicketQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
-	if tq.ctx.Unique == nil && tq.path != nil {
-		tq.Unique(true)
+func (_q *TicketQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if _q.ctx.Unique == nil && _q.path != nil {
+		_q.Unique(true)
 	}
-	ctx = setContextOp(ctx, tq.ctx, ent.OpQueryIDs)
-	if err = tq.Select(ticket.FieldID).Scan(ctx, &ids); err != nil {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
+	if err = _q.Select(ticket.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tq *TicketQuery) IDsX(ctx context.Context) []uuid.UUID {
-	ids, err := tq.IDs(ctx)
+func (_q *TicketQuery) IDsX(ctx context.Context) []uuid.UUID {
+	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -274,17 +274,17 @@ func (tq *TicketQuery) IDsX(ctx context.Context) []uuid.UUID {
 }
 
 // Count returns the count of the given query.
-func (tq *TicketQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, tq.ctx, ent.OpQueryCount)
-	if err := tq.prepareQuery(ctx); err != nil {
+func (_q *TicketQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, tq, querierCount[*TicketQuery](), tq.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*TicketQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (tq *TicketQuery) CountX(ctx context.Context) int {
-	count, err := tq.Count(ctx)
+func (_q *TicketQuery) CountX(ctx context.Context) int {
+	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -292,9 +292,9 @@ func (tq *TicketQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (tq *TicketQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, tq.ctx, ent.OpQueryExist)
-	switch _, err := tq.FirstID(ctx); {
+func (_q *TicketQuery) Exist(ctx context.Context) (bool, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
+	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
 	case err != nil:
@@ -305,8 +305,8 @@ func (tq *TicketQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (tq *TicketQuery) ExistX(ctx context.Context) bool {
-	exist, err := tq.Exist(ctx)
+func (_q *TicketQuery) ExistX(ctx context.Context) bool {
+	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -315,56 +315,56 @@ func (tq *TicketQuery) ExistX(ctx context.Context) bool {
 
 // Clone returns a duplicate of the TicketQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (tq *TicketQuery) Clone() *TicketQuery {
-	if tq == nil {
+func (_q *TicketQuery) Clone() *TicketQuery {
+	if _q == nil {
 		return nil
 	}
 	return &TicketQuery{
-		config:                tq.config,
-		ctx:                   tq.ctx.Clone(),
-		order:                 append([]ticket.OrderOption{}, tq.order...),
-		inters:                append([]Interceptor{}, tq.inters...),
-		predicates:            append([]predicate.Ticket{}, tq.predicates...),
-		withFiles:             tq.withFiles.Clone(),
-		withOwner:             tq.withOwner.Clone(),
-		withShareaccesstokens: tq.withShareaccesstokens.Clone(),
+		config:                _q.config,
+		ctx:                   _q.ctx.Clone(),
+		order:                 append([]ticket.OrderOption{}, _q.order...),
+		inters:                append([]Interceptor{}, _q.inters...),
+		predicates:            append([]predicate.Ticket{}, _q.predicates...),
+		withFiles:             _q.withFiles.Clone(),
+		withOwner:             _q.withOwner.Clone(),
+		withShareaccesstokens: _q.withShareaccesstokens.Clone(),
 		// clone intermediate query.
-		sql:  tq.sql.Clone(),
-		path: tq.path,
+		sql:  _q.sql.Clone(),
+		path: _q.path,
 	}
 }
 
 // WithFiles tells the query-builder to eager-load the nodes that are connected to
 // the "files" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TicketQuery) WithFiles(opts ...func(*FileQuery)) *TicketQuery {
-	query := (&FileClient{config: tq.config}).Query()
+func (_q *TicketQuery) WithFiles(opts ...func(*FileQuery)) *TicketQuery {
+	query := (&FileClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withFiles = query
-	return tq
+	_q.withFiles = query
+	return _q
 }
 
 // WithOwner tells the query-builder to eager-load the nodes that are connected to
 // the "owner" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TicketQuery) WithOwner(opts ...func(*UserQuery)) *TicketQuery {
-	query := (&UserClient{config: tq.config}).Query()
+func (_q *TicketQuery) WithOwner(opts ...func(*UserQuery)) *TicketQuery {
+	query := (&UserClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withOwner = query
-	return tq
+	_q.withOwner = query
+	return _q
 }
 
 // WithShareaccesstokens tells the query-builder to eager-load the nodes that are connected to
 // the "shareaccesstokens" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TicketQuery) WithShareaccesstokens(opts ...func(*ShareAccessTokenQuery)) *TicketQuery {
-	query := (&ShareAccessTokenClient{config: tq.config}).Query()
+func (_q *TicketQuery) WithShareaccesstokens(opts ...func(*ShareAccessTokenQuery)) *TicketQuery {
+	query := (&ShareAccessTokenClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withShareaccesstokens = query
-	return tq
+	_q.withShareaccesstokens = query
+	return _q
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -381,10 +381,10 @@ func (tq *TicketQuery) WithShareaccesstokens(opts ...func(*ShareAccessTokenQuery
 //		GroupBy(ticket.FieldComment).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (tq *TicketQuery) GroupBy(field string, fields ...string) *TicketGroupBy {
-	tq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &TicketGroupBy{build: tq}
-	grbuild.flds = &tq.ctx.Fields
+func (_q *TicketQuery) GroupBy(field string, fields ...string) *TicketGroupBy {
+	_q.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &TicketGroupBy{build: _q}
+	grbuild.flds = &_q.ctx.Fields
 	grbuild.label = ticket.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -402,57 +402,57 @@ func (tq *TicketQuery) GroupBy(field string, fields ...string) *TicketGroupBy {
 //	client.Ticket.Query().
 //		Select(ticket.FieldComment).
 //		Scan(ctx, &v)
-func (tq *TicketQuery) Select(fields ...string) *TicketSelect {
-	tq.ctx.Fields = append(tq.ctx.Fields, fields...)
-	sbuild := &TicketSelect{TicketQuery: tq}
+func (_q *TicketQuery) Select(fields ...string) *TicketSelect {
+	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
+	sbuild := &TicketSelect{TicketQuery: _q}
 	sbuild.label = ticket.Label
-	sbuild.flds, sbuild.scan = &tq.ctx.Fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
 // Aggregate returns a TicketSelect configured with the given aggregations.
-func (tq *TicketQuery) Aggregate(fns ...AggregateFunc) *TicketSelect {
-	return tq.Select().Aggregate(fns...)
+func (_q *TicketQuery) Aggregate(fns ...AggregateFunc) *TicketSelect {
+	return _q.Select().Aggregate(fns...)
 }
 
-func (tq *TicketQuery) prepareQuery(ctx context.Context) error {
-	for _, inter := range tq.inters {
+func (_q *TicketQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
 		}
 		if trv, ok := inter.(Traverser); ok {
-			if err := trv.Traverse(ctx, tq); err != nil {
+			if err := trv.Traverse(ctx, _q); err != nil {
 				return err
 			}
 		}
 	}
-	for _, f := range tq.ctx.Fields {
+	for _, f := range _q.ctx.Fields {
 		if !ticket.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
-	if tq.path != nil {
-		prev, err := tq.path(ctx)
+	if _q.path != nil {
+		prev, err := _q.path(ctx)
 		if err != nil {
 			return err
 		}
-		tq.sql = prev
+		_q.sql = prev
 	}
 	return nil
 }
 
-func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticket, error) {
+func (_q *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticket, error) {
 	var (
 		nodes       = []*Ticket{}
-		withFKs     = tq.withFKs
-		_spec       = tq.querySpec()
+		withFKs     = _q.withFKs
+		_spec       = _q.querySpec()
 		loadedTypes = [3]bool{
-			tq.withFiles != nil,
-			tq.withOwner != nil,
-			tq.withShareaccesstokens != nil,
+			_q.withFiles != nil,
+			_q.withOwner != nil,
+			_q.withShareaccesstokens != nil,
 		}
 	)
-	if tq.withOwner != nil {
+	if _q.withOwner != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -462,7 +462,7 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 		return (*Ticket).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Ticket{config: tq.config}
+		node := &Ticket{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -470,27 +470,27 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
-	if err := sqlgraph.QueryNodes(ctx, tq.driver, _spec); err != nil {
+	if err := sqlgraph.QueryNodes(ctx, _q.driver, _spec); err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := tq.withFiles; query != nil {
-		if err := tq.loadFiles(ctx, query, nodes,
+	if query := _q.withFiles; query != nil {
+		if err := _q.loadFiles(ctx, query, nodes,
 			func(n *Ticket) { n.Edges.Files = []*File{} },
 			func(n *Ticket, e *File) { n.Edges.Files = append(n.Edges.Files, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := tq.withOwner; query != nil {
-		if err := tq.loadOwner(ctx, query, nodes, nil,
+	if query := _q.withOwner; query != nil {
+		if err := _q.loadOwner(ctx, query, nodes, nil,
 			func(n *Ticket, e *User) { n.Edges.Owner = e }); err != nil {
 			return nil, err
 		}
 	}
-	if query := tq.withShareaccesstokens; query != nil {
-		if err := tq.loadShareaccesstokens(ctx, query, nodes,
+	if query := _q.withShareaccesstokens; query != nil {
+		if err := _q.loadShareaccesstokens(ctx, query, nodes,
 			func(n *Ticket) { n.Edges.Shareaccesstokens = []*ShareAccessToken{} },
 			func(n *Ticket, e *ShareAccessToken) { n.Edges.Shareaccesstokens = append(n.Edges.Shareaccesstokens, e) }); err != nil {
 			return nil, err
@@ -499,7 +499,7 @@ func (tq *TicketQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ticke
 	return nodes, nil
 }
 
-func (tq *TicketQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *File)) error {
+func (_q *TicketQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *File)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[uuid.UUID]*Ticket)
 	nids := make(map[uuid.UUID]map[*Ticket]struct{})
@@ -560,7 +560,7 @@ func (tq *TicketQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []
 	}
 	return nil
 }
-func (tq *TicketQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *User)) error {
+func (_q *TicketQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *User)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*Ticket)
 	for i := range nodes {
@@ -592,7 +592,7 @@ func (tq *TicketQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []
 	}
 	return nil
 }
-func (tq *TicketQuery) loadShareaccesstokens(ctx context.Context, query *ShareAccessTokenQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *ShareAccessToken)) error {
+func (_q *TicketQuery) loadShareaccesstokens(ctx context.Context, query *ShareAccessTokenQuery, nodes []*Ticket, init func(*Ticket), assign func(*Ticket, *ShareAccessToken)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Ticket)
 	for i := range nodes {
@@ -624,24 +624,24 @@ func (tq *TicketQuery) loadShareaccesstokens(ctx context.Context, query *ShareAc
 	return nil
 }
 
-func (tq *TicketQuery) sqlCount(ctx context.Context) (int, error) {
-	_spec := tq.querySpec()
-	_spec.Node.Columns = tq.ctx.Fields
-	if len(tq.ctx.Fields) > 0 {
-		_spec.Unique = tq.ctx.Unique != nil && *tq.ctx.Unique
+func (_q *TicketQuery) sqlCount(ctx context.Context) (int, error) {
+	_spec := _q.querySpec()
+	_spec.Node.Columns = _q.ctx.Fields
+	if len(_q.ctx.Fields) > 0 {
+		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
 	}
-	return sqlgraph.CountNodes(ctx, tq.driver, _spec)
+	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (tq *TicketQuery) querySpec() *sqlgraph.QuerySpec {
+func (_q *TicketQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := sqlgraph.NewQuerySpec(ticket.Table, ticket.Columns, sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID))
-	_spec.From = tq.sql
-	if unique := tq.ctx.Unique; unique != nil {
+	_spec.From = _q.sql
+	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
-	} else if tq.path != nil {
+	} else if _q.path != nil {
 		_spec.Unique = true
 	}
-	if fields := tq.ctx.Fields; len(fields) > 0 {
+	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, ticket.FieldID)
 		for i := range fields {
@@ -650,20 +650,20 @@ func (tq *TicketQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if ps := tq.predicates; len(ps) > 0 {
+	if ps := _q.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if limit := tq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := tq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
-	if ps := tq.order; len(ps) > 0 {
+	if ps := _q.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
@@ -673,33 +673,33 @@ func (tq *TicketQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (tq *TicketQuery) sqlQuery(ctx context.Context) *sql.Selector {
-	builder := sql.Dialect(tq.driver.Dialect())
+func (_q *TicketQuery) sqlQuery(ctx context.Context) *sql.Selector {
+	builder := sql.Dialect(_q.driver.Dialect())
 	t1 := builder.Table(ticket.Table)
-	columns := tq.ctx.Fields
+	columns := _q.ctx.Fields
 	if len(columns) == 0 {
 		columns = ticket.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
-	if tq.sql != nil {
-		selector = tq.sql
+	if _q.sql != nil {
+		selector = _q.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if tq.ctx.Unique != nil && *tq.ctx.Unique {
+	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
-	for _, p := range tq.predicates {
+	for _, p := range _q.predicates {
 		p(selector)
 	}
-	for _, p := range tq.order {
+	for _, p := range _q.order {
 		p(selector)
 	}
-	if offset := tq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := tq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -712,41 +712,41 @@ type TicketGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (tgb *TicketGroupBy) Aggregate(fns ...AggregateFunc) *TicketGroupBy {
-	tgb.fns = append(tgb.fns, fns...)
-	return tgb
+func (_g *TicketGroupBy) Aggregate(fns ...AggregateFunc) *TicketGroupBy {
+	_g.fns = append(_g.fns, fns...)
+	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (tgb *TicketGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, tgb.build.ctx, ent.OpQueryGroupBy)
-	if err := tgb.build.prepareQuery(ctx); err != nil {
+func (_g *TicketGroupBy) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
+	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TicketQuery, *TicketGroupBy](ctx, tgb.build, tgb, tgb.build.inters, v)
+	return scanWithInterceptors[*TicketQuery, *TicketGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (tgb *TicketGroupBy) sqlScan(ctx context.Context, root *TicketQuery, v any) error {
+func (_g *TicketGroupBy) sqlScan(ctx context.Context, root *TicketQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
-	aggregation := make([]string, 0, len(tgb.fns))
-	for _, fn := range tgb.fns {
+	aggregation := make([]string, 0, len(_g.fns))
+	for _, fn := range _g.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
 	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(*tgb.flds)+len(tgb.fns))
-		for _, f := range *tgb.flds {
+		columns := make([]string, 0, len(*_g.flds)+len(_g.fns))
+		for _, f := range *_g.flds {
 			columns = append(columns, selector.C(f))
 		}
 		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
-	selector.GroupBy(selector.Columns(*tgb.flds...)...)
+	selector.GroupBy(selector.Columns(*_g.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := tgb.build.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _g.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
@@ -760,27 +760,27 @@ type TicketSelect struct {
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (ts *TicketSelect) Aggregate(fns ...AggregateFunc) *TicketSelect {
-	ts.fns = append(ts.fns, fns...)
-	return ts
+func (_s *TicketSelect) Aggregate(fns ...AggregateFunc) *TicketSelect {
+	_s.fns = append(_s.fns, fns...)
+	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (ts *TicketSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ts.ctx, ent.OpQuerySelect)
-	if err := ts.prepareQuery(ctx); err != nil {
+func (_s *TicketSelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
+	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TicketQuery, *TicketSelect](ctx, ts.TicketQuery, ts, ts.inters, v)
+	return scanWithInterceptors[*TicketQuery, *TicketSelect](ctx, _s.TicketQuery, _s, _s.inters, v)
 }
 
-func (ts *TicketSelect) sqlScan(ctx context.Context, root *TicketQuery, v any) error {
+func (_s *TicketSelect) sqlScan(ctx context.Context, root *TicketQuery, v any) error {
 	selector := root.sqlQuery(ctx)
-	aggregation := make([]string, 0, len(ts.fns))
-	for _, fn := range ts.fns {
+	aggregation := make([]string, 0, len(_s.fns))
+	for _, fn := range _s.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	switch n := len(*ts.selector.flds); {
+	switch n := len(*_s.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
 		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
@@ -788,7 +788,7 @@ func (ts *TicketSelect) sqlScan(ctx context.Context, root *TicketQuery, v any) e
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := ts.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _s.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
