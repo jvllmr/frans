@@ -7,7 +7,7 @@ It took heavy inspiration from [DownloadTicketService](https://www.thregr.org/wa
 ## Included features
 
 - Create file shares and share them with others
-- Create upload grants which allows others to upload their files to you (TODO)
+- Create upload grants which allow others to upload their files to you (TODO)
 
 ## Installation
 
