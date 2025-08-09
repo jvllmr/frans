@@ -27,7 +27,7 @@
     "@tanstack/react-router-devtools": "^1.131.2",
     "axios": "^1.11.0",
     "date-fns": "^4.1.0",
-    "filesize": "^10.1.6",
+    "filesize": "^11.0.2",
     "generate-password": "^1.7.1",
     "generate-password-browser": "^1.1.0",
     "i18next": "^25.3.2",
