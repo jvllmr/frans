@@ -1,18 +1,16 @@
 module github.com/jvllmr/frans
 
-go 1.24
-
-toolchain go1.24.4
+go 1.24.6
 
 require (
-	entgo.io/ent v0.14.4
-	github.com/coreos/go-oidc/v3 v3.14.1
+	entgo.io/ent v0.14.5
+	github.com/coreos/go-oidc/v3 v3.15.0
 	github.com/gin-gonic/gin v1.10.1
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
-	github.com/mattn/go-sqlite3 v1.14.28
+	github.com/mattn/go-sqlite3 v1.14.30
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/samber/slog-multi v1.4.1
 	github.com/spf13/cobra v1.9.1
