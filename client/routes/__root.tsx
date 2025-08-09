@@ -150,6 +150,7 @@ function LogoutButton() {
       size="xs"
       component="a"
       href={`${window.fransRootPath}/api/auth/logout?redirect_uri=${window.location.href}`}
+      title={t("title_logout")}
     >
       {t("logout")}
     </Button>

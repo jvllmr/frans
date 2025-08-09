@@ -139,6 +139,7 @@ function NewTicketForm() {
               />
               <Button
                 mt="lg"
+                title={t("title_generate_password")}
                 onClick={() => {
                   form.setFieldValue(
                     "password",
@@ -204,6 +205,7 @@ function NewTicketForm() {
                     }
                   }}
                   mt="lg"
+                  title={t("title_own_email")}
                 >
                   {t("label_own_email")}
                 </Button>
@@ -218,13 +220,18 @@ function NewTicketForm() {
             </Grid>
           </Fieldset>
           <Flex justify="space-evenly">
-            <Button type="submit" loading={createTicketMutation.isPending}>
+            <Button
+              type="submit"
+              loading={createTicketMutation.isPending}
+              title={t("title_upload")}
+            >
               {t("upload", { ns: "translation" })}
             </Button>
             <Button
               onClick={() => {
                 form.reset();
               }}
+              title={t("title_reset")}
             >
               {t("reset", { ns: "translation" })}
             </Button>

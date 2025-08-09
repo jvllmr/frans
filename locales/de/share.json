@@ -2,5 +2,6 @@
   "ticket_prompt": "Geben Sie das Passwort ein, um Zugriff auf die geteilten Dateien zu erhalten",
   "ticket_submit": "Auf geteilte Dateien zugreifen",
   "ticket_message": "hat folgende Dateien mit Ihnen geteilt",
-  "comment": "Anmerkung"
+  "comment": "Anmerkung",
+  "title_open_share": "Share öffnen"
 }

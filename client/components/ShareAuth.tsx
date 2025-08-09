@@ -93,6 +93,7 @@ export function ShareAuth<TData>({
           type="submit"
           loading={!!password && isPending}
           leftSection={<IconLockOpen />}
+          title={t("title_open_share")}
         >
           {submitButtonLabel}
         </Button>

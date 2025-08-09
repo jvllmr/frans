@@ -3,5 +3,7 @@
   "table_title_created_at": "Datum",
   "table_title_expiration": "Verfallsfrist",
   "file_downloaded_success": "Erfolgreich heruntergeladen",
-  "ticket_expiration_type_none": "Nie"
+  "ticket_expiration_type_none": "Nie",
+  "title_open_share": "Share in einem neuen Tab öffnen",
+  "title_copy_link": "Link zum Share kopieren"
 }

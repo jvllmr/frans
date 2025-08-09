@@ -14,6 +14,10 @@
   "label_expiry_total_downloads": "Expire after # of downloads",
   "label_notify_email": "Get notified by e-mail",
   "label_own_email": "Use my e-mail",
+  "title_own_email": "Use your own e-mail for download notifications",
   "label_your_lang": "Your language",
-  "label_receiver_lang": "Receiver language"
+  "label_receiver_lang": "Receiver language",
+  "title_generate_password": "Generate a new password",
+  "title_upload": "Upload files",
+  "title_reset": "Reset form fields"
 }

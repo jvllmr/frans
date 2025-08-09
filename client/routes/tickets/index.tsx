@@ -52,6 +52,7 @@ function RouteComponent() {
                       to="/s/$shareId"
                       params={{ shareId: ticket.id }}
                       target="_blank"
+                      title={t("title_open_share")}
                     >
                       <IconFolderOpen />
                     </ActionIconLink>
@@ -61,6 +62,7 @@ function RouteComponent() {
                           onClick={() => {
                             copy();
                           }}
+                          title={t("title_copy_link")}
                         >
                           {copied ? <IconCopyCheck /> : <IconCopy />}
                         </ActionIcon>
