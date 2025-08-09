@@ -1,0 +1,28 @@
+name: Lint source
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  eslint:
+    permissions:
+      contents: read
+    name: eslint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          persist-credentials: false
+      - name: Setup PDM
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        with:
+          python-version: "3.9"
+          cache: true
+      - name: Install dependencies
+        run: pnpm install --frozen-lock
+      - name: Run eslint
+        run: pnpm eslint .

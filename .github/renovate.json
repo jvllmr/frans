@@ -9,7 +9,8 @@
     ":disablePeerDependencies",
     ":maintainLockFilesMonthly",
     ":semanticCommits",
-    ":semanticCommitTypeAll(chore)"
+    ":semanticCommitTypeAll(chore)",
+    "helpers:pinGitHubActionDigests"
   ],
   "labels": ["dependencies"],
   "rangeStrategy": "bump"
