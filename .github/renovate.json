@@ -13,5 +13,8 @@
     "helpers:pinGitHubActionDigests"
   ],
   "labels": ["dependencies"],
-  "rangeStrategy": "bump"
+  "rangeStrategy": "bump",
+  "packageRules": [
+    { "matchDepTypes": ["golang", "toolchain"], "enabled": false }
+  ]
 }

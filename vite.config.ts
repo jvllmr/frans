@@ -55,6 +55,14 @@ export default defineConfig((env) => ({
       output: {
         manualChunks: {
           icons: ["@tabler/icons-react"],
+          mantine: [
+            "@mantine/core",
+            "@mantine/hooks",
+            "@mantine/dropzone",
+            "@mantine/form",
+          ],
+          tanstack: ["@tanstack/react-router", "@tanstack/react-query"],
+          i18n: ["i18next", "i18next-browser-languagedetector"],
         },
       },
     },
