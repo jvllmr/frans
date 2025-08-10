@@ -4,6 +4,7 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"io"
+	"log/slog"
 	"net/http"
 	"os"
 
@@ -127,7 +128,16 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 				WithOwner().
 				OnlyX(c.Request.Context())
 
-			util.RefreshUserTotalDataSize(c.Request.Context(), currentUser)
+			err = util.RefreshUserTotalDataSize(c.Request.Context(), currentUser)
+			if err != nil {
+				slog.Error(
+					"Could not refresh total data size of user",
+					"err",
+					err,
+					"user",
+					currentUser.Username,
+				)
+			}
 			currentUser.Update().AddSubmittedTickets(1).SaveX(c.Request.Context())
 
 			c.JSON(http.StatusCreated, apiTypes.ToPublicTicket(configValue, ticketValue))

@@ -7,10 +7,13 @@ import (
 	"github.com/jvllmr/frans/internal/ent/file"
 )
 
-func RefreshUserTotalDataSize(ctx context.Context, userValue *ent.User) {
-	totalDataSize := userValue.QueryTickets().
+func RefreshUserTotalDataSize(ctx context.Context, userValue *ent.User) error {
+	if totalDataSize, err := userValue.QueryTickets().
 		QueryFiles().
 		Aggregate(ent.Sum(file.FieldSize)).
-		IntX(ctx)
-	userValue.Update().SetTotalDataSize(int64(totalDataSize)).SaveX(ctx)
+		Int(ctx); err != nil {
+		return err
+	} else {
+		return userValue.Update().SetTotalDataSize(int64(totalDataSize)).Exec(ctx)
+	}
 }
