@@ -25,7 +25,9 @@ The goal is to translate `frans` to the following languages:
 - `Czech`
 - `Italian`
 
-Feel free to contribute or improve translations via [!Crowdin](https://crowdin.com/project/go-frans)
+Feel free to contribute or improve translations via [Crowdin](https://crowdin.com/project/go-frans)
+
+_[Join as translator](https://crwd.in/go-frans/24664f0ff5acef0c182f64d00ab3deb72520878)_
 
 ## Installation
 
