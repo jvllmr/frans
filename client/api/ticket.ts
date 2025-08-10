@@ -8,7 +8,7 @@ import { errorNotification, successNotification } from "~/util/notifications";
 import { ProgressHandle } from "~/util/progress";
 import { baseFetchJSON, FetchError, v1Url } from ".";
 import { fileSchema } from "./file";
-import { userSchema } from "./user";
+import { publicUserSchema } from "./user";
 
 export const ticketsKey = ["TICKET"];
 
@@ -41,7 +41,7 @@ export type CreateTicket = z.infer<typeof createTicketSchema>;
 
 export const ticketSchema = z.object({
   id: z.uuid(),
-  owner: userSchema,
+  owner: publicUserSchema,
   files: fileSchema.array(),
   createdAt: z.coerce.date(),
   estimatedExpiry: z.coerce.date().nullable(),

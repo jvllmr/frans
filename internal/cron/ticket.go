@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/util"
 )
 
 func TicketsLifecycleTask(configValue config.Config) {
-	tickets := config.DBClient.Ticket.Query().WithFiles().AllX(context.Background())
+	tickets := config.DBClient.Ticket.Query().WithFiles().WithOwner().AllX(context.Background())
 	deletedCount := 0
+	var users []*ent.User
 	for _, ticketValue := range tickets {
 		estimatedExpiry := util.GetEstimatedExpiry(configValue, ticketValue)
 		now := time.Now()
@@ -21,6 +23,16 @@ func TicketsLifecycleTask(configValue config.Config) {
 		}
 		config.DBClient.Ticket.DeleteOne(ticketValue).ExecX(context.Background())
 		deletedCount += 1
+		users = append(users, ticketValue.Edges.Owner)
 	}
 	slog.Info("Deleted tickets", "count", deletedCount)
+
+	for _, userValue := range users {
+		util.RefreshUserTotalDataSize(context.Background(), userValue)
+	}
+	slog.Info(
+		"Refreshed totalDataSize field for all users affected by ticket deletions",
+		"count",
+		len(users),
+	)
 }

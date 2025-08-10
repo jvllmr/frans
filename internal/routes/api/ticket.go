@@ -10,10 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/ent/user"
 	"github.com/jvllmr/frans/internal/mail"
+	"github.com/jvllmr/frans/internal/middleware"
 	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
 	"github.com/jvllmr/frans/internal/util"
 )
@@ -34,7 +34,7 @@ type ticketForm struct {
 
 func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		currentUser := c.MustGet(config.UserGinContext).(*ent.User)
+		currentUser := middleware.GetCurrentUser(c)
 		var form ticketForm
 		tx, err := config.DBClient.Tx(c.Request.Context())
 		if err != nil {
@@ -127,6 +127,9 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 				WithOwner().
 				OnlyX(c.Request.Context())
 
+			util.RefreshUserTotalDataSize(c.Request.Context(), currentUser)
+			currentUser.Update().AddSubmittedTickets(1).SaveX(c.Request.Context())
+
 			c.JSON(http.StatusCreated, apiTypes.ToPublicTicket(configValue, ticketValue))
 			if form.Email != nil {
 				var toBeEmailedPassword *string = nil
@@ -153,7 +156,7 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 
 func fetchTicketsFactory(configValue config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		currentUser := c.MustGet(config.UserGinContext).(*ent.User)
+		currentUser := middleware.GetCurrentUser(c)
 		query := config.DBClient.Ticket.Query().WithFiles().WithOwner()
 
 		if !currentUser.IsAdmin {

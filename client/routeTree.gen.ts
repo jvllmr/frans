@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsersRouteImport } from './routes/users'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TicketsIndexRouteImport } from './routes/tickets/index'
 import { Route as GrantsIndexRouteImport } from './routes/grants/index'
@@ -17,6 +18,11 @@ import { Route as GrantsNewRouteImport } from './routes/grants/new'
 import { Route as GrantsActiveRouteImport } from './routes/grants/active'
 import { Route as ShareTicketTicketIdRouteImport } from './routes/share/ticket/$ticketId'
 
+const UsersRoute = UsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -55,6 +61,7 @@ const ShareTicketTicketIdRoute = ShareTicketTicketIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/users': typeof UsersRoute
   '/grants/active': typeof GrantsActiveRoute
   '/grants/new': typeof GrantsNewRoute
   '/s/$shareId': typeof SShareIdRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/users': typeof UsersRoute
   '/grants/active': typeof GrantsActiveRoute
   '/grants/new': typeof GrantsNewRoute
   '/s/$shareId': typeof SShareIdRoute
@@ -74,6 +82,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/users': typeof UsersRoute
   '/grants/active': typeof GrantsActiveRoute
   '/grants/new': typeof GrantsNewRoute
   '/s/$shareId': typeof SShareIdRoute
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/users'
     | '/grants/active'
     | '/grants/new'
     | '/s/$shareId'
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/users'
     | '/grants/active'
     | '/grants/new'
     | '/s/$shareId'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/users'
     | '/grants/active'
     | '/grants/new'
     | '/s/$shareId'
@@ -113,6 +125,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  UsersRoute: typeof UsersRoute
   GrantsActiveRoute: typeof GrantsActiveRoute
   GrantsNewRoute: typeof GrantsNewRoute
   SShareIdRoute: typeof SShareIdRoute
@@ -123,6 +136,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -177,6 +197,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  UsersRoute: UsersRoute,
   GrantsActiveRoute: GrantsActiveRoute,
   GrantsNewRoute: GrantsNewRoute,
   SShareIdRoute: SShareIdRoute,

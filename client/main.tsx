@@ -1,6 +1,7 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { queryClient } from "~/api";
 import { PendingComponent } from "./components/routing/PendingComponent";
 import { routeTree } from "./routeTree.gen";
 
@@ -8,6 +9,10 @@ const router = createRouter({
   routeTree,
   basepath: window.fransRootPath,
   defaultPendingComponent: PendingComponent,
+  defaultPreloadStaleTime: 0,
+  context: {
+    queryClient,
+  },
 });
 
 declare module "@tanstack/react-router" {

@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/ent/user"
+	"github.com/jvllmr/frans/internal/middleware"
 	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
 	"github.com/jvllmr/frans/internal/util"
 )
@@ -26,7 +26,7 @@ func fetchFileRouteFactory(configValue config.Config) gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusNotFound)
 		}
 
-		currentUser := c.MustGet(config.UserGinContext).(*ent.User)
+		currentUser := middleware.GetCurrentUser(c)
 
 		if !currentUser.IsAdmin &&
 			file.QueryTickets().

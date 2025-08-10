@@ -1,0 +1,9 @@
+{
+  "user": "User",
+  "admin": "Admin",
+  "tickets_submitted": "Tickets created",
+  "tickets_active": "Tickets active",
+  "grants_submitted": "Grants created",
+  "grants_active": "Grants active",
+  "current_size": "Current size"
+}

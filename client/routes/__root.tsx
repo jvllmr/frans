@@ -15,13 +15,14 @@ import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import {
+  QueryClient,
   QueryClientProvider,
   queryOptions,
   useQuery,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
-  createRootRoute,
+  createRootRouteWithContext,
   Outlet,
   Register,
   useChildMatches,
@@ -54,20 +55,24 @@ function LanguageControls() {
 }
 type TabTitles = Record<
   Exclude<keyof Register["router"]["routesById"], "__root__">,
-  string
+  { translationKey: string; needsAdmin: boolean }
 >;
 const tabTitles = {
-  "/": "new",
-  "/tickets/": "tickets",
-  "/grants/new": "new_grant",
-  "/grants/active": "active_grants",
-  "/grants/": "grants",
+  "/": { translationKey: "new", needsAdmin: false },
+  "/tickets/": { translationKey: "tickets", needsAdmin: false },
+  "/grants/new": { translationKey: "new_grant", needsAdmin: false },
+  "/grants/active": { translationKey: "active_grants", needsAdmin: false },
+  "/grants/": { translationKey: "grants", needsAdmin: false },
+  "/users": { translationKey: "users", needsAdmin: true },
 } satisfies Partial<TabTitles>;
 
 const hiddenTabTitles: TabTitles = {
   ...tabTitles,
-  "/s/$shareId": "share",
-  "/share/ticket/$ticketId": "ticketShare",
+  "/s/$shareId": { translationKey: "share", needsAdmin: false },
+  "/share/ticket/$ticketId": {
+    translationKey: "ticket_share",
+    needsAdmin: false,
+  },
 };
 
 const cyclicMeQueryOptions = queryOptions({
@@ -82,7 +87,9 @@ function useDeepestMatch() {
 
 function useAuthRequired() {
   const deepestMatch = useDeepestMatch();
-  return !!deepestMatch && Object.keys(tabTitles).includes(deepestMatch.id);
+  return (
+    !!deepestMatch && Object.keys(tabTitles).includes(deepestMatch.routeId)
+  );
 }
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -115,17 +122,23 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 function TabControls() {
   const { t } = useTranslation("tabs");
   const authRequired = useAuthRequired();
+  const { data: me } = useQuery(meQueryOptions);
   const data = useMemo(
     () =>
-      Object.entries(tabTitles).map(([value, label]) => ({
-        value,
-        label: t(label),
-      })),
-    [t],
+      Object.entries(tabTitles)
+        .filter(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          ([_, { needsAdmin }]) => !needsAdmin || (needsAdmin && me?.isAdmin),
+        )
+        .map(([value, { translationKey }]) => ({
+          value,
+          label: t(translationKey),
+        })),
+    [me?.isAdmin, t],
   );
   const navigate = useNavigate();
   const deepestMatch = useDeepestMatch();
-  const { data: me } = useQuery(meQueryOptions);
+
   if (!me && !authRequired) {
     return null;
   }
@@ -133,7 +146,7 @@ function TabControls() {
   return (
     <SegmentedControl
       data={data}
-      value={deepestMatch!.id}
+      value={deepestMatch!.routeId}
       onChange={(value) => {
         navigate({ to: value });
       }}
@@ -159,13 +172,13 @@ function LogoutButton() {
 
 function TabTitle() {
   const { t } = useTranslation("tabs");
-  const deepestMatch = useChildMatches({ select: (m) => m.at(-1) });
+  const deepestMatch = useDeepestMatch();
 
   return (
     <Title size="h3">
       {t(
         // @ts-expect-error we know that id is correct
-        hiddenTabTitles[deepestMatch.id],
+        hiddenTabTitles[deepestMatch!.routeId].translationKey,
       )}
     </Title>
   );
@@ -211,6 +224,10 @@ function RootRoute() {
   );
 }
 
-export const Route = createRootRoute({
+interface RoutingContext {
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<RoutingContext>()({
   component: RootRoute,
 });

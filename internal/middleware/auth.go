@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/session"
 
 	"golang.org/x/oauth2"
@@ -73,7 +74,7 @@ func Auth(configValue config.Config, redirect bool) gin.HandlerFunc {
 				session.RefreshToken,
 			)
 			if err != nil {
-				slog.Debug("Not authenticated: %v", err)
+				slog.Debug("Not authenticated", "err", err)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
@@ -84,7 +85,7 @@ func Auth(configValue config.Config, redirect bool) gin.HandlerFunc {
 				tokenRefreshmentResponse.AccessToken,
 			)
 			if err != nil {
-				slog.Debug("Not authenticated: %v", err)
+				slog.Debug("Not authenticated", "err", err)
 				missingAuthResponse(c, oauth2Config, redirect)
 				c.Abort()
 				return
@@ -113,4 +114,8 @@ func Auth(configValue config.Config, redirect bool) gin.HandlerFunc {
 		user, _ := config.DBClient.User.Get(c.Request.Context(), userId)
 		c.Set(config.UserGinContext, user)
 	}
+}
+
+func GetCurrentUser(ctx *gin.Context) *ent.User {
+	return ctx.MustGet(config.UserGinContext).(*ent.User)
 }

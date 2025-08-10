@@ -31,7 +31,7 @@ function RouteComponent() {
   const relativeDateFormatter = useRelativeDateFormatter();
   const now = new Date();
   return (
-    <Table withColumnBorders>
+    <Table withColumnBorders withTableBorder withRowBorders>
       <Table.Thead>
         <Table.Tr>
           <Table.Th />
