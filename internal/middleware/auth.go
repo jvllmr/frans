@@ -105,10 +105,10 @@ func Auth(configValue config.Config, redirect bool) gin.HandlerFunc {
 			config.SetAccessTokenCookie(c, tokenRefreshmentResponse.AccessToken)
 			newExpiry := time.Now().
 				Add(time.Duration(tokenRefreshmentResponse.ExpiresIn) * time.Second)
-			_ = config.DBClient.Session.UpdateOne(session).
+			config.DBClient.Session.UpdateOne(session).
 				SetExpire(newExpiry).
 				SetRefreshToken(tokenRefreshmentResponse.RefreshToken).
-				Exec(c.Request.Context())
+				ExecX(c.Request.Context())
 		}
 		userId, _ := uuid.Parse(introspectionResponse.Sub)
 		user, _ := config.DBClient.User.Get(c.Request.Context(), userId)
