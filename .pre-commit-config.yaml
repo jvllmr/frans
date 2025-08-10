@@ -36,7 +36,7 @@ repos:
         name: go fmt
         entry: go fmt
         language: system
-        pass_filenames: true
+        pass_filenames: false
         types:
           - go
       - id: go-vet
