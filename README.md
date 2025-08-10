@@ -1,5 +1,8 @@
 # frans
 
+[![Crowdin](https://badges.crowdin.net/go-frans/localized.svg)](https://crowdin.com/project/go-frans)
+[![GitHub License](https://img.shields.io/github/license/jvllmr/frans)](https://github.com/jvllmr/frans/blob/main/LICENSE)
+
 Frans is a simple file-sharing service intended to be ready for cloud native.
 
 It took heavy inspiration from [DownloadTicketService](https://www.thregr.org/wavexx/software/dl/). You could also call it a more modern implementation of `DownloadTicketService` optimized for todays (2025) IT landscape.
@@ -8,6 +11,21 @@ It took heavy inspiration from [DownloadTicketService](https://www.thregr.org/wa
 
 - Create file shares and share them with others
 - Create upload grants which allow others to upload their files to you (TODO)
+
+The goal is to translate `frans` to the following languages:
+
+- `German`
+- `French`
+- `Spanish`
+- `Russian`
+- `Simplified chinese`
+- `Japanese`
+- `Dutch`
+- `Portuguese, Brazilian`
+- `Czech`
+- `Italian`
+
+Feel free to contribute or improve translations via [!Crowdin](https://crowdin.com/project/go-frans)
 
 ## Installation
 
