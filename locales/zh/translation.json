@@ -1,0 +1,9 @@
+{
+  "logout": "注销",
+  "title_logout": "结束您的登录会话",
+  "upload": "上传",
+  "reset": "Reset",
+  "generate": "生成",
+  "session_expired": "您的登录会话过期",
+  "session_renew": "再次登录"
+}
