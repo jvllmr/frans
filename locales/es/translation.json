@@ -1,0 +1,9 @@
+{
+  "logout": "Cerrar sesión",
+  "title_logout": "Termina tu sesión de acceso",
+  "upload": "Subir",
+  "reset": "Reset",
+  "generate": "Generar",
+  "session_expired": "Su sesión de inicio de sesión expiró",
+  "session_renew": "Iniciar sesión de nuevo"
+}

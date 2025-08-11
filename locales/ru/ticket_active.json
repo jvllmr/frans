@@ -1,0 +1,9 @@
+{
+  "table_title_file": "Билет",
+  "table_title_created_at": "Дата",
+  "table_title_expiration": "Истечение",
+  "file_downloaded_success": "Успешно загружено",
+  "ticket_expiration_type_none": "Никогда",
+  "title_open_share": "Открыть общий доступ в новой вкладке",
+  "title_copy_link": "Скопировать ссылку для отправки"
+}

@@ -1,0 +1,7 @@
+{
+  "ticket_prompt": "共有ファイルにアクセスするためのパスワードを入力してください",
+  "ticket_submit": "共有ファイルにアクセス",
+  "ticket_message": "次のファイルを共有しています",
+  "comment": "コメント",
+  "title_open_share": "共有を開く"
+}

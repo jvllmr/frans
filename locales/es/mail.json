@@ -1,0 +1,9 @@
+{
+  "comment": "Comentario del ticket",
+  "contents": "Contenido",
+  "url": "URL",
+  "password": "Contraseña",
+  "subject_ticket": "Enlace de descarga para {{.FileName}}",
+  "subject_download": "Descargar notificación del ticket",
+  "notification_download": "El archivo {{.FileName}} (ticket {{.TicketName}}) fue descargado por {{.Address}}"
+}

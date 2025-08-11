@@ -1,0 +1,9 @@
+{
+  "logout": "ログアウト",
+  "title_logout": "ログインセッションを終了する",
+  "upload": "アップロード",
+  "reset": "Reset",
+  "generate": "生成",
+  "session_expired": "ログインセッションの有効期限が切れました",
+  "session_renew": "再度ログインする"
+}

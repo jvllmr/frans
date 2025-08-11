@@ -1,0 +1,9 @@
+{
+  "comment": "Комментарий к заявке",
+  "contents": "Содержание",
+  "url": "URL",
+  "password": "Пароль",
+  "subject_ticket": "Ссылка для скачивания {{.FileName}}",
+  "subject_download": "Уведомление о загрузке заявки",
+  "notification_download": "Файл {{.FileName}} (Заявка {{.TicketName}}) был загружен {{.Address}}"
+}

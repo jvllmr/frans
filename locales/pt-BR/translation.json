@@ -1,0 +1,9 @@
+{
+  "logout": "Desconectar",
+  "title_logout": "Encerrar sua sessão de login",
+  "upload": "Transferir",
+  "reset": "Reset",
+  "generate": "Gerar",
+  "session_expired": "Sua sessão de login expirou",
+  "session_renew": "Entrar novamente"
+}

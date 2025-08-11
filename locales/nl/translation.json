@@ -1,0 +1,9 @@
+{
+  "logout": "Afmelden",
+  "title_logout": "Beëindig uw inlogsessie",
+  "upload": "Uploaden",
+  "reset": "Reset",
+  "generate": "Genereren",
+  "session_expired": "Je inlogsessie is verlopen",
+  "session_renew": "Opnieuw inloggen"
+}

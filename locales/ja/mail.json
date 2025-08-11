@@ -1,0 +1,9 @@
+{
+  "comment": "チケットのコメント",
+  "contents": "内容",
+  "url": "URL",
+  "password": "パスワード",
+  "subject_ticket": "{{.FileName}} 用のダウンロードリンク",
+  "subject_download": "チケットのダウンロード通知",
+  "notification_download": "ファイル {{.FileName}} (チケット {{.TicketName}}) は {{.Address}} によってダウンロードされました"
+}

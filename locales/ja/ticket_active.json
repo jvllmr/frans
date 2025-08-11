@@ -1,0 +1,9 @@
+{
+  "table_title_file": "チケット",
+  "table_title_created_at": "日付",
+  "table_title_expiration": "有効期限",
+  "file_downloaded_success": "ダウンロードが完了しました",
+  "ticket_expiration_type_none": "一切なし",
+  "title_open_share": "新しいタブで共有を開く",
+  "title_copy_link": "共有するリンクをコピー"
+}

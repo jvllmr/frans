@@ -1,0 +1,9 @@
+{
+  "logout": "Esci",
+  "title_logout": "Termina la sessione di login",
+  "upload": "Carica",
+  "reset": "Reset",
+  "generate": "Genera",
+  "session_expired": "La sessione di login è scaduta",
+  "session_renew": "Accedi di nuovo"
+}

@@ -1,0 +1,5 @@
+{
+  "email": "La entrada debe ser una dirección de correo electrónico",
+  "min_length": "La entrada debe tener al menos # símbolos",
+  "password": "La contraseña es incorrecta"
+}

@@ -1,0 +1,9 @@
+{
+  "user": "Пользователь",
+  "admin": "Админ",
+  "tickets_submitted": "Заявка создана",
+  "tickets_active": "Заявки активны",
+  "grants_submitted": "Предоставление грантов",
+  "grants_active": "Доступные гранты",
+  "current_size": "Текущий размер"
+}

@@ -1,0 +1,5 @@
+{
+  "email": "La saisie doit être une adresse e-mail",
+  "min_length": "L'entrée doit avoir au moins # symboles",
+  "password": "Le mot de passe indiqué est incorrect"
+}

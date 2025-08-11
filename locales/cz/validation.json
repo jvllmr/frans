@@ -1,0 +1,5 @@
+{
+  "email": "Vstup musí být e-mailová adresa",
+  "min_length": "Vstup musí mít alespoň # symbolů",
+  "password": "Zadané heslo je nesprávné"
+}

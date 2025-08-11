@@ -1,0 +1,9 @@
+{
+  "logout": "Odhlásit se",
+  "title_logout": "Ukončit relaci přihlášení",
+  "upload": "Nahrát",
+  "reset": "Reset",
+  "generate": "Generovat",
+  "session_expired": "Platnost přihlášení vypršela",
+  "session_renew": "Přihlásit se znovu"
+}

@@ -1,0 +1,9 @@
+{
+  "user": "Utilisateur",
+  "admin": "Administrateur",
+  "tickets_submitted": "Tickets créés",
+  "tickets_active": "Tickets actifs",
+  "grants_submitted": "Subventions créées",
+  "grants_active": "Octroie active",
+  "current_size": "Taille actuelle"
+}
