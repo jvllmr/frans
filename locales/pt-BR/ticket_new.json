@@ -1,0 +1,23 @@
+{
+  "label_comment": "Comentar",
+  "label_email": "Enviar link para e-mail",
+  "label_password": "Palavra-passe",
+  "label_password_email": "Enviar ao limpar com a notificação",
+  "label_password_email_highlight": "Limpar",
+  "label_expiry": "Expiração do Ticket",
+  "expiry_automatic": "Automático",
+  "expiry_single_use": "Única utilização",
+  "expiry_none": "Sem vencimento",
+  "expiry_custom": "Personalizado",
+  "label_expiry_total_days": "Expira no número total de dias",
+  "label_expiry_last_download": "Expira em # dias após o último download",
+  "label_expiry_total_downloads": "Expira após # de downloads",
+  "label_notify_email": "Seja notificado por e-mail",
+  "label_own_email": "Usar meu e-mail",
+  "title_own_email": "Usar seu próprio e-mail para notificações de download",
+  "label_your_lang": "Seu idioma",
+  "label_receiver_lang": "Idioma do destinatário",
+  "title_generate_password": "Gerar uma nova senha",
+  "title_upload": "Upload de arquivos",
+  "title_reset": "Redefinir campos de formulário"
+}
