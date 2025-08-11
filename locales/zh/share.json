@@ -1,0 +1,7 @@
+{
+  "ticket_prompt": "输入访问共享文件的密码",
+  "ticket_submit": "访问共享文件",
+  "ticket_message": "已与您共享以下文件",
+  "comment": "评论",
+  "title_open_share": "打开共享"
+}
