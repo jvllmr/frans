@@ -1,0 +1,9 @@
+{
+  "comment": "Komentář tiketu",
+  "contents": "Obsah",
+  "url": "URL",
+  "password": "Heslo",
+  "subject_ticket": "Odkaz ke stažení pro {{.FileName}}",
+  "subject_download": "Stáhnout oznámení pro tiket",
+  "notification_download": "Soubor {{.FileName}} (tiket {{.TicketName}}) byl stažen {{.Address}}"
+}
