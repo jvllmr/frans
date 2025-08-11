@@ -1,0 +1,9 @@
+{
+  "table_title_file": "Ticket",
+  "table_title_created_at": "Fecha",
+  "table_title_expiration": "Caducidad",
+  "file_downloaded_success": "Descargado correctamente",
+  "ticket_expiration_type_none": "Nunca",
+  "title_open_share": "Abrir compartir en una nueva pestaña",
+  "title_copy_link": "Copiar enlace para compartir"
+}
