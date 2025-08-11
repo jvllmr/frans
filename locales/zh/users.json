@@ -1,0 +1,9 @@
+{
+  "user": "用户",
+  "admin": "管理员",
+  "tickets_submitted": "工单已创建",
+  "tickets_active": "工单已激活",
+  "grants_submitted": "赠款已创建",
+  "grants_active": "赠品已激活",
+  "current_size": "当前大小"
+}
