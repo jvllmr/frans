@@ -1,0 +1,9 @@
+{
+  "comment": "Ticket commentaar",
+  "contents": "Inhoud",
+  "url": "URL",
+  "password": "Wachtwoord",
+  "subject_ticket": "Downloadlink voor {{.FileName}}",
+  "subject_download": "Melding downloaden voor ticket",
+  "notification_download": "Het bestand {{.FileName}} (ticket {{.TicketName}}) is gedownload door {{.Address}}"
+}
