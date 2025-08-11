@@ -3,5 +3,8 @@
   "tickets": "Aktive Tickets",
   "new_grant": "Neue Upload-Erlaubnis",
   "active_grants": "Upload-Erlaubnis Liste",
-  "grants": "Empfangene Dateien"
+  "grants": "Empfangene Dateien",
+  "share": "Freigabe",
+  "ticket_share": "Freigegebenes Ticket",
+  "users": "Benutzer"
 }
