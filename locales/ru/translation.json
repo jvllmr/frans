@@ -1,0 +1,9 @@
+{
+  "logout": "Выйти",
+  "title_logout": "Завершить сеанс входа",
+  "upload": "Выгрузить",
+  "reset": "Reset",
+  "generate": "Сгенерировать",
+  "session_expired": "Истек срок действия вашего логина",
+  "session_renew": "Войти снова"
+}
