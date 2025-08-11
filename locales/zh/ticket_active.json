@@ -1,0 +1,9 @@
+{
+  "table_title_file": "服务单",
+  "table_title_created_at": "日期",
+  "table_title_expiration": "过期时间",
+  "file_downloaded_success": "下载成功",
+  "ticket_expiration_type_none": "从不使用",
+  "title_open_share": "在新标签中打开共享",
+  "title_copy_link": "复制链接到共享"
+}
