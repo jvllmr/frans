@@ -1,0 +1,23 @@
+{
+  "label_comment": "Commento",
+  "label_email": "Invia link a e-mail",
+  "label_password": "Password",
+  "label_password_email": "Invia in chiaro con notifica",
+  "label_password_email_highlight": "cancella",
+  "label_expiry": "Scadenza del biglietto",
+  "expiry_automatic": "Automatico",
+  "expiry_single_use": "Uso singolo",
+  "expiry_none": "Nessuna scadenza",
+  "expiry_custom": "Personalizzato",
+  "label_expiry_total_days": "Scadenza in totale # di giorni",
+  "label_expiry_last_download": "Scadenza in # di giorni dopo l'ultimo download",
+  "label_expiry_total_downloads": "Scade dopo il # di download",
+  "label_notify_email": "Ricevi una notifica via e-mail",
+  "label_own_email": "Usa la mia e-mail",
+  "title_own_email": "Usa la tua e-mail per scaricare le notifiche",
+  "label_your_lang": "La tua lingua",
+  "label_receiver_lang": "Lingua del destinatario",
+  "title_generate_password": "Genera una nuova password",
+  "title_upload": "Carica file",
+  "title_reset": "Reimposta campi modulo"
+}
