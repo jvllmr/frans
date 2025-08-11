@@ -1,0 +1,9 @@
+{
+  "user": "Gebruiker",
+  "admin": "Beheerder",
+  "tickets_submitted": "Tickets aangemaakt",
+  "tickets_active": "Tickets actief",
+  "grants_submitted": "Garanten aangemaakt",
+  "grants_active": "Geeft actieve",
+  "current_size": "Huidige grootte"
+}
