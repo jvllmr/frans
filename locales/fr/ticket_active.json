@@ -1,0 +1,9 @@
+{
+  "table_title_file": "Billet",
+  "table_title_created_at": "Date",
+  "table_title_expiration": "Expiration",
+  "file_downloaded_success": "Téléchargé avec succès",
+  "ticket_expiration_type_none": "Jamais",
+  "title_open_share": "Ouvrir le partage dans un nouvel onglet",
+  "title_copy_link": "Copier le lien pour partager"
+}
