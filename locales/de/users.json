@@ -1,0 +1,9 @@
+{
+  "user": "Benutzer",
+  "admin": "Admin",
+  "tickets_submitted": "Tickets erstellt",
+  "tickets_active": "Tickets aktiv",
+  "grants_submitted": "Upload-Tickets erstellt",
+  "grants_active": "Upload-Tickets aktiv",
+  "current_size": "Aktuelle Größe"
+}
