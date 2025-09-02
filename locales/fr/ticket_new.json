@@ -1,23 +1,5 @@
 {
-  "label_comment": "Commenter",
-  "label_email": "Envoyer un lien vers l'e-mail",
-  "label_password": "Mot de passe",
-  "label_password_email": "Envoyer en clair avec notification",
-  "label_password_email_highlight": "effacer",
-  "label_expiry": "Expiration du ticket",
-  "expiry_automatic": "Automatique",
-  "expiry_single_use": "Utilisation unique",
-  "expiry_none": "Pas d'expiration",
-  "expiry_custom": "Personnalisé",
-  "label_expiry_total_days": "Expire au total # de jours",
-  "label_expiry_last_download": "Expire dans # jours après le dernier téléchargement",
-  "label_expiry_total_downloads": "Expire après # de téléchargements",
-  "label_notify_email": "Recevez une notification par e-mail",
-  "label_own_email": "Utiliser mon e-mail",
-  "title_own_email": "Utilisez votre propre e-mail pour les notifications de téléchargement",
-  "label_your_lang": "Votre langue",
-  "label_receiver_lang": "Langue du destinataire",
-  "title_generate_password": "Générer un nouveau mot de passe",
   "title_upload": "Charger des fichiers",
-  "title_reset": "Réinitialiser les champs de formulaire"
+  "title_reset": "Réinitialiser les champs de formulaire",
+  "label_expiry": "Expiration du ticket"
 }
