@@ -1,23 +1,5 @@
 {
-  "label_comment": "Комментарий",
-  "label_email": "Отправить ссылку на e-mail",
-  "label_password": "Пароль",
-  "label_password_email": "Отправить в очищенном виде с уведомлением",
-  "label_password_email_highlight": "очистить",
-  "label_expiry": "Срок действия заявки",
-  "expiry_automatic": "Автоматически",
-  "expiry_single_use": "Одиночное использование",
-  "expiry_none": "Без истечения срока",
-  "expiry_custom": "Свой",
-  "label_expiry_total_days": "Истекает всего количество дней",
-  "label_expiry_last_download": "Истекает через # дней после последней загрузки",
-  "label_expiry_total_downloads": "Истекает после # загрузок",
-  "label_notify_email": "Получать уведомления по электронной почте",
-  "label_own_email": "Использовать мой e-mail",
-  "title_own_email": "Использовать свой e-mail для уведомлений о скачивании",
-  "label_your_lang": "Ваш язык",
-  "label_receiver_lang": "Язык получателя",
-  "title_generate_password": "Создать новый пароль",
   "title_upload": "Загрузить файлы",
-  "title_reset": "Сбросить поля формы"
+  "title_reset": "Сбросить поля формы",
+  "label_expiry": "Срок действия заявки"
 }
