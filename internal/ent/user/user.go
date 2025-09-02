@@ -36,6 +36,8 @@ const (
 	EdgeSessions = "sessions"
 	// EdgeTickets holds the string denoting the tickets edge name in mutations.
 	EdgeTickets = "tickets"
+	// EdgeGrants holds the string denoting the grants edge name in mutations.
+	EdgeGrants = "grants"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// SessionsTable is the table that holds the sessions relation/edge.
@@ -52,6 +54,13 @@ const (
 	TicketsInverseTable = "tickets"
 	// TicketsColumn is the table column denoting the tickets relation/edge.
 	TicketsColumn = "user_tickets"
+	// GrantsTable is the table that holds the grants relation/edge.
+	GrantsTable = "grants"
+	// GrantsInverseTable is the table name for the Grant entity.
+	// It exists in this package in order to avoid circular dependency with the "grant" package.
+	GrantsInverseTable = "grants"
+	// GrantsColumn is the table column denoting the grants relation/edge.
+	GrantsColumn = "user_grants"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -164,6 +173,20 @@ func ByTickets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTicketsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByGrantsCount orders the results by grants count.
+func ByGrantsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newGrantsStep(), opts...)
+	}
+}
+
+// ByGrants orders the results by grants terms.
+func ByGrants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newGrantsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newSessionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -176,5 +199,12 @@ func newTicketsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TicketsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TicketsTable, TicketsColumn),
+	)
+}
+func newGrantsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(GrantsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, GrantsTable, GrantsColumn),
 	)
 }

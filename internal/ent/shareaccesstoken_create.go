@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 )
@@ -51,6 +52,25 @@ func (_c *ShareAccessTokenCreate) SetNillableTicketID(id *uuid.UUID) *ShareAcces
 // SetTicket sets the "ticket" edge to the Ticket entity.
 func (_c *ShareAccessTokenCreate) SetTicket(v *Ticket) *ShareAccessTokenCreate {
 	return _c.SetTicketID(v.ID)
+}
+
+// SetGrantID sets the "grant" edge to the Grant entity by ID.
+func (_c *ShareAccessTokenCreate) SetGrantID(id uuid.UUID) *ShareAccessTokenCreate {
+	_c.mutation.SetGrantID(id)
+	return _c
+}
+
+// SetNillableGrantID sets the "grant" edge to the Grant entity by ID if the given value is not nil.
+func (_c *ShareAccessTokenCreate) SetNillableGrantID(id *uuid.UUID) *ShareAccessTokenCreate {
+	if id != nil {
+		_c = _c.SetGrantID(*id)
+	}
+	return _c
+}
+
+// SetGrant sets the "grant" edge to the Grant entity.
+func (_c *ShareAccessTokenCreate) SetGrant(v *Grant) *ShareAccessTokenCreate {
+	return _c.SetGrantID(v.ID)
 }
 
 // Mutation returns the ShareAccessTokenMutation object of the builder.
@@ -144,6 +164,23 @@ func (_c *ShareAccessTokenCreate) createSpec() (*ShareAccessToken, *sqlgraph.Cre
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.ticket_shareaccesstokens = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.GrantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   shareaccesstoken.GrantTable,
+			Columns: []string{shareaccesstoken.GrantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.grant_shareaccesstokens = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -19,6 +19,10 @@ func startCronScheduler() {
 		fransCron.TicketsLifecycleTask(configValue)
 	})
 
+	cronRunner.AddFunc("@every 1m", func() {
+		fransCron.GrantsLifecycleTask(configValue)
+	})
+
 	cronRunner.Run()
 
 }

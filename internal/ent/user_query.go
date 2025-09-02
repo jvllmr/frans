@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -28,6 +29,7 @@ type UserQuery struct {
 	predicates   []predicate.User
 	withSessions *SessionQuery
 	withTickets  *TicketQuery
+	withGrants   *GrantQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -101,6 +103,28 @@ func (_q *UserQuery) QueryTickets() *TicketQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(ticket.Table, ticket.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.TicketsTable, user.TicketsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryGrants chains the current query on the "grants" edge.
+func (_q *UserQuery) QueryGrants() *GrantQuery {
+	query := (&GrantClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(grant.Table, grant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.GrantsTable, user.GrantsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -302,6 +326,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		predicates:   append([]predicate.User{}, _q.predicates...),
 		withSessions: _q.withSessions.Clone(),
 		withTickets:  _q.withTickets.Clone(),
+		withGrants:   _q.withGrants.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -327,6 +352,17 @@ func (_q *UserQuery) WithTickets(opts ...func(*TicketQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withTickets = query
+	return _q
+}
+
+// WithGrants tells the query-builder to eager-load the nodes that are connected to
+// the "grants" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithGrants(opts ...func(*GrantQuery)) *UserQuery {
+	query := (&GrantClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withGrants = query
 	return _q
 }
 
@@ -408,9 +444,10 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withSessions != nil,
 			_q.withTickets != nil,
+			_q.withGrants != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -442,6 +479,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadTickets(ctx, query, nodes,
 			func(n *User) { n.Edges.Tickets = []*Ticket{} },
 			func(n *User, e *Ticket) { n.Edges.Tickets = append(n.Edges.Tickets, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withGrants; query != nil {
+		if err := _q.loadGrants(ctx, query, nodes,
+			func(n *User) { n.Edges.Grants = []*Grant{} },
+			func(n *User, e *Grant) { n.Edges.Grants = append(n.Edges.Grants, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -505,6 +549,37 @@ func (_q *UserQuery) loadTickets(ctx context.Context, query *TicketQuery, nodes 
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_tickets" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadGrants(ctx context.Context, query *GrantQuery, nodes []*User, init func(*User), assign func(*User, *Grant)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Grant(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.GrantsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_grants
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_grants" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_grants" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

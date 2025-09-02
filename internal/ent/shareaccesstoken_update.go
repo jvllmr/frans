@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -63,6 +64,25 @@ func (_u *ShareAccessTokenUpdate) SetTicket(v *Ticket) *ShareAccessTokenUpdate {
 	return _u.SetTicketID(v.ID)
 }
 
+// SetGrantID sets the "grant" edge to the Grant entity by ID.
+func (_u *ShareAccessTokenUpdate) SetGrantID(id uuid.UUID) *ShareAccessTokenUpdate {
+	_u.mutation.SetGrantID(id)
+	return _u
+}
+
+// SetNillableGrantID sets the "grant" edge to the Grant entity by ID if the given value is not nil.
+func (_u *ShareAccessTokenUpdate) SetNillableGrantID(id *uuid.UUID) *ShareAccessTokenUpdate {
+	if id != nil {
+		_u = _u.SetGrantID(*id)
+	}
+	return _u
+}
+
+// SetGrant sets the "grant" edge to the Grant entity.
+func (_u *ShareAccessTokenUpdate) SetGrant(v *Grant) *ShareAccessTokenUpdate {
+	return _u.SetGrantID(v.ID)
+}
+
 // Mutation returns the ShareAccessTokenMutation object of the builder.
 func (_u *ShareAccessTokenUpdate) Mutation() *ShareAccessTokenMutation {
 	return _u.mutation
@@ -71,6 +91,12 @@ func (_u *ShareAccessTokenUpdate) Mutation() *ShareAccessTokenMutation {
 // ClearTicket clears the "ticket" edge to the Ticket entity.
 func (_u *ShareAccessTokenUpdate) ClearTicket() *ShareAccessTokenUpdate {
 	_u.mutation.ClearTicket()
+	return _u
+}
+
+// ClearGrant clears the "grant" edge to the Grant entity.
+func (_u *ShareAccessTokenUpdate) ClearGrant() *ShareAccessTokenUpdate {
+	_u.mutation.ClearGrant()
 	return _u
 }
 
@@ -142,6 +168,35 @@ func (_u *ShareAccessTokenUpdate) sqlSave(ctx context.Context) (_node int, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.GrantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   shareaccesstoken.GrantTable,
+			Columns: []string{shareaccesstoken.GrantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.GrantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   shareaccesstoken.GrantTable,
+			Columns: []string{shareaccesstoken.GrantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{shareaccesstoken.Label}
@@ -195,6 +250,25 @@ func (_u *ShareAccessTokenUpdateOne) SetTicket(v *Ticket) *ShareAccessTokenUpdat
 	return _u.SetTicketID(v.ID)
 }
 
+// SetGrantID sets the "grant" edge to the Grant entity by ID.
+func (_u *ShareAccessTokenUpdateOne) SetGrantID(id uuid.UUID) *ShareAccessTokenUpdateOne {
+	_u.mutation.SetGrantID(id)
+	return _u
+}
+
+// SetNillableGrantID sets the "grant" edge to the Grant entity by ID if the given value is not nil.
+func (_u *ShareAccessTokenUpdateOne) SetNillableGrantID(id *uuid.UUID) *ShareAccessTokenUpdateOne {
+	if id != nil {
+		_u = _u.SetGrantID(*id)
+	}
+	return _u
+}
+
+// SetGrant sets the "grant" edge to the Grant entity.
+func (_u *ShareAccessTokenUpdateOne) SetGrant(v *Grant) *ShareAccessTokenUpdateOne {
+	return _u.SetGrantID(v.ID)
+}
+
 // Mutation returns the ShareAccessTokenMutation object of the builder.
 func (_u *ShareAccessTokenUpdateOne) Mutation() *ShareAccessTokenMutation {
 	return _u.mutation
@@ -203,6 +277,12 @@ func (_u *ShareAccessTokenUpdateOne) Mutation() *ShareAccessTokenMutation {
 // ClearTicket clears the "ticket" edge to the Ticket entity.
 func (_u *ShareAccessTokenUpdateOne) ClearTicket() *ShareAccessTokenUpdateOne {
 	_u.mutation.ClearTicket()
+	return _u
+}
+
+// ClearGrant clears the "grant" edge to the Grant entity.
+func (_u *ShareAccessTokenUpdateOne) ClearGrant() *ShareAccessTokenUpdateOne {
+	_u.mutation.ClearGrant()
 	return _u
 }
 
@@ -297,6 +377,35 @@ func (_u *ShareAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *ShareA
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.GrantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   shareaccesstoken.GrantTable,
+			Columns: []string{shareaccesstoken.GrantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.GrantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   shareaccesstoken.GrantTable,
+			Columns: []string{shareaccesstoken.GrantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

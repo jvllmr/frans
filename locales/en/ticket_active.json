@@ -2,8 +2,6 @@
   "table_title_file": "Ticket",
   "table_title_created_at": "Date",
   "table_title_expiration": "Expiration",
-  "file_downloaded_success": "Successfully downloaded",
-  "ticket_expiration_type_none": "Never",
   "title_open_share": "Open share in a new tab",
   "title_copy_link": "Copy link to share"
 }

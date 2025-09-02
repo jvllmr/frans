@@ -4,6 +4,9 @@
   "upload": "Upload",
   "reset": "Reset",
   "generate": "Generate",
+  "comment": "Comment",
   "session_expired": "Your login session expired",
-  "session_renew": "Login again"
+  "session_renew": "Login again",
+  "expiration_type_none": "Never",
+  "file_downloaded_success": "Successfully downloaded"
 }

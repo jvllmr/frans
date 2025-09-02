@@ -23,5 +23,6 @@ func (ShareAccessToken) Fields() []ent.Field {
 func (ShareAccessToken) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("ticket", Ticket.Type).Ref("shareaccesstokens").Unique(),
+		edge.From("grant", Grant.Type).Ref("shareaccesstokens").Unique(),
 	}
 }

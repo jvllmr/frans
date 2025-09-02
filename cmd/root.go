@@ -45,6 +45,7 @@ func Main() {
 		sessionLifecycleTaskCommand,
 		ticketLifecycleTaskCommand,
 		fileLifecycleTaskCommand,
+		grantLifecycleTaskCommand,
 	)
 	rootCmd.AddCommand(taskCommand, cronCmd, serveCmd)
 

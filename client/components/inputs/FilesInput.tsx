@@ -12,7 +12,7 @@ import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFileSizeFormatter } from "~/i18n";
-import { FileIcon } from "../FileIcon";
+import { FileIcon } from "../file/FileIcon";
 
 function FileCard({ children }: { children: React.ReactNode }) {
   return (

@@ -73,6 +73,7 @@ const hiddenTabTitles: TabTitles = {
     translationKey: "ticket_share",
     needsAdmin: false,
   },
+  "/share/grant/$grantId": { translationKey: "grant_share", needsAdmin: false },
 };
 
 const cyclicMeQueryOptions = queryOptions({

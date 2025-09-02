@@ -6,7 +6,7 @@ import { z } from "zod/v4";
 import i18n, { availableLanguages } from "~/i18n";
 import { errorNotification, successNotification } from "~/util/notifications";
 import { ProgressHandle } from "~/util/progress";
-import { baseFetchJSON, FetchError, v1Url } from ".";
+import { baseFetchJSON, expiryType, FetchError, v1Url } from ".";
 import { fileSchema } from "./file";
 import { publicUserSchema } from "./user";
 
@@ -16,8 +16,6 @@ function v1TicketUrl(url: string) {
   return v1Url("/ticket" + url);
 }
 
-export const ticketExpiryType = z.enum(["auto", "single", "none", "custom"]);
-
 export const createTicketSchemaFactory = (t: typeof i18n.t) =>
   z.object({
     comment: z.string().nullable(),
@@ -26,7 +24,7 @@ export const createTicketSchemaFactory = (t: typeof i18n.t) =>
       .string()
       .min(12, i18n.t("min_length", { ns: "validation" }).replace("#", "12")),
     emailPassword: z.boolean(),
-    expiryType: ticketExpiryType,
+    expiryType: expiryType,
     expiryTotalDays: z.int(),
     expiryDaysSinceLastDownload: z.int(),
     expiryTotalDownloads: z.int(),

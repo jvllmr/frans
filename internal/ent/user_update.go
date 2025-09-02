@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -207,6 +208,21 @@ func (_u *UserUpdate) AddTickets(v ...*Ticket) *UserUpdate {
 	return _u.AddTicketIDs(ids...)
 }
 
+// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
+func (_u *UserUpdate) AddGrantIDs(ids ...uuid.UUID) *UserUpdate {
+	_u.mutation.AddGrantIDs(ids...)
+	return _u
+}
+
+// AddGrants adds the "grants" edges to the Grant entity.
+func (_u *UserUpdate) AddGrants(v ...*Grant) *UserUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddGrantIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
@@ -252,6 +268,27 @@ func (_u *UserUpdate) RemoveTickets(v ...*Ticket) *UserUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTicketIDs(ids...)
+}
+
+// ClearGrants clears all "grants" edges to the Grant entity.
+func (_u *UserUpdate) ClearGrants() *UserUpdate {
+	_u.mutation.ClearGrants()
+	return _u
+}
+
+// RemoveGrantIDs removes the "grants" edge to Grant entities by IDs.
+func (_u *UserUpdate) RemoveGrantIDs(ids ...uuid.UUID) *UserUpdate {
+	_u.mutation.RemoveGrantIDs(ids...)
+	return _u
+}
+
+// RemoveGrants removes "grants" edges to Grant entities.
+func (_u *UserUpdate) RemoveGrants(v ...*Grant) *UserUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveGrantIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -414,6 +451,51 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.GrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.GrantsTable,
+			Columns: []string{user.GrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedGrantsIDs(); len(nodes) > 0 && !_u.mutation.GrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.GrantsTable,
+			Columns: []string{user.GrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.GrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.GrantsTable,
+			Columns: []string{user.GrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -616,6 +698,21 @@ func (_u *UserUpdateOne) AddTickets(v ...*Ticket) *UserUpdateOne {
 	return _u.AddTicketIDs(ids...)
 }
 
+// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
+func (_u *UserUpdateOne) AddGrantIDs(ids ...uuid.UUID) *UserUpdateOne {
+	_u.mutation.AddGrantIDs(ids...)
+	return _u
+}
+
+// AddGrants adds the "grants" edges to the Grant entity.
+func (_u *UserUpdateOne) AddGrants(v ...*Grant) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddGrantIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
@@ -661,6 +758,27 @@ func (_u *UserUpdateOne) RemoveTickets(v ...*Ticket) *UserUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTicketIDs(ids...)
+}
+
+// ClearGrants clears all "grants" edges to the Grant entity.
+func (_u *UserUpdateOne) ClearGrants() *UserUpdateOne {
+	_u.mutation.ClearGrants()
+	return _u
+}
+
+// RemoveGrantIDs removes the "grants" edge to Grant entities by IDs.
+func (_u *UserUpdateOne) RemoveGrantIDs(ids ...uuid.UUID) *UserUpdateOne {
+	_u.mutation.RemoveGrantIDs(ids...)
+	return _u
+}
+
+// RemoveGrants removes "grants" edges to Grant entities.
+func (_u *UserUpdateOne) RemoveGrants(v ...*Grant) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveGrantIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -853,6 +971,51 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.GrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.GrantsTable,
+			Columns: []string{user.GrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedGrantsIDs(); len(nodes) > 0 && !_u.mutation.GrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.GrantsTable,
+			Columns: []string{user.GrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.GrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.GrantsTable,
+			Columns: []string{user.GrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

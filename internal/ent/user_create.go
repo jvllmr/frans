@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/ent/user"
@@ -143,6 +144,21 @@ func (_c *UserCreate) AddTickets(v ...*Ticket) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddTicketIDs(ids...)
+}
+
+// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
+func (_c *UserCreate) AddGrantIDs(ids ...uuid.UUID) *UserCreate {
+	_c.mutation.AddGrantIDs(ids...)
+	return _c
+}
+
+// AddGrants adds the "grants" edges to the Grant entity.
+func (_c *UserCreate) AddGrants(v ...*Grant) *UserCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddGrantIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -323,6 +339,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.GrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.GrantsTable,
+			Columns: []string{user.GrantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

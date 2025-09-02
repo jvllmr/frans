@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 )
@@ -24,6 +25,7 @@ type ShareAccessToken struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ShareAccessTokenQuery when eager-loading is set.
 	Edges                    ShareAccessTokenEdges `json:"edges"`
+	grant_shareaccesstokens  *uuid.UUID
 	ticket_shareaccesstokens *uuid.UUID
 	selectValues             sql.SelectValues
 }
@@ -32,9 +34,11 @@ type ShareAccessToken struct {
 type ShareAccessTokenEdges struct {
 	// Ticket holds the value of the ticket edge.
 	Ticket *Ticket `json:"ticket,omitempty"`
+	// Grant holds the value of the grant edge.
+	Grant *Grant `json:"grant,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // TicketOrErr returns the Ticket value or an error if the edge
@@ -48,6 +52,17 @@ func (e ShareAccessTokenEdges) TicketOrErr() (*Ticket, error) {
 	return nil, &NotLoadedError{edge: "ticket"}
 }
 
+// GrantOrErr returns the Grant value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ShareAccessTokenEdges) GrantOrErr() (*Grant, error) {
+	if e.Grant != nil {
+		return e.Grant, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: grant.Label}
+	}
+	return nil, &NotLoadedError{edge: "grant"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*ShareAccessToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -57,7 +72,9 @@ func (*ShareAccessToken) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case shareaccesstoken.FieldExpiry:
 			values[i] = new(sql.NullTime)
-		case shareaccesstoken.ForeignKeys[0]: // ticket_shareaccesstokens
+		case shareaccesstoken.ForeignKeys[0]: // grant_shareaccesstokens
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case shareaccesstoken.ForeignKeys[1]: // ticket_shareaccesstokens
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -88,6 +105,13 @@ func (_m *ShareAccessToken) assignValues(columns []string, values []any) error {
 			}
 		case shareaccesstoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field grant_shareaccesstokens", values[i])
+			} else if value.Valid {
+				_m.grant_shareaccesstokens = new(uuid.UUID)
+				*_m.grant_shareaccesstokens = *value.S.(*uuid.UUID)
+			}
+		case shareaccesstoken.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field ticket_shareaccesstokens", values[i])
 			} else if value.Valid {
 				_m.ticket_shareaccesstokens = new(uuid.UUID)
@@ -109,6 +133,11 @@ func (_m *ShareAccessToken) Value(name string) (ent.Value, error) {
 // QueryTicket queries the "ticket" edge of the ShareAccessToken entity.
 func (_m *ShareAccessToken) QueryTicket() *TicketQuery {
 	return NewShareAccessTokenClient(_m.config).QueryTicket(_m)
+}
+
+// QueryGrant queries the "grant" edge of the ShareAccessToken entity.
+func (_m *ShareAccessToken) QueryGrant() *GrantQuery {
+	return NewShareAccessTokenClient(_m.config).QueryGrant(_m)
 }
 
 // Update returns a builder for updating this ShareAccessToken.

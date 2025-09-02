@@ -18,6 +18,8 @@ func SetupAPIRoutes(r *gin.RouterGroup, configValue config.Config) {
 	setupUserGroup(userGroup, configValue)
 	ticketGroup := v1Group.Group("/ticket", middleware.Auth(configValue, false))
 	setupTicketGroup(ticketGroup, configValue)
+	grantGroup := v1Group.Group("/grant", middleware.Auth(configValue, false))
+	setupGrantGroup(grantGroup, configValue)
 	fileGroup := v1Group.Group("/file", middleware.Auth(configValue, false))
 	setupFileGroup(fileGroup, configValue)
 	shareGroup := v1Group.Group("/share")

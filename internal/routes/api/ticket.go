@@ -39,12 +39,12 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 		var form ticketForm
 		tx, err := config.DBClient.Tx(c.Request.Context())
 		if err != nil {
-			c.AbortWithError(500, err)
+			c.AbortWithError(http.StatusInternalServerError, err)
 		}
 		if err := c.ShouldBind(&form); err == nil {
 			salt, err := util.GenerateSalt()
 			if err != nil {
-				c.AbortWithError(500, err)
+				c.AbortWithError(http.StatusInternalServerError, err)
 			}
 			hashedPassword := util.HashPassword(form.Password, salt)
 			ticketBuilder := tx.Ticket.Create().
@@ -74,20 +74,20 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 			multipartForm, _ := c.MultipartForm()
 			files := multipartForm.File["files[]"]
 			if len(files) > int(configValue.MaxFiles) {
-				c.AbortWithStatus(http.StatusUnprocessableEntity)
+				c.AbortWithStatus(http.StatusBadRequest)
 				return
 			}
 			util.EnsureFilesTmpPath(configValue)
 
 			for _, fileHeader := range files {
 				if fileHeader.Size > configValue.MaxSizes {
-					c.AbortWithStatus(http.StatusUnprocessableEntity)
+					c.AbortWithStatus(http.StatusBadRequest)
 					return
 				}
 
 				incomingFileHandle, _ := fileHeader.Open()
 				hasher := sha512.New()
-				tmpFilePath := util.GetFilesTmpFilePath(configValue)
+				tmpFilePath := util.FilesTmpFilePath(configValue)
 				tmpFileHandle, err := os.Create(tmpFilePath)
 				if err != nil {
 					c.AbortWithError(http.StatusInternalServerError, err)
@@ -109,11 +109,15 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 					SetName(fileHeader.Filename).
 					SetSize(uint64(fileHeader.Size)).
 					SetSha512(sha512sum).
+					SetExpiryType(form.ExpiryType).
+					SetExpiryDaysSinceLastDownload(form.ExpiryDaysSinceLastDownload).
+					SetExpiryTotalDays(form.ExpiryTotalDays).
+					SetExpiryTotalDownloads(form.ExpiryTotalDownloads).
 					Save(c.Request.Context())
 				if err != nil {
 					c.AbortWithError(http.StatusInternalServerError, err)
 				}
-				targetFilePath := util.GetFilesFilePath(configValue, sha512sum)
+				targetFilePath := util.FilesFilePath(configValue, sha512sum)
 				if _, err = os.Stat(targetFilePath); err != nil {
 					os.Rename(tmpFilePath, targetFilePath)
 				}
@@ -138,15 +142,14 @@ func createTicketFactory(configValue config.Config) gin.HandlerFunc {
 					currentUser.Username,
 				)
 			}
-			currentUser.Update().AddSubmittedTickets(1).SaveX(c.Request.Context())
-
+			tx.User.UpdateOne(currentUser).AddSubmittedTickets(1).SaveX(c.Request.Context())
 			c.JSON(http.StatusCreated, apiTypes.ToPublicTicket(configValue, ticketValue))
 			if form.Email != nil {
 				var toBeEmailedPassword *string = nil
 				if form.EmailPassword {
 					toBeEmailedPassword = &form.Password
 				}
-				mail.SendFileSharedNotification(
+				mail.SendTicketSharedNotification(
 					c,
 					configValue,
 					*form.Email,
@@ -177,9 +180,9 @@ func fetchTicketsFactory(configValue config.Config) gin.HandlerFunc {
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 		}
-		publicTickets := make([]apiTypes.PublicTicket, 0)
-		for _, ticketValue := range tickets {
-			publicTickets = append(publicTickets, apiTypes.ToPublicTicket(configValue, ticketValue))
+		publicTickets := make([]apiTypes.PublicTicket, len(tickets))
+		for i, ticketValue := range tickets {
+			publicTickets[i] = apiTypes.ToPublicTicket(configValue, ticketValue)
 		}
 		c.JSON(http.StatusOK, publicTickets)
 	}

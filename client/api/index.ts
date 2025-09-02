@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import axios, { AxiosRequestConfig } from "axios";
-import { ZodType } from "zod/v4";
+import z, { ZodType } from "zod/v4";
 
 export function v1Url(url: string) {
   return `${window.fransRootPath}/api/v1${url}`;
@@ -43,3 +43,7 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+export const expiryType = z.enum(["auto", "single", "none", "custom"]);
+
+export type ExpiryType = z.infer<typeof expiryType>;

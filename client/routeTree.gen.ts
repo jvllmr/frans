@@ -17,6 +17,7 @@ import { Route as SShareIdRouteImport } from './routes/s/$shareId'
 import { Route as GrantsNewRouteImport } from './routes/grants/new'
 import { Route as GrantsActiveRouteImport } from './routes/grants/active'
 import { Route as ShareTicketTicketIdRouteImport } from './routes/share/ticket/$ticketId'
+import { Route as ShareGrantGrantIdRouteImport } from './routes/share/grant/$grantId'
 
 const UsersRoute = UsersRouteImport.update({
   id: '/users',
@@ -58,6 +59,11 @@ const ShareTicketTicketIdRoute = ShareTicketTicketIdRouteImport.update({
   path: '/share/ticket/$ticketId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShareGrantGrantIdRoute = ShareGrantGrantIdRouteImport.update({
+  id: '/share/grant/$grantId',
+  path: '/share/grant/$grantId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/s/$shareId': typeof SShareIdRoute
   '/grants': typeof GrantsIndexRoute
   '/tickets': typeof TicketsIndexRoute
+  '/share/grant/$grantId': typeof ShareGrantGrantIdRoute
   '/share/ticket/$ticketId': typeof ShareTicketTicketIdRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/s/$shareId': typeof SShareIdRoute
   '/grants': typeof GrantsIndexRoute
   '/tickets': typeof TicketsIndexRoute
+  '/share/grant/$grantId': typeof ShareGrantGrantIdRoute
   '/share/ticket/$ticketId': typeof ShareTicketTicketIdRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/s/$shareId': typeof SShareIdRoute
   '/grants/': typeof GrantsIndexRoute
   '/tickets/': typeof TicketsIndexRoute
+  '/share/grant/$grantId': typeof ShareGrantGrantIdRoute
   '/share/ticket/$ticketId': typeof ShareTicketTicketIdRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/s/$shareId'
     | '/grants'
     | '/tickets'
+    | '/share/grant/$grantId'
     | '/share/ticket/$ticketId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/s/$shareId'
     | '/grants'
     | '/tickets'
+    | '/share/grant/$grantId'
     | '/share/ticket/$ticketId'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/s/$shareId'
     | '/grants/'
     | '/tickets/'
+    | '/share/grant/$grantId'
     | '/share/ticket/$ticketId'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   SShareIdRoute: typeof SShareIdRoute
   GrantsIndexRoute: typeof GrantsIndexRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
+  ShareGrantGrantIdRoute: typeof ShareGrantGrantIdRoute
   ShareTicketTicketIdRoute: typeof ShareTicketTicketIdRoute
 }
 
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShareTicketTicketIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/share/grant/$grantId': {
+      id: '/share/grant/$grantId'
+      path: '/share/grant/$grantId'
+      fullPath: '/share/grant/$grantId'
+      preLoaderRoute: typeof ShareGrantGrantIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   SShareIdRoute: SShareIdRoute,
   GrantsIndexRoute: GrantsIndexRoute,
   TicketsIndexRoute: TicketsIndexRoute,
+  ShareGrantGrantIdRoute: ShareGrantGrantIdRoute,
   ShareTicketTicketIdRoute: ShareTicketTicketIdRoute,
 }
 export const routeTree = rootRouteImport

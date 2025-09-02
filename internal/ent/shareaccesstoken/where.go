@@ -133,6 +133,29 @@ func HasTicketWith(preds ...predicate.Ticket) predicate.ShareAccessToken {
 	})
 }
 
+// HasGrant applies the HasEdge predicate on the "grant" edge.
+func HasGrant() predicate.ShareAccessToken {
+	return predicate.ShareAccessToken(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, GrantTable, GrantColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGrantWith applies the HasEdge predicate on the "grant" edge with a given conditions (other predicates).
+func HasGrantWith(preds ...predicate.Grant) predicate.ShareAccessToken {
+	return predicate.ShareAccessToken(func(s *sql.Selector) {
+		step := newGrantStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.ShareAccessToken) predicate.ShareAccessToken {
 	return predicate.ShareAccessToken(sql.AndPredicates(predicates...))

@@ -16,6 +16,7 @@ const (
 const (
 	UserGinContext     = "user"
 	ShareTicketContext = "shareTicket"
+	ShareGrantContext  = "shareGrant"
 )
 
 const (

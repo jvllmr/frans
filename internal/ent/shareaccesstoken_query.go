@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -25,6 +26,7 @@ type ShareAccessTokenQuery struct {
 	inters     []Interceptor
 	predicates []predicate.ShareAccessToken
 	withTicket *TicketQuery
+	withGrant  *GrantQuery
 	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -77,6 +79,28 @@ func (_q *ShareAccessTokenQuery) QueryTicket() *TicketQuery {
 			sqlgraph.From(shareaccesstoken.Table, shareaccesstoken.FieldID, selector),
 			sqlgraph.To(ticket.Table, ticket.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, shareaccesstoken.TicketTable, shareaccesstoken.TicketColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryGrant chains the current query on the "grant" edge.
+func (_q *ShareAccessTokenQuery) QueryGrant() *GrantQuery {
+	query := (&GrantClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(shareaccesstoken.Table, shareaccesstoken.FieldID, selector),
+			sqlgraph.To(grant.Table, grant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, shareaccesstoken.GrantTable, shareaccesstoken.GrantColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -277,6 +301,7 @@ func (_q *ShareAccessTokenQuery) Clone() *ShareAccessTokenQuery {
 		inters:     append([]Interceptor{}, _q.inters...),
 		predicates: append([]predicate.ShareAccessToken{}, _q.predicates...),
 		withTicket: _q.withTicket.Clone(),
+		withGrant:  _q.withGrant.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -291,6 +316,17 @@ func (_q *ShareAccessTokenQuery) WithTicket(opts ...func(*TicketQuery)) *ShareAc
 		opt(query)
 	}
 	_q.withTicket = query
+	return _q
+}
+
+// WithGrant tells the query-builder to eager-load the nodes that are connected to
+// the "grant" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ShareAccessTokenQuery) WithGrant(opts ...func(*GrantQuery)) *ShareAccessTokenQuery {
+	query := (&GrantClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withGrant = query
 	return _q
 }
 
@@ -373,11 +409,12 @@ func (_q *ShareAccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		nodes       = []*ShareAccessToken{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			_q.withTicket != nil,
+			_q.withGrant != nil,
 		}
 	)
-	if _q.withTicket != nil {
+	if _q.withTicket != nil || _q.withGrant != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -404,6 +441,12 @@ func (_q *ShareAccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if query := _q.withTicket; query != nil {
 		if err := _q.loadTicket(ctx, query, nodes, nil,
 			func(n *ShareAccessToken, e *Ticket) { n.Edges.Ticket = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withGrant; query != nil {
+		if err := _q.loadGrant(ctx, query, nodes, nil,
+			func(n *ShareAccessToken, e *Grant) { n.Edges.Grant = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -435,6 +478,38 @@ func (_q *ShareAccessTokenQuery) loadTicket(ctx context.Context, query *TicketQu
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "ticket_shareaccesstokens" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *ShareAccessTokenQuery) loadGrant(ctx context.Context, query *GrantQuery, nodes []*ShareAccessToken, init func(*ShareAccessToken), assign func(*ShareAccessToken, *Grant)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*ShareAccessToken)
+	for i := range nodes {
+		if nodes[i].grant_shareaccesstokens == nil {
+			continue
+		}
+		fk := *nodes[i].grant_shareaccesstokens
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(grant.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "grant_shareaccesstokens" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

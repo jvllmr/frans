@@ -3,5 +3,8 @@
   "ticket_submit": "Access shared files",
   "ticket_message": "has shared the following files with you",
   "comment": "Comment",
-  "title_open_share": "Open share"
+  "title_open_share": "Open share",
+  "grant_prompt": "Enter your password for uploading files you want to share",
+  "grant_submit": "Access shared grant",
+  "grant_message": "has given you permission to upload files here"
 }

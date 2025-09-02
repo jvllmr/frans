@@ -8,6 +8,9 @@ interface Window {
   fransDefaultExpiryTotalDays: number;
   fransDefaultExpiryTotalDownloads: number;
   fransDefaultExpiryDaysSinceLastDownload: number;
+  fransGrantDefaultExpiryTotalDays: number;
+  fransGrantDefaultExpiryTotalUploads: number;
+  fransGrantDefaultExpiryDaysSinceLastUpload: number;
 }
 
 declare module "virtual:*";

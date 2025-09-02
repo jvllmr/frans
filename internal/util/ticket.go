@@ -9,41 +9,34 @@ import (
 	"github.com/jvllmr/frans/internal/ent"
 )
 
-func GetEstimatedExpiry(configValue config.Config, ticket *ent.Ticket) *time.Time {
-	if ticket.ExpiryType == "none" {
-		return nil
-	}
-
-	expiryTotalDays := configValue.DefaultExpiryTotalDays
-	expiryDaysSinceLastDownload := configValue.DefaultExpiryDaysSinceLastDownload
-	if ticket.ExpiryType == "custom" {
-		expiryTotalDays = ticket.ExpiryTotalDays
-		expiryDaysSinceLastDownload = ticket.ExpiryDaysSinceLastDownload
-	}
-
-	totalLimit := ticket.CreatedAt.Add(time.Hour * 24 * time.Duration(expiryTotalDays)).UTC()
+func TicketEstimatedExpiry(configValue config.Config, ticketValue *ent.Ticket) *time.Time {
 	var latestDownload *time.Time = nil
-	for _, file := range ticket.Edges.Files {
+	for _, file := range ticketValue.Edges.Files {
 		if latestDownload == nil ||
 			(file.LastDownload != nil && latestDownload.Before(*file.LastDownload)) {
 			latestDownload = file.LastDownload
 		}
 	}
-	if latestDownload == nil {
-		return &totalLimit
-	}
 
-	lastDownloadLimit := latestDownload.Add(
-		time.Hour * 24 * time.Duration(expiryDaysSinceLastDownload),
-	).UTC()
-
-	if lastDownloadLimit.Before(totalLimit) {
-		return &lastDownloadLimit
-	}
-
-	return &totalLimit
+	return estimatedExpiry(
+		ticketValue.ExpiryType,
+		configValue.DefaultExpiryTotalDays,
+		configValue.DefaultExpiryDaysSinceLastDownload,
+		ticketValue.ExpiryTotalDays,
+		ticketValue.ExpiryDaysSinceLastDownload,
+		ticketValue.CreatedAt,
+		latestDownload,
+	)
 }
 
-func GetTicketShareLink(ctx *gin.Context, configValue config.Config, ticket *ent.Ticket) string {
+func TicketShareLink(ctx *gin.Context, configValue config.Config, ticket *ent.Ticket) string {
 	return fmt.Sprintf("%s/s/%s", config.GetBaseURL(configValue, ctx.Request), ticket.ID.String())
+}
+
+func ShouldDeleteTicket(configValue config.Config, ticketValue *ent.Ticket) bool {
+	estimatedExpiry := TicketEstimatedExpiry(configValue, ticketValue)
+	now := time.Now()
+
+	return len(ticketValue.Edges.Files) == 0 ||
+		(estimatedExpiry != nil && estimatedExpiry.Before(now))
 }

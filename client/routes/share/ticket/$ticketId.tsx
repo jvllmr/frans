@@ -9,7 +9,7 @@ import {
   getTicketShareFileUrl,
   Ticket,
 } from "~/api/ticket";
-import { ShareAuth } from "~/components/ShareAuth";
+import { ShareAuth } from "~/components/share/ShareAuth";
 import { useFileSizeFormatter } from "~/i18n";
 
 export const Route = createFileRoute("/share/ticket/$ticketId")({

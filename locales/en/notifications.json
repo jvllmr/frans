@@ -1,4 +1,8 @@
 {
   "ticket_new_failed": "Failed to create new ticket",
-  "ticket_new_success": "Created a new ticket"
+  "ticket_new_success": "Created a new ticket",
+  "grant_new_failed": "Failed to create new grant",
+  "grant_new_success": "Created a new grant",
+  "grant_upload_failed": "Failed to upload files to grant",
+  "grant_upload_success": "Uploaded files to grant"
 }

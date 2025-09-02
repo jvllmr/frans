@@ -16,6 +16,9 @@ func FileLifecycleTask(configValue config.Config) {
 		WithTickets(func(ticketQuery *ent.TicketQuery) {
 			ticketQuery.WithOwner()
 		}).
+		WithGrants(func(grantQuery *ent.GrantQuery) {
+			grantQuery.WithOwner()
+		}).
 		AllX(context.Background())
 	deletedCount := 0
 	var users []*ent.User
@@ -25,11 +28,10 @@ func FileLifecycleTask(configValue config.Config) {
 			ticketValue = fileValue.Edges.Tickets[0]
 		}
 
-		if ticketValue == nil || util.ShouldDeleteFileConnectedToTicket(configValue,
-			*ticketValue, *fileValue) {
+		if util.ShouldDeleteFile(configValue, fileValue) {
 			err := util.DeleteFile(configValue, fileValue)
 			if err != nil {
-				filePath := util.GetFilesFilePath(configValue, fileValue.Sha512)
+				filePath := util.FilesFilePath(configValue, fileValue.Sha512)
 				slog.Error("Could not delete file", "file", filePath, "err", err)
 				continue
 			}

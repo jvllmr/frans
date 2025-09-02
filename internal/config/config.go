@@ -37,6 +37,10 @@ type Config struct {
 	DefaultExpiryTotalDownloads        uint8 `mapstructure:"expiry_total_dl"`
 	DefaultExpiryTotalDays             uint8 `mapstructure:"expiry_total_days"`
 
+	GrantDefaultExpiryDaysSinceLastUpload uint8 `mapstructure:"grant_expiry_days_since"`
+	GrantDefaultExpiryTotalUploads        uint8 `mapstructure:"grant_expiry_total_up"`
+	GrantDefaultExpiryTotalDays           uint8 `mapstructure:"grant_expiry_total_days"`
+
 	SMTPServer   string  `mapstructure:"smtp_server"`
 	SMTPPort     int     `mapstructure:"smtp_port"`
 	SMTPFrom     string  `mapstructure:"smtp_from"`
@@ -63,6 +67,10 @@ func GetConfig() (Config, error) {
 	fransConf.SetDefault("expiry_days_since", 7)
 	fransConf.SetDefault("expiry_total_dl", 10)
 	fransConf.SetDefault("expiry_total_days", 30)
+
+	fransConf.SetDefault("grant_expiry_days_since", 7)
+	fransConf.SetDefault("grant_expiry_total_up", 10)
+	fransConf.SetDefault("grant_expiry_total_days", 30)
 
 	fransConf.SetDefault("db_type", "postgres")
 	fransConf.SetDefault("db_host", "localhost")

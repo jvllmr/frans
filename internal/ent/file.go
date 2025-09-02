@@ -24,10 +24,20 @@ type File struct {
 	Size uint64 `json:"size,omitempty"`
 	// Sha512 holds the value of the "sha512" field.
 	Sha512 string `json:"sha512,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// LastDownload holds the value of the "last_download" field.
 	LastDownload *time.Time `json:"last_download,omitempty"`
 	// TimesDownloaded holds the value of the "times_downloaded" field.
 	TimesDownloaded uint64 `json:"times_downloaded,omitempty"`
+	// ExpiryType holds the value of the "expiry_type" field.
+	ExpiryType string `json:"expiry_type,omitempty"`
+	// ExpiryTotalDays holds the value of the "expiry_total_days" field.
+	ExpiryTotalDays uint8 `json:"expiry_total_days,omitempty"`
+	// ExpiryDaysSinceLastDownload holds the value of the "expiry_days_since_last_download" field.
+	ExpiryDaysSinceLastDownload uint8 `json:"expiry_days_since_last_download,omitempty"`
+	// ExpiryTotalDownloads holds the value of the "expiry_total_downloads" field.
+	ExpiryTotalDownloads uint8 `json:"expiry_total_downloads,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FileQuery when eager-loading is set.
 	Edges        FileEdges `json:"edges"`
@@ -38,9 +48,11 @@ type File struct {
 type FileEdges struct {
 	// Tickets holds the value of the tickets edge.
 	Tickets []*Ticket `json:"tickets,omitempty"`
+	// Grants holds the value of the grants edge.
+	Grants []*Grant `json:"grants,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // TicketsOrErr returns the Tickets value or an error if the edge
@@ -52,16 +64,25 @@ func (e FileEdges) TicketsOrErr() ([]*Ticket, error) {
 	return nil, &NotLoadedError{edge: "tickets"}
 }
 
+// GrantsOrErr returns the Grants value or an error if the edge
+// was not loaded in eager-loading.
+func (e FileEdges) GrantsOrErr() ([]*Grant, error) {
+	if e.loadedTypes[1] {
+		return e.Grants, nil
+	}
+	return nil, &NotLoadedError{edge: "grants"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*File) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case file.FieldSize, file.FieldTimesDownloaded:
+		case file.FieldSize, file.FieldTimesDownloaded, file.FieldExpiryTotalDays, file.FieldExpiryDaysSinceLastDownload, file.FieldExpiryTotalDownloads:
 			values[i] = new(sql.NullInt64)
-		case file.FieldName, file.FieldSha512:
+		case file.FieldName, file.FieldSha512, file.FieldExpiryType:
 			values[i] = new(sql.NullString)
-		case file.FieldLastDownload:
+		case file.FieldCreatedAt, file.FieldLastDownload:
 			values[i] = new(sql.NullTime)
 		case file.FieldID:
 			values[i] = new(uuid.UUID)
@@ -104,6 +125,12 @@ func (_m *File) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Sha512 = value.String
 			}
+		case file.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
 		case file.FieldLastDownload:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field last_download", values[i])
@@ -116,6 +143,30 @@ func (_m *File) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field times_downloaded", values[i])
 			} else if value.Valid {
 				_m.TimesDownloaded = uint64(value.Int64)
+			}
+		case file.FieldExpiryType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field expiry_type", values[i])
+			} else if value.Valid {
+				_m.ExpiryType = value.String
+			}
+		case file.FieldExpiryTotalDays:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field expiry_total_days", values[i])
+			} else if value.Valid {
+				_m.ExpiryTotalDays = uint8(value.Int64)
+			}
+		case file.FieldExpiryDaysSinceLastDownload:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field expiry_days_since_last_download", values[i])
+			} else if value.Valid {
+				_m.ExpiryDaysSinceLastDownload = uint8(value.Int64)
+			}
+		case file.FieldExpiryTotalDownloads:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field expiry_total_downloads", values[i])
+			} else if value.Valid {
+				_m.ExpiryTotalDownloads = uint8(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -133,6 +184,11 @@ func (_m *File) Value(name string) (ent.Value, error) {
 // QueryTickets queries the "tickets" edge of the File entity.
 func (_m *File) QueryTickets() *TicketQuery {
 	return NewFileClient(_m.config).QueryTickets(_m)
+}
+
+// QueryGrants queries the "grants" edge of the File entity.
+func (_m *File) QueryGrants() *GrantQuery {
+	return NewFileClient(_m.config).QueryGrants(_m)
 }
 
 // Update returns a builder for updating this File.
@@ -167,6 +223,9 @@ func (_m *File) String() string {
 	builder.WriteString("sha512=")
 	builder.WriteString(_m.Sha512)
 	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
 	if v := _m.LastDownload; v != nil {
 		builder.WriteString("last_download=")
 		builder.WriteString(v.Format(time.ANSIC))
@@ -174,6 +233,18 @@ func (_m *File) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("times_downloaded=")
 	builder.WriteString(fmt.Sprintf("%v", _m.TimesDownloaded))
+	builder.WriteString(", ")
+	builder.WriteString("expiry_type=")
+	builder.WriteString(_m.ExpiryType)
+	builder.WriteString(", ")
+	builder.WriteString("expiry_total_days=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ExpiryTotalDays))
+	builder.WriteString(", ")
+	builder.WriteString("expiry_days_since_last_download=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ExpiryDaysSinceLastDownload))
+	builder.WriteString(", ")
+	builder.WriteString("expiry_total_downloads=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ExpiryTotalDownloads))
 	builder.WriteByte(')')
 	return builder.String()
 }

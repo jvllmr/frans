@@ -71,6 +71,11 @@ func Sha512(v string) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldSha512, v))
 }
 
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldCreatedAt, v))
+}
+
 // LastDownload applies equality check predicate on the "last_download" field. It's identical to LastDownloadEQ.
 func LastDownload(v time.Time) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldLastDownload, v))
@@ -79,6 +84,26 @@ func LastDownload(v time.Time) predicate.File {
 // TimesDownloaded applies equality check predicate on the "times_downloaded" field. It's identical to TimesDownloadedEQ.
 func TimesDownloaded(v uint64) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldTimesDownloaded, v))
+}
+
+// ExpiryType applies equality check predicate on the "expiry_type" field. It's identical to ExpiryTypeEQ.
+func ExpiryType(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldExpiryType, v))
+}
+
+// ExpiryTotalDays applies equality check predicate on the "expiry_total_days" field. It's identical to ExpiryTotalDaysEQ.
+func ExpiryTotalDays(v uint8) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldExpiryTotalDays, v))
+}
+
+// ExpiryDaysSinceLastDownload applies equality check predicate on the "expiry_days_since_last_download" field. It's identical to ExpiryDaysSinceLastDownloadEQ.
+func ExpiryDaysSinceLastDownload(v uint8) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldExpiryDaysSinceLastDownload, v))
+}
+
+// ExpiryTotalDownloads applies equality check predicate on the "expiry_total_downloads" field. It's identical to ExpiryTotalDownloadsEQ.
+func ExpiryTotalDownloads(v uint8) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldExpiryTotalDownloads, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -251,6 +276,46 @@ func Sha512ContainsFold(v string) predicate.File {
 	return predicate.File(sql.FieldContainsFold(FieldSha512, v))
 }
 
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldCreatedAt, v))
+}
+
 // LastDownloadEQ applies the EQ predicate on the "last_download" field.
 func LastDownloadEQ(v time.Time) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldLastDownload, v))
@@ -341,6 +406,191 @@ func TimesDownloadedLTE(v uint64) predicate.File {
 	return predicate.File(sql.FieldLTE(FieldTimesDownloaded, v))
 }
 
+// ExpiryTypeEQ applies the EQ predicate on the "expiry_type" field.
+func ExpiryTypeEQ(v string) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldExpiryType, v))
+}
+
+// ExpiryTypeNEQ applies the NEQ predicate on the "expiry_type" field.
+func ExpiryTypeNEQ(v string) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldExpiryType, v))
+}
+
+// ExpiryTypeIn applies the In predicate on the "expiry_type" field.
+func ExpiryTypeIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldIn(FieldExpiryType, vs...))
+}
+
+// ExpiryTypeNotIn applies the NotIn predicate on the "expiry_type" field.
+func ExpiryTypeNotIn(vs ...string) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldExpiryType, vs...))
+}
+
+// ExpiryTypeGT applies the GT predicate on the "expiry_type" field.
+func ExpiryTypeGT(v string) predicate.File {
+	return predicate.File(sql.FieldGT(FieldExpiryType, v))
+}
+
+// ExpiryTypeGTE applies the GTE predicate on the "expiry_type" field.
+func ExpiryTypeGTE(v string) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldExpiryType, v))
+}
+
+// ExpiryTypeLT applies the LT predicate on the "expiry_type" field.
+func ExpiryTypeLT(v string) predicate.File {
+	return predicate.File(sql.FieldLT(FieldExpiryType, v))
+}
+
+// ExpiryTypeLTE applies the LTE predicate on the "expiry_type" field.
+func ExpiryTypeLTE(v string) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldExpiryType, v))
+}
+
+// ExpiryTypeContains applies the Contains predicate on the "expiry_type" field.
+func ExpiryTypeContains(v string) predicate.File {
+	return predicate.File(sql.FieldContains(FieldExpiryType, v))
+}
+
+// ExpiryTypeHasPrefix applies the HasPrefix predicate on the "expiry_type" field.
+func ExpiryTypeHasPrefix(v string) predicate.File {
+	return predicate.File(sql.FieldHasPrefix(FieldExpiryType, v))
+}
+
+// ExpiryTypeHasSuffix applies the HasSuffix predicate on the "expiry_type" field.
+func ExpiryTypeHasSuffix(v string) predicate.File {
+	return predicate.File(sql.FieldHasSuffix(FieldExpiryType, v))
+}
+
+// ExpiryTypeEqualFold applies the EqualFold predicate on the "expiry_type" field.
+func ExpiryTypeEqualFold(v string) predicate.File {
+	return predicate.File(sql.FieldEqualFold(FieldExpiryType, v))
+}
+
+// ExpiryTypeContainsFold applies the ContainsFold predicate on the "expiry_type" field.
+func ExpiryTypeContainsFold(v string) predicate.File {
+	return predicate.File(sql.FieldContainsFold(FieldExpiryType, v))
+}
+
+// ExpiryTotalDaysEQ applies the EQ predicate on the "expiry_total_days" field.
+func ExpiryTotalDaysEQ(v uint8) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldExpiryTotalDays, v))
+}
+
+// ExpiryTotalDaysNEQ applies the NEQ predicate on the "expiry_total_days" field.
+func ExpiryTotalDaysNEQ(v uint8) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldExpiryTotalDays, v))
+}
+
+// ExpiryTotalDaysIn applies the In predicate on the "expiry_total_days" field.
+func ExpiryTotalDaysIn(vs ...uint8) predicate.File {
+	return predicate.File(sql.FieldIn(FieldExpiryTotalDays, vs...))
+}
+
+// ExpiryTotalDaysNotIn applies the NotIn predicate on the "expiry_total_days" field.
+func ExpiryTotalDaysNotIn(vs ...uint8) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldExpiryTotalDays, vs...))
+}
+
+// ExpiryTotalDaysGT applies the GT predicate on the "expiry_total_days" field.
+func ExpiryTotalDaysGT(v uint8) predicate.File {
+	return predicate.File(sql.FieldGT(FieldExpiryTotalDays, v))
+}
+
+// ExpiryTotalDaysGTE applies the GTE predicate on the "expiry_total_days" field.
+func ExpiryTotalDaysGTE(v uint8) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldExpiryTotalDays, v))
+}
+
+// ExpiryTotalDaysLT applies the LT predicate on the "expiry_total_days" field.
+func ExpiryTotalDaysLT(v uint8) predicate.File {
+	return predicate.File(sql.FieldLT(FieldExpiryTotalDays, v))
+}
+
+// ExpiryTotalDaysLTE applies the LTE predicate on the "expiry_total_days" field.
+func ExpiryTotalDaysLTE(v uint8) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldExpiryTotalDays, v))
+}
+
+// ExpiryDaysSinceLastDownloadEQ applies the EQ predicate on the "expiry_days_since_last_download" field.
+func ExpiryDaysSinceLastDownloadEQ(v uint8) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldExpiryDaysSinceLastDownload, v))
+}
+
+// ExpiryDaysSinceLastDownloadNEQ applies the NEQ predicate on the "expiry_days_since_last_download" field.
+func ExpiryDaysSinceLastDownloadNEQ(v uint8) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldExpiryDaysSinceLastDownload, v))
+}
+
+// ExpiryDaysSinceLastDownloadIn applies the In predicate on the "expiry_days_since_last_download" field.
+func ExpiryDaysSinceLastDownloadIn(vs ...uint8) predicate.File {
+	return predicate.File(sql.FieldIn(FieldExpiryDaysSinceLastDownload, vs...))
+}
+
+// ExpiryDaysSinceLastDownloadNotIn applies the NotIn predicate on the "expiry_days_since_last_download" field.
+func ExpiryDaysSinceLastDownloadNotIn(vs ...uint8) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldExpiryDaysSinceLastDownload, vs...))
+}
+
+// ExpiryDaysSinceLastDownloadGT applies the GT predicate on the "expiry_days_since_last_download" field.
+func ExpiryDaysSinceLastDownloadGT(v uint8) predicate.File {
+	return predicate.File(sql.FieldGT(FieldExpiryDaysSinceLastDownload, v))
+}
+
+// ExpiryDaysSinceLastDownloadGTE applies the GTE predicate on the "expiry_days_since_last_download" field.
+func ExpiryDaysSinceLastDownloadGTE(v uint8) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldExpiryDaysSinceLastDownload, v))
+}
+
+// ExpiryDaysSinceLastDownloadLT applies the LT predicate on the "expiry_days_since_last_download" field.
+func ExpiryDaysSinceLastDownloadLT(v uint8) predicate.File {
+	return predicate.File(sql.FieldLT(FieldExpiryDaysSinceLastDownload, v))
+}
+
+// ExpiryDaysSinceLastDownloadLTE applies the LTE predicate on the "expiry_days_since_last_download" field.
+func ExpiryDaysSinceLastDownloadLTE(v uint8) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldExpiryDaysSinceLastDownload, v))
+}
+
+// ExpiryTotalDownloadsEQ applies the EQ predicate on the "expiry_total_downloads" field.
+func ExpiryTotalDownloadsEQ(v uint8) predicate.File {
+	return predicate.File(sql.FieldEQ(FieldExpiryTotalDownloads, v))
+}
+
+// ExpiryTotalDownloadsNEQ applies the NEQ predicate on the "expiry_total_downloads" field.
+func ExpiryTotalDownloadsNEQ(v uint8) predicate.File {
+	return predicate.File(sql.FieldNEQ(FieldExpiryTotalDownloads, v))
+}
+
+// ExpiryTotalDownloadsIn applies the In predicate on the "expiry_total_downloads" field.
+func ExpiryTotalDownloadsIn(vs ...uint8) predicate.File {
+	return predicate.File(sql.FieldIn(FieldExpiryTotalDownloads, vs...))
+}
+
+// ExpiryTotalDownloadsNotIn applies the NotIn predicate on the "expiry_total_downloads" field.
+func ExpiryTotalDownloadsNotIn(vs ...uint8) predicate.File {
+	return predicate.File(sql.FieldNotIn(FieldExpiryTotalDownloads, vs...))
+}
+
+// ExpiryTotalDownloadsGT applies the GT predicate on the "expiry_total_downloads" field.
+func ExpiryTotalDownloadsGT(v uint8) predicate.File {
+	return predicate.File(sql.FieldGT(FieldExpiryTotalDownloads, v))
+}
+
+// ExpiryTotalDownloadsGTE applies the GTE predicate on the "expiry_total_downloads" field.
+func ExpiryTotalDownloadsGTE(v uint8) predicate.File {
+	return predicate.File(sql.FieldGTE(FieldExpiryTotalDownloads, v))
+}
+
+// ExpiryTotalDownloadsLT applies the LT predicate on the "expiry_total_downloads" field.
+func ExpiryTotalDownloadsLT(v uint8) predicate.File {
+	return predicate.File(sql.FieldLT(FieldExpiryTotalDownloads, v))
+}
+
+// ExpiryTotalDownloadsLTE applies the LTE predicate on the "expiry_total_downloads" field.
+func ExpiryTotalDownloadsLTE(v uint8) predicate.File {
+	return predicate.File(sql.FieldLTE(FieldExpiryTotalDownloads, v))
+}
+
 // HasTickets applies the HasEdge predicate on the "tickets" edge.
 func HasTickets() predicate.File {
 	return predicate.File(func(s *sql.Selector) {
@@ -356,6 +606,29 @@ func HasTickets() predicate.File {
 func HasTicketsWith(preds ...predicate.Ticket) predicate.File {
 	return predicate.File(func(s *sql.Selector) {
 		step := newTicketsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasGrants applies the HasEdge predicate on the "grants" edge.
+func HasGrants() predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, GrantsTable, GrantsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGrantsWith applies the HasEdge predicate on the "grants" edge with a given conditions (other predicates).
+func HasGrantsWith(preds ...predicate.Grant) predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := newGrantsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
