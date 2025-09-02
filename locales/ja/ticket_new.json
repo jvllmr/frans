@@ -1,23 +1,5 @@
 {
-  "label_comment": "コメント",
-  "label_email": "リンクをメールに送信",
-  "label_password": "パスワード",
-  "label_password_email": "通知付きで送信する",
-  "label_password_email_highlight": "クリア",
-  "label_expiry": "チケットの有効期限",
-  "expiry_automatic": "自動",
-  "expiry_single_use": "単一使用",
-  "expiry_none": "有効期限なし",
-  "expiry_custom": "カスタム",
-  "label_expiry_total_days": "有効期限 (日)",
-  "label_expiry_last_download": "前回のダウンロードから数日後に期限切れ",
-  "label_expiry_total_downloads": "ダウンロード数の後に期限切れ",
-  "label_notify_email": "メールで通知を受ける",
-  "label_own_email": "メールアドレスを使用する",
-  "title_own_email": "ダウンロード通知に自分のメールアドレスを使用する",
-  "label_your_lang": "あなたの言語",
-  "label_receiver_lang": "受信者の言語",
-  "title_generate_password": "新しいパスワードを生成する",
   "title_upload": "ファイルをアップロード",
-  "title_reset": "フォームフィールドをリセット"
+  "title_reset": "フォームフィールドをリセット",
+  "label_expiry": "チケットの有効期限"
 }
