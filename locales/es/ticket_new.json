@@ -1,23 +1,5 @@
 {
-  "label_comment": "Comentario",
-  "label_email": "Enviar enlace al e-mail",
-  "label_password": "Contraseña",
-  "label_password_email": "Enviar en blanco con notificación",
-  "label_password_email_highlight": "limpiar",
-  "label_expiry": "Ticket caducado",
-  "expiry_automatic": "Automático",
-  "expiry_single_use": "Uso único",
-  "expiry_none": "No expiración",
-  "expiry_custom": "Personalizado",
-  "label_expiry_total_days": "Expira en total # de días",
-  "label_expiry_last_download": "Expira en # de días después de la última descarga",
-  "label_expiry_total_downloads": "Expira después de # de descargas",
-  "label_notify_email": "Recibir notificaciones por correo electrónico",
-  "label_own_email": "Usar mi e-mail",
-  "title_own_email": "Utilice su propio correo electrónico para descargar notificaciones",
-  "label_your_lang": "Tu idioma",
-  "label_receiver_lang": "Idioma del receptor",
-  "title_generate_password": "Generar una nueva contraseña",
   "title_upload": "Subir archivos",
-  "title_reset": "Restablecer campos de formulario"
+  "title_reset": "Restablecer campos de formulario",
+  "label_expiry": "Ticket caducado"
 }
