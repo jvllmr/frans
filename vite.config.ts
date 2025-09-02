@@ -13,6 +13,19 @@ function getDefines(env: ConfigEnv) {
   return defines;
 }
 
+const manualChunksMap = {
+  icons: ["@tabler//icons-react", "@tabler//icons"],
+  mantine: [
+    "@mantine//core",
+    "@mantine//hooks",
+    "@mantine//dropzone",
+    "@mantine//form",
+  ],
+  tanstack: ["@tanstack"],
+  zod: ["zod@"],
+  vendor: ["node_modules"],
+};
+
 // https://vite.dev/config/
 // @ts-ignore
 export default defineConfig((env) => ({
@@ -53,16 +66,12 @@ export default defineConfig((env) => ({
     rollupOptions: {
       input: "client/main.tsx",
       output: {
-        manualChunks: {
-          icons: ["@tabler/icons-react"],
-          mantine: [
-            "@mantine/core",
-            "@mantine/hooks",
-            "@mantine/dropzone",
-            "@mantine/form",
-          ],
-          tanstack: ["@tanstack/react-router", "@tanstack/react-query"],
-          i18n: ["i18next", "i18next-browser-languagedetector"],
+        manualChunks: (moduleId) => {
+          for (const [key, value] of Object.entries(manualChunksMap)) {
+            for (const moduleName of value) {
+              if (moduleId.includes(moduleName.replace("//", "+"))) return key;
+            }
+          }
         },
       },
     },
