@@ -1,23 +1,5 @@
 {
-  "label_comment": "评论",
-  "label_email": "发送链接到电子邮件",
-  "label_password": "密码",
-  "label_password_email": "以通知方式清理发送",
-  "label_password_email_highlight": "清除",
-  "label_expiry": "工单过期",
-  "expiry_automatic": "自动的",
-  "expiry_single_use": "单次使用",
-  "expiry_none": "没有过期",
-  "expiry_custom": "自定义",
-  "label_expiry_total_days": "在总天数内过期",
-  "label_expiry_last_download": "上次下载过期数天",
-  "label_expiry_total_downloads": "下载次数后过期",
-  "label_notify_email": "通过电子邮件得到通知",
-  "label_own_email": "使用我的电子邮件",
-  "title_own_email": "使用您自己的电子邮件下载通知",
-  "label_your_lang": "您的语言",
-  "label_receiver_lang": "接收者语言",
-  "title_generate_password": "生成新密码",
   "title_upload": "上传文件",
-  "title_reset": "重置表单字段"
+  "title_reset": "重置表单字段",
+  "label_expiry": "工单过期"
 }
