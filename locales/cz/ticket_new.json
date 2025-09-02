@@ -1,23 +1,5 @@
 {
-  "label_comment": "Komentář",
-  "label_email": "Odeslat odkaz na e-mail",
-  "label_password": "Heslo",
-  "label_password_email": "Odeslat jasně s oznámením",
-  "label_password_email_highlight": "vyčistit",
-  "label_expiry": "Platnost tiketu",
-  "expiry_automatic": "Automaticky",
-  "expiry_single_use": "Jediné použití",
-  "expiry_none": "Bez vypršení platnosti",
-  "expiry_custom": "Vlastní",
-  "label_expiry_total_days": "Vyprší celkem počet dní",
-  "label_expiry_last_download": "Vyprší za # dní po posledním stažení",
-  "label_expiry_total_downloads": "Vyprší po # stažení",
-  "label_notify_email": "Dostat oznámení e-mailem",
-  "label_own_email": "Použít můj e-mail",
-  "title_own_email": "Použijte vlastní e-mail pro oznámení o stažení",
-  "label_your_lang": "Váš jazyk",
-  "label_receiver_lang": "Jazyk příjemce",
-  "title_generate_password": "Vygenerovat nové heslo",
   "title_upload": "Nahrát soubory",
-  "title_reset": "Obnovit pole formuláře"
+  "title_reset": "Obnovit pole formuláře",
+  "label_expiry": "Platnost tiketu"
 }
