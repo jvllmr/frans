@@ -1,23 +1,5 @@
 {
-  "label_comment": "Opmerking",
-  "label_email": "Stuur link naar e-mail",
-  "label_password": "Wachtwoord",
-  "label_password_email": "Verstuur opschonen met een melding",
-  "label_password_email_highlight": "Wis",
-  "label_expiry": "Ticket vervaldatum",
-  "expiry_automatic": "Automatisch",
-  "expiry_single_use": "Enkel gebruik",
-  "expiry_none": "Geen vervaldatum",
-  "expiry_custom": "Aangepaste",
-  "label_expiry_total_days": "Vervalt in totaal # dagen",
-  "label_expiry_last_download": "Vervalt over # dagen na laatste download",
-  "label_expiry_total_downloads": "Vervalt na # downloads",
-  "label_notify_email": "Ontvang een melding per e-mail",
-  "label_own_email": "Gebruik mijn e-mail",
-  "title_own_email": "Gebruik je eigen e-mail om meldingen te downloaden",
-  "label_your_lang": "Jouw taal",
-  "label_receiver_lang": "Ontvanger taal",
-  "title_generate_password": "Een nieuw wachtwoord genereren",
   "title_upload": "Bestanden uploaden",
-  "title_reset": "Reset formuliervelden"
+  "title_reset": "Reset formuliervelden",
+  "label_expiry": "Ticket vervaldatum"
 }
