@@ -134,7 +134,7 @@ func Migrate() {
 		log.Fatalf("Could not create revisions table: %v", err)
 	}
 
-	executor, err := migrate.NewExecutor(drv, dir, &rrw)
+	executor, err := migrate.NewExecutor(drv, dir, &rrw, migrate.WithAllowDirty(true))
 	if err != nil {
 		log.Fatalf("Could not get migration executor: %v", err)
 	}
