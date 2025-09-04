@@ -252,7 +252,7 @@ func (e *entRevisionsReadWriter) createTable() error {
 		type integer NOT NULL DEFAULT (2), 
 		applied integer NOT NULL DEFAULT (0),
 		total integer NOT NULL DEFAULT (0), 
-		executed_at datetime NOT NULL, 
+		executed_at timestamp NOT NULL, 
 		execution_time integer NOT NULL, 
 		error text NULL, 
 		error_stmt text NULL, 
