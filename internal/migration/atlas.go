@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"ariga.io/atlas/sql/migrate"
@@ -99,7 +100,11 @@ func (e *entRevisionsReadWriter) ReadRevision(
 	),
 		v,
 	)
-	return e.scanRow(row)
+	rev, err := e.scanRow(row)
+	if err != nil && errors.Is(err, sql.ErrNoRows) {
+		return nil, migrate.ErrRevisionNotExist
+	}
+	return rev, err
 }
 
 // ReadRevisions implements migrate.RevisionReadWriter.
