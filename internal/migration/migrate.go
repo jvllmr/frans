@@ -128,7 +128,7 @@ func Migrate() {
 		log.Fatalf("Could not create new local dir: %v", err)
 	}
 
-	rrw := entRevisionsReadWriter{db: db, dbType: dsn}
+	rrw := entRevisionsReadWriter{db: db, dbType: dbConfig.DBType}
 	err = rrw.createTable()
 	if err != nil {
 		log.Fatalf("Could not create revisions table: %v", err)
