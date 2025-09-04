@@ -143,7 +143,12 @@ func (e *entRevisionsReadWriter) ReadRevisions(context.Context) ([]*migrate.Revi
 
 // WriteRevision implements migrate.RevisionReadWriter.
 func (e *entRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate.Revision) error {
-	_, err := e.db.ExecContext(ctx, fmt.Sprintf(`
+	encPartialHashes, err := json.Marshal(rev.PartialHashes)
+	if err != nil {
+		return err
+	}
+
+	_, err = e.db.ExecContext(ctx, fmt.Sprintf(`
 		INSERT INTO atlas_schema_revisions (
 			version, 
 			description, 
@@ -181,7 +186,7 @@ func (e *entRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate
 		rev.Error,
 		rev.ErrorStmt,
 		rev.Hash,
-		rev.PartialHashes,
+		encPartialHashes,
 		rev.OperatorVersion,
 	)
 	return err
