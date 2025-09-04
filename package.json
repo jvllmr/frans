@@ -13,7 +13,9 @@
     "ent": "go run entgo.io/ent/cmd/ent@latest",
     "ent:generate": "go run entgo.io/ent/cmd/ent@latest generate ./internal/ent/schema",
     "ent:new": "go run entgo.io/ent/cmd/ent@latest new --target ./internal/ent/schema",
-    "golines": "go run github.com/segmentio/golines@latest"
+    "golines": "go run github.com/segmentio/golines@latest",
+    "db:migrate": "go run main.go migrate",
+    "db:diff": "./scripts/atlas_diff.sh"
   },
   "dependencies": {
     "@mantine/core": "^8.2.7",
