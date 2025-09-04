@@ -208,7 +208,7 @@ func (e *entRevisionsReadWriter) createTable() error {
 		hash text NOT NULL, 
 		partial_hashes json NULL, 
 		operator_version text NOT NULL,
-		PRIMARY KEY (version))
+		PRIMARY KEY (version)
 	)`)
 	default:
 		err = fmt.Errorf("database type %s is not supported by frans", e.dbType)
