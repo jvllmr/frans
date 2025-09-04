@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FRANS_DB_TYPE: postgres
-      FRANS_DB_HOST: postgres
+      FRANS_DB_HOST: localhost
       FRANS_DB_USER: postgres
       FRANS_DB_PASSWORD: postgres
       FRANS_DB_NAME: postgres
@@ -86,10 +86,5 @@ jobs:
         with:
           name: build-output
       - run: chmod +x frans
-      - name: Wait for PostgreSQL
-        run: |
-          until pg_isready -h postgres -p 5432 -U postgres; do
-            sleep 1
-          done
       - name: Run migration
         run: ./frans migrate
