@@ -84,5 +84,10 @@ jobs:
         with:
           name: build-output
       - run: chmod +x frans
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h postgres -p 5432; do
+            sleep 1
+          done
       - name: Run migration
         run: ./frans migrate
