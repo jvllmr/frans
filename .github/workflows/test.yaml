@@ -41,10 +41,10 @@ jobs:
     needs: build
     permissions:
       contents: read
-    name: test-migration-sqlite
+    name: test-migration-sqlite3
     runs-on: ubuntu-latest
     env:
-      FRANS_DB_TYPE: sqlite
+      FRANS_DB_TYPE: sqlite3
 
     steps:
       - name: Download artifact from build workflow
