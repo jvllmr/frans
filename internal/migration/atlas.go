@@ -13,12 +13,12 @@ type scannable interface {
 	Scan(dest ...any) error
 }
 
-type EntRevisionsReadWriter struct {
+type entRevisionsReadWriter struct {
 	db     *sql.DB
 	dbType string
 }
 
-func (e *EntRevisionsReadWriter) formatSQLParam(count int) string {
+func (e *entRevisionsReadWriter) formatSQLParam(count int) string {
 	if e.dbType == "postgres" {
 		return fmt.Sprintf("$%d", count)
 	}
@@ -27,7 +27,7 @@ func (e *EntRevisionsReadWriter) formatSQLParam(count int) string {
 }
 
 // DeleteRevision implements migrate.RevisionReadWriter.
-func (e *EntRevisionsReadWriter) DeleteRevision(ctx context.Context, v string) error {
+func (e *entRevisionsReadWriter) DeleteRevision(ctx context.Context, v string) error {
 	_, err := e.db.QueryContext(
 		ctx,
 		fmt.Sprintf("DELETE FROM atlas_schema_revisions WHERE version = %s", e.formatSQLParam(1)),
@@ -37,14 +37,14 @@ func (e *EntRevisionsReadWriter) DeleteRevision(ctx context.Context, v string) e
 }
 
 // Ident implements migrate.RevisionReadWriter.
-func (e *EntRevisionsReadWriter) Ident() *migrate.TableIdent {
+func (e *entRevisionsReadWriter) Ident() *migrate.TableIdent {
 	return &migrate.TableIdent{
 		Name:   "atlas_schema_revisions",
 		Schema: "",
 	}
 }
 
-func (*EntRevisionsReadWriter) scanRow(row scannable) (*migrate.Revision, error) {
+func (*entRevisionsReadWriter) scanRow(row scannable) (*migrate.Revision, error) {
 	var rev migrate.Revision
 	var partialHashesHolder []byte
 	err := row.Scan(
@@ -75,7 +75,7 @@ func (*EntRevisionsReadWriter) scanRow(row scannable) (*migrate.Revision, error)
 }
 
 // ReadRevision implements migrate.RevisionReadWriter.
-func (e *EntRevisionsReadWriter) ReadRevision(
+func (e *entRevisionsReadWriter) ReadRevision(
 	ctx context.Context,
 	v string,
 ) (*migrate.Revision, error) {
@@ -103,7 +103,7 @@ func (e *EntRevisionsReadWriter) ReadRevision(
 }
 
 // ReadRevisions implements migrate.RevisionReadWriter.
-func (e *EntRevisionsReadWriter) ReadRevisions(context.Context) ([]*migrate.Revision, error) {
+func (e *entRevisionsReadWriter) ReadRevisions(context.Context) ([]*migrate.Revision, error) {
 	rows, err := e.db.QueryContext(context.Background(), `SELECT
 			version, 
 			description, 
@@ -137,7 +137,7 @@ func (e *EntRevisionsReadWriter) ReadRevisions(context.Context) ([]*migrate.Revi
 }
 
 // WriteRevision implements migrate.RevisionReadWriter.
-func (e *EntRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate.Revision) error {
+func (e *entRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate.Revision) error {
 	_, err := e.db.ExecContext(ctx, fmt.Sprintf(`
 		INSERT INTO atlas_schema_revisions (
 			version, 
@@ -182,4 +182,39 @@ func (e *EntRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate
 	return err
 }
 
-var _ migrate.RevisionReadWriter = (*EntRevisionsReadWriter)(nil)
+func (e *entRevisionsReadWriter) createTable() error {
+	var err error
+	switch e.dbType {
+	case "postgres":
+		_, err = e.db.Exec(`CREATE TABLE IF NOT EXISTS (
+		version
+	)`)
+	case "mysql":
+		_, err = e.db.Exec(`CREATE TABLE IF NOT EXISTS (
+		version
+	)`)
+
+	case "sqlite3":
+		_, err = e.db.Exec(`CREATE TABLE IF NOT EXISTS atlas_schema_revisions (
+		version text NOT NULL, 
+		description text NOT NULL, 
+		type integer NOT NULL DEFAULT (2), 
+		applied integer NOT NULL DEFAULT (0),
+		total integer NOT NULL DEFAULT (0), 
+		executed_at datetime NOT NULL, 
+		execution_time integer NOT NULL, 
+		error text NULL, 
+		error_stmt text NULL, 
+		hash text NOT NULL, 
+		partial_hashes json NULL, 
+		operator_version text NOT NULL,
+		PRIMARY KEY (version))
+	)`)
+	default:
+		err = fmt.Errorf("database type %s is not supported by frans", e.dbType)
+	}
+
+	return err
+}
+
+var _ migrate.RevisionReadWriter = (*entRevisionsReadWriter)(nil)
