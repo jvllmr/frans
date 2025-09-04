@@ -51,6 +51,7 @@ jobs:
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: build-output
+      - run: chmod +x frans
       - name: Run migration
         run: ./frans migrate
   migration-postgres:
@@ -68,7 +69,7 @@ jobs:
 
     services:
       postgres:
-        image: docker.io/posgres:17
+        image: docker.io/postgres:17
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -82,5 +83,6 @@ jobs:
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: build-output
+      - run: chmod +x frans
       - name: Run migration
         run: ./frans migrate
