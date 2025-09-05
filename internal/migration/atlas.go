@@ -165,7 +165,7 @@ func (e *entRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate
 			operator_version
 			) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 			ON DUPLICATE KEY UPDATE
-			SET description = VALUES(description), 
+				description = VALUES(description), 
 				type = VALUES(type), 
 				applied = VALUES(applied), 
 				total = VALUES(total), 
@@ -218,8 +218,8 @@ func (e *entRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate
 			partial_hashes, 
 			operator_version
 			) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-			ON CONFLICT(version) DO UPDATE
-			SET description = excluded.description, 
+			ON CONFLICT(version) DO UPDATE SET 
+				description = excluded.description, 
 				type = excluded.type, 
 				applied = excluded.applied, 
 				total = excluded.total, 
