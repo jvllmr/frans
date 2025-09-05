@@ -103,7 +103,7 @@ jobs:
 
     services:
       mysql:
-        image: docker.io/mysql:9-alpine
+        image: docker.io/mysql:9
         ports:
           - 3306:3306
         env:
