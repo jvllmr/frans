@@ -52,13 +52,17 @@ func InterfaceSliceToStringSlice(in []any) []string {
 	return out
 }
 
-func GenerateSalt() ([]byte, error) {
-	salt := make([]byte, 16)
-	_, err := rand.Read(salt)
+func GenerateRandomString(byteLength int) ([]byte, error) {
+	value := make([]byte, byteLength)
+	_, err := rand.Read(value)
 	if err != nil {
 		return nil, err
 	}
-	return salt, nil
+	return value, nil
+}
+
+func GenerateSalt() ([]byte, error) {
+	return GenerateRandomString(16)
 }
 
 func HashPassword(password string, salt []byte) string {

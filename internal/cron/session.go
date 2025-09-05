@@ -18,7 +18,7 @@ func SessionLifecycleTask() {
 		ExecX(context.Background())
 	slog.Info("Deleted shared access tokens", "count", deletedTokens)
 	deletedSessions := config.DBClient.Session.Delete().
-		Where(session.ExpireLT(now)).
+		Where(session.ExpireLT(now.Add(-1 * time.Hour))).
 		ExecX(context.Background())
 	slog.Info("Deleted sessions", "count", deletedSessions)
 }

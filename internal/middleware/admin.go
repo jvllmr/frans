@@ -8,7 +8,7 @@ import (
 )
 
 func AdminRequired(configValue config.Config) gin.HandlerFunc {
-	auth := Auth(configValue, false)
+	auth := Auth(configValue, nil)
 
 	return func(c *gin.Context) {
 		auth(c)

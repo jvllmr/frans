@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/config"
 	logging "github.com/jvllmr/frans/internal/logging"
+	"github.com/jvllmr/frans/internal/oidc"
 	apiRoutes "github.com/jvllmr/frans/internal/routes/api"
 	clientRoutes "github.com/jvllmr/frans/internal/routes/client"
 	slogmulti "github.com/samber/slog-multi"
@@ -28,7 +29,10 @@ func SetupRootRouter(configValue config.Config) *gin.Engine {
 	r.Use(logging.GinLogger(logger), logging.RecoveryLogger(logger))
 
 	defaultGroup := r.Group(configValue.RootPath)
-	clientRoutes.SetupClientRoutes(r, defaultGroup, configValue)
-	apiRoutes.SetupAPIRoutes(defaultGroup, configValue)
+
+	pkceCache := oidc.CreatePKCECache()
+
+	clientRoutes.SetupClientRoutes(r, defaultGroup, configValue, pkceCache)
+	apiRoutes.SetupAPIRoutes(defaultGroup, configValue, pkceCache)
 	return r
 }

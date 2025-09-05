@@ -688,7 +688,6 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "Xaxmu1Ufw5ee2okQoVN9fEla7JIjTiw9",
       "redirectUris": ["http://localhost:8081/files/api/auth/callback"],
       "webOrigins": ["+"],
       "notBefore": 0,
@@ -698,7 +697,7 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
-      "publicClient": false,
+      "publicClient": true,
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
@@ -711,6 +710,7 @@
         "post.logout.redirect.uris": "http://localhost:8081/files*",
         "display.on.consent.screen": "false",
         "oauth2.device.authorization.grant.enabled": "false",
+        "pkce.code.challenge.method": "S256",
         "backchannel.logout.revoke.offline.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
@@ -2508,7 +2508,7 @@
     "cibaInterval": "5",
     "realmReusableOtpCode": "false"
   },
-  "keycloakVersion": "26.3.2",
+  "keycloakVersion": "26.3.3",
   "userManagedAccessAllowed": false,
   "organizationsEnabled": false,
   "verifiableCredentialsEnabled": false,
