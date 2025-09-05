@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FRANS_DB_TYPE: postgres
-      FRANS_DB_HOST: 127.0.0.1
+      FRANS_DB_HOST: localhost
       FRANS_DB_USER: postgres
       FRANS_DB_PASSWORD: postgres
       FRANS_DB_NAME: postgres
@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FRANS_DB_TYPE: mysql
-      FRANS_DB_HOST: 127.0.0.1
+      FRANS_DB_HOST: localhost
       FRANS_DB_USER: user
       FRANS_DB_PASSWORD: abc123
       FRANS_DB_NAME: frans
