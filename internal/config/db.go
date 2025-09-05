@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"fmt"
 	"os"
 
@@ -53,12 +52,6 @@ func InitDB(configValue Config) {
 	if err != nil {
 		slog.Error("failed opening connection to database", "err", err)
 		os.Exit(1)
-	}
-	if configValue.DevMode {
-		if err := client.Schema.Create(context.Background()); err != nil {
-			slog.Error("failed creating schema resources", "err", err)
-			os.Exit(1)
-		}
 	}
 	DBClient = client
 }

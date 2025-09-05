@@ -5,10 +5,42 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/hex"
+	"io/fs"
+	"os"
+	"path/filepath"
 	"time"
 )
 
-func InterfaceSliceToStringSlice(in []interface{}) []string {
+func UnpackFSToPath(fsys fs.FS, targetPath string) error {
+	return fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		relPath, err := filepath.Rel(".", path)
+		if err != nil {
+			return err
+		}
+		targetPath := filepath.Join(targetPath, relPath)
+
+		if d.IsDir() {
+
+			return os.MkdirAll(targetPath, 0755)
+		}
+
+		data, err := fs.ReadFile(fsys, path)
+		if err != nil {
+			return err
+		}
+
+		if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+			return err
+		}
+
+		return os.WriteFile(targetPath, data, 0644)
+	})
+}
+
+func InterfaceSliceToStringSlice(in []any) []string {
 	out := make([]string, len(in))
 	for i, v := range in {
 		s, ok := v.(string)

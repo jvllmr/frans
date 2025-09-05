@@ -10,8 +10,18 @@ import (
 	"github.com/spf13/viper"
 )
 
+type DBConfig struct {
+	DBType     string `mapstructure:"db_type"`
+	DBHost     string `mapstructure:"db_host"`
+	DBPort     uint16 `mapstructure:"db_port"`
+	DBName     string `mapstructure:"db_name"`
+	DBUser     string `mapstructure:"db_user"`
+	DBPassword string `mapstructure:"db_password"`
+}
+
 type Config struct {
-	DevMode bool `mapstructure:"dev_mode"`
+	DBConfig `mapstructure:",squash"`
+	DevMode  bool `mapstructure:"dev_mode"`
 
 	Host     string `mapstructure:"host"`
 	Port     uint16 `mapstructure:"port"`
@@ -21,13 +31,6 @@ type Config struct {
 	OidcClientID     string `mapstructure:"oidc_client_id"`
 	OidcClientSecret string `mapstructure:"oidc_client_secret"`
 	OidcAdminGroup   string `mapstructure:"oidc_admin_group"`
-
-	DBType     string `mapstructure:"db_type"`
-	DBHost     string `mapstructure:"db_host"`
-	DBPort     uint16 `mapstructure:"db_port"`
-	DBName     string `mapstructure:"db_name"`
-	DBUser     string `mapstructure:"db_user"`
-	DBPassword string `mapstructure:"db_password"`
 
 	FilesDir string `mapstructure:"files_dir"`
 	MaxSizes int64  `mapstructure:"max_sizes"`
@@ -48,6 +51,40 @@ type Config struct {
 	SMTPPassword *string `mapstructure:"smtp_password"`
 
 	LogJSON bool `mapstructure:"log_json"`
+}
+
+func setConfigSearchStrategy(viper *viper.Viper) {
+	viper.SetConfigName("frans")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	viper.SetEnvPrefix("frans")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+}
+
+func setDBConfigDefaults(viper *viper.Viper) {
+	viper.SetDefault("db_type", "postgres")
+	viper.SetDefault("db_host", "localhost")
+	viper.SetDefault("db_port", 0)
+	viper.SetDefault("db_name", "frans")
+	viper.SetDefault("db_user", "frans")
+	viper.SetDefault("db_password", "")
+}
+
+func GetDBConfig() (DBConfig, error) {
+	var config DBConfig
+	dbConf := viper.New()
+	setDBConfigDefaults(dbConf)
+	setConfigSearchStrategy(dbConf)
+	if err := dbConf.ReadInConfig(); err != nil {
+		slog.Warn("No config file found, falling back to environment variables.")
+	}
+
+	if err := dbConf.Unmarshal(&config); err != nil {
+		return config, fmt.Errorf("unable to decode into struct: %w", err)
+	}
+
+	return config, nil
 }
 
 func GetConfig() (Config, error) {
@@ -72,12 +109,7 @@ func GetConfig() (Config, error) {
 	fransConf.SetDefault("grant_expiry_total_up", 10)
 	fransConf.SetDefault("grant_expiry_total_days", 30)
 
-	fransConf.SetDefault("db_type", "postgres")
-	fransConf.SetDefault("db_host", "localhost")
-	fransConf.SetDefault("db_port", 0)
-	fransConf.SetDefault("db_name", "frans")
-	fransConf.SetDefault("db_user", "frans")
-	fransConf.SetDefault("db_password", "")
+	setDBConfigDefaults(fransConf)
 
 	fransConf.SetDefault("oidc_admin_group", "admin")
 
@@ -87,18 +119,12 @@ func GetConfig() (Config, error) {
 	fransConf.SetDefault("smtp_username", nil)
 	fransConf.SetDefault("smtp_password", nil)
 
-	fransConf.SetConfigName("frans")
-	fransConf.SetConfigType("yaml")
-	fransConf.AddConfigPath(".")
-	fransConf.SetEnvPrefix("frans")
-	fransConf.AutomaticEnv()
-	fransConf.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	setConfigSearchStrategy(fransConf)
 
 	if err := fransConf.ReadInConfig(); err != nil {
 		slog.Warn("No config file found, falling back to environment variables.")
 	}
 
-	// Unmarshal into the struct
 	if err := fransConf.Unmarshal(&config); err != nil {
 		return config, fmt.Errorf("unable to decode into struct: %w", err)
 	}

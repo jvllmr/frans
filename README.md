@@ -89,13 +89,20 @@ If you want to try your luck with another OIDC provider, I have a checklist read
 
 ## Development
 
-### Requirements
+I always welcome contributions. Even the smaller ones.
+
+### Development requirements
+
+The following tools are required to start with development on frans:
 
 - golang installed
-- `pnpm` installed
+- `pnpm` installed: installation via corepack is preferred
 - `docker` with `docker compose v2` installed
+- `atlas` installed: <https://atlasgo.io/guides/evaluation/install>
 
 ### Start environment
+
+After you have installed all requirements you can start the environment
 
 #### Start services
 
@@ -113,6 +120,12 @@ Keycloak can be managed via the credentials `admin`/`admin`.
 
 Frans authentication is managed via the `dev` realm.
 
+#### Setup database
+
+```shell
+pnpm db:migrate
+```
+
 #### Start backend & client for development
 
 ```shell
@@ -127,6 +140,28 @@ After starting both development servers, `frans` is available under `http://loca
 You can login via one of the following credentials:
 
 - `frans_admin`/`frans_admin`: User with administration rights
+
+### Do changes to database
+
+Everything for ent is generated from the contents of `internal/ent/schema`.
+After making your changes there, run the following to apply them correctly:
+
+```shell
+# generate new ent source
+pnpm ent:generate
+
+# create migration scripts for postgresql, mysql and sqlite3
+pnpm db:diff
+
+# apply migrations to development database
+pnpm db:migrate
+```
+
+#### Create a new database entity
+
+```shell
+pnpm ent:new <entity name>
+```
 
 #### Build
 
