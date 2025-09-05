@@ -8,20 +8,20 @@ ci:
     - go-tidy
 repos:
   - repo: https://github.com/woodruffw/zizmor-pre-commit
-    rev: v1.11.0
+    rev: v1.12.1
     hooks:
       - id: zizmor
         args:
           - --fix=all
   - repo: https://github.com/jvllmr/pre-commit-prettier
-    rev: v3.5.2
+    rev: v3.6.2
     hooks:
       - id: prettier
         additional_dependencies:
           - prettier@latest
           - prettier-plugin-organize-imports@latest
   - repo: https://github.com/segmentio/golines
-    rev: v0.12.2
+    rev: v0.13.0
     hooks:
       - id: golines
   - repo: local
