@@ -27,10 +27,9 @@ type Config struct {
 	Port     uint16 `mapstructure:"port"`
 	RootPath string `mapstructure:"root_path"`
 
-	OidcIssuer       string `mapstructure:"oidc_issuer"`
-	OidcClientID     string `mapstructure:"oidc_client_id"`
-	OidcClientSecret string `mapstructure:"oidc_client_secret"`
-	OidcAdminGroup   string `mapstructure:"oidc_admin_group"`
+	OidcIssuer     string `mapstructure:"oidc_issuer"`
+	OidcClientID   string `mapstructure:"oidc_client_id"`
+	OidcAdminGroup string `mapstructure:"oidc_admin_group"`
 
 	FilesDir string `mapstructure:"files_dir"`
 	MaxSizes int64  `mapstructure:"max_sizes"`

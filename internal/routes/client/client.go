@@ -13,6 +13,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/middleware"
+	"github.com/jvllmr/frans/internal/oidc"
 
 	"github.com/tidwall/gjson"
 )
@@ -106,7 +107,12 @@ func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 	return r
 }
 
-func SetupClientRoutes(r *gin.Engine, rGroup *gin.RouterGroup, configValue config.Config) {
+func SetupClientRoutes(
+	r *gin.Engine,
+	rGroup *gin.RouterGroup,
+	configValue config.Config,
+	pkceCache *oidc.PKCECache,
+) {
 	rGroup.GET("/s/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		uuid, err := uuid.Parse(id)
@@ -141,7 +147,7 @@ func SetupClientRoutes(r *gin.Engine, rGroup *gin.RouterGroup, configValue confi
 	staticFiles, _ := fs.Sub(clientFiles, "assets")
 	rGroup.StaticFS("/static", http.FS(staticFiles))
 
-	r.NoRoute(middleware.Auth(configValue, true), func(c *gin.Context) {
+	r.NoRoute(middleware.Auth(configValue, pkceCache), func(c *gin.Context) {
 		// Fallback to index.html for React Router
 		c.HTML(http.StatusOK, "index", gin.H{
 			"rootPath":                              configValue.RootPath,

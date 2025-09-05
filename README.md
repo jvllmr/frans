@@ -40,11 +40,11 @@ TODO...
 ### Authentication
 
 `frans` does not handle user management by itself, but rather uses OpenID Connect (OIDC) to delegate this task to an OIDC provider. One of the more well known open source examples for an OIDC provider is `Keycloak` which was initially developed by RedHat and has graduated to be a Cloud Native Computing Foundation (CNCF) project. Therefore, `frans` is optimized for usage with `Keycloak`.
-If you want to try your luck with another OIDC provider, I have a checklist ready for you. The used OIDC provider needs to:
+If you want to try your luck with another OIDC provider, I have a checklist ready for you. The used OIDC provider client needs to:
 
-- provide an introspection endpoint that includes the `sub` claim
+- be a public client (no client secret needed) with pkce challenges
 - allow usage of refresh tokens
-- an `end_session_endpoint`
+- have an `end_session_endpoint`
 
 ### SMTP Server
 
@@ -63,7 +63,6 @@ If you want to try your luck with another OIDC provider, I have a checklist read
 | `port`                    | uint16   | Port the webserver should listen on                                          | `8081`                 | `FRANS_PORT`                    |
 | `oidc_issuer`             | string   | URL to the OIDC provider                                                     | _(none)_               | `FRANS_OIDC_ISSUER`             |
 | `oidc_client_id`          | string   | OIDC client ID                                                               | _(none)_               | `FRANS_OIDC_CLIENT_ID`          |
-| `oidc_client_secret`      | string   | OIDC client secret                                                           | _(none)_               | `FRANS_OIDC_CLIENT_SECRET`      |
 | `oidc_admin_group`        | string   | A group in your OIDC provider that should have admin privileges within frans | _empty string_         | `FRANS_DB_PASSWORD`             |
 | `db_type`                 | string   | Database type to use. One of `postgres`, `mysql` or `sqlite3`                | `postgres`             | `FRANS_DB_TYPE`                 |
 | `db_host`                 | string   | Database host (file path in case of `sqlite3`)                               | `localhost`            | `FRANS_DB_HOST`                 |

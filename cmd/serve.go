@@ -6,13 +6,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/oidc"
 	"github.com/jvllmr/frans/internal/routes"
 	"github.com/spf13/cobra"
 )
 
 func startGin() {
 	configValue := config.GetSafeConfig()
-	config.InitOIDC(configValue)
+	oidc.InitOIDC(configValue)
 	if configValue.DevMode {
 		slog.Info("frans was started in development mode")
 	} else {
