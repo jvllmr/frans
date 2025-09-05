@@ -18,8 +18,8 @@ import (
 	"github.com/jvllmr/frans/internal/util"
 )
 
-//go:embed migrations/*.sql
-//go:embed migrations/*.sum
+//go:embed migrations/*/*.sql
+//go:embed migrations/*/*.sum
 var migrationFiles embed.FS
 
 func buildMigrationDsn(dbConfig config.DBConfig) (string, error) {
@@ -122,7 +122,7 @@ func Migrate() {
 		log.Fatalf("Could not get database driver: %v", err)
 	}
 
-	dir, err := migrate.NewLocalDir("migrations")
+	dir, err := migrate.NewLocalDir(fmt.Sprintf("migrations/%s", dbConfig.DBType))
 
 	if err != nil {
 		log.Fatalf("Could not create new local dir: %v", err)

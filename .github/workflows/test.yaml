@@ -88,3 +88,40 @@ jobs:
       - run: chmod +x frans
       - name: Run migration
         run: ./frans migrate
+  migration-mysql:
+    needs: build
+    permissions:
+      contents: read
+    name: test-migration-mysql
+    runs-on: ubuntu-latest
+    env:
+      FRANS_DB_TYPE: mysql
+      FRANS_DB_HOST: localhost
+      FRANS_DB_USER: mysql
+      FRANS_DB_PASSWORD: mysql
+      FRANS_DB_NAME: mysql
+
+    services:
+      mysql:
+        image: docker.io/mysql:9-alpine
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: mysql
+          MYSQL_PASSWORD: mysql
+          MYSQL_DATABASE: mysql
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Download artifact from build workflow
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          name: build-output
+      - run: chmod +x frans
+      - name: Run migration
+        run: ./frans migrate

@@ -7,3 +7,4 @@ frans
 .tanstack
 tmp
 migrations/*.sql
+migration.db
