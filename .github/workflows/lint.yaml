@@ -42,4 +42,4 @@ jobs:
       - uses: ariga/setup-atlas@d52cd13fed38eca914fa57071155a4644fd6f820 # v0.2
       - run: git fetch origin main
       - name: Lint migrations
-        run: ./scripts/migration.sh
+        run: ./scripts/lint_migrations.sh
