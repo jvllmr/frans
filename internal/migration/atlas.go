@@ -148,6 +148,12 @@ func (e *entRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate
 		return err
 	}
 
+	conflict_expr := "ON CONFLICT(version) DO UPDATE"
+
+	if e.dbType == "mysql" {
+		conflict_expr = "ON DUPLICATE KEY UPDATE"
+	}
+
 	_, err = e.db.ExecContext(ctx, fmt.Sprintf(`
 		INSERT INTO atlas_schema_revisions (
 			version, 
@@ -163,7 +169,7 @@ func (e *entRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate
 			partial_hashes, 
 			operator_version
 			) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-			 ON CONFLICT(version) DO UPDATE
+			 %s
 			SET description = %s, 
 				type = %s, 
 				applied = %s, 
@@ -187,6 +193,7 @@ func (e *entRevisionsReadWriter) WriteRevision(ctx context.Context, rev *migrate
 		e.formatSQLParam(10),
 		e.formatSQLParam(11),
 		e.formatSQLParam(12),
+		conflict_expr,
 		e.formatSQLParam(13),
 		e.formatSQLParam(14),
 		e.formatSQLParam(15),
