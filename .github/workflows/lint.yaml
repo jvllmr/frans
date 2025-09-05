@@ -41,7 +41,7 @@ jobs:
           persist-credentials: true
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref }}
-      - run: git fetch origin main:HEAD
+      - run: git pull origin main
       - uses: ariga/setup-atlas@d52cd13fed38eca914fa57071155a4644fd6f820 # v0.2
       - name: Lint migrations
         run: ./scripts/lint_migrations.sh
