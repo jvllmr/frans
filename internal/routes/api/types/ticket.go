@@ -19,13 +19,13 @@ type PublicTicket struct {
 }
 
 func ToPublicTicket(configValue config.Config, ticket *ent.Ticket) PublicTicket {
-	files := []PublicFile{}
-	for _, file := range ticket.Edges.Files {
-		files = append(files, ToPublicFile(file))
+	files := make([]PublicFile, len(ticket.Edges.Files))
+	for i, file := range ticket.Edges.Files {
+		files[i] = ToPublicFile(configValue, file)
 	}
 	var estimatedExpiryValue *string = nil
 
-	if estimatedExpiryResult := util.GetEstimatedExpiry(configValue, ticket); estimatedExpiryResult != nil {
+	if estimatedExpiryResult := util.TicketEstimatedExpiry(configValue, ticket); estimatedExpiryResult != nil {
 		estimatedExpiry := estimatedExpiryResult.Format(http.TimeFormat)
 		estimatedExpiryValue = &estimatedExpiry
 	}

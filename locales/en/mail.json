@@ -1,9 +1,13 @@
 {
-  "comment": "Ticket comment",
+  "ticket_comment": "Ticket comment",
+  "grant_comment": "Grant comment",
   "contents": "Contents",
   "url": "URL",
   "password": "Password",
   "subject_ticket": "Download-Link for {{.FileName}}",
   "subject_download": "Download notification for ticket",
-  "notification_download": "The file {{.FileName}} (ticket {{.TicketName}}) was downloaded by {{.Address}}"
+  "notification_download": "The file {{.FileName}} (ticket {{.TicketName}}) was downloaded by {{.Address}}",
+  "subject_upload": "Upload notification for grant",
+  "notification_upload": "Files were uploaded to grant {{.GrantName}} by {{.Address}}",
+  "subject_grant": "Link for grant"
 }

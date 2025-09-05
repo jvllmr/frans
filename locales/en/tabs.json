@@ -6,5 +6,6 @@
   "grants": "Received files",
   "share": "Share",
   "ticket_share": "Ticket share",
-  "users": "Users"
+  "users": "Users",
+  "grant_share": "Grant share"
 }

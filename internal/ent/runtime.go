@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/schema"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/ent/user"
@@ -17,10 +18,28 @@ import (
 func init() {
 	fileFields := schema.File{}.Fields()
 	_ = fileFields
+	// fileDescCreatedAt is the schema descriptor for created_at field.
+	fileDescCreatedAt := fileFields[4].Descriptor()
+	// file.DefaultCreatedAt holds the default value on creation for the created_at field.
+	file.DefaultCreatedAt = fileDescCreatedAt.Default.(func() time.Time)
 	// fileDescTimesDownloaded is the schema descriptor for times_downloaded field.
-	fileDescTimesDownloaded := fileFields[5].Descriptor()
+	fileDescTimesDownloaded := fileFields[6].Descriptor()
 	// file.DefaultTimesDownloaded holds the default value on creation for the times_downloaded field.
 	file.DefaultTimesDownloaded = fileDescTimesDownloaded.Default.(uint64)
+	grantFields := schema.Grant{}.Fields()
+	_ = grantFields
+	// grantDescCreatedAt is the schema descriptor for created_at field.
+	grantDescCreatedAt := grantFields[5].Descriptor()
+	// grant.DefaultCreatedAt holds the default value on creation for the created_at field.
+	grant.DefaultCreatedAt = grantDescCreatedAt.Default.(func() time.Time)
+	// grantDescTimesUploaded is the schema descriptor for times_uploaded field.
+	grantDescTimesUploaded := grantFields[14].Descriptor()
+	// grant.DefaultTimesUploaded holds the default value on creation for the times_uploaded field.
+	grant.DefaultTimesUploaded = grantDescTimesUploaded.Default.(uint64)
+	// grantDescCreatorLang is the schema descriptor for creator_lang field.
+	grantDescCreatorLang := grantFields[16].Descriptor()
+	// grant.DefaultCreatorLang holds the default value on creation for the creator_lang field.
+	grant.DefaultCreatorLang = grantDescCreatorLang.Default.(string)
 	ticketFields := schema.Ticket{}.Fields()
 	_ = ticketFields
 	// ticketDescCreatedAt is the schema descriptor for created_at field.

@@ -3,6 +3,7 @@ module github.com/jvllmr/frans
 go 1.24
 
 require (
+	ariga.io/atlas v0.36.1
 	entgo.io/ent v0.14.5
 	github.com/coreos/go-oidc/v3 v3.15.0
 	github.com/gin-gonic/gin v1.10.1
@@ -35,10 +36,10 @@ require (
 	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/tools v0.35.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+
 )
 
 require (
-	ariga.io/atlas v0.35.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect

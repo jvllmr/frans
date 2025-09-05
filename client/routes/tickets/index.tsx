@@ -1,24 +1,13 @@
-import {
-  ActionIcon,
-  Anchor,
-  CopyButton,
-  Group,
-  Table,
-  Text,
-} from "@mantine/core";
-import {
-  IconCheck,
-  IconCopy,
-  IconCopyCheck,
-  IconFolderOpen,
-} from "@tabler/icons-react";
+import { ActionIcon, Anchor, CopyButton, Group, Table } from "@mantine/core";
+import { IconCopy, IconCopyCheck, IconFolderOpen } from "@tabler/icons-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { differenceInDays } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { ticketQueryOptions } from "~/api/ticket";
-import { ActionIconLink } from "~/components/Link";
-import { useDateFormatter, useRelativeDateFormatter } from "~/i18n";
+import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
+import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
+import { ActionIconLink } from "~/components/routing/Link";
+import { useDateFormatter } from "~/i18n";
 import { getShareLink } from "~/util/link";
 export const Route = createFileRoute("/tickets/")({
   component: RouteComponent,
@@ -28,8 +17,7 @@ function RouteComponent() {
   const { t } = useTranslation("ticket_active");
   const { data: tickets } = useSuspenseQuery(ticketQueryOptions);
   const dateFormatter = useDateFormatter();
-  const relativeDateFormatter = useRelativeDateFormatter();
-  const now = new Date();
+
   return (
     <Table withColumnBorders withTableBorder withRowBorders>
       <Table.Thead>
@@ -73,11 +61,10 @@ function RouteComponent() {
               ) : null}
 
               <Table.Td>
-                {file.timesDownloaded > 0 ? (
-                  <Text span c="teal">
-                    <IconCheck />
-                  </Text>
-                ) : null}
+                <DownloadSuccessIndicator
+                  lastDownloaded={file.lastDownloaded}
+                  timesDownloaded={file.timesDownloaded}
+                />
               </Table.Td>
               <Table.Td>
                 <Anchor href={`${window.fransRootPath}/api/v1/file/${file.id}`}>
@@ -91,12 +78,7 @@ function RouteComponent() {
               ) : null}
               {index === 0 ? (
                 <Table.Td rowSpan={ticket.files.length}>
-                  {ticket.estimatedExpiry
-                    ? relativeDateFormatter.format(
-                        differenceInDays(ticket.estimatedExpiry, now),
-                        "days",
-                      )
-                    : t("ticket_expiration_type_none")}
+                  <EstimatedExpiry estimatedExpiry={ticket.estimatedExpiry} />
                 </Table.Td>
               ) : null}
             </Table.Tr>

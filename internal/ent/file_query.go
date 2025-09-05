@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 )
@@ -26,6 +27,7 @@ type FileQuery struct {
 	inters      []Interceptor
 	predicates  []predicate.File
 	withTickets *TicketQuery
+	withGrants  *GrantQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -77,6 +79,28 @@ func (_q *FileQuery) QueryTickets() *TicketQuery {
 			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(ticket.Table, ticket.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, file.TicketsTable, file.TicketsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryGrants chains the current query on the "grants" edge.
+func (_q *FileQuery) QueryGrants() *GrantQuery {
+	query := (&GrantClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, selector),
+			sqlgraph.To(grant.Table, grant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, file.GrantsTable, file.GrantsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -277,6 +301,7 @@ func (_q *FileQuery) Clone() *FileQuery {
 		inters:      append([]Interceptor{}, _q.inters...),
 		predicates:  append([]predicate.File{}, _q.predicates...),
 		withTickets: _q.withTickets.Clone(),
+		withGrants:  _q.withGrants.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -291,6 +316,17 @@ func (_q *FileQuery) WithTickets(opts ...func(*TicketQuery)) *FileQuery {
 		opt(query)
 	}
 	_q.withTickets = query
+	return _q
+}
+
+// WithGrants tells the query-builder to eager-load the nodes that are connected to
+// the "grants" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *FileQuery) WithGrants(opts ...func(*GrantQuery)) *FileQuery {
+	query := (&GrantClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withGrants = query
 	return _q
 }
 
@@ -372,8 +408,9 @@ func (_q *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 	var (
 		nodes       = []*File{}
 		_spec       = _q.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			_q.withTickets != nil,
+			_q.withGrants != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -398,6 +435,13 @@ func (_q *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 		if err := _q.loadTickets(ctx, query, nodes,
 			func(n *File) { n.Edges.Tickets = []*Ticket{} },
 			func(n *File, e *Ticket) { n.Edges.Tickets = append(n.Edges.Tickets, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withGrants; query != nil {
+		if err := _q.loadGrants(ctx, query, nodes,
+			func(n *File) { n.Edges.Grants = []*Grant{} },
+			func(n *File, e *Grant) { n.Edges.Grants = append(n.Edges.Grants, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -458,6 +502,67 @@ func (_q *FileQuery) loadTickets(ctx context.Context, query *TicketQuery, nodes 
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "tickets" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (_q *FileQuery) loadGrants(ctx context.Context, query *GrantQuery, nodes []*File, init func(*File), assign func(*File, *Grant)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[uuid.UUID]*File)
+	nids := make(map[uuid.UUID]map[*File]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(file.GrantsTable)
+		s.Join(joinT).On(s.C(grant.FieldID), joinT.C(file.GrantsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(file.GrantsPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(file.GrantsPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(uuid.UUID)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := *values[0].(*uuid.UUID)
+				inValue := *values[1].(*uuid.UUID)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*File]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Grant](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "grants" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

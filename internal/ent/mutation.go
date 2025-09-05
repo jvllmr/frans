@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
@@ -30,6 +31,7 @@ const (
 
 	// Node types.
 	TypeFile             = "File"
+	TypeGrant            = "Grant"
 	TypeSession          = "Session"
 	TypeShareAccessToken = "ShareAccessToken"
 	TypeTicket           = "Ticket"
@@ -39,23 +41,34 @@ const (
 // FileMutation represents an operation that mutates the File nodes in the graph.
 type FileMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *uuid.UUID
-	name                *string
-	size                *uint64
-	addsize             *int64
-	sha512              *string
-	last_download       *time.Time
-	times_downloaded    *uint64
-	addtimes_downloaded *int64
-	clearedFields       map[string]struct{}
-	tickets             map[uuid.UUID]struct{}
-	removedtickets      map[uuid.UUID]struct{}
-	clearedtickets      bool
-	done                bool
-	oldValue            func(context.Context) (*File, error)
-	predicates          []predicate.File
+	op                                 Op
+	typ                                string
+	id                                 *uuid.UUID
+	name                               *string
+	size                               *uint64
+	addsize                            *int64
+	sha512                             *string
+	created_at                         *time.Time
+	last_download                      *time.Time
+	times_downloaded                   *uint64
+	addtimes_downloaded                *int64
+	expiry_type                        *string
+	expiry_total_days                  *uint8
+	addexpiry_total_days               *int8
+	expiry_days_since_last_download    *uint8
+	addexpiry_days_since_last_download *int8
+	expiry_total_downloads             *uint8
+	addexpiry_total_downloads          *int8
+	clearedFields                      map[string]struct{}
+	tickets                            map[uuid.UUID]struct{}
+	removedtickets                     map[uuid.UUID]struct{}
+	clearedtickets                     bool
+	grants                             map[uuid.UUID]struct{}
+	removedgrants                      map[uuid.UUID]struct{}
+	clearedgrants                      bool
+	done                               bool
+	oldValue                           func(context.Context) (*File, error)
+	predicates                         []predicate.File
 }
 
 var _ ent.Mutation = (*FileMutation)(nil)
@@ -290,6 +303,42 @@ func (m *FileMutation) ResetSha512() {
 	m.sha512 = nil
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (m *FileMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FileMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FileMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
 // SetLastDownload sets the "last_download" field.
 func (m *FileMutation) SetLastDownload(t time.Time) {
 	m.last_download = &t
@@ -395,6 +444,210 @@ func (m *FileMutation) ResetTimesDownloaded() {
 	m.addtimes_downloaded = nil
 }
 
+// SetExpiryType sets the "expiry_type" field.
+func (m *FileMutation) SetExpiryType(s string) {
+	m.expiry_type = &s
+}
+
+// ExpiryType returns the value of the "expiry_type" field in the mutation.
+func (m *FileMutation) ExpiryType() (r string, exists bool) {
+	v := m.expiry_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiryType returns the old "expiry_type" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldExpiryType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiryType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiryType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiryType: %w", err)
+	}
+	return oldValue.ExpiryType, nil
+}
+
+// ResetExpiryType resets all changes to the "expiry_type" field.
+func (m *FileMutation) ResetExpiryType() {
+	m.expiry_type = nil
+}
+
+// SetExpiryTotalDays sets the "expiry_total_days" field.
+func (m *FileMutation) SetExpiryTotalDays(u uint8) {
+	m.expiry_total_days = &u
+	m.addexpiry_total_days = nil
+}
+
+// ExpiryTotalDays returns the value of the "expiry_total_days" field in the mutation.
+func (m *FileMutation) ExpiryTotalDays() (r uint8, exists bool) {
+	v := m.expiry_total_days
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiryTotalDays returns the old "expiry_total_days" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldExpiryTotalDays(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiryTotalDays is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiryTotalDays requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiryTotalDays: %w", err)
+	}
+	return oldValue.ExpiryTotalDays, nil
+}
+
+// AddExpiryTotalDays adds u to the "expiry_total_days" field.
+func (m *FileMutation) AddExpiryTotalDays(u int8) {
+	if m.addexpiry_total_days != nil {
+		*m.addexpiry_total_days += u
+	} else {
+		m.addexpiry_total_days = &u
+	}
+}
+
+// AddedExpiryTotalDays returns the value that was added to the "expiry_total_days" field in this mutation.
+func (m *FileMutation) AddedExpiryTotalDays() (r int8, exists bool) {
+	v := m.addexpiry_total_days
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetExpiryTotalDays resets all changes to the "expiry_total_days" field.
+func (m *FileMutation) ResetExpiryTotalDays() {
+	m.expiry_total_days = nil
+	m.addexpiry_total_days = nil
+}
+
+// SetExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field.
+func (m *FileMutation) SetExpiryDaysSinceLastDownload(u uint8) {
+	m.expiry_days_since_last_download = &u
+	m.addexpiry_days_since_last_download = nil
+}
+
+// ExpiryDaysSinceLastDownload returns the value of the "expiry_days_since_last_download" field in the mutation.
+func (m *FileMutation) ExpiryDaysSinceLastDownload() (r uint8, exists bool) {
+	v := m.expiry_days_since_last_download
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiryDaysSinceLastDownload returns the old "expiry_days_since_last_download" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldExpiryDaysSinceLastDownload(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiryDaysSinceLastDownload is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiryDaysSinceLastDownload requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiryDaysSinceLastDownload: %w", err)
+	}
+	return oldValue.ExpiryDaysSinceLastDownload, nil
+}
+
+// AddExpiryDaysSinceLastDownload adds u to the "expiry_days_since_last_download" field.
+func (m *FileMutation) AddExpiryDaysSinceLastDownload(u int8) {
+	if m.addexpiry_days_since_last_download != nil {
+		*m.addexpiry_days_since_last_download += u
+	} else {
+		m.addexpiry_days_since_last_download = &u
+	}
+}
+
+// AddedExpiryDaysSinceLastDownload returns the value that was added to the "expiry_days_since_last_download" field in this mutation.
+func (m *FileMutation) AddedExpiryDaysSinceLastDownload() (r int8, exists bool) {
+	v := m.addexpiry_days_since_last_download
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetExpiryDaysSinceLastDownload resets all changes to the "expiry_days_since_last_download" field.
+func (m *FileMutation) ResetExpiryDaysSinceLastDownload() {
+	m.expiry_days_since_last_download = nil
+	m.addexpiry_days_since_last_download = nil
+}
+
+// SetExpiryTotalDownloads sets the "expiry_total_downloads" field.
+func (m *FileMutation) SetExpiryTotalDownloads(u uint8) {
+	m.expiry_total_downloads = &u
+	m.addexpiry_total_downloads = nil
+}
+
+// ExpiryTotalDownloads returns the value of the "expiry_total_downloads" field in the mutation.
+func (m *FileMutation) ExpiryTotalDownloads() (r uint8, exists bool) {
+	v := m.expiry_total_downloads
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiryTotalDownloads returns the old "expiry_total_downloads" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldExpiryTotalDownloads(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiryTotalDownloads is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiryTotalDownloads requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiryTotalDownloads: %w", err)
+	}
+	return oldValue.ExpiryTotalDownloads, nil
+}
+
+// AddExpiryTotalDownloads adds u to the "expiry_total_downloads" field.
+func (m *FileMutation) AddExpiryTotalDownloads(u int8) {
+	if m.addexpiry_total_downloads != nil {
+		*m.addexpiry_total_downloads += u
+	} else {
+		m.addexpiry_total_downloads = &u
+	}
+}
+
+// AddedExpiryTotalDownloads returns the value that was added to the "expiry_total_downloads" field in this mutation.
+func (m *FileMutation) AddedExpiryTotalDownloads() (r int8, exists bool) {
+	v := m.addexpiry_total_downloads
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetExpiryTotalDownloads resets all changes to the "expiry_total_downloads" field.
+func (m *FileMutation) ResetExpiryTotalDownloads() {
+	m.expiry_total_downloads = nil
+	m.addexpiry_total_downloads = nil
+}
+
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by ids.
 func (m *FileMutation) AddTicketIDs(ids ...uuid.UUID) {
 	if m.tickets == nil {
@@ -449,6 +702,60 @@ func (m *FileMutation) ResetTickets() {
 	m.removedtickets = nil
 }
 
+// AddGrantIDs adds the "grants" edge to the Grant entity by ids.
+func (m *FileMutation) AddGrantIDs(ids ...uuid.UUID) {
+	if m.grants == nil {
+		m.grants = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.grants[ids[i]] = struct{}{}
+	}
+}
+
+// ClearGrants clears the "grants" edge to the Grant entity.
+func (m *FileMutation) ClearGrants() {
+	m.clearedgrants = true
+}
+
+// GrantsCleared reports if the "grants" edge to the Grant entity was cleared.
+func (m *FileMutation) GrantsCleared() bool {
+	return m.clearedgrants
+}
+
+// RemoveGrantIDs removes the "grants" edge to the Grant entity by IDs.
+func (m *FileMutation) RemoveGrantIDs(ids ...uuid.UUID) {
+	if m.removedgrants == nil {
+		m.removedgrants = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.grants, ids[i])
+		m.removedgrants[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedGrants returns the removed IDs of the "grants" edge to the Grant entity.
+func (m *FileMutation) RemovedGrantsIDs() (ids []uuid.UUID) {
+	for id := range m.removedgrants {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// GrantsIDs returns the "grants" edge IDs in the mutation.
+func (m *FileMutation) GrantsIDs() (ids []uuid.UUID) {
+	for id := range m.grants {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetGrants resets all changes to the "grants" edge.
+func (m *FileMutation) ResetGrants() {
+	m.grants = nil
+	m.clearedgrants = false
+	m.removedgrants = nil
+}
+
 // Where appends a list predicates to the FileMutation builder.
 func (m *FileMutation) Where(ps ...predicate.File) {
 	m.predicates = append(m.predicates, ps...)
@@ -483,7 +790,7 @@ func (m *FileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FileMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 10)
 	if m.name != nil {
 		fields = append(fields, file.FieldName)
 	}
@@ -493,11 +800,26 @@ func (m *FileMutation) Fields() []string {
 	if m.sha512 != nil {
 		fields = append(fields, file.FieldSha512)
 	}
+	if m.created_at != nil {
+		fields = append(fields, file.FieldCreatedAt)
+	}
 	if m.last_download != nil {
 		fields = append(fields, file.FieldLastDownload)
 	}
 	if m.times_downloaded != nil {
 		fields = append(fields, file.FieldTimesDownloaded)
+	}
+	if m.expiry_type != nil {
+		fields = append(fields, file.FieldExpiryType)
+	}
+	if m.expiry_total_days != nil {
+		fields = append(fields, file.FieldExpiryTotalDays)
+	}
+	if m.expiry_days_since_last_download != nil {
+		fields = append(fields, file.FieldExpiryDaysSinceLastDownload)
+	}
+	if m.expiry_total_downloads != nil {
+		fields = append(fields, file.FieldExpiryTotalDownloads)
 	}
 	return fields
 }
@@ -513,10 +835,20 @@ func (m *FileMutation) Field(name string) (ent.Value, bool) {
 		return m.Size()
 	case file.FieldSha512:
 		return m.Sha512()
+	case file.FieldCreatedAt:
+		return m.CreatedAt()
 	case file.FieldLastDownload:
 		return m.LastDownload()
 	case file.FieldTimesDownloaded:
 		return m.TimesDownloaded()
+	case file.FieldExpiryType:
+		return m.ExpiryType()
+	case file.FieldExpiryTotalDays:
+		return m.ExpiryTotalDays()
+	case file.FieldExpiryDaysSinceLastDownload:
+		return m.ExpiryDaysSinceLastDownload()
+	case file.FieldExpiryTotalDownloads:
+		return m.ExpiryTotalDownloads()
 	}
 	return nil, false
 }
@@ -532,10 +864,20 @@ func (m *FileMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldSize(ctx)
 	case file.FieldSha512:
 		return m.OldSha512(ctx)
+	case file.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
 	case file.FieldLastDownload:
 		return m.OldLastDownload(ctx)
 	case file.FieldTimesDownloaded:
 		return m.OldTimesDownloaded(ctx)
+	case file.FieldExpiryType:
+		return m.OldExpiryType(ctx)
+	case file.FieldExpiryTotalDays:
+		return m.OldExpiryTotalDays(ctx)
+	case file.FieldExpiryDaysSinceLastDownload:
+		return m.OldExpiryDaysSinceLastDownload(ctx)
+	case file.FieldExpiryTotalDownloads:
+		return m.OldExpiryTotalDownloads(ctx)
 	}
 	return nil, fmt.Errorf("unknown File field %s", name)
 }
@@ -566,6 +908,13 @@ func (m *FileMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSha512(v)
 		return nil
+	case file.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
 	case file.FieldLastDownload:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -579,6 +928,34 @@ func (m *FileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTimesDownloaded(v)
+		return nil
+	case file.FieldExpiryType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiryType(v)
+		return nil
+	case file.FieldExpiryTotalDays:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiryTotalDays(v)
+		return nil
+	case file.FieldExpiryDaysSinceLastDownload:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiryDaysSinceLastDownload(v)
+		return nil
+	case file.FieldExpiryTotalDownloads:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiryTotalDownloads(v)
 		return nil
 	}
 	return fmt.Errorf("unknown File field %s", name)
@@ -594,6 +971,15 @@ func (m *FileMutation) AddedFields() []string {
 	if m.addtimes_downloaded != nil {
 		fields = append(fields, file.FieldTimesDownloaded)
 	}
+	if m.addexpiry_total_days != nil {
+		fields = append(fields, file.FieldExpiryTotalDays)
+	}
+	if m.addexpiry_days_since_last_download != nil {
+		fields = append(fields, file.FieldExpiryDaysSinceLastDownload)
+	}
+	if m.addexpiry_total_downloads != nil {
+		fields = append(fields, file.FieldExpiryTotalDownloads)
+	}
 	return fields
 }
 
@@ -606,6 +992,12 @@ func (m *FileMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedSize()
 	case file.FieldTimesDownloaded:
 		return m.AddedTimesDownloaded()
+	case file.FieldExpiryTotalDays:
+		return m.AddedExpiryTotalDays()
+	case file.FieldExpiryDaysSinceLastDownload:
+		return m.AddedExpiryDaysSinceLastDownload()
+	case file.FieldExpiryTotalDownloads:
+		return m.AddedExpiryTotalDownloads()
 	}
 	return nil, false
 }
@@ -628,6 +1020,27 @@ func (m *FileMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTimesDownloaded(v)
+		return nil
+	case file.FieldExpiryTotalDays:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpiryTotalDays(v)
+		return nil
+	case file.FieldExpiryDaysSinceLastDownload:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpiryDaysSinceLastDownload(v)
+		return nil
+	case file.FieldExpiryTotalDownloads:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpiryTotalDownloads(v)
 		return nil
 	}
 	return fmt.Errorf("unknown File numeric field %s", name)
@@ -674,11 +1087,26 @@ func (m *FileMutation) ResetField(name string) error {
 	case file.FieldSha512:
 		m.ResetSha512()
 		return nil
+	case file.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
 	case file.FieldLastDownload:
 		m.ResetLastDownload()
 		return nil
 	case file.FieldTimesDownloaded:
 		m.ResetTimesDownloaded()
+		return nil
+	case file.FieldExpiryType:
+		m.ResetExpiryType()
+		return nil
+	case file.FieldExpiryTotalDays:
+		m.ResetExpiryTotalDays()
+		return nil
+	case file.FieldExpiryDaysSinceLastDownload:
+		m.ResetExpiryDaysSinceLastDownload()
+		return nil
+	case file.FieldExpiryTotalDownloads:
+		m.ResetExpiryTotalDownloads()
 		return nil
 	}
 	return fmt.Errorf("unknown File field %s", name)
@@ -686,9 +1114,12 @@ func (m *FileMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *FileMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.tickets != nil {
 		edges = append(edges, file.EdgeTickets)
+	}
+	if m.grants != nil {
+		edges = append(edges, file.EdgeGrants)
 	}
 	return edges
 }
@@ -703,15 +1134,24 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case file.EdgeGrants:
+		ids := make([]ent.Value, 0, len(m.grants))
+		for id := range m.grants {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *FileMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedtickets != nil {
 		edges = append(edges, file.EdgeTickets)
+	}
+	if m.removedgrants != nil {
+		edges = append(edges, file.EdgeGrants)
 	}
 	return edges
 }
@@ -726,15 +1166,24 @@ func (m *FileMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case file.EdgeGrants:
+		ids := make([]ent.Value, 0, len(m.removedgrants))
+		for id := range m.removedgrants {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *FileMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedtickets {
 		edges = append(edges, file.EdgeTickets)
+	}
+	if m.clearedgrants {
+		edges = append(edges, file.EdgeGrants)
 	}
 	return edges
 }
@@ -745,6 +1194,8 @@ func (m *FileMutation) EdgeCleared(name string) bool {
 	switch name {
 	case file.EdgeTickets:
 		return m.clearedtickets
+	case file.EdgeGrants:
+		return m.clearedgrants
 	}
 	return false
 }
@@ -764,8 +1215,1682 @@ func (m *FileMutation) ResetEdge(name string) error {
 	case file.EdgeTickets:
 		m.ResetTickets()
 		return nil
+	case file.EdgeGrants:
+		m.ResetGrants()
+		return nil
 	}
 	return fmt.Errorf("unknown File edge %s", name)
+}
+
+// GrantMutation represents an operation that mutates the Grant nodes in the graph.
+type GrantMutation struct {
+	config
+	op                                      Op
+	typ                                     string
+	id                                      *uuid.UUID
+	comment                                 *string
+	expiry_type                             *string
+	hashed_password                         *string
+	salt                                    *string
+	created_at                              *time.Time
+	expiry_total_days                       *uint8
+	addexpiry_total_days                    *int8
+	expiry_days_since_last_upload           *uint8
+	addexpiry_days_since_last_upload        *int8
+	expiry_total_uploads                    *uint8
+	addexpiry_total_uploads                 *int8
+	file_expiry_type                        *string
+	file_expiry_total_days                  *uint8
+	addfile_expiry_total_days               *int8
+	file_expiry_days_since_last_download    *uint8
+	addfile_expiry_days_since_last_download *int8
+	file_expiry_total_downloads             *uint8
+	addfile_expiry_total_downloads          *int8
+	last_upload                             *time.Time
+	times_uploaded                          *uint64
+	addtimes_uploaded                       *int64
+	email_on_upload                         *string
+	creator_lang                            *string
+	clearedFields                           map[string]struct{}
+	files                                   map[uuid.UUID]struct{}
+	removedfiles                            map[uuid.UUID]struct{}
+	clearedfiles                            bool
+	owner                                   *uuid.UUID
+	clearedowner                            bool
+	shareaccesstokens                       map[string]struct{}
+	removedshareaccesstokens                map[string]struct{}
+	clearedshareaccesstokens                bool
+	done                                    bool
+	oldValue                                func(context.Context) (*Grant, error)
+	predicates                              []predicate.Grant
+}
+
+var _ ent.Mutation = (*GrantMutation)(nil)
+
+// grantOption allows management of the mutation configuration using functional options.
+type grantOption func(*GrantMutation)
+
+// newGrantMutation creates new mutation for the Grant entity.
+func newGrantMutation(c config, op Op, opts ...grantOption) *GrantMutation {
+	m := &GrantMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeGrant,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withGrantID sets the ID field of the mutation.
+func withGrantID(id uuid.UUID) grantOption {
+	return func(m *GrantMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Grant
+		)
+		m.oldValue = func(ctx context.Context) (*Grant, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Grant.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withGrant sets the old Grant of the mutation.
+func withGrant(node *Grant) grantOption {
+	return func(m *GrantMutation) {
+		m.oldValue = func(context.Context) (*Grant, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m GrantMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m GrantMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Grant entities.
+func (m *GrantMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *GrantMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *GrantMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Grant.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetComment sets the "comment" field.
+func (m *GrantMutation) SetComment(s string) {
+	m.comment = &s
+}
+
+// Comment returns the value of the "comment" field in the mutation.
+func (m *GrantMutation) Comment() (r string, exists bool) {
+	v := m.comment
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldComment returns the old "comment" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldComment(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldComment is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldComment requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldComment: %w", err)
+	}
+	return oldValue.Comment, nil
+}
+
+// ClearComment clears the value of the "comment" field.
+func (m *GrantMutation) ClearComment() {
+	m.comment = nil
+	m.clearedFields[grant.FieldComment] = struct{}{}
+}
+
+// CommentCleared returns if the "comment" field was cleared in this mutation.
+func (m *GrantMutation) CommentCleared() bool {
+	_, ok := m.clearedFields[grant.FieldComment]
+	return ok
+}
+
+// ResetComment resets all changes to the "comment" field.
+func (m *GrantMutation) ResetComment() {
+	m.comment = nil
+	delete(m.clearedFields, grant.FieldComment)
+}
+
+// SetExpiryType sets the "expiry_type" field.
+func (m *GrantMutation) SetExpiryType(s string) {
+	m.expiry_type = &s
+}
+
+// ExpiryType returns the value of the "expiry_type" field in the mutation.
+func (m *GrantMutation) ExpiryType() (r string, exists bool) {
+	v := m.expiry_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiryType returns the old "expiry_type" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldExpiryType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiryType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiryType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiryType: %w", err)
+	}
+	return oldValue.ExpiryType, nil
+}
+
+// ResetExpiryType resets all changes to the "expiry_type" field.
+func (m *GrantMutation) ResetExpiryType() {
+	m.expiry_type = nil
+}
+
+// SetHashedPassword sets the "hashed_password" field.
+func (m *GrantMutation) SetHashedPassword(s string) {
+	m.hashed_password = &s
+}
+
+// HashedPassword returns the value of the "hashed_password" field in the mutation.
+func (m *GrantMutation) HashedPassword() (r string, exists bool) {
+	v := m.hashed_password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHashedPassword returns the old "hashed_password" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldHashedPassword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHashedPassword is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHashedPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHashedPassword: %w", err)
+	}
+	return oldValue.HashedPassword, nil
+}
+
+// ResetHashedPassword resets all changes to the "hashed_password" field.
+func (m *GrantMutation) ResetHashedPassword() {
+	m.hashed_password = nil
+}
+
+// SetSalt sets the "salt" field.
+func (m *GrantMutation) SetSalt(s string) {
+	m.salt = &s
+}
+
+// Salt returns the value of the "salt" field in the mutation.
+func (m *GrantMutation) Salt() (r string, exists bool) {
+	v := m.salt
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSalt returns the old "salt" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldSalt(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSalt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSalt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSalt: %w", err)
+	}
+	return oldValue.Salt, nil
+}
+
+// ResetSalt resets all changes to the "salt" field.
+func (m *GrantMutation) ResetSalt() {
+	m.salt = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *GrantMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *GrantMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *GrantMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetExpiryTotalDays sets the "expiry_total_days" field.
+func (m *GrantMutation) SetExpiryTotalDays(u uint8) {
+	m.expiry_total_days = &u
+	m.addexpiry_total_days = nil
+}
+
+// ExpiryTotalDays returns the value of the "expiry_total_days" field in the mutation.
+func (m *GrantMutation) ExpiryTotalDays() (r uint8, exists bool) {
+	v := m.expiry_total_days
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiryTotalDays returns the old "expiry_total_days" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldExpiryTotalDays(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiryTotalDays is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiryTotalDays requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiryTotalDays: %w", err)
+	}
+	return oldValue.ExpiryTotalDays, nil
+}
+
+// AddExpiryTotalDays adds u to the "expiry_total_days" field.
+func (m *GrantMutation) AddExpiryTotalDays(u int8) {
+	if m.addexpiry_total_days != nil {
+		*m.addexpiry_total_days += u
+	} else {
+		m.addexpiry_total_days = &u
+	}
+}
+
+// AddedExpiryTotalDays returns the value that was added to the "expiry_total_days" field in this mutation.
+func (m *GrantMutation) AddedExpiryTotalDays() (r int8, exists bool) {
+	v := m.addexpiry_total_days
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetExpiryTotalDays resets all changes to the "expiry_total_days" field.
+func (m *GrantMutation) ResetExpiryTotalDays() {
+	m.expiry_total_days = nil
+	m.addexpiry_total_days = nil
+}
+
+// SetExpiryDaysSinceLastUpload sets the "expiry_days_since_last_upload" field.
+func (m *GrantMutation) SetExpiryDaysSinceLastUpload(u uint8) {
+	m.expiry_days_since_last_upload = &u
+	m.addexpiry_days_since_last_upload = nil
+}
+
+// ExpiryDaysSinceLastUpload returns the value of the "expiry_days_since_last_upload" field in the mutation.
+func (m *GrantMutation) ExpiryDaysSinceLastUpload() (r uint8, exists bool) {
+	v := m.expiry_days_since_last_upload
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiryDaysSinceLastUpload returns the old "expiry_days_since_last_upload" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldExpiryDaysSinceLastUpload(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiryDaysSinceLastUpload is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiryDaysSinceLastUpload requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiryDaysSinceLastUpload: %w", err)
+	}
+	return oldValue.ExpiryDaysSinceLastUpload, nil
+}
+
+// AddExpiryDaysSinceLastUpload adds u to the "expiry_days_since_last_upload" field.
+func (m *GrantMutation) AddExpiryDaysSinceLastUpload(u int8) {
+	if m.addexpiry_days_since_last_upload != nil {
+		*m.addexpiry_days_since_last_upload += u
+	} else {
+		m.addexpiry_days_since_last_upload = &u
+	}
+}
+
+// AddedExpiryDaysSinceLastUpload returns the value that was added to the "expiry_days_since_last_upload" field in this mutation.
+func (m *GrantMutation) AddedExpiryDaysSinceLastUpload() (r int8, exists bool) {
+	v := m.addexpiry_days_since_last_upload
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetExpiryDaysSinceLastUpload resets all changes to the "expiry_days_since_last_upload" field.
+func (m *GrantMutation) ResetExpiryDaysSinceLastUpload() {
+	m.expiry_days_since_last_upload = nil
+	m.addexpiry_days_since_last_upload = nil
+}
+
+// SetExpiryTotalUploads sets the "expiry_total_uploads" field.
+func (m *GrantMutation) SetExpiryTotalUploads(u uint8) {
+	m.expiry_total_uploads = &u
+	m.addexpiry_total_uploads = nil
+}
+
+// ExpiryTotalUploads returns the value of the "expiry_total_uploads" field in the mutation.
+func (m *GrantMutation) ExpiryTotalUploads() (r uint8, exists bool) {
+	v := m.expiry_total_uploads
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiryTotalUploads returns the old "expiry_total_uploads" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldExpiryTotalUploads(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiryTotalUploads is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiryTotalUploads requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiryTotalUploads: %w", err)
+	}
+	return oldValue.ExpiryTotalUploads, nil
+}
+
+// AddExpiryTotalUploads adds u to the "expiry_total_uploads" field.
+func (m *GrantMutation) AddExpiryTotalUploads(u int8) {
+	if m.addexpiry_total_uploads != nil {
+		*m.addexpiry_total_uploads += u
+	} else {
+		m.addexpiry_total_uploads = &u
+	}
+}
+
+// AddedExpiryTotalUploads returns the value that was added to the "expiry_total_uploads" field in this mutation.
+func (m *GrantMutation) AddedExpiryTotalUploads() (r int8, exists bool) {
+	v := m.addexpiry_total_uploads
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetExpiryTotalUploads resets all changes to the "expiry_total_uploads" field.
+func (m *GrantMutation) ResetExpiryTotalUploads() {
+	m.expiry_total_uploads = nil
+	m.addexpiry_total_uploads = nil
+}
+
+// SetFileExpiryType sets the "file_expiry_type" field.
+func (m *GrantMutation) SetFileExpiryType(s string) {
+	m.file_expiry_type = &s
+}
+
+// FileExpiryType returns the value of the "file_expiry_type" field in the mutation.
+func (m *GrantMutation) FileExpiryType() (r string, exists bool) {
+	v := m.file_expiry_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFileExpiryType returns the old "file_expiry_type" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldFileExpiryType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFileExpiryType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFileExpiryType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFileExpiryType: %w", err)
+	}
+	return oldValue.FileExpiryType, nil
+}
+
+// ResetFileExpiryType resets all changes to the "file_expiry_type" field.
+func (m *GrantMutation) ResetFileExpiryType() {
+	m.file_expiry_type = nil
+}
+
+// SetFileExpiryTotalDays sets the "file_expiry_total_days" field.
+func (m *GrantMutation) SetFileExpiryTotalDays(u uint8) {
+	m.file_expiry_total_days = &u
+	m.addfile_expiry_total_days = nil
+}
+
+// FileExpiryTotalDays returns the value of the "file_expiry_total_days" field in the mutation.
+func (m *GrantMutation) FileExpiryTotalDays() (r uint8, exists bool) {
+	v := m.file_expiry_total_days
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFileExpiryTotalDays returns the old "file_expiry_total_days" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldFileExpiryTotalDays(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFileExpiryTotalDays is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFileExpiryTotalDays requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFileExpiryTotalDays: %w", err)
+	}
+	return oldValue.FileExpiryTotalDays, nil
+}
+
+// AddFileExpiryTotalDays adds u to the "file_expiry_total_days" field.
+func (m *GrantMutation) AddFileExpiryTotalDays(u int8) {
+	if m.addfile_expiry_total_days != nil {
+		*m.addfile_expiry_total_days += u
+	} else {
+		m.addfile_expiry_total_days = &u
+	}
+}
+
+// AddedFileExpiryTotalDays returns the value that was added to the "file_expiry_total_days" field in this mutation.
+func (m *GrantMutation) AddedFileExpiryTotalDays() (r int8, exists bool) {
+	v := m.addfile_expiry_total_days
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFileExpiryTotalDays resets all changes to the "file_expiry_total_days" field.
+func (m *GrantMutation) ResetFileExpiryTotalDays() {
+	m.file_expiry_total_days = nil
+	m.addfile_expiry_total_days = nil
+}
+
+// SetFileExpiryDaysSinceLastDownload sets the "file_expiry_days_since_last_download" field.
+func (m *GrantMutation) SetFileExpiryDaysSinceLastDownload(u uint8) {
+	m.file_expiry_days_since_last_download = &u
+	m.addfile_expiry_days_since_last_download = nil
+}
+
+// FileExpiryDaysSinceLastDownload returns the value of the "file_expiry_days_since_last_download" field in the mutation.
+func (m *GrantMutation) FileExpiryDaysSinceLastDownload() (r uint8, exists bool) {
+	v := m.file_expiry_days_since_last_download
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFileExpiryDaysSinceLastDownload returns the old "file_expiry_days_since_last_download" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldFileExpiryDaysSinceLastDownload(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFileExpiryDaysSinceLastDownload is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFileExpiryDaysSinceLastDownload requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFileExpiryDaysSinceLastDownload: %w", err)
+	}
+	return oldValue.FileExpiryDaysSinceLastDownload, nil
+}
+
+// AddFileExpiryDaysSinceLastDownload adds u to the "file_expiry_days_since_last_download" field.
+func (m *GrantMutation) AddFileExpiryDaysSinceLastDownload(u int8) {
+	if m.addfile_expiry_days_since_last_download != nil {
+		*m.addfile_expiry_days_since_last_download += u
+	} else {
+		m.addfile_expiry_days_since_last_download = &u
+	}
+}
+
+// AddedFileExpiryDaysSinceLastDownload returns the value that was added to the "file_expiry_days_since_last_download" field in this mutation.
+func (m *GrantMutation) AddedFileExpiryDaysSinceLastDownload() (r int8, exists bool) {
+	v := m.addfile_expiry_days_since_last_download
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFileExpiryDaysSinceLastDownload resets all changes to the "file_expiry_days_since_last_download" field.
+func (m *GrantMutation) ResetFileExpiryDaysSinceLastDownload() {
+	m.file_expiry_days_since_last_download = nil
+	m.addfile_expiry_days_since_last_download = nil
+}
+
+// SetFileExpiryTotalDownloads sets the "file_expiry_total_downloads" field.
+func (m *GrantMutation) SetFileExpiryTotalDownloads(u uint8) {
+	m.file_expiry_total_downloads = &u
+	m.addfile_expiry_total_downloads = nil
+}
+
+// FileExpiryTotalDownloads returns the value of the "file_expiry_total_downloads" field in the mutation.
+func (m *GrantMutation) FileExpiryTotalDownloads() (r uint8, exists bool) {
+	v := m.file_expiry_total_downloads
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFileExpiryTotalDownloads returns the old "file_expiry_total_downloads" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldFileExpiryTotalDownloads(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFileExpiryTotalDownloads is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFileExpiryTotalDownloads requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFileExpiryTotalDownloads: %w", err)
+	}
+	return oldValue.FileExpiryTotalDownloads, nil
+}
+
+// AddFileExpiryTotalDownloads adds u to the "file_expiry_total_downloads" field.
+func (m *GrantMutation) AddFileExpiryTotalDownloads(u int8) {
+	if m.addfile_expiry_total_downloads != nil {
+		*m.addfile_expiry_total_downloads += u
+	} else {
+		m.addfile_expiry_total_downloads = &u
+	}
+}
+
+// AddedFileExpiryTotalDownloads returns the value that was added to the "file_expiry_total_downloads" field in this mutation.
+func (m *GrantMutation) AddedFileExpiryTotalDownloads() (r int8, exists bool) {
+	v := m.addfile_expiry_total_downloads
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFileExpiryTotalDownloads resets all changes to the "file_expiry_total_downloads" field.
+func (m *GrantMutation) ResetFileExpiryTotalDownloads() {
+	m.file_expiry_total_downloads = nil
+	m.addfile_expiry_total_downloads = nil
+}
+
+// SetLastUpload sets the "last_upload" field.
+func (m *GrantMutation) SetLastUpload(t time.Time) {
+	m.last_upload = &t
+}
+
+// LastUpload returns the value of the "last_upload" field in the mutation.
+func (m *GrantMutation) LastUpload() (r time.Time, exists bool) {
+	v := m.last_upload
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastUpload returns the old "last_upload" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldLastUpload(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastUpload is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastUpload requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastUpload: %w", err)
+	}
+	return oldValue.LastUpload, nil
+}
+
+// ClearLastUpload clears the value of the "last_upload" field.
+func (m *GrantMutation) ClearLastUpload() {
+	m.last_upload = nil
+	m.clearedFields[grant.FieldLastUpload] = struct{}{}
+}
+
+// LastUploadCleared returns if the "last_upload" field was cleared in this mutation.
+func (m *GrantMutation) LastUploadCleared() bool {
+	_, ok := m.clearedFields[grant.FieldLastUpload]
+	return ok
+}
+
+// ResetLastUpload resets all changes to the "last_upload" field.
+func (m *GrantMutation) ResetLastUpload() {
+	m.last_upload = nil
+	delete(m.clearedFields, grant.FieldLastUpload)
+}
+
+// SetTimesUploaded sets the "times_uploaded" field.
+func (m *GrantMutation) SetTimesUploaded(u uint64) {
+	m.times_uploaded = &u
+	m.addtimes_uploaded = nil
+}
+
+// TimesUploaded returns the value of the "times_uploaded" field in the mutation.
+func (m *GrantMutation) TimesUploaded() (r uint64, exists bool) {
+	v := m.times_uploaded
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimesUploaded returns the old "times_uploaded" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldTimesUploaded(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimesUploaded is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimesUploaded requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimesUploaded: %w", err)
+	}
+	return oldValue.TimesUploaded, nil
+}
+
+// AddTimesUploaded adds u to the "times_uploaded" field.
+func (m *GrantMutation) AddTimesUploaded(u int64) {
+	if m.addtimes_uploaded != nil {
+		*m.addtimes_uploaded += u
+	} else {
+		m.addtimes_uploaded = &u
+	}
+}
+
+// AddedTimesUploaded returns the value that was added to the "times_uploaded" field in this mutation.
+func (m *GrantMutation) AddedTimesUploaded() (r int64, exists bool) {
+	v := m.addtimes_uploaded
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTimesUploaded resets all changes to the "times_uploaded" field.
+func (m *GrantMutation) ResetTimesUploaded() {
+	m.times_uploaded = nil
+	m.addtimes_uploaded = nil
+}
+
+// SetEmailOnUpload sets the "email_on_upload" field.
+func (m *GrantMutation) SetEmailOnUpload(s string) {
+	m.email_on_upload = &s
+}
+
+// EmailOnUpload returns the value of the "email_on_upload" field in the mutation.
+func (m *GrantMutation) EmailOnUpload() (r string, exists bool) {
+	v := m.email_on_upload
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmailOnUpload returns the old "email_on_upload" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldEmailOnUpload(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEmailOnUpload is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEmailOnUpload requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmailOnUpload: %w", err)
+	}
+	return oldValue.EmailOnUpload, nil
+}
+
+// ClearEmailOnUpload clears the value of the "email_on_upload" field.
+func (m *GrantMutation) ClearEmailOnUpload() {
+	m.email_on_upload = nil
+	m.clearedFields[grant.FieldEmailOnUpload] = struct{}{}
+}
+
+// EmailOnUploadCleared returns if the "email_on_upload" field was cleared in this mutation.
+func (m *GrantMutation) EmailOnUploadCleared() bool {
+	_, ok := m.clearedFields[grant.FieldEmailOnUpload]
+	return ok
+}
+
+// ResetEmailOnUpload resets all changes to the "email_on_upload" field.
+func (m *GrantMutation) ResetEmailOnUpload() {
+	m.email_on_upload = nil
+	delete(m.clearedFields, grant.FieldEmailOnUpload)
+}
+
+// SetCreatorLang sets the "creator_lang" field.
+func (m *GrantMutation) SetCreatorLang(s string) {
+	m.creator_lang = &s
+}
+
+// CreatorLang returns the value of the "creator_lang" field in the mutation.
+func (m *GrantMutation) CreatorLang() (r string, exists bool) {
+	v := m.creator_lang
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatorLang returns the old "creator_lang" field's value of the Grant entity.
+// If the Grant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrantMutation) OldCreatorLang(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatorLang is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatorLang requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatorLang: %w", err)
+	}
+	return oldValue.CreatorLang, nil
+}
+
+// ResetCreatorLang resets all changes to the "creator_lang" field.
+func (m *GrantMutation) ResetCreatorLang() {
+	m.creator_lang = nil
+}
+
+// AddFileIDs adds the "files" edge to the File entity by ids.
+func (m *GrantMutation) AddFileIDs(ids ...uuid.UUID) {
+	if m.files == nil {
+		m.files = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.files[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFiles clears the "files" edge to the File entity.
+func (m *GrantMutation) ClearFiles() {
+	m.clearedfiles = true
+}
+
+// FilesCleared reports if the "files" edge to the File entity was cleared.
+func (m *GrantMutation) FilesCleared() bool {
+	return m.clearedfiles
+}
+
+// RemoveFileIDs removes the "files" edge to the File entity by IDs.
+func (m *GrantMutation) RemoveFileIDs(ids ...uuid.UUID) {
+	if m.removedfiles == nil {
+		m.removedfiles = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.files, ids[i])
+		m.removedfiles[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFiles returns the removed IDs of the "files" edge to the File entity.
+func (m *GrantMutation) RemovedFilesIDs() (ids []uuid.UUID) {
+	for id := range m.removedfiles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FilesIDs returns the "files" edge IDs in the mutation.
+func (m *GrantMutation) FilesIDs() (ids []uuid.UUID) {
+	for id := range m.files {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFiles resets all changes to the "files" edge.
+func (m *GrantMutation) ResetFiles() {
+	m.files = nil
+	m.clearedfiles = false
+	m.removedfiles = nil
+}
+
+// SetOwnerID sets the "owner" edge to the User entity by id.
+func (m *GrantMutation) SetOwnerID(id uuid.UUID) {
+	m.owner = &id
+}
+
+// ClearOwner clears the "owner" edge to the User entity.
+func (m *GrantMutation) ClearOwner() {
+	m.clearedowner = true
+}
+
+// OwnerCleared reports if the "owner" edge to the User entity was cleared.
+func (m *GrantMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *GrantMutation) OwnerID() (id uuid.UUID, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *GrantMutation) OwnerIDs() (ids []uuid.UUID) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *GrantMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
+// AddShareaccesstokenIDs adds the "shareaccesstokens" edge to the ShareAccessToken entity by ids.
+func (m *GrantMutation) AddShareaccesstokenIDs(ids ...string) {
+	if m.shareaccesstokens == nil {
+		m.shareaccesstokens = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.shareaccesstokens[ids[i]] = struct{}{}
+	}
+}
+
+// ClearShareaccesstokens clears the "shareaccesstokens" edge to the ShareAccessToken entity.
+func (m *GrantMutation) ClearShareaccesstokens() {
+	m.clearedshareaccesstokens = true
+}
+
+// ShareaccesstokensCleared reports if the "shareaccesstokens" edge to the ShareAccessToken entity was cleared.
+func (m *GrantMutation) ShareaccesstokensCleared() bool {
+	return m.clearedshareaccesstokens
+}
+
+// RemoveShareaccesstokenIDs removes the "shareaccesstokens" edge to the ShareAccessToken entity by IDs.
+func (m *GrantMutation) RemoveShareaccesstokenIDs(ids ...string) {
+	if m.removedshareaccesstokens == nil {
+		m.removedshareaccesstokens = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.shareaccesstokens, ids[i])
+		m.removedshareaccesstokens[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedShareaccesstokens returns the removed IDs of the "shareaccesstokens" edge to the ShareAccessToken entity.
+func (m *GrantMutation) RemovedShareaccesstokensIDs() (ids []string) {
+	for id := range m.removedshareaccesstokens {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ShareaccesstokensIDs returns the "shareaccesstokens" edge IDs in the mutation.
+func (m *GrantMutation) ShareaccesstokensIDs() (ids []string) {
+	for id := range m.shareaccesstokens {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetShareaccesstokens resets all changes to the "shareaccesstokens" edge.
+func (m *GrantMutation) ResetShareaccesstokens() {
+	m.shareaccesstokens = nil
+	m.clearedshareaccesstokens = false
+	m.removedshareaccesstokens = nil
+}
+
+// Where appends a list predicates to the GrantMutation builder.
+func (m *GrantMutation) Where(ps ...predicate.Grant) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the GrantMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *GrantMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Grant, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *GrantMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *GrantMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Grant).
+func (m *GrantMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *GrantMutation) Fields() []string {
+	fields := make([]string, 0, 16)
+	if m.comment != nil {
+		fields = append(fields, grant.FieldComment)
+	}
+	if m.expiry_type != nil {
+		fields = append(fields, grant.FieldExpiryType)
+	}
+	if m.hashed_password != nil {
+		fields = append(fields, grant.FieldHashedPassword)
+	}
+	if m.salt != nil {
+		fields = append(fields, grant.FieldSalt)
+	}
+	if m.created_at != nil {
+		fields = append(fields, grant.FieldCreatedAt)
+	}
+	if m.expiry_total_days != nil {
+		fields = append(fields, grant.FieldExpiryTotalDays)
+	}
+	if m.expiry_days_since_last_upload != nil {
+		fields = append(fields, grant.FieldExpiryDaysSinceLastUpload)
+	}
+	if m.expiry_total_uploads != nil {
+		fields = append(fields, grant.FieldExpiryTotalUploads)
+	}
+	if m.file_expiry_type != nil {
+		fields = append(fields, grant.FieldFileExpiryType)
+	}
+	if m.file_expiry_total_days != nil {
+		fields = append(fields, grant.FieldFileExpiryTotalDays)
+	}
+	if m.file_expiry_days_since_last_download != nil {
+		fields = append(fields, grant.FieldFileExpiryDaysSinceLastDownload)
+	}
+	if m.file_expiry_total_downloads != nil {
+		fields = append(fields, grant.FieldFileExpiryTotalDownloads)
+	}
+	if m.last_upload != nil {
+		fields = append(fields, grant.FieldLastUpload)
+	}
+	if m.times_uploaded != nil {
+		fields = append(fields, grant.FieldTimesUploaded)
+	}
+	if m.email_on_upload != nil {
+		fields = append(fields, grant.FieldEmailOnUpload)
+	}
+	if m.creator_lang != nil {
+		fields = append(fields, grant.FieldCreatorLang)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *GrantMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case grant.FieldComment:
+		return m.Comment()
+	case grant.FieldExpiryType:
+		return m.ExpiryType()
+	case grant.FieldHashedPassword:
+		return m.HashedPassword()
+	case grant.FieldSalt:
+		return m.Salt()
+	case grant.FieldCreatedAt:
+		return m.CreatedAt()
+	case grant.FieldExpiryTotalDays:
+		return m.ExpiryTotalDays()
+	case grant.FieldExpiryDaysSinceLastUpload:
+		return m.ExpiryDaysSinceLastUpload()
+	case grant.FieldExpiryTotalUploads:
+		return m.ExpiryTotalUploads()
+	case grant.FieldFileExpiryType:
+		return m.FileExpiryType()
+	case grant.FieldFileExpiryTotalDays:
+		return m.FileExpiryTotalDays()
+	case grant.FieldFileExpiryDaysSinceLastDownload:
+		return m.FileExpiryDaysSinceLastDownload()
+	case grant.FieldFileExpiryTotalDownloads:
+		return m.FileExpiryTotalDownloads()
+	case grant.FieldLastUpload:
+		return m.LastUpload()
+	case grant.FieldTimesUploaded:
+		return m.TimesUploaded()
+	case grant.FieldEmailOnUpload:
+		return m.EmailOnUpload()
+	case grant.FieldCreatorLang:
+		return m.CreatorLang()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *GrantMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case grant.FieldComment:
+		return m.OldComment(ctx)
+	case grant.FieldExpiryType:
+		return m.OldExpiryType(ctx)
+	case grant.FieldHashedPassword:
+		return m.OldHashedPassword(ctx)
+	case grant.FieldSalt:
+		return m.OldSalt(ctx)
+	case grant.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case grant.FieldExpiryTotalDays:
+		return m.OldExpiryTotalDays(ctx)
+	case grant.FieldExpiryDaysSinceLastUpload:
+		return m.OldExpiryDaysSinceLastUpload(ctx)
+	case grant.FieldExpiryTotalUploads:
+		return m.OldExpiryTotalUploads(ctx)
+	case grant.FieldFileExpiryType:
+		return m.OldFileExpiryType(ctx)
+	case grant.FieldFileExpiryTotalDays:
+		return m.OldFileExpiryTotalDays(ctx)
+	case grant.FieldFileExpiryDaysSinceLastDownload:
+		return m.OldFileExpiryDaysSinceLastDownload(ctx)
+	case grant.FieldFileExpiryTotalDownloads:
+		return m.OldFileExpiryTotalDownloads(ctx)
+	case grant.FieldLastUpload:
+		return m.OldLastUpload(ctx)
+	case grant.FieldTimesUploaded:
+		return m.OldTimesUploaded(ctx)
+	case grant.FieldEmailOnUpload:
+		return m.OldEmailOnUpload(ctx)
+	case grant.FieldCreatorLang:
+		return m.OldCreatorLang(ctx)
+	}
+	return nil, fmt.Errorf("unknown Grant field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GrantMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case grant.FieldComment:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetComment(v)
+		return nil
+	case grant.FieldExpiryType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiryType(v)
+		return nil
+	case grant.FieldHashedPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHashedPassword(v)
+		return nil
+	case grant.FieldSalt:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSalt(v)
+		return nil
+	case grant.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case grant.FieldExpiryTotalDays:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiryTotalDays(v)
+		return nil
+	case grant.FieldExpiryDaysSinceLastUpload:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiryDaysSinceLastUpload(v)
+		return nil
+	case grant.FieldExpiryTotalUploads:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiryTotalUploads(v)
+		return nil
+	case grant.FieldFileExpiryType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFileExpiryType(v)
+		return nil
+	case grant.FieldFileExpiryTotalDays:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFileExpiryTotalDays(v)
+		return nil
+	case grant.FieldFileExpiryDaysSinceLastDownload:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFileExpiryDaysSinceLastDownload(v)
+		return nil
+	case grant.FieldFileExpiryTotalDownloads:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFileExpiryTotalDownloads(v)
+		return nil
+	case grant.FieldLastUpload:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastUpload(v)
+		return nil
+	case grant.FieldTimesUploaded:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimesUploaded(v)
+		return nil
+	case grant.FieldEmailOnUpload:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmailOnUpload(v)
+		return nil
+	case grant.FieldCreatorLang:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatorLang(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Grant field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *GrantMutation) AddedFields() []string {
+	var fields []string
+	if m.addexpiry_total_days != nil {
+		fields = append(fields, grant.FieldExpiryTotalDays)
+	}
+	if m.addexpiry_days_since_last_upload != nil {
+		fields = append(fields, grant.FieldExpiryDaysSinceLastUpload)
+	}
+	if m.addexpiry_total_uploads != nil {
+		fields = append(fields, grant.FieldExpiryTotalUploads)
+	}
+	if m.addfile_expiry_total_days != nil {
+		fields = append(fields, grant.FieldFileExpiryTotalDays)
+	}
+	if m.addfile_expiry_days_since_last_download != nil {
+		fields = append(fields, grant.FieldFileExpiryDaysSinceLastDownload)
+	}
+	if m.addfile_expiry_total_downloads != nil {
+		fields = append(fields, grant.FieldFileExpiryTotalDownloads)
+	}
+	if m.addtimes_uploaded != nil {
+		fields = append(fields, grant.FieldTimesUploaded)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *GrantMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case grant.FieldExpiryTotalDays:
+		return m.AddedExpiryTotalDays()
+	case grant.FieldExpiryDaysSinceLastUpload:
+		return m.AddedExpiryDaysSinceLastUpload()
+	case grant.FieldExpiryTotalUploads:
+		return m.AddedExpiryTotalUploads()
+	case grant.FieldFileExpiryTotalDays:
+		return m.AddedFileExpiryTotalDays()
+	case grant.FieldFileExpiryDaysSinceLastDownload:
+		return m.AddedFileExpiryDaysSinceLastDownload()
+	case grant.FieldFileExpiryTotalDownloads:
+		return m.AddedFileExpiryTotalDownloads()
+	case grant.FieldTimesUploaded:
+		return m.AddedTimesUploaded()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GrantMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case grant.FieldExpiryTotalDays:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpiryTotalDays(v)
+		return nil
+	case grant.FieldExpiryDaysSinceLastUpload:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpiryDaysSinceLastUpload(v)
+		return nil
+	case grant.FieldExpiryTotalUploads:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpiryTotalUploads(v)
+		return nil
+	case grant.FieldFileExpiryTotalDays:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFileExpiryTotalDays(v)
+		return nil
+	case grant.FieldFileExpiryDaysSinceLastDownload:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFileExpiryDaysSinceLastDownload(v)
+		return nil
+	case grant.FieldFileExpiryTotalDownloads:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFileExpiryTotalDownloads(v)
+		return nil
+	case grant.FieldTimesUploaded:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTimesUploaded(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Grant numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *GrantMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(grant.FieldComment) {
+		fields = append(fields, grant.FieldComment)
+	}
+	if m.FieldCleared(grant.FieldLastUpload) {
+		fields = append(fields, grant.FieldLastUpload)
+	}
+	if m.FieldCleared(grant.FieldEmailOnUpload) {
+		fields = append(fields, grant.FieldEmailOnUpload)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *GrantMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *GrantMutation) ClearField(name string) error {
+	switch name {
+	case grant.FieldComment:
+		m.ClearComment()
+		return nil
+	case grant.FieldLastUpload:
+		m.ClearLastUpload()
+		return nil
+	case grant.FieldEmailOnUpload:
+		m.ClearEmailOnUpload()
+		return nil
+	}
+	return fmt.Errorf("unknown Grant nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *GrantMutation) ResetField(name string) error {
+	switch name {
+	case grant.FieldComment:
+		m.ResetComment()
+		return nil
+	case grant.FieldExpiryType:
+		m.ResetExpiryType()
+		return nil
+	case grant.FieldHashedPassword:
+		m.ResetHashedPassword()
+		return nil
+	case grant.FieldSalt:
+		m.ResetSalt()
+		return nil
+	case grant.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case grant.FieldExpiryTotalDays:
+		m.ResetExpiryTotalDays()
+		return nil
+	case grant.FieldExpiryDaysSinceLastUpload:
+		m.ResetExpiryDaysSinceLastUpload()
+		return nil
+	case grant.FieldExpiryTotalUploads:
+		m.ResetExpiryTotalUploads()
+		return nil
+	case grant.FieldFileExpiryType:
+		m.ResetFileExpiryType()
+		return nil
+	case grant.FieldFileExpiryTotalDays:
+		m.ResetFileExpiryTotalDays()
+		return nil
+	case grant.FieldFileExpiryDaysSinceLastDownload:
+		m.ResetFileExpiryDaysSinceLastDownload()
+		return nil
+	case grant.FieldFileExpiryTotalDownloads:
+		m.ResetFileExpiryTotalDownloads()
+		return nil
+	case grant.FieldLastUpload:
+		m.ResetLastUpload()
+		return nil
+	case grant.FieldTimesUploaded:
+		m.ResetTimesUploaded()
+		return nil
+	case grant.FieldEmailOnUpload:
+		m.ResetEmailOnUpload()
+		return nil
+	case grant.FieldCreatorLang:
+		m.ResetCreatorLang()
+		return nil
+	}
+	return fmt.Errorf("unknown Grant field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *GrantMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.files != nil {
+		edges = append(edges, grant.EdgeFiles)
+	}
+	if m.owner != nil {
+		edges = append(edges, grant.EdgeOwner)
+	}
+	if m.shareaccesstokens != nil {
+		edges = append(edges, grant.EdgeShareaccesstokens)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *GrantMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case grant.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.files))
+		for id := range m.files {
+			ids = append(ids, id)
+		}
+		return ids
+	case grant.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	case grant.EdgeShareaccesstokens:
+		ids := make([]ent.Value, 0, len(m.shareaccesstokens))
+		for id := range m.shareaccesstokens {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *GrantMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedfiles != nil {
+		edges = append(edges, grant.EdgeFiles)
+	}
+	if m.removedshareaccesstokens != nil {
+		edges = append(edges, grant.EdgeShareaccesstokens)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *GrantMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case grant.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.removedfiles))
+		for id := range m.removedfiles {
+			ids = append(ids, id)
+		}
+		return ids
+	case grant.EdgeShareaccesstokens:
+		ids := make([]ent.Value, 0, len(m.removedshareaccesstokens))
+		for id := range m.removedshareaccesstokens {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *GrantMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedfiles {
+		edges = append(edges, grant.EdgeFiles)
+	}
+	if m.clearedowner {
+		edges = append(edges, grant.EdgeOwner)
+	}
+	if m.clearedshareaccesstokens {
+		edges = append(edges, grant.EdgeShareaccesstokens)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *GrantMutation) EdgeCleared(name string) bool {
+	switch name {
+	case grant.EdgeFiles:
+		return m.clearedfiles
+	case grant.EdgeOwner:
+		return m.clearedowner
+	case grant.EdgeShareaccesstokens:
+		return m.clearedshareaccesstokens
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *GrantMutation) ClearEdge(name string) error {
+	switch name {
+	case grant.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown Grant unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *GrantMutation) ResetEdge(name string) error {
+	switch name {
+	case grant.EdgeFiles:
+		m.ResetFiles()
+		return nil
+	case grant.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	case grant.EdgeShareaccesstokens:
+		m.ResetShareaccesstokens()
+		return nil
+	}
+	return fmt.Errorf("unknown Grant edge %s", name)
 }
 
 // SessionMutation represents an operation that mutates the Session nodes in the graph.
@@ -1279,6 +3404,8 @@ type ShareAccessTokenMutation struct {
 	clearedFields map[string]struct{}
 	ticket        *uuid.UUID
 	clearedticket bool
+	grant         *uuid.UUID
+	clearedgrant  bool
 	done          bool
 	oldValue      func(context.Context) (*ShareAccessToken, error)
 	predicates    []predicate.ShareAccessToken
@@ -1463,6 +3590,45 @@ func (m *ShareAccessTokenMutation) ResetTicket() {
 	m.clearedticket = false
 }
 
+// SetGrantID sets the "grant" edge to the Grant entity by id.
+func (m *ShareAccessTokenMutation) SetGrantID(id uuid.UUID) {
+	m.grant = &id
+}
+
+// ClearGrant clears the "grant" edge to the Grant entity.
+func (m *ShareAccessTokenMutation) ClearGrant() {
+	m.clearedgrant = true
+}
+
+// GrantCleared reports if the "grant" edge to the Grant entity was cleared.
+func (m *ShareAccessTokenMutation) GrantCleared() bool {
+	return m.clearedgrant
+}
+
+// GrantID returns the "grant" edge ID in the mutation.
+func (m *ShareAccessTokenMutation) GrantID() (id uuid.UUID, exists bool) {
+	if m.grant != nil {
+		return *m.grant, true
+	}
+	return
+}
+
+// GrantIDs returns the "grant" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GrantID instead. It exists only for internal usage by the builders.
+func (m *ShareAccessTokenMutation) GrantIDs() (ids []uuid.UUID) {
+	if id := m.grant; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGrant resets all changes to the "grant" edge.
+func (m *ShareAccessTokenMutation) ResetGrant() {
+	m.grant = nil
+	m.clearedgrant = false
+}
+
 // Where appends a list predicates to the ShareAccessTokenMutation builder.
 func (m *ShareAccessTokenMutation) Where(ps ...predicate.ShareAccessToken) {
 	m.predicates = append(m.predicates, ps...)
@@ -1596,9 +3762,12 @@ func (m *ShareAccessTokenMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ShareAccessTokenMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.ticket != nil {
 		edges = append(edges, shareaccesstoken.EdgeTicket)
+	}
+	if m.grant != nil {
+		edges = append(edges, shareaccesstoken.EdgeGrant)
 	}
 	return edges
 }
@@ -1611,13 +3780,17 @@ func (m *ShareAccessTokenMutation) AddedIDs(name string) []ent.Value {
 		if id := m.ticket; id != nil {
 			return []ent.Value{*id}
 		}
+	case shareaccesstoken.EdgeGrant:
+		if id := m.grant; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ShareAccessTokenMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -1629,9 +3802,12 @@ func (m *ShareAccessTokenMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ShareAccessTokenMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedticket {
 		edges = append(edges, shareaccesstoken.EdgeTicket)
+	}
+	if m.clearedgrant {
+		edges = append(edges, shareaccesstoken.EdgeGrant)
 	}
 	return edges
 }
@@ -1642,6 +3818,8 @@ func (m *ShareAccessTokenMutation) EdgeCleared(name string) bool {
 	switch name {
 	case shareaccesstoken.EdgeTicket:
 		return m.clearedticket
+	case shareaccesstoken.EdgeGrant:
+		return m.clearedgrant
 	}
 	return false
 }
@@ -1653,6 +3831,9 @@ func (m *ShareAccessTokenMutation) ClearEdge(name string) error {
 	case shareaccesstoken.EdgeTicket:
 		m.ClearTicket()
 		return nil
+	case shareaccesstoken.EdgeGrant:
+		m.ClearGrant()
+		return nil
 	}
 	return fmt.Errorf("unknown ShareAccessToken unique edge %s", name)
 }
@@ -1663,6 +3844,9 @@ func (m *ShareAccessTokenMutation) ResetEdge(name string) error {
 	switch name {
 	case shareaccesstoken.EdgeTicket:
 		m.ResetTicket()
+		return nil
+	case shareaccesstoken.EdgeGrant:
+		m.ResetGrant()
 		return nil
 	}
 	return fmt.Errorf("unknown ShareAccessToken edge %s", name)
@@ -2890,6 +5074,9 @@ type UserMutation struct {
 	tickets              map[uuid.UUID]struct{}
 	removedtickets       map[uuid.UUID]struct{}
 	clearedtickets       bool
+	grants               map[uuid.UUID]struct{}
+	removedgrants        map[uuid.UUID]struct{}
+	clearedgrants        bool
 	done                 bool
 	oldValue             func(context.Context) (*User, error)
 	predicates           []predicate.User
@@ -3506,6 +5693,60 @@ func (m *UserMutation) ResetTickets() {
 	m.removedtickets = nil
 }
 
+// AddGrantIDs adds the "grants" edge to the Grant entity by ids.
+func (m *UserMutation) AddGrantIDs(ids ...uuid.UUID) {
+	if m.grants == nil {
+		m.grants = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.grants[ids[i]] = struct{}{}
+	}
+}
+
+// ClearGrants clears the "grants" edge to the Grant entity.
+func (m *UserMutation) ClearGrants() {
+	m.clearedgrants = true
+}
+
+// GrantsCleared reports if the "grants" edge to the Grant entity was cleared.
+func (m *UserMutation) GrantsCleared() bool {
+	return m.clearedgrants
+}
+
+// RemoveGrantIDs removes the "grants" edge to the Grant entity by IDs.
+func (m *UserMutation) RemoveGrantIDs(ids ...uuid.UUID) {
+	if m.removedgrants == nil {
+		m.removedgrants = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.grants, ids[i])
+		m.removedgrants[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedGrants returns the removed IDs of the "grants" edge to the Grant entity.
+func (m *UserMutation) RemovedGrantsIDs() (ids []uuid.UUID) {
+	for id := range m.removedgrants {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// GrantsIDs returns the "grants" edge IDs in the mutation.
+func (m *UserMutation) GrantsIDs() (ids []uuid.UUID) {
+	for id := range m.grants {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetGrants resets all changes to the "grants" edge.
+func (m *UserMutation) ResetGrants() {
+	m.grants = nil
+	m.clearedgrants = false
+	m.removedgrants = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -3814,12 +6055,15 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.sessions != nil {
 		edges = append(edges, user.EdgeSessions)
 	}
 	if m.tickets != nil {
 		edges = append(edges, user.EdgeTickets)
+	}
+	if m.grants != nil {
+		edges = append(edges, user.EdgeGrants)
 	}
 	return edges
 }
@@ -3840,18 +6084,27 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeGrants:
+		ids := make([]ent.Value, 0, len(m.grants))
+		for id := range m.grants {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedsessions != nil {
 		edges = append(edges, user.EdgeSessions)
 	}
 	if m.removedtickets != nil {
 		edges = append(edges, user.EdgeTickets)
+	}
+	if m.removedgrants != nil {
+		edges = append(edges, user.EdgeGrants)
 	}
 	return edges
 }
@@ -3872,18 +6125,27 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeGrants:
+		ids := make([]ent.Value, 0, len(m.removedgrants))
+		for id := range m.removedgrants {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedsessions {
 		edges = append(edges, user.EdgeSessions)
 	}
 	if m.clearedtickets {
 		edges = append(edges, user.EdgeTickets)
+	}
+	if m.clearedgrants {
+		edges = append(edges, user.EdgeGrants)
 	}
 	return edges
 }
@@ -3896,6 +6158,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedsessions
 	case user.EdgeTickets:
 		return m.clearedtickets
+	case user.EdgeGrants:
+		return m.clearedgrants
 	}
 	return false
 }
@@ -3917,6 +6181,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeTickets:
 		m.ResetTickets()
+		return nil
+	case user.EdgeGrants:
+		m.ResetGrants()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

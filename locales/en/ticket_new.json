@@ -1,23 +1,5 @@
 {
-  "label_comment": "Comment",
-  "label_email": "Send link to e-mail",
-  "label_password": "Password",
-  "label_password_email": "Send in clear with notification",
-  "label_password_email_highlight": "clear",
-  "label_expiry": "Ticket expiry",
-  "expiry_automatic": "Automatic",
-  "expiry_single_use": "Single use",
-  "expiry_none": "No expiration",
-  "expiry_custom": "Custom",
-  "label_expiry_total_days": "Expire in total # of days",
-  "label_expiry_last_download": "Expire in # of days after last download",
-  "label_expiry_total_downloads": "Expire after # of downloads",
-  "label_notify_email": "Get notified by e-mail",
-  "label_own_email": "Use my e-mail",
-  "title_own_email": "Use your own e-mail for download notifications",
-  "label_your_lang": "Your language",
-  "label_receiver_lang": "Receiver language",
-  "title_generate_password": "Generate a new password",
   "title_upload": "Upload files",
-  "title_reset": "Reset form fields"
+  "title_reset": "Reset form fields",
+  "label_expiry": "Ticket expiry"
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/middleware"
 
@@ -112,13 +113,24 @@ func SetupClientRoutes(r *gin.Engine, rGroup *gin.RouterGroup, configValue confi
 		if err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 		}
-		targetTicket, _ := config.DBClient.Ticket.Query().
+		targetTicket := config.DBClient.Ticket.Query().
 			Where(ticket.ID(uuid)).
-			First(c.Request.Context())
+			FirstX(c.Request.Context())
 		if targetTicket != nil {
 			c.Redirect(
 				http.StatusPermanentRedirect,
 				fmt.Sprintf("/share/ticket/%s", targetTicket.ID.String()),
+			)
+			return
+		}
+
+		targetGrant := config.DBClient.Grant.Query().
+			Where(grant.ID(uuid)).
+			FirstX(c.Request.Context())
+		if targetGrant != nil {
+			c.Redirect(
+				http.StatusPermanentRedirect,
+				fmt.Sprintf("/share/grant/%s", targetGrant.ID.String()),
 			)
 			return
 		}
@@ -132,13 +144,16 @@ func SetupClientRoutes(r *gin.Engine, rGroup *gin.RouterGroup, configValue confi
 	r.NoRoute(middleware.Auth(configValue, true), func(c *gin.Context) {
 		// Fallback to index.html for React Router
 		c.HTML(http.StatusOK, "index", gin.H{
-			"rootPath":                           configValue.RootPath,
-			"devMode":                            configValue.DevMode,
-			"maxFiles":                           configValue.MaxFiles,
-			"maxSizes":                           configValue.MaxSizes,
-			"defaultExpiryTotalDays":             configValue.DefaultExpiryTotalDays,
-			"defaultExpiryTotalDownloads":        configValue.DefaultExpiryTotalDownloads,
-			"defaultExpiryDaysSinceLastDownload": configValue.DefaultExpiryDaysSinceLastDownload,
+			"rootPath":                              configValue.RootPath,
+			"devMode":                               configValue.DevMode,
+			"maxFiles":                              configValue.MaxFiles,
+			"maxSizes":                              configValue.MaxSizes,
+			"defaultExpiryTotalDays":                configValue.DefaultExpiryTotalDays,
+			"defaultExpiryTotalDownloads":           configValue.DefaultExpiryTotalDownloads,
+			"defaultExpiryDaysSinceLastDownload":    configValue.DefaultExpiryDaysSinceLastDownload,
+			"grantDefaultExpiryTotalDays":           configValue.GrantDefaultExpiryTotalDays,
+			"grantDefaultExpiryTotalUploads":        configValue.GrantDefaultExpiryTotalUploads,
+			"grantDefaultExpiryDaysSinceLastUpload": configValue.GrantDefaultExpiryDaysSinceLastUpload,
 		})
 	})
 

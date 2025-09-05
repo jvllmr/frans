@@ -5,9 +5,42 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/hex"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"time"
 )
 
-func InterfaceSliceToStringSlice(in []interface{}) []string {
+func UnpackFSToPath(fsys fs.FS, targetPath string) error {
+	return fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		relPath, err := filepath.Rel(".", path)
+		if err != nil {
+			return err
+		}
+		targetPath := filepath.Join(targetPath, relPath)
+
+		if d.IsDir() {
+
+			return os.MkdirAll(targetPath, 0755)
+		}
+
+		data, err := fs.ReadFile(fsys, path)
+		if err != nil {
+			return err
+		}
+
+		if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+			return err
+		}
+
+		return os.WriteFile(targetPath, data, 0644)
+	})
+}
+
+func InterfaceSliceToStringSlice(in []any) []string {
 	out := make([]string, len(in))
 	for i, v := range in {
 		s, ok := v.(string)
@@ -45,4 +78,41 @@ func VerifyPassword(password string, hashedPassword string, salt string) bool {
 		panic(err)
 	}
 	return compareStringsTimingSafe(HashPassword(password, decodedSalt), hashedPassword)
+}
+
+func estimatedExpiry(
+	expiryType string,
+	defaultExpiryTotalDays uint8,
+	defaultExpiryDaysSinceLastDownload uint8,
+	customExpiryTotalDays uint8,
+	customExpiryDaysSinceLastDownload uint8,
+	createdAt time.Time,
+	lastDownload *time.Time,
+) *time.Time {
+	if expiryType == "none" {
+		return nil
+	}
+
+	expiryTotalDays := defaultExpiryTotalDays
+	expiryDaysSinceLastDownload := defaultExpiryDaysSinceLastDownload
+	if expiryType == "custom" {
+		expiryTotalDays = customExpiryTotalDays
+		expiryDaysSinceLastDownload = customExpiryDaysSinceLastDownload
+	}
+
+	totalLimit := createdAt.Add(time.Hour * 24 * time.Duration(expiryTotalDays)).UTC()
+
+	if lastDownload == nil {
+		return &totalLimit
+	}
+
+	lastDownloadLimit := lastDownload.Add(
+		time.Hour * 24 * time.Duration(expiryDaysSinceLastDownload),
+	).UTC()
+
+	if lastDownloadLimit.Before(totalLimit) {
+		return &lastDownloadLimit
+	}
+
+	return &totalLimit
 }

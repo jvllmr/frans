@@ -4,6 +4,7 @@ import { IconLockOpen } from "@tabler/icons-react";
 import { QueryKey, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { shareAuthContext } from "./shareAuthContext";
 
 interface TokenGeneratorProps {
   shareTokenGenerator: (password: string) => Promise<{ token: string }>;
@@ -71,7 +72,9 @@ export function ShareAuth<TData>({
           password={password}
           shareTokenGenerator={shareTokenGenerator}
         />
-        <DataContextProvider value={data}>{children}</DataContextProvider>
+        <shareAuthContext.Provider value={{ password }}>
+          <DataContextProvider value={data}>{children}</DataContextProvider>
+        </shareAuthContext.Provider>
       </>
     );
   }

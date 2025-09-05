@@ -3,6 +3,8 @@
 package file
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -18,12 +20,24 @@ const (
 	FieldSize = "size"
 	// FieldSha512 holds the string denoting the sha512 field in the database.
 	FieldSha512 = "sha512"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// FieldLastDownload holds the string denoting the last_download field in the database.
 	FieldLastDownload = "last_download"
 	// FieldTimesDownloaded holds the string denoting the times_downloaded field in the database.
 	FieldTimesDownloaded = "times_downloaded"
+	// FieldExpiryType holds the string denoting the expiry_type field in the database.
+	FieldExpiryType = "expiry_type"
+	// FieldExpiryTotalDays holds the string denoting the expiry_total_days field in the database.
+	FieldExpiryTotalDays = "expiry_total_days"
+	// FieldExpiryDaysSinceLastDownload holds the string denoting the expiry_days_since_last_download field in the database.
+	FieldExpiryDaysSinceLastDownload = "expiry_days_since_last_download"
+	// FieldExpiryTotalDownloads holds the string denoting the expiry_total_downloads field in the database.
+	FieldExpiryTotalDownloads = "expiry_total_downloads"
 	// EdgeTickets holds the string denoting the tickets edge name in mutations.
 	EdgeTickets = "tickets"
+	// EdgeGrants holds the string denoting the grants edge name in mutations.
+	EdgeGrants = "grants"
 	// Table holds the table name of the file in the database.
 	Table = "files"
 	// TicketsTable is the table that holds the tickets relation/edge. The primary key declared below.
@@ -31,6 +45,11 @@ const (
 	// TicketsInverseTable is the table name for the Ticket entity.
 	// It exists in this package in order to avoid circular dependency with the "ticket" package.
 	TicketsInverseTable = "tickets"
+	// GrantsTable is the table that holds the grants relation/edge. The primary key declared below.
+	GrantsTable = "grant_files"
+	// GrantsInverseTable is the table name for the Grant entity.
+	// It exists in this package in order to avoid circular dependency with the "grant" package.
+	GrantsInverseTable = "grants"
 )
 
 // Columns holds all SQL columns for file fields.
@@ -39,14 +58,22 @@ var Columns = []string{
 	FieldName,
 	FieldSize,
 	FieldSha512,
+	FieldCreatedAt,
 	FieldLastDownload,
 	FieldTimesDownloaded,
+	FieldExpiryType,
+	FieldExpiryTotalDays,
+	FieldExpiryDaysSinceLastDownload,
+	FieldExpiryTotalDownloads,
 }
 
 var (
 	// TicketsPrimaryKey and TicketsColumn2 are the table columns denoting the
 	// primary key for the tickets relation (M2M).
 	TicketsPrimaryKey = []string{"ticket_id", "file_id"}
+	// GrantsPrimaryKey and GrantsColumn2 are the table columns denoting the
+	// primary key for the grants relation (M2M).
+	GrantsPrimaryKey = []string{"grant_id", "file_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -60,6 +87,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 	// DefaultTimesDownloaded holds the default value on creation for the "times_downloaded" field.
 	DefaultTimesDownloaded uint64
 )
@@ -87,6 +116,11 @@ func BySha512(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSha512, opts...).ToFunc()
 }
 
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
 // ByLastDownload orders the results by the last_download field.
 func ByLastDownload(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastDownload, opts...).ToFunc()
@@ -95,6 +129,26 @@ func ByLastDownload(opts ...sql.OrderTermOption) OrderOption {
 // ByTimesDownloaded orders the results by the times_downloaded field.
 func ByTimesDownloaded(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTimesDownloaded, opts...).ToFunc()
+}
+
+// ByExpiryType orders the results by the expiry_type field.
+func ByExpiryType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiryType, opts...).ToFunc()
+}
+
+// ByExpiryTotalDays orders the results by the expiry_total_days field.
+func ByExpiryTotalDays(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiryTotalDays, opts...).ToFunc()
+}
+
+// ByExpiryDaysSinceLastDownload orders the results by the expiry_days_since_last_download field.
+func ByExpiryDaysSinceLastDownload(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiryDaysSinceLastDownload, opts...).ToFunc()
+}
+
+// ByExpiryTotalDownloads orders the results by the expiry_total_downloads field.
+func ByExpiryTotalDownloads(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiryTotalDownloads, opts...).ToFunc()
 }
 
 // ByTicketsCount orders the results by tickets count.
@@ -110,10 +164,31 @@ func ByTickets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTicketsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByGrantsCount orders the results by grants count.
+func ByGrantsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newGrantsStep(), opts...)
+	}
+}
+
+// ByGrants orders the results by grants terms.
+func ByGrants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newGrantsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newTicketsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TicketsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, TicketsTable, TicketsPrimaryKey...),
+	)
+}
+func newGrantsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(GrantsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, GrantsTable, GrantsPrimaryKey...),
 	)
 }

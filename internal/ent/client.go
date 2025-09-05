@@ -17,6 +17,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -30,6 +31,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// Grant is the client for interacting with the Grant builders.
+	Grant *GrantClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
 	// ShareAccessToken is the client for interacting with the ShareAccessToken builders.
@@ -50,6 +53,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.File = NewFileClient(c.config)
+	c.Grant = NewGrantClient(c.config)
 	c.Session = NewSessionClient(c.config)
 	c.ShareAccessToken = NewShareAccessTokenClient(c.config)
 	c.Ticket = NewTicketClient(c.config)
@@ -147,6 +151,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:              ctx,
 		config:           cfg,
 		File:             NewFileClient(cfg),
+		Grant:            NewGrantClient(cfg),
 		Session:          NewSessionClient(cfg),
 		ShareAccessToken: NewShareAccessTokenClient(cfg),
 		Ticket:           NewTicketClient(cfg),
@@ -171,6 +176,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:              ctx,
 		config:           cfg,
 		File:             NewFileClient(cfg),
+		Grant:            NewGrantClient(cfg),
 		Session:          NewSessionClient(cfg),
 		ShareAccessToken: NewShareAccessTokenClient(cfg),
 		Ticket:           NewTicketClient(cfg),
@@ -203,21 +209,21 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.File.Use(hooks...)
-	c.Session.Use(hooks...)
-	c.ShareAccessToken.Use(hooks...)
-	c.Ticket.Use(hooks...)
-	c.User.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.File, c.Grant, c.Session, c.ShareAccessToken, c.Ticket, c.User,
+	} {
+		n.Use(hooks...)
+	}
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.File.Intercept(interceptors...)
-	c.Session.Intercept(interceptors...)
-	c.ShareAccessToken.Intercept(interceptors...)
-	c.Ticket.Intercept(interceptors...)
-	c.User.Intercept(interceptors...)
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.File, c.Grant, c.Session, c.ShareAccessToken, c.Ticket, c.User,
+	} {
+		n.Intercept(interceptors...)
+	}
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -225,6 +231,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
+	case *GrantMutation:
+		return c.Grant.mutate(ctx, m)
 	case *SessionMutation:
 		return c.Session.mutate(ctx, m)
 	case *ShareAccessTokenMutation:
@@ -362,6 +370,22 @@ func (c *FileClient) QueryTickets(_m *File) *TicketQuery {
 	return query
 }
 
+// QueryGrants queries the grants edge of a File.
+func (c *FileClient) QueryGrants(_m *File) *GrantQuery {
+	query := (&GrantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, id),
+			sqlgraph.To(grant.Table, grant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, file.GrantsTable, file.GrantsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FileClient) Hooks() []Hook {
 	return c.hooks.File
@@ -384,6 +408,187 @@ func (c *FileClient) mutate(ctx context.Context, m *FileMutation) (Value, error)
 		return (&FileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown File mutation op: %q", m.Op())
+	}
+}
+
+// GrantClient is a client for the Grant schema.
+type GrantClient struct {
+	config
+}
+
+// NewGrantClient returns a client for the Grant from the given config.
+func NewGrantClient(c config) *GrantClient {
+	return &GrantClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `grant.Hooks(f(g(h())))`.
+func (c *GrantClient) Use(hooks ...Hook) {
+	c.hooks.Grant = append(c.hooks.Grant, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `grant.Intercept(f(g(h())))`.
+func (c *GrantClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Grant = append(c.inters.Grant, interceptors...)
+}
+
+// Create returns a builder for creating a Grant entity.
+func (c *GrantClient) Create() *GrantCreate {
+	mutation := newGrantMutation(c.config, OpCreate)
+	return &GrantCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Grant entities.
+func (c *GrantClient) CreateBulk(builders ...*GrantCreate) *GrantCreateBulk {
+	return &GrantCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *GrantClient) MapCreateBulk(slice any, setFunc func(*GrantCreate, int)) *GrantCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &GrantCreateBulk{err: fmt.Errorf("calling to GrantClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*GrantCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &GrantCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Grant.
+func (c *GrantClient) Update() *GrantUpdate {
+	mutation := newGrantMutation(c.config, OpUpdate)
+	return &GrantUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GrantClient) UpdateOne(_m *Grant) *GrantUpdateOne {
+	mutation := newGrantMutation(c.config, OpUpdateOne, withGrant(_m))
+	return &GrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GrantClient) UpdateOneID(id uuid.UUID) *GrantUpdateOne {
+	mutation := newGrantMutation(c.config, OpUpdateOne, withGrantID(id))
+	return &GrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Grant.
+func (c *GrantClient) Delete() *GrantDelete {
+	mutation := newGrantMutation(c.config, OpDelete)
+	return &GrantDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GrantClient) DeleteOne(_m *Grant) *GrantDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GrantClient) DeleteOneID(id uuid.UUID) *GrantDeleteOne {
+	builder := c.Delete().Where(grant.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GrantDeleteOne{builder}
+}
+
+// Query returns a query builder for Grant.
+func (c *GrantClient) Query() *GrantQuery {
+	return &GrantQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGrant},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Grant entity by its id.
+func (c *GrantClient) Get(ctx context.Context, id uuid.UUID) (*Grant, error) {
+	return c.Query().Where(grant.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GrantClient) GetX(ctx context.Context, id uuid.UUID) *Grant {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFiles queries the files edge of a Grant.
+func (c *GrantClient) QueryFiles(_m *Grant) *FileQuery {
+	query := (&FileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(grant.Table, grant.FieldID, id),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, grant.FilesTable, grant.FilesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOwner queries the owner edge of a Grant.
+func (c *GrantClient) QueryOwner(_m *Grant) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(grant.Table, grant.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, grant.OwnerTable, grant.OwnerColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryShareaccesstokens queries the shareaccesstokens edge of a Grant.
+func (c *GrantClient) QueryShareaccesstokens(_m *Grant) *ShareAccessTokenQuery {
+	query := (&ShareAccessTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(grant.Table, grant.FieldID, id),
+			sqlgraph.To(shareaccesstoken.Table, shareaccesstoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, grant.ShareaccesstokensTable, grant.ShareaccesstokensColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *GrantClient) Hooks() []Hook {
+	return c.hooks.Grant
+}
+
+// Interceptors returns the client interceptors.
+func (c *GrantClient) Interceptors() []Interceptor {
+	return c.inters.Grant
+}
+
+func (c *GrantClient) mutate(ctx context.Context, m *GrantMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GrantCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GrantUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GrantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GrantDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Grant mutation op: %q", m.Op())
 	}
 }
 
@@ -653,6 +858,22 @@ func (c *ShareAccessTokenClient) QueryTicket(_m *ShareAccessToken) *TicketQuery 
 			sqlgraph.From(shareaccesstoken.Table, shareaccesstoken.FieldID, id),
 			sqlgraph.To(ticket.Table, ticket.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, shareaccesstoken.TicketTable, shareaccesstoken.TicketColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGrant queries the grant edge of a ShareAccessToken.
+func (c *ShareAccessTokenClient) QueryGrant(_m *ShareAccessToken) *GrantQuery {
+	query := (&GrantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(shareaccesstoken.Table, shareaccesstoken.FieldID, id),
+			sqlgraph.To(grant.Table, grant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, shareaccesstoken.GrantTable, shareaccesstoken.GrantColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1006,6 +1227,22 @@ func (c *UserClient) QueryTickets(_m *User) *TicketQuery {
 	return query
 }
 
+// QueryGrants queries the grants edge of a User.
+func (c *UserClient) QueryGrants(_m *User) *GrantQuery {
+	query := (&GrantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(grant.Table, grant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.GrantsTable, user.GrantsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -1034,9 +1271,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		File, Session, ShareAccessToken, Ticket, User []ent.Hook
+		File, Grant, Session, ShareAccessToken, Ticket, User []ent.Hook
 	}
 	inters struct {
-		File, Session, ShareAccessToken, Ticket, User []ent.Interceptor
+		File, Grant, Session, ShareAccessToken, Ticket, User []ent.Interceptor
 	}
 )

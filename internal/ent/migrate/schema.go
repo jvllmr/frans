@@ -14,14 +14,54 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "size", Type: field.TypeUint64},
 		{Name: "sha512", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "last_download", Type: field.TypeTime, Nullable: true},
 		{Name: "times_downloaded", Type: field.TypeUint64, Default: 0},
+		{Name: "expiry_type", Type: field.TypeString},
+		{Name: "expiry_total_days", Type: field.TypeUint8},
+		{Name: "expiry_days_since_last_download", Type: field.TypeUint8},
+		{Name: "expiry_total_downloads", Type: field.TypeUint8},
 	}
 	// FilesTable holds the schema information for the "files" table.
 	FilesTable = &schema.Table{
 		Name:       "files",
 		Columns:    FilesColumns,
 		PrimaryKey: []*schema.Column{FilesColumns[0]},
+	}
+	// GrantsColumns holds the columns for the "grants" table.
+	GrantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "comment", Type: field.TypeString, Nullable: true},
+		{Name: "expiry_type", Type: field.TypeString},
+		{Name: "hashed_password", Type: field.TypeString},
+		{Name: "salt", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "expiry_total_days", Type: field.TypeUint8},
+		{Name: "expiry_days_since_last_upload", Type: field.TypeUint8},
+		{Name: "expiry_total_uploads", Type: field.TypeUint8},
+		{Name: "file_expiry_type", Type: field.TypeString},
+		{Name: "file_expiry_total_days", Type: field.TypeUint8},
+		{Name: "file_expiry_days_since_last_download", Type: field.TypeUint8},
+		{Name: "file_expiry_total_downloads", Type: field.TypeUint8},
+		{Name: "last_upload", Type: field.TypeTime, Nullable: true},
+		{Name: "times_uploaded", Type: field.TypeUint64, Default: 0},
+		{Name: "email_on_upload", Type: field.TypeString, Nullable: true},
+		{Name: "creator_lang", Type: field.TypeString, Default: "en"},
+		{Name: "user_grants", Type: field.TypeUUID, Nullable: true},
+	}
+	// GrantsTable holds the schema information for the "grants" table.
+	GrantsTable = &schema.Table{
+		Name:       "grants",
+		Columns:    GrantsColumns,
+		PrimaryKey: []*schema.Column{GrantsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "grants_users_grants",
+				Columns:    []*schema.Column{GrantsColumns[17]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
@@ -49,6 +89,7 @@ var (
 	ShareAccessTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "expiry", Type: field.TypeTime},
+		{Name: "grant_shareaccesstokens", Type: field.TypeUUID, Nullable: true},
 		{Name: "ticket_shareaccesstokens", Type: field.TypeUUID, Nullable: true},
 	}
 	// ShareAccessTokensTable holds the schema information for the "share_access_tokens" table.
@@ -58,8 +99,14 @@ var (
 		PrimaryKey: []*schema.Column{ShareAccessTokensColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "share_access_tokens_tickets_shareaccesstokens",
+				Symbol:     "share_access_tokens_grants_shareaccesstokens",
 				Columns:    []*schema.Column{ShareAccessTokensColumns[2]},
+				RefColumns: []*schema.Column{GrantsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "share_access_tokens_tickets_shareaccesstokens",
+				Columns:    []*schema.Column{ShareAccessTokensColumns[3]},
 				RefColumns: []*schema.Column{TicketsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -113,6 +160,31 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// GrantFilesColumns holds the columns for the "grant_files" table.
+	GrantFilesColumns = []*schema.Column{
+		{Name: "grant_id", Type: field.TypeUUID},
+		{Name: "file_id", Type: field.TypeUUID},
+	}
+	// GrantFilesTable holds the schema information for the "grant_files" table.
+	GrantFilesTable = &schema.Table{
+		Name:       "grant_files",
+		Columns:    GrantFilesColumns,
+		PrimaryKey: []*schema.Column{GrantFilesColumns[0], GrantFilesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "grant_files_grant_id",
+				Columns:    []*schema.Column{GrantFilesColumns[0]},
+				RefColumns: []*schema.Column{GrantsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "grant_files_file_id",
+				Columns:    []*schema.Column{GrantFilesColumns[1]},
+				RefColumns: []*schema.Column{FilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// TicketFilesColumns holds the columns for the "ticket_files" table.
 	TicketFilesColumns = []*schema.Column{
 		{Name: "ticket_id", Type: field.TypeUUID},
@@ -141,18 +213,24 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		FilesTable,
+		GrantsTable,
 		SessionsTable,
 		ShareAccessTokensTable,
 		TicketsTable,
 		UsersTable,
+		GrantFilesTable,
 		TicketFilesTable,
 	}
 )
 
 func init() {
+	GrantsTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
-	ShareAccessTokensTable.ForeignKeys[0].RefTable = TicketsTable
+	ShareAccessTokensTable.ForeignKeys[0].RefTable = GrantsTable
+	ShareAccessTokensTable.ForeignKeys[1].RefTable = TicketsTable
 	TicketsTable.ForeignKeys[0].RefTable = UsersTable
+	GrantFilesTable.ForeignKeys[0].RefTable = GrantsTable
+	GrantFilesTable.ForeignKeys[1].RefTable = FilesTable
 	TicketFilesTable.ForeignKeys[0].RefTable = TicketsTable
 	TicketFilesTable.ForeignKeys[1].RefTable = FilesTable
 }

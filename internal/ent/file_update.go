@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 )
@@ -79,6 +80,20 @@ func (_u *FileUpdate) SetNillableSha512(v *string) *FileUpdate {
 	return _u
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (_u *FileUpdate) SetCreatedAt(v time.Time) *FileUpdate {
+	_u.mutation.SetCreatedAt(v)
+	return _u
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_u *FileUpdate) SetNillableCreatedAt(v *time.Time) *FileUpdate {
+	if v != nil {
+		_u.SetCreatedAt(*v)
+	}
+	return _u
+}
+
 // SetLastDownload sets the "last_download" field.
 func (_u *FileUpdate) SetLastDownload(v time.Time) *FileUpdate {
 	_u.mutation.SetLastDownload(v)
@@ -120,6 +135,83 @@ func (_u *FileUpdate) AddTimesDownloaded(v int64) *FileUpdate {
 	return _u
 }
 
+// SetExpiryType sets the "expiry_type" field.
+func (_u *FileUpdate) SetExpiryType(v string) *FileUpdate {
+	_u.mutation.SetExpiryType(v)
+	return _u
+}
+
+// SetNillableExpiryType sets the "expiry_type" field if the given value is not nil.
+func (_u *FileUpdate) SetNillableExpiryType(v *string) *FileUpdate {
+	if v != nil {
+		_u.SetExpiryType(*v)
+	}
+	return _u
+}
+
+// SetExpiryTotalDays sets the "expiry_total_days" field.
+func (_u *FileUpdate) SetExpiryTotalDays(v uint8) *FileUpdate {
+	_u.mutation.ResetExpiryTotalDays()
+	_u.mutation.SetExpiryTotalDays(v)
+	return _u
+}
+
+// SetNillableExpiryTotalDays sets the "expiry_total_days" field if the given value is not nil.
+func (_u *FileUpdate) SetNillableExpiryTotalDays(v *uint8) *FileUpdate {
+	if v != nil {
+		_u.SetExpiryTotalDays(*v)
+	}
+	return _u
+}
+
+// AddExpiryTotalDays adds value to the "expiry_total_days" field.
+func (_u *FileUpdate) AddExpiryTotalDays(v int8) *FileUpdate {
+	_u.mutation.AddExpiryTotalDays(v)
+	return _u
+}
+
+// SetExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field.
+func (_u *FileUpdate) SetExpiryDaysSinceLastDownload(v uint8) *FileUpdate {
+	_u.mutation.ResetExpiryDaysSinceLastDownload()
+	_u.mutation.SetExpiryDaysSinceLastDownload(v)
+	return _u
+}
+
+// SetNillableExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field if the given value is not nil.
+func (_u *FileUpdate) SetNillableExpiryDaysSinceLastDownload(v *uint8) *FileUpdate {
+	if v != nil {
+		_u.SetExpiryDaysSinceLastDownload(*v)
+	}
+	return _u
+}
+
+// AddExpiryDaysSinceLastDownload adds value to the "expiry_days_since_last_download" field.
+func (_u *FileUpdate) AddExpiryDaysSinceLastDownload(v int8) *FileUpdate {
+	_u.mutation.AddExpiryDaysSinceLastDownload(v)
+	return _u
+}
+
+// SetExpiryTotalDownloads sets the "expiry_total_downloads" field.
+func (_u *FileUpdate) SetExpiryTotalDownloads(v uint8) *FileUpdate {
+	_u.mutation.ResetExpiryTotalDownloads()
+	_u.mutation.SetExpiryTotalDownloads(v)
+	return _u
+}
+
+// SetNillableExpiryTotalDownloads sets the "expiry_total_downloads" field if the given value is not nil.
+func (_u *FileUpdate) SetNillableExpiryTotalDownloads(v *uint8) *FileUpdate {
+	if v != nil {
+		_u.SetExpiryTotalDownloads(*v)
+	}
+	return _u
+}
+
+// AddExpiryTotalDownloads adds value to the "expiry_total_downloads" field.
+func (_u *FileUpdate) AddExpiryTotalDownloads(v int8) *FileUpdate {
+	_u.mutation.AddExpiryTotalDownloads(v)
+	return _u
+}
+
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
 func (_u *FileUpdate) AddTicketIDs(ids ...uuid.UUID) *FileUpdate {
 	_u.mutation.AddTicketIDs(ids...)
@@ -133,6 +225,21 @@ func (_u *FileUpdate) AddTickets(v ...*Ticket) *FileUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.AddTicketIDs(ids...)
+}
+
+// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
+func (_u *FileUpdate) AddGrantIDs(ids ...uuid.UUID) *FileUpdate {
+	_u.mutation.AddGrantIDs(ids...)
+	return _u
+}
+
+// AddGrants adds the "grants" edges to the Grant entity.
+func (_u *FileUpdate) AddGrants(v ...*Grant) *FileUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddGrantIDs(ids...)
 }
 
 // Mutation returns the FileMutation object of the builder.
@@ -159,6 +266,27 @@ func (_u *FileUpdate) RemoveTickets(v ...*Ticket) *FileUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTicketIDs(ids...)
+}
+
+// ClearGrants clears all "grants" edges to the Grant entity.
+func (_u *FileUpdate) ClearGrants() *FileUpdate {
+	_u.mutation.ClearGrants()
+	return _u
+}
+
+// RemoveGrantIDs removes the "grants" edge to Grant entities by IDs.
+func (_u *FileUpdate) RemoveGrantIDs(ids ...uuid.UUID) *FileUpdate {
+	_u.mutation.RemoveGrantIDs(ids...)
+	return _u
+}
+
+// RemoveGrants removes "grants" edges to Grant entities.
+func (_u *FileUpdate) RemoveGrants(v ...*Grant) *FileUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveGrantIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -209,6 +337,9 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Sha512(); ok {
 		_spec.SetField(file.FieldSha512, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.CreatedAt(); ok {
+		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
+	}
 	if value, ok := _u.mutation.LastDownload(); ok {
 		_spec.SetField(file.FieldLastDownload, field.TypeTime, value)
 	}
@@ -220,6 +351,27 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedTimesDownloaded(); ok {
 		_spec.AddField(file.FieldTimesDownloaded, field.TypeUint64, value)
+	}
+	if value, ok := _u.mutation.ExpiryType(); ok {
+		_spec.SetField(file.FieldExpiryType, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ExpiryTotalDays(); ok {
+		_spec.SetField(file.FieldExpiryTotalDays, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.AddedExpiryTotalDays(); ok {
+		_spec.AddField(file.FieldExpiryTotalDays, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.ExpiryDaysSinceLastDownload(); ok {
+		_spec.SetField(file.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.AddedExpiryDaysSinceLastDownload(); ok {
+		_spec.AddField(file.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.ExpiryTotalDownloads(); ok {
+		_spec.SetField(file.FieldExpiryTotalDownloads, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.AddedExpiryTotalDownloads(); ok {
+		_spec.AddField(file.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
 	if _u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -259,6 +411,51 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.GrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   file.GrantsTable,
+			Columns: file.GrantsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedGrantsIDs(); len(nodes) > 0 && !_u.mutation.GrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   file.GrantsTable,
+			Columns: file.GrantsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.GrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   file.GrantsTable,
+			Columns: file.GrantsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -335,6 +532,20 @@ func (_u *FileUpdateOne) SetNillableSha512(v *string) *FileUpdateOne {
 	return _u
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (_u *FileUpdateOne) SetCreatedAt(v time.Time) *FileUpdateOne {
+	_u.mutation.SetCreatedAt(v)
+	return _u
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_u *FileUpdateOne) SetNillableCreatedAt(v *time.Time) *FileUpdateOne {
+	if v != nil {
+		_u.SetCreatedAt(*v)
+	}
+	return _u
+}
+
 // SetLastDownload sets the "last_download" field.
 func (_u *FileUpdateOne) SetLastDownload(v time.Time) *FileUpdateOne {
 	_u.mutation.SetLastDownload(v)
@@ -376,6 +587,83 @@ func (_u *FileUpdateOne) AddTimesDownloaded(v int64) *FileUpdateOne {
 	return _u
 }
 
+// SetExpiryType sets the "expiry_type" field.
+func (_u *FileUpdateOne) SetExpiryType(v string) *FileUpdateOne {
+	_u.mutation.SetExpiryType(v)
+	return _u
+}
+
+// SetNillableExpiryType sets the "expiry_type" field if the given value is not nil.
+func (_u *FileUpdateOne) SetNillableExpiryType(v *string) *FileUpdateOne {
+	if v != nil {
+		_u.SetExpiryType(*v)
+	}
+	return _u
+}
+
+// SetExpiryTotalDays sets the "expiry_total_days" field.
+func (_u *FileUpdateOne) SetExpiryTotalDays(v uint8) *FileUpdateOne {
+	_u.mutation.ResetExpiryTotalDays()
+	_u.mutation.SetExpiryTotalDays(v)
+	return _u
+}
+
+// SetNillableExpiryTotalDays sets the "expiry_total_days" field if the given value is not nil.
+func (_u *FileUpdateOne) SetNillableExpiryTotalDays(v *uint8) *FileUpdateOne {
+	if v != nil {
+		_u.SetExpiryTotalDays(*v)
+	}
+	return _u
+}
+
+// AddExpiryTotalDays adds value to the "expiry_total_days" field.
+func (_u *FileUpdateOne) AddExpiryTotalDays(v int8) *FileUpdateOne {
+	_u.mutation.AddExpiryTotalDays(v)
+	return _u
+}
+
+// SetExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field.
+func (_u *FileUpdateOne) SetExpiryDaysSinceLastDownload(v uint8) *FileUpdateOne {
+	_u.mutation.ResetExpiryDaysSinceLastDownload()
+	_u.mutation.SetExpiryDaysSinceLastDownload(v)
+	return _u
+}
+
+// SetNillableExpiryDaysSinceLastDownload sets the "expiry_days_since_last_download" field if the given value is not nil.
+func (_u *FileUpdateOne) SetNillableExpiryDaysSinceLastDownload(v *uint8) *FileUpdateOne {
+	if v != nil {
+		_u.SetExpiryDaysSinceLastDownload(*v)
+	}
+	return _u
+}
+
+// AddExpiryDaysSinceLastDownload adds value to the "expiry_days_since_last_download" field.
+func (_u *FileUpdateOne) AddExpiryDaysSinceLastDownload(v int8) *FileUpdateOne {
+	_u.mutation.AddExpiryDaysSinceLastDownload(v)
+	return _u
+}
+
+// SetExpiryTotalDownloads sets the "expiry_total_downloads" field.
+func (_u *FileUpdateOne) SetExpiryTotalDownloads(v uint8) *FileUpdateOne {
+	_u.mutation.ResetExpiryTotalDownloads()
+	_u.mutation.SetExpiryTotalDownloads(v)
+	return _u
+}
+
+// SetNillableExpiryTotalDownloads sets the "expiry_total_downloads" field if the given value is not nil.
+func (_u *FileUpdateOne) SetNillableExpiryTotalDownloads(v *uint8) *FileUpdateOne {
+	if v != nil {
+		_u.SetExpiryTotalDownloads(*v)
+	}
+	return _u
+}
+
+// AddExpiryTotalDownloads adds value to the "expiry_total_downloads" field.
+func (_u *FileUpdateOne) AddExpiryTotalDownloads(v int8) *FileUpdateOne {
+	_u.mutation.AddExpiryTotalDownloads(v)
+	return _u
+}
+
 // AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
 func (_u *FileUpdateOne) AddTicketIDs(ids ...uuid.UUID) *FileUpdateOne {
 	_u.mutation.AddTicketIDs(ids...)
@@ -389,6 +677,21 @@ func (_u *FileUpdateOne) AddTickets(v ...*Ticket) *FileUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.AddTicketIDs(ids...)
+}
+
+// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
+func (_u *FileUpdateOne) AddGrantIDs(ids ...uuid.UUID) *FileUpdateOne {
+	_u.mutation.AddGrantIDs(ids...)
+	return _u
+}
+
+// AddGrants adds the "grants" edges to the Grant entity.
+func (_u *FileUpdateOne) AddGrants(v ...*Grant) *FileUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddGrantIDs(ids...)
 }
 
 // Mutation returns the FileMutation object of the builder.
@@ -415,6 +718,27 @@ func (_u *FileUpdateOne) RemoveTickets(v ...*Ticket) *FileUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTicketIDs(ids...)
+}
+
+// ClearGrants clears all "grants" edges to the Grant entity.
+func (_u *FileUpdateOne) ClearGrants() *FileUpdateOne {
+	_u.mutation.ClearGrants()
+	return _u
+}
+
+// RemoveGrantIDs removes the "grants" edge to Grant entities by IDs.
+func (_u *FileUpdateOne) RemoveGrantIDs(ids ...uuid.UUID) *FileUpdateOne {
+	_u.mutation.RemoveGrantIDs(ids...)
+	return _u
+}
+
+// RemoveGrants removes "grants" edges to Grant entities.
+func (_u *FileUpdateOne) RemoveGrants(v ...*Grant) *FileUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveGrantIDs(ids...)
 }
 
 // Where appends a list predicates to the FileUpdate builder.
@@ -495,6 +819,9 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 	if value, ok := _u.mutation.Sha512(); ok {
 		_spec.SetField(file.FieldSha512, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.CreatedAt(); ok {
+		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
+	}
 	if value, ok := _u.mutation.LastDownload(); ok {
 		_spec.SetField(file.FieldLastDownload, field.TypeTime, value)
 	}
@@ -506,6 +833,27 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 	}
 	if value, ok := _u.mutation.AddedTimesDownloaded(); ok {
 		_spec.AddField(file.FieldTimesDownloaded, field.TypeUint64, value)
+	}
+	if value, ok := _u.mutation.ExpiryType(); ok {
+		_spec.SetField(file.FieldExpiryType, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ExpiryTotalDays(); ok {
+		_spec.SetField(file.FieldExpiryTotalDays, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.AddedExpiryTotalDays(); ok {
+		_spec.AddField(file.FieldExpiryTotalDays, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.ExpiryDaysSinceLastDownload(); ok {
+		_spec.SetField(file.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.AddedExpiryDaysSinceLastDownload(); ok {
+		_spec.AddField(file.FieldExpiryDaysSinceLastDownload, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.ExpiryTotalDownloads(); ok {
+		_spec.SetField(file.FieldExpiryTotalDownloads, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.AddedExpiryTotalDownloads(); ok {
+		_spec.AddField(file.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
 	if _u.mutation.TicketsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -545,6 +893,51 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.GrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   file.GrantsTable,
+			Columns: file.GrantsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedGrantsIDs(); len(nodes) > 0 && !_u.mutation.GrantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   file.GrantsTable,
+			Columns: file.GrantsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.GrantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   file.GrantsTable,
+			Columns: file.GrantsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

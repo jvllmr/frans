@@ -16,6 +16,8 @@ const (
 	FieldExpiry = "expiry"
 	// EdgeTicket holds the string denoting the ticket edge name in mutations.
 	EdgeTicket = "ticket"
+	// EdgeGrant holds the string denoting the grant edge name in mutations.
+	EdgeGrant = "grant"
 	// Table holds the table name of the shareaccesstoken in the database.
 	Table = "share_access_tokens"
 	// TicketTable is the table that holds the ticket relation/edge.
@@ -25,6 +27,13 @@ const (
 	TicketInverseTable = "tickets"
 	// TicketColumn is the table column denoting the ticket relation/edge.
 	TicketColumn = "ticket_shareaccesstokens"
+	// GrantTable is the table that holds the grant relation/edge.
+	GrantTable = "share_access_tokens"
+	// GrantInverseTable is the table name for the Grant entity.
+	// It exists in this package in order to avoid circular dependency with the "grant" package.
+	GrantInverseTable = "grants"
+	// GrantColumn is the table column denoting the grant relation/edge.
+	GrantColumn = "grant_shareaccesstokens"
 )
 
 // Columns holds all SQL columns for shareaccesstoken fields.
@@ -36,6 +45,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "share_access_tokens"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
+	"grant_shareaccesstokens",
 	"ticket_shareaccesstokens",
 }
 
@@ -73,10 +83,24 @@ func ByTicketField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTicketStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByGrantField orders the results by grant field.
+func ByGrantField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newGrantStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newTicketStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TicketInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, TicketTable, TicketColumn),
+	)
+}
+func newGrantStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(GrantInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, GrantTable, GrantColumn),
 	)
 }

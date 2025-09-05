@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -19,8 +21,14 @@ func (File) Fields() []ent.Field {
 		field.String("name"),
 		field.Uint64("size"),
 		field.String("sha512"),
+		field.Time("created_at").
+			Default(time.Now),
 		field.Time("last_download").Nillable().Optional(),
 		field.Uint64("times_downloaded").Default(0),
+		field.String("expiry_type"),
+		field.Uint8("expiry_total_days"),
+		field.Uint8("expiry_days_since_last_download"),
+		field.Uint8("expiry_total_downloads"),
 	}
 }
 
@@ -28,5 +36,6 @@ func (File) Fields() []ent.Field {
 func (File) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("tickets", Ticket.Type).Ref("files"),
+		edge.From("grants", Grant.Type).Ref("files"),
 	}
 }

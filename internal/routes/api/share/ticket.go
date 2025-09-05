@@ -21,6 +21,7 @@ func getTicketMiddleware(c *gin.Context) {
 
 	ticketId := c.Param("ticketId")
 	username, password, ok := c.Request.BasicAuth()
+
 	if !ok {
 		tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
 		if err != nil {
@@ -39,11 +40,15 @@ func getTicketMiddleware(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
-	ticketValue := config.DBClient.Ticket.Query().
+	ticketValue, err := config.DBClient.Ticket.Query().
 		Where(ticket.ID(uuidValue)).
 		WithOwner().
-		WithFiles().
-		OnlyX(c.Request.Context())
+		WithFiles().Only(c.Request.Context())
+
+	if err != nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
+	}
+
 	if ok && !util.VerifyPassword(password, ticketValue.HashedPassword, ticketValue.Salt) {
 		c.AbortWithStatus(http.StatusUnauthorized)
 	}
@@ -98,7 +103,7 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config) {
 			SetLastDownload(time.Now()).
 			AddTimesDownloaded(1).
 			SaveX(c.Request.Context())
-		filePath := util.GetFilesFilePath(configValue, fileValue.Sha512)
+		filePath := util.FilesFilePath(configValue, fileValue.Sha512)
 		c.FileAttachment(filePath, fileValue.Name)
 		ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
 		if ticketValue.EmailOnDownload != nil &&

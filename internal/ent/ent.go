@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -78,6 +79,7 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			file.Table:             file.ValidColumn,
+			grant.Table:            grant.ValidColumn,
 			session.Table:          session.ValidColumn,
 			shareaccesstoken.Table: shareaccesstoken.ValidColumn,
 			ticket.Table:           ticket.ValidColumn,

@@ -9,15 +9,20 @@ var taskCommand = &cobra.Command{
 
 var sessionLifecycleTaskCommand = &cobra.Command{
 	Use:   "lifecycle-session",
-	Short: "Delete stale sessions",
+	Short: "Delete expired sessions",
 }
 
 var ticketLifecycleTaskCommand = &cobra.Command{
 	Use:   "lifecycle-ticket",
-	Short: "Delete stale tickets",
+	Short: "Delete expired tickets",
+}
+
+var grantLifecycleTaskCommand = &cobra.Command{
+	Use:   "lifecycle-grant",
+	Short: "Delete expired grants",
 }
 
 var fileLifecycleTaskCommand = &cobra.Command{
 	Use:   "lifecycle-file",
-	Short: "Delete stale files",
+	Short: "Delete expired files",
 }
