@@ -113,9 +113,9 @@ jobs:
           MYSQL_DATABASE: mysql
         options: >-
           --health-cmd="mysqladmin ping -h 127.0.0.1 --connect-timeout=5 -u root -p secret"
-          --health-interval 15s
+          --health-interval 20s
           --health-timeout 5s
-          --health-retries 7
+          --health-retries 10
 
     steps:
       - name: Download artifact from build workflow
