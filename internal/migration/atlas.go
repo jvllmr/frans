@@ -259,7 +259,7 @@ func (e *entRevisionsReadWriter) createTable() error {
 		hash text NOT NULL, 
 		partial_hashes json NULL, 
 		operator_version text NOT NULL,
-		PRIMARY KEY (version)
+		PRIMARY KEY (version(255))
 	)`)
 	case "sqlite3":
 		_, err = e.db.Exec(`CREATE TABLE IF NOT EXISTS atlas_schema_revisions (

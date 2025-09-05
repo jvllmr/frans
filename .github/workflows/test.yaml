@@ -123,7 +123,5 @@ jobs:
         with:
           name: build-output
       - run: chmod +x frans
-      - name: Wait a bit for mysql...
-        run: sleep 5
       - name: Run migration
         run: ./frans migrate
