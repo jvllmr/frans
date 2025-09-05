@@ -42,7 +42,8 @@ jobs:
           fetch-depth: 0
           tags: true
           ref: main
-      - run: git checkout origin/${GITHUB_EVENT_PULL_REQUEST_HEAD_REF}
+      - if: ${{ env.GITHUB_EVENT_PULL_REQUEST_HEAD_REF != '' }}
+        run: git checkout origin/${GITHUB_EVENT_PULL_REQUEST_HEAD_REF}
         env:
           GITHUB_EVENT_PULL_REQUEST_HEAD_REF: ${{ github.event.pull_request.head.ref }}
       - uses: ariga/setup-atlas@d52cd13fed38eca914fa57071155a4644fd6f820 # v0.2
