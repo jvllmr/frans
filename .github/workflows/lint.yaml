@@ -39,6 +39,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           persist-credentials: true
+          ref: ${{ github.event.pull_request.head.ref }}
       - run: git fetch origin main
       - uses: ariga/setup-atlas@d52cd13fed38eca914fa57071155a4644fd6f820 # v0.2
       - name: Lint migrations
