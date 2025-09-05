@@ -112,7 +112,7 @@ jobs:
           MYSQL_PASSWORD: mysql
           MYSQL_DATABASE: mysql
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 --connect-timeout=5 -u root -p secret"
+          --health-cmd="mysqladmin ping --silent --connect-timeout=5"
           --health-interval 20s
           --health-timeout 5s
           --health-retries 10
