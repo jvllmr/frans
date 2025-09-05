@@ -11,6 +11,8 @@ repos:
     rev: v1.11.0
     hooks:
       - id: zizmor
+        args:
+          - --fix=all
   - repo: https://github.com/jvllmr/pre-commit-prettier
     rev: v3.5.2
     hooks:
