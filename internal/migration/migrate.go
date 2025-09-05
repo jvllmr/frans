@@ -43,7 +43,7 @@ func buildMigrationDsn(dbConfig config.DBConfig) (string, error) {
 			dbConfig.DBPort = 3306
 		}
 		dsn = fmt.Sprintf(
-			"mysql://%s:%s@%s:%d/%s",
+			"mysql://%s:%s@tcp(%s:%d)/%s",
 			dbConfig.DBUser,
 			dbConfig.DBPassword,
 			dbConfig.DBHost,
