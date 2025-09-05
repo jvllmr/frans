@@ -30,3 +30,16 @@ jobs:
         run: pnpm install --frozen-lock
       - name: Run eslint
         run: pnpm eslint .
+  atlas:
+    permissions:
+      contents: read
+    name: atlas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          persist-credentials: true
+      - uses: ariga/setup-atlas@d1a1b6bd01882a2c60332b67080cd3e8b7e7500e # v1.12.0
+      - run: git fetch origin main
+      - name: Lint migrations
+        run: ./scripts/migration.sh
