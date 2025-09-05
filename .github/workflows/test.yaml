@@ -107,15 +107,15 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: secret
           MYSQL_USER: mysql
           MYSQL_PASSWORD: mysql
           MYSQL_DATABASE: mysql
         options: >-
-          --health-cmd="mysql -h 127.0.0.1 -u root -p root -e \"SELECT 1;\" >/dev/null 2>&1"
-          --health-interval 10s
+          --health-cmd="mysql -h 127.0.0.1 -u root -p secret -e \"SELECT 1;\" >/dev/null 2>&1"
+          --health-interval 15s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 7
 
     steps:
       - name: Download artifact from build workflow
