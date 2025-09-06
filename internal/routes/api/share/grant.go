@@ -23,6 +23,7 @@ import (
 
 type grantShareController struct {
 	config       config.Config
+	db           *ent.Client
 	grantService services.GrantService
 	fileService  services.FileService
 	mailer       mail.Mailer
@@ -40,7 +41,7 @@ func (gsc *grantShareController) fetchGrantAccessToken(c *gin.Context) {
 	tokenValueBytes := util.GenerateSalt()
 
 	tokenValue := hex.EncodeToString(tokenValueBytes)
-	token := config.DBClient.ShareAccessToken.Create().
+	token := gsc.db.ShareAccessToken.Create().
 		SetID(tokenValue).
 		SetExpiry(time.Now().Add(10 * time.Second)).
 		SaveX(c.Request.Context())
@@ -66,7 +67,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 		return
 	}
 	gsc.fileService.EnsureFilesTmpPath()
-	tx, err := config.DBClient.Tx(c.Request.Context())
+	tx, err := gsc.db.Tx(c.Request.Context())
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -143,7 +144,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 		)
 	}
 	tx.Commit()
-	grantValue = config.DBClient.Grant.Query().
+	grantValue = gsc.db.Grant.Query().
 		Where(grant.ID(grantValue.ID)).
 		WithFiles().
 		WithOwner().
@@ -155,59 +156,60 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	)
 }
 
-func getGrantMiddleware(c *gin.Context) {
-	grantId := c.Param("grantId")
-	username, password, ok := c.Request.BasicAuth()
+func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
+	getGrantMiddleware := func(c *gin.Context) {
+		grantId := c.Param("grantId")
+		username, password, ok := c.Request.BasicAuth()
 
-	if !ok {
-		tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
+		if !ok {
+			tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
+			if err != nil {
+				c.AbortWithStatus(http.StatusUnauthorized)
+				return
+			}
+			token, err := db.ShareAccessToken.Get(c.Request.Context(), tokenCookie)
+			if err != nil {
+				c.AbortWithError(http.StatusUnauthorized, err)
+				return
+			} else if token.Expiry.Before(time.Now()) {
+				c.AbortWithStatus(http.StatusUnauthorized)
+				return
+			}
+		} else if username != grantId {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		uuidValue, err := uuid.Parse(grantId)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+		grantValue, err := db.Grant.Query().
+			Where(grant.ID(uuidValue)).
+			WithOwner().
+			WithFiles().
+			Only(c.Request.Context())
+
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-		token, err := config.DBClient.ShareAccessToken.Get(c.Request.Context(), tokenCookie)
-		if err != nil {
-			c.AbortWithError(http.StatusUnauthorized, err)
-			return
-		} else if token.Expiry.Before(time.Now()) {
+
+		if ok && !util.VerifyPassword(password, grantValue.HashedPassword, grantValue.Salt) {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-	} else if username != grantId {
-		c.AbortWithStatus(http.StatusUnauthorized)
-		return
-	}
-	uuidValue, err := uuid.Parse(grantId)
-	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-	grantValue, err := config.DBClient.Grant.Query().
-		Where(grant.ID(uuidValue)).
-		WithOwner().
-		WithFiles().
-		Only(c.Request.Context())
 
-	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
-		return
+		c.Set(config.ShareGrantContext, grantValue)
 	}
 
-	if ok && !util.VerifyPassword(password, grantValue.HashedPassword, grantValue.Salt) {
-		c.AbortWithStatus(http.StatusUnauthorized)
-		return
-	}
-
-	c.Set(config.ShareGrantContext, grantValue)
-}
-
-func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config) {
 	singleGrantShareGroup := r.Group("/:grantId", getGrantMiddleware)
 
 	controller := grantShareController{
 		config:       configValue,
+		db:           db,
 		grantService: services.NewGrantService(configValue),
-		fileService:  services.NewFileService(configValue),
+		fileService:  services.NewFileService(configValue, db),
 		mailer:       mail.NewMailer(configValue),
 	}
 

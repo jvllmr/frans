@@ -14,6 +14,7 @@ import (
 
 type FileService struct {
 	config config.Config
+	db     *ent.Client
 }
 
 func (fs FileService) EnsureFilesTmpPath() {
@@ -62,7 +63,7 @@ func (fs FileService) DeleteFile(fileValue *ent.File) error {
 	if err != nil {
 		return err
 	}
-	err = config.DBClient.File.DeleteOne(fileValue).Exec(context.Background())
+	err = fs.db.File.DeleteOne(fileValue).Exec(context.Background())
 	return err
 }
 
@@ -116,6 +117,6 @@ func (fs FileService) ToPublicFile(file *ent.File) PublicFile {
 
 }
 
-func NewFileService(c config.Config) FileService {
-	return FileService{config: c}
+func NewFileService(c config.Config, db *ent.Client) FileService {
+	return FileService{config: c, db: db}
 }

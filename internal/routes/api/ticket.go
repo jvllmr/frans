@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/ent/user"
 	"github.com/jvllmr/frans/internal/mail"
@@ -21,6 +22,7 @@ import (
 
 type ticketController struct {
 	config        config.Config
+	db            *ent.Client
 	ticketService services.TicketService
 	fileService   services.FileService
 	mailer        mail.Mailer
@@ -43,7 +45,7 @@ type ticketForm struct {
 func (tc *ticketController) createTicketHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
 	var form ticketForm
-	tx, err := config.DBClient.Tx(c.Request.Context())
+	tx, err := tc.db.Tx(c.Request.Context())
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -172,7 +174,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 func (tc *ticketController) fetchTicketsHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
-	query := config.DBClient.Ticket.Query().WithFiles().WithOwner()
+	query := tc.db.Ticket.Query().WithFiles().WithOwner()
 
 	if !currentUser.IsAdmin {
 		query = query.Where(ticket.HasOwnerWith(user.ID(currentUser.ID)))
@@ -189,11 +191,12 @@ func (tc *ticketController) fetchTicketsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, publicTickets)
 }
 
-func setupTicketGroup(r *gin.RouterGroup, configValue config.Config) {
+func setupTicketGroup(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
 	controller := ticketController{
 		config:        configValue,
+		db:            db,
 		ticketService: services.NewTicketService(configValue),
-		fileService:   services.NewFileService(configValue),
+		fileService:   services.NewFileService(configValue, db),
 		mailer:        mail.NewMailer(configValue),
 	}
 	r.POST("", controller.createTicketHandler)

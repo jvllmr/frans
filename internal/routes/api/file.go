@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/user"
@@ -17,13 +18,14 @@ import (
 
 type fileController struct {
 	config      config.Config
+	db          *ent.Client
 	fileService services.FileService
 }
 
 func (fc *fileController) fetchReceivedFilesHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
 
-	files := config.DBClient.File.Query().
+	files := fc.db.File.Query().
 		Where(file.HasGrantsWith(grant.HasOwnerWith(user.ID(currentUser.ID)))).
 		AllX(c.Request.Context())
 
@@ -42,7 +44,7 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	fileValue, err := config.DBClient.File.Get(
+	fileValue, err := fc.db.File.Get(
 		c.Request.Context(),
 		uuid.MustParse(requestedFile.ID),
 	)
@@ -60,10 +62,11 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 
 }
 
-func setupFileGroup(r *gin.RouterGroup, configValue config.Config) {
+func setupFileGroup(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
 	controller := fileController{
 		config:      configValue,
-		fileService: services.NewFileService(configValue),
+		db:          db,
+		fileService: services.NewFileService(configValue, db),
 	}
 	r.GET("/received", controller.fetchReceivedFilesHandler)
 	r.GET("/:fileId", controller.fetchFileHandler)

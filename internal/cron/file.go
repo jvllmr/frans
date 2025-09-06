@@ -4,15 +4,14 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/services"
 	"github.com/jvllmr/frans/internal/util"
 )
 
-func FileLifecycleTask(fs services.FileService) {
-	files := config.DBClient.File.Query().
+func FileLifecycleTask(db *ent.Client, fs services.FileService) {
+	files := db.File.Query().
 		Where(file.TimesDownloadedGT(0)).
 		WithTickets(func(ticketQuery *ent.TicketQuery) {
 			ticketQuery.WithOwner()
