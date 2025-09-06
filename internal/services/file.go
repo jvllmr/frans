@@ -2,7 +2,11 @@ package services
 
 import (
 	"context"
+	"crypto/sha512"
+	"encoding/hex"
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"time"
@@ -11,6 +15,21 @@ import (
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
 )
+
+type ErrFileTooBig struct {
+	size    int64
+	maxSize int64
+}
+
+func (e *ErrFileTooBig) Error() string {
+	return fmt.Sprintf(
+		"file too big: tried to create file with %d bytes in size, but only %d bytes are allowed",
+		e.size,
+		e.maxSize,
+	)
+}
+
+var _ error = (*ErrFileTooBig)(nil)
 
 type FileService struct {
 	config config.Config
@@ -55,6 +74,64 @@ func (fs FileService) ShouldDeleteFile(
 	}
 	return fileValue.TimesDownloaded >= uint64(fs.config.DefaultExpiryTotalDownloads) ||
 		estimatedExpiry.Before(now)
+}
+
+func (fs FileService) CreateFile(
+	ctx context.Context,
+	tx *ent.Tx,
+	fileHeader *multipart.FileHeader,
+	expiryType string,
+	expiryDaysSinceLastDownload uint8,
+	expiryTotalDays uint8,
+	expiryTotalDownloads uint8,
+
+) (*ent.File, error) {
+	if fileHeader.Size > fs.config.MaxSizes {
+		return nil, &ErrFileTooBig{
+			size:    fileHeader.Size,
+			maxSize: fs.config.MaxSizes,
+		}
+	}
+
+	incomingFileHandle, err := fileHeader.Open()
+	if err != nil {
+		return nil, fmt.Errorf("create file: %w", err)
+	}
+	hasher := sha512.New()
+	tmpFilePath := fs.FilesTmpFilePath()
+	tmpFileHandle, err := os.Create(tmpFilePath)
+	if err != nil {
+		return nil, fmt.Errorf("create file: %w", err)
+	}
+	defer os.Remove(tmpFilePath)
+	writer := io.MultiWriter(hasher, tmpFileHandle)
+	_, err = io.Copy(writer, incomingFileHandle)
+	if err != nil {
+		return nil, fmt.Errorf("create file: %w", err)
+	}
+	tmpFileHandle.Close()
+
+	hash := hasher.Sum(nil)
+	sha512sum := hex.EncodeToString(hash)
+	dbFile, err := tx.File.Create().
+		SetID(uuid.New()).
+		SetName(fileHeader.Filename).
+		SetSize(uint64(fileHeader.Size)).
+		SetSha512(sha512sum).
+		SetExpiryType(expiryType).
+		SetExpiryDaysSinceLastDownload(expiryDaysSinceLastDownload).
+		SetExpiryTotalDays(expiryTotalDays).
+		SetExpiryTotalDownloads(expiryTotalDownloads).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("create file: %w", err)
+	}
+	targetFilePath := fs.FilesFilePath(sha512sum)
+	if _, err = os.Stat(targetFilePath); err != nil {
+		os.Rename(tmpFilePath, targetFilePath)
+	}
+
+	return dbFile, nil
 }
 
 func (fs FileService) DeleteFile(fileValue *ent.File) error {

@@ -6,9 +6,11 @@ import (
 	"log/slog"
 	"slices"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/util"
+	"golang.org/x/oauth2"
 )
 
 func (f *FransOidcProvider) MustGetUser(ctx context.Context, userId uuid.UUID) *ent.User {
@@ -17,8 +19,16 @@ func (f *FransOidcProvider) MustGetUser(ctx context.Context, userId uuid.UUID) *
 
 func (f *FransOidcProvider) ProvisionUser(
 	ctx context.Context,
-	claimsData map[string]any,
+	idToken *oidc.IDToken,
+	tokenSource *oauth2.TokenSource,
 ) (*ent.User, error) {
+	userInfo, err := f.UserInfo(ctx, *tokenSource)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve user info: %w", err)
+	}
+	claimsData := make(map[string]any)
+	_ = idToken.Claims(&claimsData)
+	_ = userInfo.Claims(&claimsData)
 	userId, err := uuid.Parse(claimsData["sub"].(string))
 	if err != nil {
 		return nil, err
