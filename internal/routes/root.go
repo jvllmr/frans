@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -14,7 +15,7 @@ import (
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 )
 
-func SetupRootRouter(configValue config.Config) *gin.Engine {
+func SetupRootRouter(configValue config.Config) (*gin.Engine, error) {
 
 	r := gin.New()
 
@@ -30,9 +31,13 @@ func SetupRootRouter(configValue config.Config) *gin.Engine {
 
 	defaultGroup := r.Group(configValue.RootPath)
 
-	pkceCache := oidc.CreatePKCECache()
+	oidcProvider, err := oidc.NewOIDC(configValue)
 
-	clientRoutes.SetupClientRoutes(r, defaultGroup, configValue, pkceCache)
-	apiRoutes.SetupAPIRoutes(defaultGroup, configValue, pkceCache)
-	return r
+	if err != nil {
+		return nil, fmt.Errorf("root setup: %w", err)
+	}
+
+	clientRoutes.SetupClientRoutes(r, defaultGroup, configValue, oidcProvider)
+	apiRoutes.SetupAPIRoutes(defaultGroup, configValue, oidcProvider)
+	return r, nil
 }

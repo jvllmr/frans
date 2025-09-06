@@ -37,7 +37,7 @@ var rootCmd = &cobra.Command{
 
 func Main() {
 	godotenv.Load()
-	configValue := config.GetSafeConfig()
+	configValue := config.NewSafeConfig()
 	initFrans(configValue)
 	defer config.DBClient.Close()
 

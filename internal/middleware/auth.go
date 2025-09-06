@@ -1,9 +1,7 @@
 package middleware
 
 import (
-	"log"
 	"log/slog"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,31 +14,16 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func missingAuthResponse(c *gin.Context, oauth2Config oauth2.Config, pkceCache *oidc.PKCECache) {
-	if pkceCache != nil {
-		state, verifier := pkceCache.CreateChallenge()
-		log.Printf("verifier %s", verifier)
-		c.SetCookie(config.AuthOriginCookieName, c.Request.URL.String(), 3_600, "", "", true, true)
-		c.Redirect(
-			http.StatusTemporaryRedirect,
-			oauth2Config.AuthCodeURL(state, oauth2.S256ChallengeOption(verifier)),
-		)
-	} else {
-		c.Status(http.StatusUnauthorized)
-	}
-
-}
-
-func Auth(configValue config.Config, redirect *oidc.PKCECache) gin.HandlerFunc {
+func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		var err error
-		oauth2Config := oidc.CreateOauth2Config(configValue, c.Request)
+		oauth2Config := p.NewOauth2Config(c.Request)
 
 		accessTokenCookie, err := c.Request.Cookie(config.AccessTokenCookieName)
 		if err != nil {
 			slog.Debug("Not authenticated", "err", err)
-			missingAuthResponse(c, oauth2Config, redirect)
+			p.MissingAuthResponse(c, oauth2Config, redirect)
 			c.Abort()
 			return
 		}
@@ -48,7 +31,7 @@ func Auth(configValue config.Config, redirect *oidc.PKCECache) gin.HandlerFunc {
 		idTokenCookie, err := c.Request.Cookie(config.IdTokenCookieName)
 		if err != nil {
 			slog.Debug("Not authenticated", "err", err)
-			missingAuthResponse(c, oauth2Config, redirect)
+			p.MissingAuthResponse(c, oauth2Config, redirect)
 			c.Abort()
 			return
 		}
@@ -58,7 +41,7 @@ func Auth(configValue config.Config, redirect *oidc.PKCECache) gin.HandlerFunc {
 			Only(c.Request.Context())
 		if err != nil {
 			slog.Debug("Not authenticated", "err", err)
-			missingAuthResponse(c, oauth2Config, redirect)
+			p.MissingAuthResponse(c, oauth2Config, redirect)
 			c.Abort()
 			return
 		}
@@ -75,7 +58,7 @@ func Auth(configValue config.Config, redirect *oidc.PKCECache) gin.HandlerFunc {
 		newToken, err := tokenSource.Token()
 		if err != nil {
 			slog.Debug("Not authenticated", "err", err)
-			missingAuthResponse(c, oauth2Config, redirect)
+			p.MissingAuthResponse(c, oauth2Config, redirect)
 			c.Abort()
 			return
 		}
@@ -88,11 +71,11 @@ func Auth(configValue config.Config, redirect *oidc.PKCECache) gin.HandlerFunc {
 			oidc.SetAccessTokenCookie(c, newToken.AccessToken)
 		}
 
-		userinfo, err := oidc.OidcProvider.UserInfo(c.Request.Context(), tokenSource)
+		userinfo, err := p.UserInfo(c.Request.Context(), tokenSource)
 
 		if err != nil {
 			slog.Debug("Not authenticated", "err", err)
-			missingAuthResponse(c, oauth2Config, redirect)
+			p.MissingAuthResponse(c, oauth2Config, redirect)
 			c.Abort()
 			return
 		}
@@ -105,7 +88,7 @@ func Auth(configValue config.Config, redirect *oidc.PKCECache) gin.HandlerFunc {
 				"user_id",
 				session.Edges.User.ID,
 			)
-			missingAuthResponse(c, oauth2Config, redirect)
+			p.MissingAuthResponse(c, oauth2Config, redirect)
 			c.Abort()
 			return
 		}

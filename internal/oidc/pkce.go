@@ -33,6 +33,6 @@ func (p *PKCECache) GetVerifier(state OidcState) (oidcVerifier, error) {
 	return verifier, nil
 }
 
-func CreatePKCECache() *PKCECache {
+func NewPKCECache() *PKCECache {
 	return &PKCECache{lru: expirable.NewLRU[string, string](2048, nil, 1*time.Hour)}
 }

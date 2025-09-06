@@ -92,7 +92,7 @@ func getDriver(db *sql.DB, dbType string) (migrate.Driver, error) {
 }
 
 func Migrate() {
-	dbConfig, err := config.GetDBConfig()
+	dbConfig, err := config.NewDBConfig()
 	if err != nil {
 		log.Fatalf("Could not get database config: %v", err)
 	}

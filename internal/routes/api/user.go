@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/middleware"
+	"github.com/jvllmr/frans/internal/oidc"
 	"github.com/jvllmr/frans/internal/services"
 )
 
@@ -26,7 +27,7 @@ func fetchUsers(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, publicUsers)
 }
 
-func setupUserGroup(r *gin.RouterGroup, configValue config.Config) {
+func setupUserGroup(r *gin.RouterGroup, oidcProvider *oidc.FransOidcProvider) {
 	r.GET("/me", fetchMe)
-	r.GET("", middleware.AdminRequired(configValue), fetchUsers)
+	r.GET("", middleware.AdminRequired(oidcProvider), fetchUsers)
 }

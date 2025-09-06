@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/middleware"
 	"github.com/jvllmr/frans/internal/oidc"
@@ -107,8 +108,7 @@ func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 }
 
 type clientController struct {
-	config    config.Config
-	pkceCache *oidc.PKCECache
+	config config.Config
 }
 
 func (cc *clientController) redirectShareLink(c *gin.Context) {
@@ -117,6 +117,7 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
+
 	targetTicket := config.DBClient.Ticket.Query().
 		Where(ticket.ID(uuid)).
 		FirstX(c.Request.Context())
@@ -127,15 +128,26 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 		)
 		return
 	}
+
+	targetGrant := config.DBClient.Grant.Query().
+		Where(grant.ID(uuid)).
+		FirstX(c.Request.Context())
+	if targetGrant != nil {
+		c.Redirect(
+			http.StatusPermanentRedirect,
+			fmt.Sprintf("/share/grant/%s", targetGrant.ID.String()),
+		)
+		return
+	}
 }
 
 func SetupClientRoutes(
 	r *gin.Engine,
 	rGroup *gin.RouterGroup,
 	configValue config.Config,
-	pkceCache *oidc.PKCECache,
+	oidcProvider *oidc.FransOidcProvider,
 ) {
-	controller := clientController{config: configValue, pkceCache: pkceCache}
+	controller := clientController{config: configValue}
 
 	rGroup.GET("/s/:id", controller.redirectShareLink)
 
@@ -143,7 +155,7 @@ func SetupClientRoutes(
 	staticFiles, _ := fs.Sub(clientFiles, "assets")
 	rGroup.StaticFS("/static", http.FS(staticFiles))
 
-	r.NoRoute(middleware.Auth(configValue, pkceCache), func(c *gin.Context) {
+	r.NoRoute(middleware.Auth(oidcProvider, true), func(c *gin.Context) {
 		// Fallback to index.html for React Router
 		c.HTML(http.StatusOK, "index", gin.H{
 			"rootPath":                              configValue.RootPath,

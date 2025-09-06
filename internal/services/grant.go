@@ -16,7 +16,7 @@ type GrantService struct {
 }
 
 func (gs GrantService) GrantShareLink(ctx *gin.Context, grant *ent.Grant) string {
-	return fmt.Sprintf("%s/s/%s", config.GetBaseURL(gs.config, ctx.Request), grant.ID.String())
+	return fmt.Sprintf("%s/s/%s", gs.config.GetBaseURL(ctx.Request), grant.ID.String())
 }
 
 func (gs GrantService) GrantEstimatedExpiry(grantValue *ent.Grant) *time.Time {

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log/slog"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/config"
@@ -12,14 +13,18 @@ import (
 )
 
 func startGin() {
-	configValue := config.GetSafeConfig()
-	oidc.InitOIDC(configValue)
+	configValue := config.NewSafeConfig()
+	oidc.NewOIDC(configValue)
 	if configValue.DevMode {
 		slog.Info("frans was started in development mode")
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
-	r := routes.SetupRootRouter(configValue)
+	r, err := routes.SetupRootRouter(configValue)
+	if err != nil {
+		slog.Error("Setup failed", "err", err)
+		os.Exit(1)
+	}
 	serveString := fmt.Sprintf("%s:%d", configValue.Host, configValue.Port)
 	slog.Info(fmt.Sprintf("Serving on %s", serveString))
 	r.Run(serveString)
