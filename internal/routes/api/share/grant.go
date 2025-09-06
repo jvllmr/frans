@@ -1,12 +1,10 @@
 package shareRoutes
 
 import (
-	"crypto/sha512"
 	"encoding/hex"
-	"io"
+	"errors"
 	"log/slog"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -74,46 +72,19 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 
 	dbFiles := make([]*ent.File, len(files))
 	for i, fileHeader := range files {
-		if fileHeader.Size > gsc.config.MaxSizes {
-			c.AbortWithStatus(http.StatusBadRequest)
-			return
-		}
-
-		incomingFileHandle, _ := fileHeader.Open()
-		hasher := sha512.New()
-		tmpFilePath := gsc.fileService.FilesTmpFilePath()
-		tmpFileHandle, err := os.Create(tmpFilePath)
-		if err != nil {
+		dbFile, err := gsc.fileService.CreateFile(
+			c.Request.Context(),
+			tx, fileHeader,
+			grantValue.ExpiryType,
+			grantValue.FileExpiryDaysSinceLastDownload,
+			grantValue.FileExpiryTotalDays,
+			grantValue.FileExpiryTotalDownloads,
+		)
+		var errFileTooBig *services.ErrFileTooBig
+		if errors.As(err, &errFileTooBig) {
+			c.AbortWithError(http.StatusBadRequest, err)
+		} else {
 			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-		defer os.Remove(tmpFilePath)
-		writer := io.MultiWriter(hasher, tmpFileHandle)
-		_, err = io.Copy(writer, incomingFileHandle)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-		tmpFileHandle.Close()
-
-		hash := hasher.Sum(nil)
-		sha512sum := hex.EncodeToString(hash)
-		dbFile, err := tx.File.Create().
-			SetID(uuid.New()).
-			SetName(fileHeader.Filename).
-			SetSize(uint64(fileHeader.Size)).
-			SetSha512(sha512sum).
-			SetExpiryType(grantValue.FileExpiryType).
-			SetExpiryDaysSinceLastDownload(grantValue.FileExpiryDaysSinceLastDownload).
-			SetExpiryTotalDays(grantValue.FileExpiryTotalDays).
-			SetExpiryTotalDownloads(grantValue.FileExpiryTotalDownloads).
-			Save(c.Request.Context())
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-		}
-		targetFilePath := gsc.fileService.FilesFilePath(sha512sum)
-		if _, err = os.Stat(targetFilePath); err != nil {
-			os.Rename(tmpFilePath, targetFilePath)
 		}
 		tx.Grant.UpdateOne(grantValue).
 			AddFiles(dbFile).

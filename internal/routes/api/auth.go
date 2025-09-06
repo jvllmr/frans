@@ -65,17 +65,7 @@ func (ac *authController) authCallback(c *gin.Context) {
 	}
 	tokenSource := oauth2Config.TokenSource(c.Request.Context(), oauth2Token)
 
-	userInfo, err := ac.provider.UserInfo(c.Request.Context(), tokenSource)
-	if err != nil {
-		slog.Error("Failed to retrieve user info", "err", err)
-		ac.redirectToAuth(c, oauth2Config)
-		return
-	}
-	claimsData := make(map[string]any)
-	_ = idToken.Claims(&claimsData)
-	_ = userInfo.Claims(&claimsData)
-
-	user, err := ac.provider.ProvisionUser(c.Request.Context(), claimsData)
+	user, err := ac.provider.ProvisionUser(c.Request.Context(), idToken, &tokenSource)
 	if err != nil {
 		slog.Error("Could not provision user", "err", err)
 		c.AbortWithError(http.StatusInternalServerError, err)
