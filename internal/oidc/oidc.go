@@ -3,9 +3,7 @@ package oidc
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"net/http"
-	"os"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
@@ -13,43 +11,75 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var OidcProvider *oidc.Provider
-var OidcProviderExtraEndpoints struct {
+type oidcProviderExtraEndpoints struct {
 	EndSessionEndpoint string `json:"end_session_endpoint"`
 }
 
-func NewOidcConfig(configValue config.Config) *oidc.Config {
-	return &oidc.Config{ClientID: configValue.OidcClientID}
+type FransOidcProvider struct {
+	*oidc.Provider
+	*PKCECache
+	extraEndpoints oidcProviderExtraEndpoints
+	config         config.Config
+	OidcConfig     oidc.Config
 }
 
-func InitOIDC(configValue config.Config) {
+func (f *FransOidcProvider) EndSessionEndpoint() string {
+	return f.extraEndpoints.EndSessionEndpoint
+}
+
+func NewOIDC(configValue config.Config) (*FransOidcProvider, error) {
 	var err error
-	OidcProvider, err = oidc.NewProvider(context.Background(), configValue.OidcIssuer)
+	oidcProvider, err := oidc.NewProvider(context.Background(), configValue.OidcIssuer)
 	if err != nil {
-		slog.Error("Failed to create OIDC provider", "err", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("failed to create OIDC provider: %w", err)
 	}
-	if err := OidcProvider.Claims(&OidcProviderExtraEndpoints); err != nil {
-		slog.Error("Failed to find extra endpoints in OIDC Provider", "err", err)
-		os.Exit(1)
+	var extraEndpoints oidcProviderExtraEndpoints
+	if err := oidcProvider.Claims(&extraEndpoints); err != nil {
+		return nil, fmt.Errorf("failed to find extra endpoints in OIDC Provider: %w", err)
 	}
-
+	return &FransOidcProvider{
+		config:         configValue,
+		Provider:       oidcProvider,
+		extraEndpoints: extraEndpoints,
+		PKCECache:      NewPKCECache(),
+		OidcConfig: oidc.Config{
+			ClientID: configValue.OidcClientID,
+		},
+	}, nil
 }
 
-func buildRedirectURL(configValue config.Config, request *http.Request) string {
-	return fmt.Sprintf("%s/api/auth/callback", config.GetBaseURL(configValue, request))
+func (f *FransOidcProvider) buildRedirectURL(request *http.Request) string {
+	return fmt.Sprintf("%s/api/auth/callback", f.config.GetBaseURL(request))
 }
 
-func CreateOauth2Config(configValue config.Config, request *http.Request) oauth2.Config {
-	endpoint := OidcProvider.Endpoint()
+func (f *FransOidcProvider) NewOauth2Config(request *http.Request) oauth2.Config {
+	endpoint := f.Endpoint()
 	endpoint.AuthStyle = oauth2.AuthStyleInParams
 	return oauth2.Config{
-		ClientID:     configValue.OidcClientID,
+		ClientID:     f.config.OidcClientID,
 		ClientSecret: "",
 		Endpoint:     endpoint,
-		RedirectURL:  buildRedirectURL(configValue, request),
+		RedirectURL:  f.buildRedirectURL(request),
 		Scopes:       config.OidcScopes,
 	}
+}
+
+func (f *FransOidcProvider) MissingAuthResponse(
+	c *gin.Context,
+	oauth2Config oauth2.Config,
+	redirect bool,
+) {
+	if redirect {
+		state, verifier := f.PKCECache.CreateChallenge()
+		c.SetCookie(config.AuthOriginCookieName, c.Request.URL.String(), 3_600, "", "", true, true)
+		c.Redirect(
+			http.StatusTemporaryRedirect,
+			oauth2Config.AuthCodeURL(state, oauth2.S256ChallengeOption(verifier)),
+		)
+	} else {
+		c.Status(http.StatusUnauthorized)
+	}
+
 }
 
 func SetAccessTokenCookie(c *gin.Context, accessToken string) {

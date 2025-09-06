@@ -9,7 +9,7 @@ import (
 )
 
 func startCronScheduler() {
-	configValue := config.GetSafeConfig()
+	configValue := config.NewSafeConfig()
 	cronRunner := cron.New()
 	cronRunner.AddFunc("@every 1m", fransCron.SessionLifecycleTask)
 

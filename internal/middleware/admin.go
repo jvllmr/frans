@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/oidc"
 )
 
-func AdminRequired(configValue config.Config) gin.HandlerFunc {
-	auth := Auth(configValue, nil)
+func AdminRequired(p *oidc.FransOidcProvider) gin.HandlerFunc {
+	auth := Auth(p, false)
 
 	return func(c *gin.Context) {
 		auth(c)

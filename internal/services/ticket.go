@@ -36,7 +36,7 @@ func (ts TicketService) TicketEstimatedExpiry(ticketValue *ent.Ticket) *time.Tim
 }
 
 func (ts TicketService) TicketShareLink(ctx *gin.Context, ticket *ent.Ticket) string {
-	return fmt.Sprintf("%s/s/%s", config.GetBaseURL(ts.config, ctx.Request), ticket.ID.String())
+	return fmt.Sprintf("%s/s/%s", ts.config.GetBaseURL(ctx.Request), ticket.ID.String())
 }
 
 func (ts TicketService) ShouldDeleteTicket(ticketValue *ent.Ticket) bool {

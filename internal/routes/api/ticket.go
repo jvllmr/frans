@@ -49,9 +49,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 	}
 	if err := c.ShouldBind(&form); err == nil {
 		salt := util.GenerateSalt()
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-		}
+
 		hashedPassword := util.HashPassword(form.Password, salt)
 		ticketBuilder := tx.Ticket.Create().
 			SetID(uuid.New()).

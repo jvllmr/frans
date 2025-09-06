@@ -70,7 +70,7 @@ func setDBConfigDefaults(viper *viper.Viper) {
 	viper.SetDefault("db_password", "")
 }
 
-func GetDBConfig() (DBConfig, error) {
+func NewDBConfig() (DBConfig, error) {
 	var config DBConfig
 	dbConf := viper.New()
 	setDBConfigDefaults(dbConf)
@@ -86,7 +86,7 @@ func GetDBConfig() (DBConfig, error) {
 	return config, nil
 }
 
-func GetConfig() (Config, error) {
+func NewConfig() (Config, error) {
 	var config Config
 	fransConf := viper.New()
 
@@ -131,21 +131,21 @@ func GetConfig() (Config, error) {
 	return config, nil
 }
 
-func GetSafeConfig() Config {
-	configValue, err := GetConfig()
+func NewSafeConfig() Config {
+	configValue, err := NewConfig()
 	if err != nil {
 		panic(err)
 	}
 	return configValue
 }
 
-func GetBaseURL(configValue Config, request *http.Request) string {
+func (c *Config) GetBaseURL(request *http.Request) string {
 	proto := "http"
 	if request.TLS != nil {
 		proto = "https"
 	}
 	host := request.Host
-	patchedRootPath := configValue.RootPath
+	patchedRootPath := c.RootPath
 	if len(patchedRootPath) == 0 {
 		patchedRootPath = "/"
 	}

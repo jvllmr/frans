@@ -10,19 +10,30 @@ import (
 	shareRoutes "github.com/jvllmr/frans/internal/routes/api/share"
 )
 
-func SetupAPIRoutes(r *gin.RouterGroup, configValue config.Config, pkceCache *oidc.PKCECache) {
+func SetupAPIRoutes(
+	r *gin.RouterGroup,
+	configValue config.Config,
+	oidcProvider *oidc.FransOidcProvider,
+) {
 	apiGroup := r.Group("/api")
-	setupAuthRoutes(apiGroup, configValue, pkceCache)
+	setupAuthRoutes(apiGroup, configValue, oidcProvider)
+
+	auth := middleware.Auth(oidcProvider, false)
 
 	v1Group := apiGroup.Group("/v1")
-	userGroup := v1Group.Group("/user", middleware.Auth(configValue, nil))
-	setupUserGroup(userGroup, configValue)
-	ticketGroup := v1Group.Group("/ticket", middleware.Auth(configValue, nil))
+
+	userGroup := v1Group.Group("/user", auth)
+	setupUserGroup(userGroup, oidcProvider)
+
+	ticketGroup := v1Group.Group("/ticket", auth)
 	setupTicketGroup(ticketGroup, configValue)
-	grantGroup := v1Group.Group("/grant", middleware.Auth(configValue, nil))
+
+	grantGroup := v1Group.Group("/grant", auth)
 	setupGrantGroup(grantGroup, configValue)
-	fileGroup := v1Group.Group("/file", middleware.Auth(configValue, nil))
+
+	fileGroup := v1Group.Group("/file", auth)
 	setupFileGroup(fileGroup, configValue)
+
 	shareGroup := v1Group.Group("/share")
 	shareRoutes.SetupShareRoutes(shareGroup, configValue)
 }

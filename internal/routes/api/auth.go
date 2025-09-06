@@ -17,12 +17,12 @@ import (
 )
 
 type authController struct {
-	config    config.Config
-	pkceCache *oidc.PKCECache
+	config   config.Config
+	provider *oidc.FransOidcProvider
 }
 
 func (ac *authController) redirectToAuth(c *gin.Context, oauth2Config oauth2.Config) {
-	state, verifier := ac.pkceCache.CreateChallenge()
+	state, verifier := ac.provider.CreateChallenge()
 
 	c.Redirect(
 		http.StatusTemporaryRedirect,
@@ -32,10 +32,10 @@ func (ac *authController) redirectToAuth(c *gin.Context, oauth2Config oauth2.Con
 
 func (ac *authController) authCallback(c *gin.Context) {
 	code := c.Request.URL.Query().Get("code")
-	oauth2Config := oidc.CreateOauth2Config(ac.config, c.Request)
+	oauth2Config := ac.provider.NewOauth2Config(c.Request)
 
 	var state oidc.OidcState = c.Request.URL.Query().Get("state")
-	pkceVerifier, err := ac.pkceCache.GetVerifier(state)
+	pkceVerifier, err := ac.provider.GetVerifier(state)
 
 	if err != nil {
 		slog.Error("Failed at Oauth2 token exchange", "err", err)
@@ -60,7 +60,7 @@ func (ac *authController) authCallback(c *gin.Context) {
 		return
 	}
 
-	verifier := oidc.OidcProvider.Verifier(oidc.NewOidcConfig(ac.config))
+	verifier := ac.provider.Verifier(&ac.provider.OidcConfig)
 	idToken, err := verifier.Verify(c.Request.Context(), rawIDToken)
 	if err != nil {
 		slog.Error("Failed to verify id token", "err", err)
@@ -69,7 +69,7 @@ func (ac *authController) authCallback(c *gin.Context) {
 	}
 	tokenSource := oauth2Config.TokenSource(c.Request.Context(), oauth2Token)
 
-	userInfo, err := oidc.OidcProvider.UserInfo(c.Request.Context(), tokenSource)
+	userInfo, err := ac.provider.UserInfo(c.Request.Context(), tokenSource)
 	if err != nil {
 		slog.Error("Failed to retrieve user info", "err", err)
 		ac.redirectToAuth(c, oauth2Config)
@@ -158,16 +158,20 @@ func (ac *authController) logoutCallback(ctx *gin.Context) {
 		http.StatusTemporaryRedirect,
 		fmt.Sprintf(
 			"%s?id_token_hint=%s&post_logout_redirect_uri=%s",
-			oidc.OidcProviderExtraEndpoints.EndSessionEndpoint,
+			ac.provider.EndSessionEndpoint(),
 			idTokenCookie.Value,
 			redirectURI,
 		),
 	)
 }
 
-func setupAuthRoutes(r *gin.RouterGroup, configValue config.Config, pkceCache *oidc.PKCECache) {
+func setupAuthRoutes(
+	r *gin.RouterGroup,
+	configValue config.Config,
+	provider *oidc.FransOidcProvider,
+) {
 	authGroup := r.Group("/auth")
-	controller := authController{config: configValue, pkceCache: pkceCache}
+	controller := authController{config: configValue, provider: provider}
 
 	authGroup.GET("/callback", controller.authCallback)
 
