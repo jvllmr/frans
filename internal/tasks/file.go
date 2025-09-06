@@ -28,6 +28,11 @@ func FileLifecycleTask(db *ent.Client, fs services.FileService) {
 			ticketValue = fileValue.Edges.Tickets[0]
 		}
 
+		var grantValue *ent.Grant
+		if len(fileValue.Edges.Grants) == 1 {
+			grantValue = fileValue.Edges.Grants[0]
+		}
+
 		if fs.ShouldDeleteFile(fileValue) {
 			err := fs.DeleteFile(fileValue)
 			if err != nil {
@@ -40,6 +45,11 @@ func FileLifecycleTask(db *ent.Client, fs services.FileService) {
 			if ticketValue != nil {
 				users = append(users, ticketValue.Edges.Owner)
 			}
+
+			if grantValue != nil {
+				users = append(users, grantValue.Edges.Owner)
+			}
+
 		}
 
 	}
