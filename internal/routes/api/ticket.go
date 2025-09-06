@@ -1,12 +1,10 @@
 package apiRoutes
 
 import (
-	"crypto/sha512"
 	"encoding/hex"
-	"io"
+	"errors"
 	"log/slog"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -86,46 +84,22 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 		tc.fileService.EnsureFilesTmpPath()
 
 		for _, fileHeader := range files {
-			if fileHeader.Size > tc.config.MaxSizes {
-				c.AbortWithStatus(http.StatusBadRequest)
-				return
-			}
-
-			incomingFileHandle, _ := fileHeader.Open()
-			hasher := sha512.New()
-			tmpFilePath := tc.fileService.FilesTmpFilePath()
-			tmpFileHandle, err := os.Create(tmpFilePath)
+			dbFile, err := tc.fileService.CreateFile(
+				c.Request.Context(),
+				tx, fileHeader,
+				ticketValue.ExpiryType,
+				ticketValue.ExpiryDaysSinceLastDownload,
+				ticketValue.ExpiryTotalDays,
+				ticketValue.ExpiryTotalDownloads,
+			)
 			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
+				var errFileTooBig *services.ErrFileTooBig
+				if errors.As(err, &errFileTooBig) {
+					c.AbortWithError(http.StatusBadRequest, err)
+				} else {
+					c.AbortWithError(http.StatusInternalServerError, err)
+				}
 				return
-			}
-			defer os.Remove(tmpFilePath)
-			writer := io.MultiWriter(hasher, tmpFileHandle)
-			_, err = io.Copy(writer, incomingFileHandle)
-			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
-			tmpFileHandle.Close()
-
-			hash := hasher.Sum(nil)
-			sha512sum := hex.EncodeToString(hash)
-			dbFile, err := tx.File.Create().
-				SetID(uuid.New()).
-				SetName(fileHeader.Filename).
-				SetSize(uint64(fileHeader.Size)).
-				SetSha512(sha512sum).
-				SetExpiryType(form.ExpiryType).
-				SetExpiryDaysSinceLastDownload(form.ExpiryDaysSinceLastDownload).
-				SetExpiryTotalDays(form.ExpiryTotalDays).
-				SetExpiryTotalDownloads(form.ExpiryTotalDownloads).
-				Save(c.Request.Context())
-			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-			}
-			targetFilePath := tc.fileService.FilesFilePath(sha512sum)
-			if _, err = os.Stat(targetFilePath); err != nil {
-				os.Rename(tmpFilePath, targetFilePath)
 			}
 			ticketValue = tx.Ticket.UpdateOne(ticketValue).
 				AddFiles(dbFile).
