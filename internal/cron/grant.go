@@ -5,15 +5,15 @@ import (
 	"log/slog"
 
 	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/util"
+	"github.com/jvllmr/frans/internal/services"
 )
 
-func GrantsLifecycleTask(configValue config.Config) {
+func GrantsLifecycleTask(gs services.GrantService) {
 	grants := config.DBClient.Grant.Query().WithFiles().AllX(context.Background())
 	deletedCount := 0
 
 	for _, grantValue := range grants {
-		if util.ShouldDeleteGrant(configValue, grantValue) {
+		if gs.ShouldDeleteGrant(grantValue) {
 			err := config.DBClient.Grant.DeleteOne(grantValue).Exec(context.Background())
 			if err != nil {
 				slog.Error("Could not delete grant", "err", err)

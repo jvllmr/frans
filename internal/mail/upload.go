@@ -6,14 +6,13 @@ import (
 	"text/template"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
 	gomail "gopkg.in/mail.v2"
 )
 
-func SendFileUploadNotification(
+func (m *Mailer) SendFileUploadNotification(
 	ctx *gin.Context,
-	configValue config.Config,
+
 	to string,
 	grantValue *ent.Grant,
 	files []*ent.File,
@@ -56,5 +55,5 @@ func SendFileUploadNotification(
 	}
 
 	message.SetBody("text/plain", bodyStr)
-	sendMail(configValue, message)
+	m.sendMail(message)
 }

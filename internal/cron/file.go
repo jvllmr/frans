@@ -7,10 +7,11 @@ import (
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/services"
 	"github.com/jvllmr/frans/internal/util"
 )
 
-func FileLifecycleTask(configValue config.Config) {
+func FileLifecycleTask(fs services.FileService) {
 	files := config.DBClient.File.Query().
 		Where(file.TimesDownloadedGT(0)).
 		WithTickets(func(ticketQuery *ent.TicketQuery) {
@@ -28,10 +29,10 @@ func FileLifecycleTask(configValue config.Config) {
 			ticketValue = fileValue.Edges.Tickets[0]
 		}
 
-		if util.ShouldDeleteFile(configValue, fileValue) {
-			err := util.DeleteFile(configValue, fileValue)
+		if fs.ShouldDeleteFile(fileValue) {
+			err := fs.DeleteFile(fileValue)
 			if err != nil {
-				filePath := util.FilesFilePath(configValue, fileValue.Sha512)
+				filePath := fs.FilesFilePath(fileValue.Sha512)
 				slog.Error("Could not delete file", "file", filePath, "err", err)
 				continue
 			}
