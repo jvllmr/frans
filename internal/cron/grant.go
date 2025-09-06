@@ -4,17 +4,17 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/services"
 )
 
-func GrantsLifecycleTask(gs services.GrantService) {
-	grants := config.DBClient.Grant.Query().WithFiles().AllX(context.Background())
+func GrantsLifecycleTask(db *ent.Client, gs services.GrantService) {
+	grants := db.Grant.Query().WithFiles().AllX(context.Background())
 	deletedCount := 0
 
 	for _, grantValue := range grants {
 		if gs.ShouldDeleteGrant(grantValue) {
-			err := config.DBClient.Grant.DeleteOne(grantValue).Exec(context.Background())
+			err := db.Grant.DeleteOne(grantValue).Exec(context.Background())
 			if err != nil {
 				slog.Error("Could not delete grant", "err", err)
 				continue

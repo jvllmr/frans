@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent"
 	logging "github.com/jvllmr/frans/internal/logging"
 	"github.com/jvllmr/frans/internal/oidc"
 	apiRoutes "github.com/jvllmr/frans/internal/routes/api"
@@ -15,7 +16,7 @@ import (
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 )
 
-func SetupRootRouter(configValue config.Config) (*gin.Engine, error) {
+func SetupRootRouter(configValue config.Config, db *ent.Client) (*gin.Engine, error) {
 
 	r := gin.New()
 
@@ -31,13 +32,13 @@ func SetupRootRouter(configValue config.Config) (*gin.Engine, error) {
 
 	defaultGroup := r.Group(configValue.RootPath)
 
-	oidcProvider, err := oidc.NewOIDC(configValue)
+	oidcProvider, err := oidc.NewOIDC(configValue, db)
 
 	if err != nil {
 		return nil, fmt.Errorf("root setup: %w", err)
 	}
 
-	clientRoutes.SetupClientRoutes(r, defaultGroup, configValue, oidcProvider)
-	apiRoutes.SetupAPIRoutes(defaultGroup, configValue, oidcProvider)
+	clientRoutes.SetupClientRoutes(r, defaultGroup, configValue, db, oidcProvider)
+	apiRoutes.SetupAPIRoutes(defaultGroup, configValue, db, oidcProvider)
 	return r, nil
 }

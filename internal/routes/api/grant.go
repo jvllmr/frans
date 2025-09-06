@@ -18,6 +18,7 @@ import (
 
 type grantController struct {
 	config       config.Config
+	db           *ent.Client
 	grantService services.GrantService
 	fileService  services.FileService
 	mailer       mail.Mailer
@@ -44,7 +45,7 @@ type grantForm struct {
 func (gc *grantController) createGrantHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
 	var form grantForm
-	tx, err := config.DBClient.Tx(c.Request.Context())
+	tx, err := gc.db.Tx(c.Request.Context())
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -113,7 +114,7 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 
 func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
-	query := config.DBClient.Grant.Query().WithFiles().WithOwner()
+	query := gc.db.Grant.Query().WithFiles().WithOwner()
 
 	if !currentUser.IsAdmin {
 		query = query.Where(grant.HasOwnerWith(user.ID(currentUser.ID)))
@@ -135,11 +136,12 @@ func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, publicGrants)
 }
 
-func setupGrantGroup(r *gin.RouterGroup, configValue config.Config) {
+func setupGrantGroup(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
 	controller := grantController{
 		config:       configValue,
+		db:           db,
 		grantService: services.NewGrantService(configValue),
-		fileService:  services.NewFileService(configValue),
+		fileService:  services.NewFileService(configValue, db),
 		mailer:       mail.NewMailer(configValue),
 	}
 	r.POST("", controller.createGrantHandler)

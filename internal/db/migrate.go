@@ -1,4 +1,4 @@
-package migration
+package db
 
 import (
 	"context"
@@ -62,7 +62,7 @@ func buildMigrationDsn(dbConfig config.DBConfig) (string, error) {
 	return dsn, nil
 }
 
-func getDriver(db *sql.DB, dbType string) (migrate.Driver, error) {
+func getMigrationDriver(db *sql.DB, dbType string) (migrate.Driver, error) {
 	var drv migrate.Driver
 	var err error
 	switch dbType {
@@ -117,7 +117,7 @@ func Migrate() {
 		}
 	}()
 
-	drv, err := getDriver(db, dbConfig.DBType)
+	drv, err := getMigrationDriver(db, dbConfig.DBType)
 	if err != nil {
 		log.Fatalf("Could not get database driver: %v", err)
 	}

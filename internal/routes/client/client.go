@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/middleware"
@@ -109,6 +110,7 @@ func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 
 type clientController struct {
 	config config.Config
+	db     *ent.Client
 }
 
 func (cc *clientController) redirectShareLink(c *gin.Context) {
@@ -118,7 +120,7 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
-	targetTicket := config.DBClient.Ticket.Query().
+	targetTicket := cc.db.Ticket.Query().
 		Where(ticket.ID(uuid)).
 		FirstX(c.Request.Context())
 	if targetTicket != nil {
@@ -129,7 +131,7 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 		return
 	}
 
-	targetGrant := config.DBClient.Grant.Query().
+	targetGrant := cc.db.Grant.Query().
 		Where(grant.ID(uuid)).
 		FirstX(c.Request.Context())
 	if targetGrant != nil {
@@ -145,9 +147,13 @@ func SetupClientRoutes(
 	r *gin.Engine,
 	rGroup *gin.RouterGroup,
 	configValue config.Config,
+	db *ent.Client,
 	oidcProvider *oidc.FransOidcProvider,
 ) {
-	controller := clientController{config: configValue}
+	controller := clientController{
+		config: configValue,
+		db:     db,
+	}
 
 	rGroup.GET("/s/:id", controller.redirectShareLink)
 

@@ -3,10 +3,12 @@ package logging
 import (
 	"context"
 	"log/slog"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jvllmr/frans/internal/config"
 )
 
 // adapted from https://github.com/FabienMht/ginslog
@@ -44,4 +46,14 @@ func GinLogger(logger *slog.Logger) gin.HandlerFunc {
 		logger.LogAttrs(context.Background(), slog.LevelInfo, "Incoming request", attributes...)
 
 	}
+}
+
+func SetupLogging(logConfig config.LogConfig) {
+	var logHandler slog.Handler = slog.NewTextHandler(os.Stdout, nil)
+	if logConfig.LogJSON {
+		logHandler = slog.NewJSONHandler(os.Stdout, nil)
+	}
+
+	basicLogger := slog.New(logHandler)
+	slog.SetDefault(basicLogger)
 }

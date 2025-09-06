@@ -10,18 +10,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-type DBConfig struct {
-	DBType     string `mapstructure:"db_type"`
-	DBHost     string `mapstructure:"db_host"`
-	DBPort     uint16 `mapstructure:"db_port"`
-	DBName     string `mapstructure:"db_name"`
-	DBUser     string `mapstructure:"db_user"`
-	DBPassword string `mapstructure:"db_password"`
-}
-
 type Config struct {
-	DBConfig `mapstructure:",squash"`
-	DevMode  bool `mapstructure:"dev_mode"`
+	DBConfig  `mapstructure:",squash"`
+	LogConfig `mapstructure:",squash"`
+
+	DevMode bool `mapstructure:"dev_mode"`
 
 	Host     string `mapstructure:"host"`
 	Port     uint16 `mapstructure:"port"`
@@ -48,8 +41,6 @@ type Config struct {
 	SMTPFrom     string  `mapstructure:"smtp_from"`
 	SMTPUsername *string `mapstructure:"smtp_username"`
 	SMTPPassword *string `mapstructure:"smtp_password"`
-
-	LogJSON bool `mapstructure:"log_json"`
 }
 
 func setConfigSearchStrategy(viper *viper.Viper) {
@@ -59,31 +50,6 @@ func setConfigSearchStrategy(viper *viper.Viper) {
 	viper.SetEnvPrefix("frans")
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-}
-
-func setDBConfigDefaults(viper *viper.Viper) {
-	viper.SetDefault("db_type", "postgres")
-	viper.SetDefault("db_host", "localhost")
-	viper.SetDefault("db_port", 0)
-	viper.SetDefault("db_name", "frans")
-	viper.SetDefault("db_user", "frans")
-	viper.SetDefault("db_password", "")
-}
-
-func NewDBConfig() (DBConfig, error) {
-	var config DBConfig
-	dbConf := viper.New()
-	setDBConfigDefaults(dbConf)
-	setConfigSearchStrategy(dbConf)
-	if err := dbConf.ReadInConfig(); err != nil {
-		slog.Warn("No config file found, falling back to environment variables.")
-	}
-
-	if err := dbConf.Unmarshal(&config); err != nil {
-		return config, fmt.Errorf("unable to decode into struct: %w", err)
-	}
-
-	return config, nil
 }
 
 func NewConfig() (Config, error) {
@@ -112,7 +78,7 @@ func NewConfig() (Config, error) {
 
 	fransConf.SetDefault("oidc_admin_group", "admin")
 
-	fransConf.SetDefault("log_json", false)
+	setLogConfigDefaults(fransConf)
 
 	fransConf.SetDefault("smtp_port", 25)
 	fransConf.SetDefault("smtp_username", nil)

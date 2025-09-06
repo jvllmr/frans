@@ -1,6 +1,10 @@
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	fransCron "github.com/jvllmr/frans/internal/cron"
+	"github.com/jvllmr/frans/internal/services"
+	"github.com/spf13/cobra"
+)
 
 var taskCommand = &cobra.Command{
 	Use:   "task",
@@ -10,19 +14,38 @@ var taskCommand = &cobra.Command{
 var sessionLifecycleTaskCommand = &cobra.Command{
 	Use:   "lifecycle-session",
 	Short: "Delete expired sessions",
+	Run: func(cmd *cobra.Command, args []string) {
+		_, db := getConfigAndDBClient()
+		fransCron.SessionLifecycleTask(db)
+	},
 }
 
 var ticketLifecycleTaskCommand = &cobra.Command{
 	Use:   "lifecycle-ticket",
 	Short: "Delete expired tickets",
+	Run: func(cmd *cobra.Command, args []string) {
+		configValue, db := getConfigAndDBClient()
+		ts := services.NewTicketService(configValue)
+		fransCron.TicketsLifecycleTask(db, ts)
+	},
 }
 
 var grantLifecycleTaskCommand = &cobra.Command{
 	Use:   "lifecycle-grant",
 	Short: "Delete expired grants",
+	Run: func(cmd *cobra.Command, args []string) {
+		configValue, db := getConfigAndDBClient()
+		gs := services.NewGrantService(configValue)
+		fransCron.GrantsLifecycleTask(db, gs)
+	},
 }
 
 var fileLifecycleTaskCommand = &cobra.Command{
 	Use:   "lifecycle-file",
 	Short: "Delete expired files",
+	Run: func(cmd *cobra.Command, args []string) {
+		configValue, db := getConfigAndDBClient()
+		fs := services.NewFileService(configValue, db)
+		fransCron.FileLifecycleTask(db, fs)
+	},
 }

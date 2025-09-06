@@ -20,6 +20,7 @@ import (
 
 type ticketShareController struct {
 	config        config.Config
+	db            *ent.Client
 	ticketService services.TicketService
 	fileService   services.FileService
 	mailer        mail.Mailer
@@ -34,7 +35,7 @@ func (tsc *ticketShareController) fetchTicketAccessToken(c *gin.Context) {
 	tokenValueBytes := util.GenerateSalt()
 
 	tokenValue := hex.EncodeToString(tokenValueBytes)
-	token := config.DBClient.ShareAccessToken.Create().
+	token := tsc.db.ShareAccessToken.Create().
 		SetID(tokenValue).
 		SetExpiry(time.Now().Add(10 * time.Second)).
 		SaveX(c.Request.Context())
@@ -56,14 +57,14 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	fileValue, err := config.DBClient.File.Get(
+	fileValue, err := tsc.db.File.Get(
 		c.Request.Context(),
 		uuid.MustParse(requestedFile.ID),
 	)
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
-	fileValue = config.DBClient.File.UpdateOne(fileValue).
+	fileValue = tsc.db.File.UpdateOne(fileValue).
 		SetLastDownload(time.Now()).
 		AddTimesDownloaded(1).
 		SaveX(c.Request.Context())
@@ -81,51 +82,51 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 	}
 }
 
-func getTicketMiddleware(c *gin.Context) {
+func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
+	getTicketMiddleware := func(c *gin.Context) {
+		ticketId := c.Param("ticketId")
+		username, password, ok := c.Request.BasicAuth()
 
-	ticketId := c.Param("ticketId")
-	username, password, ok := c.Request.BasicAuth()
+		if !ok {
+			tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
+			if err != nil {
+				c.AbortWithStatus(http.StatusUnauthorized)
+			}
+			token, err := db.ShareAccessToken.Get(c.Request.Context(), tokenCookie)
+			if err != nil {
+				c.AbortWithError(http.StatusUnauthorized, err)
+			} else if token.Expiry.Before(time.Now()) {
+				c.AbortWithStatus(http.StatusUnauthorized)
+			}
+		} else if username != ticketId {
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
+		uuidValue, err := uuid.Parse(ticketId)
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+		}
+		ticketValue, err := db.Ticket.Query().
+			Where(ticket.ID(uuidValue)).
+			WithOwner().
+			WithFiles().Only(c.Request.Context())
 
-	if !ok {
-		tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
-		token, err := config.DBClient.ShareAccessToken.Get(c.Request.Context(), tokenCookie)
-		if err != nil {
-			c.AbortWithError(http.StatusUnauthorized, err)
-		} else if token.Expiry.Before(time.Now()) {
+
+		if ok && !util.VerifyPassword(password, ticketValue.HashedPassword, ticketValue.Salt) {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
-	} else if username != ticketId {
-		c.AbortWithStatus(http.StatusUnauthorized)
-	}
-	uuidValue, err := uuid.Parse(ticketId)
-	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-	}
-	ticketValue, err := config.DBClient.Ticket.Query().
-		Where(ticket.ID(uuidValue)).
-		WithOwner().
-		WithFiles().Only(c.Request.Context())
 
-	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.Set(config.ShareTicketContext, ticketValue)
 	}
 
-	if ok && !util.VerifyPassword(password, ticketValue.HashedPassword, ticketValue.Salt) {
-		c.AbortWithStatus(http.StatusUnauthorized)
-	}
-
-	c.Set(config.ShareTicketContext, ticketValue)
-}
-
-func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config) {
 	singleTicketShareGroup := r.Group("/:ticketId", getTicketMiddleware)
 	controller := ticketShareController{
 		config:        configValue,
+		db:            db,
 		ticketService: services.NewTicketService(configValue),
-		fileService:   services.NewFileService(configValue),
+		fileService:   services.NewFileService(configValue, db),
 		mailer:        mail.NewMailer(configValue),
 	}
 

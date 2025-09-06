@@ -5,14 +5,10 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
-	"slices"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/oidc"
-	"github.com/jvllmr/frans/internal/util"
 	"golang.org/x/oauth2"
 )
 
@@ -79,53 +75,16 @@ func (ac *authController) authCallback(c *gin.Context) {
 	_ = idToken.Claims(&claimsData)
 	_ = userInfo.Claims(&claimsData)
 
-	userId, err := uuid.Parse(claimsData["sub"].(string))
+	user, err := ac.provider.ProvisionUser(c.Request.Context(), claimsData)
 	if err != nil {
-		slog.Error("Could not access user id from claims", "err", err)
-		ac.redirectToAuth(c, oauth2Config)
+		slog.Error("Could not provision user", "err", err)
+		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	groups := util.InterfaceSliceToStringSlice(claimsData["groups"].([]any))
-	isAdmin := slices.Contains(groups, "admin")
-	username := claimsData["preferred_username"].(string)
-	fullName := claimsData["name"].(string)
-	email := claimsData["email"].(string)
-	user, err := config.DBClient.User.Get(c.Request.Context(), userId)
-	if err != nil {
-		user, err = config.DBClient.User.Create().
-			SetGroups(groups).
-			SetIsAdmin(isAdmin).
-			SetUsername(username).
-			SetFullName(fullName).
-			SetEmail(email).
-			SetID(userId).
-			Save(c.Request.Context())
-		if err != nil {
-			slog.Error("Could not create User", "err", err)
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		} else {
-			slog.Info(fmt.Sprintf("Created user %s", user.Username))
-		}
 
-	} else {
-		_ = config.DBClient.User.UpdateOne(user).
-			SetGroups(groups).
-			SetIsAdmin(isAdmin).
-			SetUsername(username).
-			SetFullName(fullName).
-			SetEmail(email).
-			Exec(c.Request.Context())
-		slog.Info(fmt.Sprintf("Updated user %s", username))
-	}
 	oidc.SetIdTokenCookie(c, rawIDToken)
 	oidc.SetAccessTokenCookie(c, oauth2Token.AccessToken)
-	err = config.DBClient.Session.Create().
-		SetUser(user).
-		SetExpire(oauth2Token.Expiry).
-		SetIDToken(rawIDToken).
-		SetRefreshToken(oauth2Token.RefreshToken).
-		Exec(c.Request.Context())
+	err = ac.provider.CreateSession(c.Request.Context(), user, oauth2Token, rawIDToken)
 	if err != nil {
 		slog.Error("could not store session", "err", err)
 	}
@@ -147,9 +106,7 @@ func (ac *authController) logoutCallback(ctx *gin.Context) {
 	ctx.SetCookie(config.AccessTokenCookieName, "", 5, "", "", true, true)
 	idTokenCookie, err := ctx.Request.Cookie(config.IdTokenCookieName)
 	if err == nil {
-		_, _ = config.DBClient.Session.Delete().
-			Where(session.IDToken(idTokenCookie.Value)).
-			Exec(ctx.Request.Context())
+		_ = ac.provider.DeleteSession(ctx.Request.Context(), idTokenCookie)
 	}
 	ctx.SetCookie(config.IdTokenCookieName, "", 5, "", "", true, true)
 	redirectURI := ctx.Query("redirect_uri")
@@ -168,10 +125,14 @@ func (ac *authController) logoutCallback(ctx *gin.Context) {
 func setupAuthRoutes(
 	r *gin.RouterGroup,
 	configValue config.Config,
+
 	provider *oidc.FransOidcProvider,
 ) {
 	authGroup := r.Group("/auth")
-	controller := authController{config: configValue, provider: provider}
+	controller := authController{
+		config:   configValue,
+		provider: provider,
+	}
 
 	authGroup.GET("/callback", controller.authCallback)
 

@@ -8,6 +8,7 @@ import (
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/ent"
 	"golang.org/x/oauth2"
 )
 
@@ -21,13 +22,14 @@ type FransOidcProvider struct {
 	extraEndpoints oidcProviderExtraEndpoints
 	config         config.Config
 	OidcConfig     oidc.Config
+	db             *ent.Client
 }
 
 func (f *FransOidcProvider) EndSessionEndpoint() string {
 	return f.extraEndpoints.EndSessionEndpoint
 }
 
-func NewOIDC(configValue config.Config) (*FransOidcProvider, error) {
+func NewOIDC(configValue config.Config, db *ent.Client) (*FransOidcProvider, error) {
 	var err error
 	oidcProvider, err := oidc.NewProvider(context.Background(), configValue.OidcIssuer)
 	if err != nil {
@@ -45,6 +47,7 @@ func NewOIDC(configValue config.Config) (*FransOidcProvider, error) {
 		OidcConfig: oidc.Config{
 			ClientID: configValue.OidcClientID,
 		},
+		db: db,
 	}, nil
 }
 

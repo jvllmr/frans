@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/oidc"
 
 	"golang.org/x/oauth2"
@@ -35,10 +34,7 @@ func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		session, err := config.DBClient.Session.Query().
-			WithUser().
-			Where(session.IDToken(idTokenCookie.Value)).
-			Only(c.Request.Context())
+		session, err := p.GetSession(c.Request.Context(), idTokenCookie)
 		if err != nil {
 			slog.Debug("Not authenticated", "err", err)
 			p.MissingAuthResponse(c, oauth2Config, redirect)
@@ -64,10 +60,7 @@ func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 		}
 
 		if newToken.Expiry.After(token.Expiry) {
-			config.DBClient.Session.UpdateOne(session).
-				SetExpire(newToken.Expiry).
-				SetRefreshToken(newToken.RefreshToken).
-				ExecX(c.Request.Context())
+			p.UpdateSession(c.Request.Context(), session, newToken)
 			oidc.SetAccessTokenCookie(c, newToken.AccessToken)
 		}
 
@@ -94,7 +87,7 @@ func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 		}
 
 		userId, _ := uuid.Parse(userinfo.Subject)
-		user, _ := config.DBClient.User.Get(c.Request.Context(), userId)
+		user := p.MustGetUser(c.Request.Context(), userId)
 		c.Set(config.UserGinContext, user)
 	}
 }

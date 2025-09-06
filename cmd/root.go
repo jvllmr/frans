@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"log/slog"
-	"os"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
@@ -10,36 +9,27 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/logging"
 	"github.com/spf13/cobra"
 )
-
-func initFrans(configValue config.Config) {
-
-	config.InitDB(configValue)
-	var logHandler slog.Handler = slog.NewTextHandler(os.Stdout, nil)
-	if configValue.LogJSON {
-		logHandler = slog.NewJSONHandler(os.Stdout, nil)
-	}
-
-	basicLogger := slog.New(logHandler)
-	slog.SetDefault(basicLogger)
-
-}
 
 var rootCmd = &cobra.Command{
 	Use:   "frans",
 	Short: "A simple file-sharing tool ready for cloud native",
 	Run: func(cmd *cobra.Command, args []string) {
-		go startCronScheduler()
-		startGin()
+		configValue, db := getConfigAndDBClient()
+		go startCronScheduler(configValue, db)
+		startGin(configValue, db)
 	},
 }
 
 func Main() {
 	godotenv.Load()
-	configValue := config.NewSafeConfig()
-	initFrans(configValue)
-	defer config.DBClient.Close()
+	logConfig, err := config.NewLogConfig()
+	if err != nil {
+		log.Fatalf("Could not parse logging config: %v", err)
+	}
+	logging.SetupLogging(logConfig)
 
 	taskCommand.AddCommand(
 		sessionLifecycleTaskCommand,

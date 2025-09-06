@@ -3,29 +3,31 @@ package cmd
 import (
 	"github.com/jvllmr/frans/internal/config"
 	fransCron "github.com/jvllmr/frans/internal/cron"
+	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/services"
 	"github.com/robfig/cron/v3"
 	"github.com/spf13/cobra"
 )
 
-func startCronScheduler() {
-	configValue := config.NewSafeConfig()
-	cronRunner := cron.New()
-	cronRunner.AddFunc("@every 1m", fransCron.SessionLifecycleTask)
+func startCronScheduler(configValue config.Config, db *ent.Client) {
 
-	fs := services.NewFileService(configValue)
+	cronRunner := cron.New()
+
+	cronRunner.AddFunc("@every 1m", func() { fransCron.SessionLifecycleTask(db) })
+
+	fs := services.NewFileService(configValue, db)
 	cronRunner.AddFunc("@every 1m", func() {
-		fransCron.FileLifecycleTask(fs)
+		fransCron.FileLifecycleTask(db, fs)
 	})
 
 	ts := services.NewTicketService(configValue)
 	cronRunner.AddFunc("@every 1m", func() {
-		fransCron.TicketsLifecycleTask(ts)
+		fransCron.TicketsLifecycleTask(db, ts)
 	})
 
 	gs := services.NewGrantService(configValue)
 	cronRunner.AddFunc("@every 1m", func() {
-		fransCron.GrantsLifecycleTask(gs)
+		fransCron.GrantsLifecycleTask(db, gs)
 	})
 
 	cronRunner.Run()
@@ -35,5 +37,8 @@ func startCronScheduler() {
 var cronCmd = &cobra.Command{
 	Use:   "cron",
 	Short: "Start only the cron scheduler",
-	Run:   func(cmd *cobra.Command, args []string) { startCronScheduler() },
+	Run: func(cmd *cobra.Command, args []string) {
+		configValue, db := getConfigAndDBClient()
+		startCronScheduler(configValue, db)
+	},
 }
