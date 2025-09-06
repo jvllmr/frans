@@ -1,4 +1,4 @@
-package fransCron
+package tasks
 
 import (
 	"context"
