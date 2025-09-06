@@ -112,7 +112,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 			WithOwner().
 			OnlyX(c.Request.Context())
 
-		err = util.RefreshUserTotalDataSize(c.Request.Context(), currentUser)
+		err = util.RefreshUserTotalDataSize(c.Request.Context(), currentUser, tx)
 		if err != nil {
 			slog.Error(
 				"Could not refresh total data size of user",
