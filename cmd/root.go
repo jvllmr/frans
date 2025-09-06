@@ -18,6 +18,7 @@ var rootCmd = &cobra.Command{
 	Short: "A simple file-sharing tool ready for cloud native",
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, db := getConfigAndDBClient()
+		defer db.Close()
 		go startCronScheduler(configValue, db)
 		startGin(configValue, db)
 	},

@@ -39,6 +39,7 @@ var cronCmd = &cobra.Command{
 	Short: "Start only the cron scheduler",
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, db := getConfigAndDBClient()
+		defer db.Close()
 		startCronScheduler(configValue, db)
 	},
 }

@@ -34,6 +34,7 @@ var serveCmd = &cobra.Command{
 	Short: "Start only the server",
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, db := getConfigAndDBClient()
+		defer db.Close()
 		startGin(configValue, db)
 	},
 }
