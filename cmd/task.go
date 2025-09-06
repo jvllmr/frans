@@ -16,6 +16,7 @@ var sessionLifecycleTaskCommand = &cobra.Command{
 	Short: "Delete expired sessions",
 	Run: func(cmd *cobra.Command, args []string) {
 		_, db := getConfigAndDBClient()
+		defer db.Close()
 		fransCron.SessionLifecycleTask(db)
 	},
 }
@@ -25,6 +26,7 @@ var ticketLifecycleTaskCommand = &cobra.Command{
 	Short: "Delete expired tickets",
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, db := getConfigAndDBClient()
+		defer db.Close()
 		ts := services.NewTicketService(configValue)
 		fransCron.TicketsLifecycleTask(db, ts)
 	},
@@ -35,6 +37,7 @@ var grantLifecycleTaskCommand = &cobra.Command{
 	Short: "Delete expired grants",
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, db := getConfigAndDBClient()
+		defer db.Close()
 		gs := services.NewGrantService(configValue)
 		fransCron.GrantsLifecycleTask(db, gs)
 	},
@@ -45,6 +48,7 @@ var fileLifecycleTaskCommand = &cobra.Command{
 	Short: "Delete expired files",
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, db := getConfigAndDBClient()
+		defer db.Close()
 		fs := services.NewFileService(configValue, db)
 		fransCron.FileLifecycleTask(db, fs)
 	},
