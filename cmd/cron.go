@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"github.com/jvllmr/frans/internal/config"
-	fransCron "github.com/jvllmr/frans/internal/cron"
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/services"
+	fransCron "github.com/jvllmr/frans/internal/tasks"
 	"github.com/robfig/cron/v3"
 	"github.com/spf13/cobra"
 )

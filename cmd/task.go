@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	fransCron "github.com/jvllmr/frans/internal/cron"
 	"github.com/jvllmr/frans/internal/services"
+	fransCron "github.com/jvllmr/frans/internal/tasks"
 	"github.com/spf13/cobra"
 )
 
