@@ -1,4 +1,4 @@
-package apiTypes
+package services
 
 import "github.com/jvllmr/frans/internal/ent"
 

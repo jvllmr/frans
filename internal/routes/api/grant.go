@@ -12,9 +12,16 @@ import (
 	"github.com/jvllmr/frans/internal/ent/user"
 	"github.com/jvllmr/frans/internal/mail"
 	"github.com/jvllmr/frans/internal/middleware"
-	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
+	"github.com/jvllmr/frans/internal/services"
 	"github.com/jvllmr/frans/internal/util"
 )
+
+type grantController struct {
+	config       config.Config
+	grantService services.GrantService
+	fileService  services.FileService
+	mailer       mail.Mailer
+}
 
 type grantForm struct {
 	Comment                         *string `form:"comment"`
@@ -34,107 +41,107 @@ type grantForm struct {
 	ReceiverLang                    string  `form:"receiverLang"                    binding:"required"`
 }
 
-func createGrantFactory(configValue config.Config) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		currentUser := middleware.GetCurrentUser(c)
-		var form grantForm
-		tx, err := config.DBClient.Tx(c.Request.Context())
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-		}
-		if err := c.ShouldBind(&form); err == nil {
-			salt, err := util.GenerateSalt()
-			if err != nil {
-				c.AbortWithError(http.StatusInternalServerError, err)
-			}
-			hashedPassword := util.HashPassword(form.Password, salt)
-			grantBuilder := tx.Grant.Create().
-				SetID(uuid.New()).
-				SetExpiryType(form.ExpiryType).
-				SetExpiryDaysSinceLastUpload(form.ExpiryDaysSinceLastUpload).
-				SetExpiryTotalDays(form.ExpiryTotalDays).
-				SetExpiryTotalUploads(form.ExpiryTotalUploads).
-				SetFileExpiryType(form.ExpiryType).
-				SetFileExpiryDaysSinceLastDownload(form.FileExpiryDaysSinceLastDownload).
-				SetFileExpiryTotalDays(form.FileExpiryTotalDays).
-				SetFileExpiryTotalDownloads(form.FileExpiryTotalDownloads).
-				SetHashedPassword(hashedPassword).
-				SetSalt(hex.EncodeToString(salt)).
-				SetOwner(currentUser).
-				SetCreatorLang(form.CreatorLang)
-
-			if form.Comment != nil {
-				grantBuilder = grantBuilder.SetComment(*form.Comment)
-			}
-
-			if form.EmailOnUpload != nil {
-				grantBuilder = grantBuilder.SetEmailOnUpload(*form.EmailOnUpload)
-			}
-
-			grantValue, err := grantBuilder.Save(c.Request.Context())
-			if err != nil {
-				c.AbortWithError(http.StatusBadRequest, err)
-			}
-			tx.User.UpdateOne(currentUser).AddSubmittedGrants(1).SaveX(c.Request.Context())
-			grantValue = tx.Grant.Query().
-				WithOwner().
-				WithFiles().
-				Where(grant.ID(grantValue.ID)).
-				OnlyX(c.Request.Context())
-			c.JSON(
-				http.StatusCreated,
-				apiTypes.ToPublicGrant(configValue, grantValue, []*ent.File{}),
-			)
-			if form.Email != nil {
-				var toBeEmailedPassword *string = nil
-				if form.EmailPassword {
-					toBeEmailedPassword = &form.Password
-				}
-				mail.SendGrantSharedNotification(
-					c,
-					configValue,
-					*form.Email,
-					form.ReceiverLang,
-					grantValue,
-					toBeEmailedPassword,
-				)
-			}
-
-			tx.Commit()
-		} else {
-			c.AbortWithError(422, err)
-		}
-
+func (gc *grantController) createGrantHandler(c *gin.Context) {
+	currentUser := middleware.GetCurrentUser(c)
+	var form grantForm
+	tx, err := config.DBClient.Tx(c.Request.Context())
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
 	}
+	if err := c.ShouldBind(&form); err == nil {
+		salt := util.GenerateSalt()
+
+		hashedPassword := util.HashPassword(form.Password, salt)
+		grantBuilder := tx.Grant.Create().
+			SetID(uuid.New()).
+			SetExpiryType(form.ExpiryType).
+			SetExpiryDaysSinceLastUpload(form.ExpiryDaysSinceLastUpload).
+			SetExpiryTotalDays(form.ExpiryTotalDays).
+			SetExpiryTotalUploads(form.ExpiryTotalUploads).
+			SetFileExpiryType(form.ExpiryType).
+			SetFileExpiryDaysSinceLastDownload(form.FileExpiryDaysSinceLastDownload).
+			SetFileExpiryTotalDays(form.FileExpiryTotalDays).
+			SetFileExpiryTotalDownloads(form.FileExpiryTotalDownloads).
+			SetHashedPassword(hashedPassword).
+			SetSalt(hex.EncodeToString(salt)).
+			SetOwner(currentUser).
+			SetCreatorLang(form.CreatorLang)
+
+		if form.Comment != nil {
+			grantBuilder = grantBuilder.SetComment(*form.Comment)
+		}
+
+		if form.EmailOnUpload != nil {
+			grantBuilder = grantBuilder.SetEmailOnUpload(*form.EmailOnUpload)
+		}
+
+		grantValue, err := grantBuilder.Save(c.Request.Context())
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+		}
+		tx.User.UpdateOne(currentUser).AddSubmittedGrants(1).SaveX(c.Request.Context())
+		grantValue = tx.Grant.Query().
+			WithOwner().
+			WithFiles().
+			Where(grant.ID(grantValue.ID)).
+			OnlyX(c.Request.Context())
+		c.JSON(
+			http.StatusCreated,
+			gc.grantService.ToPublicGrant(gc.fileService, grantValue, make([]*ent.File, 0)),
+		)
+		if form.Email != nil {
+			var toBeEmailedPassword *string = nil
+			if form.EmailPassword {
+				toBeEmailedPassword = &form.Password
+			}
+			gc.mailer.SendGrantSharedNotification(
+				c,
+				gc.grantService,
+				*form.Email,
+				form.ReceiverLang,
+				grantValue,
+				toBeEmailedPassword,
+			)
+		}
+
+		tx.Commit()
+	} else {
+		c.AbortWithError(422, err)
+	}
+
 }
 
-func fetchGrantsFactory(configValue config.Config) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		currentUser := middleware.GetCurrentUser(c)
-		query := config.DBClient.Grant.Query().WithFiles().WithOwner()
+func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
+	currentUser := middleware.GetCurrentUser(c)
+	query := config.DBClient.Grant.Query().WithFiles().WithOwner()
 
-		if !currentUser.IsAdmin {
-			query = query.Where(grant.HasOwnerWith(user.ID(currentUser.ID)))
-		}
-
-		grants, err := query.All(c.Request.Context())
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-		}
-		publicGrants := make([]apiTypes.PublicGrant, 0, len(grants))
-		for _, grantValue := range grants {
-			if !util.GrantExpired(configValue, grantValue) {
-				publicGrants = append(
-					publicGrants,
-					apiTypes.ToPublicGrant(configValue, grantValue, grantValue.Edges.Files),
-				)
-			}
-		}
-		c.JSON(http.StatusOK, publicGrants)
+	if !currentUser.IsAdmin {
+		query = query.Where(grant.HasOwnerWith(user.ID(currentUser.ID)))
 	}
+
+	grants, err := query.All(c.Request.Context())
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+	}
+	publicGrants := make([]services.PublicGrant, 0, len(grants))
+	for _, grantValue := range grants {
+		if !gc.grantService.GrantExpired(grantValue) {
+			publicGrants = append(
+				publicGrants,
+				gc.grantService.ToPublicGrant(gc.fileService, grantValue, grantValue.Edges.Files),
+			)
+		}
+	}
+	c.JSON(http.StatusOK, publicGrants)
 }
 
 func setupGrantGroup(r *gin.RouterGroup, configValue config.Config) {
-	r.POST("", createGrantFactory(configValue))
-	r.GET("", fetchGrantsFactory(configValue))
+	controller := grantController{
+		config:       configValue,
+		grantService: services.NewGrantService(configValue),
+		fileService:  services.NewFileService(configValue),
+		mailer:       mail.NewMailer(configValue),
+	}
+	r.POST("", controller.createGrantHandler)
+	r.GET("", controller.fetchGrantsHandler)
 }

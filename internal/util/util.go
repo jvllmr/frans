@@ -8,7 +8,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 func UnpackFSToPath(fsys fs.FS, targetPath string) error {
@@ -52,16 +51,16 @@ func InterfaceSliceToStringSlice(in []any) []string {
 	return out
 }
 
-func GenerateRandomString(byteLength int) ([]byte, error) {
+func GenerateRandomString(byteLength int) []byte {
 	value := make([]byte, byteLength)
 	_, err := rand.Read(value)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return value, nil
+	return value
 }
 
-func GenerateSalt() ([]byte, error) {
+func GenerateSalt() []byte {
 	return GenerateRandomString(16)
 }
 
@@ -82,41 +81,4 @@ func VerifyPassword(password string, hashedPassword string, salt string) bool {
 		panic(err)
 	}
 	return compareStringsTimingSafe(HashPassword(password, decodedSalt), hashedPassword)
-}
-
-func estimatedExpiry(
-	expiryType string,
-	defaultExpiryTotalDays uint8,
-	defaultExpiryDaysSinceLastDownload uint8,
-	customExpiryTotalDays uint8,
-	customExpiryDaysSinceLastDownload uint8,
-	createdAt time.Time,
-	lastDownload *time.Time,
-) *time.Time {
-	if expiryType == "none" {
-		return nil
-	}
-
-	expiryTotalDays := defaultExpiryTotalDays
-	expiryDaysSinceLastDownload := defaultExpiryDaysSinceLastDownload
-	if expiryType == "custom" {
-		expiryTotalDays = customExpiryTotalDays
-		expiryDaysSinceLastDownload = customExpiryDaysSinceLastDownload
-	}
-
-	totalLimit := createdAt.Add(time.Hour * 24 * time.Duration(expiryTotalDays)).UTC()
-
-	if lastDownload == nil {
-		return &totalLimit
-	}
-
-	lastDownloadLimit := lastDownload.Add(
-		time.Hour * 24 * time.Duration(expiryDaysSinceLastDownload),
-	).UTC()
-
-	if lastDownloadLimit.Before(totalLimit) {
-		return &lastDownloadLimit
-	}
-
-	return &totalLimit
 }

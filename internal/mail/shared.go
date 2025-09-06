@@ -6,15 +6,14 @@ import (
 	"text/template"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/util"
+	"github.com/jvllmr/frans/internal/services"
 	gomail "gopkg.in/mail.v2"
 )
 
-func SendTicketSharedNotification(
+func (m *Mailer) SendTicketSharedNotification(
 	ctx *gin.Context,
-	configValue config.Config,
+	ticketService services.TicketService,
 	to string,
 	locale string,
 	ticketValue *ent.Ticket,
@@ -46,7 +45,7 @@ func SendTicketSharedNotification(
 	body := fmt.Sprintf(
 		"%s: %s",
 		getTranslation("url"),
-		util.TicketShareLink(ctx, configValue, ticketValue),
+		ticketService.TicketShareLink(ctx, ticketValue),
 	)
 
 	if password != nil {
@@ -71,12 +70,12 @@ func SendTicketSharedNotification(
 	}
 
 	message.SetBody("text/plain", body)
-	sendMail(configValue, message)
+	m.sendMail(message)
 }
 
-func SendGrantSharedNotification(
+func (m *Mailer) SendGrantSharedNotification(
 	ctx *gin.Context,
-	configValue config.Config,
+	grantService services.GrantService,
 	to string,
 	locale string,
 	grantValue *ent.Grant,
@@ -94,7 +93,7 @@ func SendGrantSharedNotification(
 	body := fmt.Sprintf(
 		"%s: %s",
 		getTranslation("url"),
-		util.GrantShareLink(ctx, configValue, grantValue),
+		grantService.GrantShareLink(ctx, grantValue),
 	)
 
 	if password != nil {
@@ -110,5 +109,5 @@ func SendGrantSharedNotification(
 	}
 
 	message.SetBody("text/plain", body)
-	sendMail(configValue, message)
+	m.sendMail(message)
 }

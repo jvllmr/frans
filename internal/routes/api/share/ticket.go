@@ -13,9 +13,73 @@ import (
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/mail"
 	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
+	"github.com/jvllmr/frans/internal/services"
 
 	"github.com/jvllmr/frans/internal/util"
 )
+
+type ticketShareController struct {
+	config        config.Config
+	ticketService services.TicketService
+	fileService   services.FileService
+	mailer        mail.Mailer
+}
+
+func (tsc *ticketShareController) fetchTicket(c *gin.Context) {
+	ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
+	c.JSON(http.StatusOK, tsc.ticketService.ToPublicTicket(tsc.fileService, ticketValue))
+}
+
+func (tsc *ticketShareController) fetchTicketAccessToken(c *gin.Context) {
+	tokenValueBytes := util.GenerateSalt()
+
+	tokenValue := hex.EncodeToString(tokenValueBytes)
+	token := config.DBClient.ShareAccessToken.Create().
+		SetID(tokenValue).
+		SetExpiry(time.Now().Add(10 * time.Second)).
+		SaveX(c.Request.Context())
+	c.SetCookie(
+		config.ShareAccessTokenCookieName,
+		token.ID,
+		10,
+		strings.TrimSuffix(c.Request.URL.Path, "/token"),
+		"",
+		false,
+		true,
+	)
+	c.JSON(http.StatusCreated, apiTypes.PublicShareAccessToken{Token: token.ID})
+}
+
+func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
+	var requestedFile apiTypes.RequestedFileParam
+	if err := c.ShouldBindUri(&requestedFile); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	fileValue, err := config.DBClient.File.Get(
+		c.Request.Context(),
+		uuid.MustParse(requestedFile.ID),
+	)
+	if err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	}
+	fileValue = config.DBClient.File.UpdateOne(fileValue).
+		SetLastDownload(time.Now()).
+		AddTimesDownloaded(1).
+		SaveX(c.Request.Context())
+	filePath := tsc.fileService.FilesFilePath(fileValue.Sha512)
+	c.FileAttachment(filePath, fileValue.Name)
+	ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
+	if ticketValue.EmailOnDownload != nil &&
+		(fileValue.LastDownload == nil || fileValue.LastDownload.Before(ticketValue.CreatedAt)) {
+		tsc.mailer.SendFileDownloadNotification(
+			c,
+			*ticketValue.EmailOnDownload,
+			ticketValue,
+			fileValue,
+		)
+	}
+}
 
 func getTicketMiddleware(c *gin.Context) {
 
@@ -58,64 +122,17 @@ func getTicketMiddleware(c *gin.Context) {
 
 func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config) {
 	singleTicketShareGroup := r.Group("/:ticketId", getTicketMiddleware)
+	controller := ticketShareController{
+		config:        configValue,
+		ticketService: services.NewTicketService(configValue),
+		fileService:   services.NewFileService(configValue),
+		mailer:        mail.NewMailer(configValue),
+	}
 
-	singleTicketShareGroup.GET("", func(c *gin.Context) {
-		ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
-		c.JSON(http.StatusOK, apiTypes.ToPublicTicket(configValue, ticketValue))
-	})
+	singleTicketShareGroup.GET("", controller.fetchTicket)
 
-	singleTicketShareGroup.GET("/token", func(c *gin.Context) {
-		tokenValueBytes, err := util.GenerateSalt()
-		if err != nil {
-			panic(err)
-		}
-		tokenValue := hex.EncodeToString(tokenValueBytes)
-		token := config.DBClient.ShareAccessToken.Create().
-			SetID(tokenValue).
-			SetExpiry(time.Now().Add(10 * time.Second)).
-			SaveX(c.Request.Context())
-		c.SetCookie(
-			config.ShareAccessTokenCookieName,
-			token.ID,
-			10,
-			strings.TrimSuffix(c.Request.URL.Path, "/token"),
-			"",
-			false,
-			true,
-		)
-		c.JSON(http.StatusCreated, apiTypes.PublicShareAccessToken{Token: token.ID})
-	})
+	singleTicketShareGroup.GET("/token", controller.fetchTicketAccessToken)
 
-	singleTicketShareGroup.GET("/file/:fileId", func(c *gin.Context) {
-		var requestedFile apiTypes.RequestedFileParam
-		if err := c.ShouldBindUri(&requestedFile); err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
-			return
-		}
-		fileValue, err := config.DBClient.File.Get(
-			c.Request.Context(),
-			uuid.MustParse(requestedFile.ID),
-		)
-		if err != nil {
-			c.AbortWithStatus(http.StatusNotFound)
-		}
-		fileValue = config.DBClient.File.UpdateOne(fileValue).
-			SetLastDownload(time.Now()).
-			AddTimesDownloaded(1).
-			SaveX(c.Request.Context())
-		filePath := util.FilesFilePath(configValue, fileValue.Sha512)
-		c.FileAttachment(filePath, fileValue.Name)
-		ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
-		if ticketValue.EmailOnDownload != nil &&
-			(fileValue.LastDownload == nil || fileValue.LastDownload.Before(ticketValue.CreatedAt)) {
-			mail.SendFileDownloadNotification(
-				c,
-				configValue,
-				*ticketValue.EmailOnDownload,
-				ticketValue,
-				fileValue,
-			)
-		}
-	})
+	singleTicketShareGroup.GET("/file/:fileId", controller.fetchTicketFile)
 
 }

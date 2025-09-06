@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/middleware"
 	"github.com/jvllmr/frans/internal/oidc"
@@ -107,41 +106,38 @@ func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 	return r
 }
 
+type clientController struct {
+	config    config.Config
+	pkceCache *oidc.PKCECache
+}
+
+func (cc *clientController) redirectShareLink(c *gin.Context) {
+	id := c.Param("id")
+	uuid, err := uuid.Parse(id)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+	}
+	targetTicket := config.DBClient.Ticket.Query().
+		Where(ticket.ID(uuid)).
+		FirstX(c.Request.Context())
+	if targetTicket != nil {
+		c.Redirect(
+			http.StatusPermanentRedirect,
+			fmt.Sprintf("/share/ticket/%s", targetTicket.ID.String()),
+		)
+		return
+	}
+}
+
 func SetupClientRoutes(
 	r *gin.Engine,
 	rGroup *gin.RouterGroup,
 	configValue config.Config,
 	pkceCache *oidc.PKCECache,
 ) {
-	rGroup.GET("/s/:id", func(c *gin.Context) {
-		id := c.Param("id")
-		uuid, err := uuid.Parse(id)
-		if err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
-		}
-		targetTicket := config.DBClient.Ticket.Query().
-			Where(ticket.ID(uuid)).
-			FirstX(c.Request.Context())
-		if targetTicket != nil {
-			c.Redirect(
-				http.StatusPermanentRedirect,
-				fmt.Sprintf("/share/ticket/%s", targetTicket.ID.String()),
-			)
-			return
-		}
+	controller := clientController{config: configValue, pkceCache: pkceCache}
 
-		targetGrant := config.DBClient.Grant.Query().
-			Where(grant.ID(uuid)).
-			FirstX(c.Request.Context())
-		if targetGrant != nil {
-			c.Redirect(
-				http.StatusPermanentRedirect,
-				fmt.Sprintf("/share/grant/%s", targetGrant.ID.String()),
-			)
-			return
-		}
-
-	})
+	rGroup.GET("/s/:id", controller.redirectShareLink)
 
 	setIndexTemplate(r, configValue)
 	staticFiles, _ := fs.Sub(clientFiles, "assets")
