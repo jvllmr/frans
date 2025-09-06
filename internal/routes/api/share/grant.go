@@ -96,7 +96,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 		AddTimesUploaded(1).
 		SaveX(c.Request.Context())
 
-	err = util.RefreshUserTotalDataSize(c.Request.Context(), grantValue.Edges.Owner)
+	err = util.RefreshUserTotalDataSize(c.Request.Context(), grantValue.Edges.Owner, tx)
 	if err != nil {
 		slog.Error(
 			"Could not refresh total data size of user",

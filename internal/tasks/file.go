@@ -46,7 +46,7 @@ func FileLifecycleTask(db *ent.Client, fs services.FileService) {
 	slog.Info("Deleted files", "count", deletedCount)
 
 	for _, userValue := range users {
-		err := util.RefreshUserTotalDataSize(context.Background(), userValue)
+		err := util.RefreshUserTotalDataSize(context.Background(), userValue, nil)
 		if err != nil {
 			slog.Error(
 				"Could not refresh total data size of user",
