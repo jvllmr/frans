@@ -3,5 +3,8 @@
   "ticket_submit": "Auf geteilte Dateien zugreifen",
   "ticket_message": "hat folgende Dateien mit Ihnen geteilt",
   "comment": "Anmerkung",
-  "title_open_share": "Share öffnen"
+  "title_open_share": "Share öffnen",
+  "grant_prompt": "Geben Sie das Passwort ein, um Dateien hochladen zu können",
+  "grant_submit": "Auf Upload-Erlaubnis zugreifen",
+  "grant_message": "hat Ihnen die Erlaubnis gegeben Dateien hier hochzuladen"
 }
