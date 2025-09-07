@@ -1,14 +1,14 @@
-import { ActionIcon, Anchor, CopyButton, Group, Table } from "@mantine/core";
-import { IconCopy, IconCopyCheck, IconFolderOpen } from "@tabler/icons-react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { Table } from "@mantine/core";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { ticketQueryOptions } from "~/api/ticket";
+import { ticketQueryOptions, ticketsKey } from "~/api/ticket";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
-import { ActionIconLink } from "~/components/routing/Link";
+import { FileRef } from "~/components/file/FileRef";
+import { ShareLinkButtons } from "~/components/share/ShareLink";
 import { useDateFormatter } from "~/i18n";
-import { getShareLink } from "~/util/link";
+import { getInternalFileLink } from "~/util/link";
 export const Route = createFileRoute("/tickets/")({
   component: RouteComponent,
 });
@@ -17,7 +17,7 @@ function RouteComponent() {
   const { t } = useTranslation("ticket_active");
   const { data: tickets } = useSuspenseQuery(ticketQueryOptions);
   const dateFormatter = useDateFormatter();
-
+  const queryClient = useQueryClient();
   return (
     <Table withColumnBorders withTableBorder withRowBorders>
       <Table.Thead>
@@ -35,28 +35,7 @@ function RouteComponent() {
             <Table.Tr key={file.id}>
               {index === 0 ? (
                 <Table.Td rowSpan={ticket.files.length}>
-                  <Group>
-                    <ActionIconLink
-                      to="/s/$shareId"
-                      params={{ shareId: ticket.id }}
-                      target="_blank"
-                      title={t("title_open_share")}
-                    >
-                      <IconFolderOpen />
-                    </ActionIconLink>
-                    <CopyButton value={getShareLink(ticket.id)}>
-                      {({ copied, copy }) => (
-                        <ActionIcon
-                          onClick={() => {
-                            copy();
-                          }}
-                          title={t("title_copy_link")}
-                        >
-                          {copied ? <IconCopyCheck /> : <IconCopy />}
-                        </ActionIcon>
-                      )}
-                    </CopyButton>
-                  </Group>
+                  <ShareLinkButtons shareId={ticket.id} />
                 </Table.Td>
               ) : null}
 
@@ -67,9 +46,14 @@ function RouteComponent() {
                 />
               </Table.Td>
               <Table.Td>
-                <Anchor href={`${window.fransRootPath}/api/v1/file/${file.id}`}>
-                  {file.name}
-                </Anchor>
+                <FileRef
+                  file={file}
+                  link={getInternalFileLink(file.id)}
+                  withoutSize
+                  onClick={() => {
+                    queryClient.invalidateQueries({ queryKey: ticketsKey });
+                  }}
+                />
               </Table.Td>
               {index === 0 ? (
                 <Table.Td rowSpan={ticket.files.length}>

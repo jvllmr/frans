@@ -1,4 +1,4 @@
-import { Anchor, List, Stack, Text } from "@mantine/core";
+import { List, Stack, Text } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useCallback, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,8 +9,8 @@ import {
   getTicketShareFileUrl,
   Ticket,
 } from "~/api/ticket";
+import { FileRef } from "~/components/file/FileRef";
 import { ShareAuth } from "~/components/share/ShareAuth";
-import { useFileSizeFormatter } from "~/i18n";
 
 export const Route = createFileRoute("/share/ticket/$ticketId")({
   component: RouteComponent,
@@ -28,7 +28,6 @@ function useShareTicketContext() {
 function TicketShare() {
   const ticket = useShareTicketContext();
   const { t } = useTranslation("share");
-  const fileSizeFormatter = useFileSizeFormatter();
   return (
     <Stack>
       <Text>
@@ -40,14 +39,13 @@ function TicketShare() {
       <List px="xl">
         {ticket.files.map((file) => (
           <List.Item key={file.id}>
-            <Anchor
-              href={getTicketShareFileUrl({
+            <FileRef
+              file={file}
+              link={getTicketShareFileUrl({
                 ticketId: ticket.id,
                 fileId: file.id,
               })}
-            >
-              {file.name} ({fileSizeFormatter(file.size)})
-            </Anchor>
+            />
           </List.Item>
         ))}
       </List>

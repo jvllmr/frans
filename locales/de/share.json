@@ -6,5 +6,6 @@
   "title_open_share": "Share öffnen",
   "grant_prompt": "Geben Sie das Passwort ein, um Dateien hochladen zu können",
   "grant_submit": "Auf Upload-Erlaubnis zugreifen",
-  "grant_message": "hat Ihnen die Erlaubnis gegeben Dateien hier hochzuladen"
+  "grant_message": "hat Ihnen die Erlaubnis gegeben Dateien hier hochzuladen",
+  "files": "Dateien"
 }

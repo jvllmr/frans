@@ -3,5 +3,7 @@
   "label_create": "Upload-Erlaubnis erstellen",
   "title_reset": "Formulatfelder zurücksetzen",
   "label_expiry": "Upload-Erlaubnis Verfallsparameter",
-  "label_download_expiry": "Dateien Verfallsparameter"
+  "label_download_expiry": "Dateien Verfallsparameter",
+  "grant_available": "Ihre Upload-Erlaubnis ist jetzt verfügbar!",
+  "grant_another": "Weitere Upload-Erlaubnis erstellen"
 }

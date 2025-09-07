@@ -1,7 +1,7 @@
-import { Button, Flex, Stack, Text } from "@mantine/core";
+import { Box, Button, Flex, List, Stack, Text } from "@mantine/core";
 import { FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
-import { useQueryClient } from "@tanstack/react-query";
+import { QueryKey, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useCallback, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ import {
   grantsKey,
   useGrantUploadMutation,
 } from "~/api/grant";
+import { FileRefText } from "~/components/file/FileRef";
 import { ProgressBar } from "~/components/form/ProgressBar";
 
 import { FilesInput } from "~/components/inputs/FilesInput";
@@ -35,8 +36,12 @@ function useShareGrantContext() {
   return grant;
 }
 
+function grantShareQueryKey(grantId: string): QueryKey {
+  return ["SHARE", "GRANT", grantId];
+}
+
 function GrantShare() {
-  const ticket = useShareGrantContext();
+  const grant = useShareGrantContext();
   const { t } = useTranslation("share");
   const queryClient = useQueryClient();
   const form = useForm<{ files: FileWithPath[] }>({
@@ -55,22 +60,42 @@ function GrantShare() {
   return (
     <form
       onSubmit={form.onSubmit((values) => {
-        uploadFilesToGrantMutation.mutate(values);
-        queryClient.invalidateQueries({ queryKey: grantsKey });
-        queryClient.invalidateQueries({ queryKey: filesKey });
+        uploadFilesToGrantMutation.mutate(values, {
+          onSuccess() {
+            queryClient.invalidateQueries({ queryKey: grantsKey });
+            queryClient.invalidateQueries({ queryKey: filesKey });
+            queryClient.invalidateQueries({
+              queryKey: grantShareQueryKey(grantId),
+            });
+            form.reset();
+          },
+        });
       })}
     >
       <Stack>
         <Text>
           <b>
-            {ticket.owner.name} ({ticket.owner.email})
+            {grant.owner.name} ({grant.owner.email})
           </b>{" "}
           {t("grant_message")}
         </Text>
         <Text>
           <b>{t("comment")}: </b>
-          {ticket.comment}
+          {grant.comment}
         </Text>
+        {grant.files.length ? (
+          <Box>
+            <b>{t("files")}:</b>
+            <List ml="sm">
+              {grant.files.map((file) => (
+                <List.Item key={file.id}>
+                  <FileRefText file={file} />
+                </List.Item>
+              ))}
+            </List>
+          </Box>
+        ) : null}
+
         <FilesInput {...form.getInputProps("files")} />
         <Flex justify="space-evenly">
           <Button type="submit">{t("upload", { ns: "translation" })}</Button>
@@ -94,7 +119,7 @@ function RouteComponent() {
     (password: string) => fetchGrantShare({ grantId: grantId, password }),
     [grantId],
   );
-  const queryKey = useMemo(() => ["SHARE", "GRANT", grantId], [grantId]);
+  const queryKey = useMemo(() => grantShareQueryKey(grantId), [grantId]);
   const shareTokenGenerator = useCallback(
     (password: string) =>
       fetchGrantShareAccessToken({ grantId: grantId, password }),

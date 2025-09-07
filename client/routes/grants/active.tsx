@@ -1,52 +1,28 @@
-import { ActionIcon, Anchor, CopyButton, Group, Table } from "@mantine/core";
-import { IconCopy, IconCopyCheck, IconFolderOpen } from "@tabler/icons-react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { Table } from "@mantine/core";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { Grant, grantQueryOptions } from "~/api/grant";
+import { Grant, grantQueryOptions, grantsKey } from "~/api/grant";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
-import { ActionIconLink } from "~/components/routing/Link";
+import { FileRef } from "~/components/file/FileRef";
+import { ShareLinkButtons } from "~/components/share/ShareLink";
 import { useDateFormatter } from "~/i18n";
-import { getShareLink } from "~/util/link";
+import { getInternalFileLink } from "~/util/link";
 
 export const Route = createFileRoute("/grants/active")({
   component: RouteComponent,
 });
 
 function GrantButtons({ grant }: { grant: Grant }) {
-  const { t } = useTranslation("grant_active");
-  return (
-    <Group>
-      <ActionIconLink
-        to="/s/$shareId"
-        params={{ shareId: grant.id }}
-        target="_blank"
-        title={t("title_open_share")}
-      >
-        <IconFolderOpen />
-      </ActionIconLink>
-      <CopyButton value={getShareLink(grant.id)}>
-        {({ copied, copy }) => (
-          <ActionIcon
-            onClick={() => {
-              copy();
-            }}
-            title={t("title_copy_link")}
-          >
-            {copied ? <IconCopyCheck /> : <IconCopy />}
-          </ActionIcon>
-        )}
-      </CopyButton>
-    </Group>
-  );
+  return <ShareLinkButtons shareId={grant.id} />;
 }
 
 function RouteComponent() {
   const { t } = useTranslation("grant_active");
   const { data: grants } = useSuspenseQuery(grantQueryOptions);
   const dateFormatter = useDateFormatter();
-
+  const queryClient = useQueryClient();
   return (
     <Table withColumnBorders withTableBorder withRowBorders>
       <Table.Thead>
@@ -76,11 +52,13 @@ function RouteComponent() {
                     />
                   </Table.Td>
                   <Table.Td>
-                    <Anchor
-                      href={`${window.fransRootPath}/api/v1/file/${file.id}`}
-                    >
-                      {file.name}
-                    </Anchor>
+                    <FileRef
+                      file={file}
+                      link={getInternalFileLink(file.id)}
+                      onClick={() => {
+                        queryClient.invalidateQueries({ queryKey: grantsKey });
+                      }}
+                    />
                   </Table.Td>
                   {index === 0 ? (
                     <Table.Td rowSpan={grant.files.length}>

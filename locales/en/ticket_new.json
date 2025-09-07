@@ -1,5 +1,7 @@
 {
   "title_upload": "Upload files",
   "title_reset": "Reset form fields",
-  "label_expiry": "Ticket expiry"
+  "label_expiry": "Ticket expiry",
+  "ticket_available": "Your ticket is now available!",
+  "ticket_another": "Create another ticket"
 }

@@ -8,5 +8,7 @@
   "session_expired": "Ihre Sitzung ist abgelaufen",
   "session_renew": "Neu anmelden",
   "expiration_type_none": "Nie",
-  "file_downloaded_success": "Erfolgreich heruntergeladen"
+  "file_downloaded_success": "Erfolgreich heruntergeladen",
+  "url": "URL",
+  "password": "Passwort"
 }
