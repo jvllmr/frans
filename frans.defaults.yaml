@@ -1,0 +1,115 @@
+# IP the webserver should listen on
+# Env var: FRANS_HOST
+host: 127.0.0.1 # 0.0.0.0 for containers
+# Port the webserver should listen on
+# Env var: FRANS_PORT
+port: 8081
+# The root path from where frans serves its content (i.e. /files)
+# Env var: FRANS_ROOT_PATH
+root_path: ""
+
+oidc:
+  # URL to the OIDC provider (required)
+  # Env var: FRANS_OIDC_ISSUER
+  issuer:
+  # OIDC client ID (required)
+  # Env var: FRANS_OIDC_CLIENT_ID
+  client_id:
+  # A group in your OIDC provider that should have admin privileges within frans
+  # Env var: FRANS_OIDC_ADMIN_GROUP
+  admin_group: admin
+
+db:
+  # Database type to use. One of `postgres`, `mysql` or `sqlite3`
+  # Env var: FRANS_DB_TYPE
+  type: postgres
+  # Database host (file path in case of `sqlite3`)
+  # Env var: FRANS_DB_HOST
+  host: localhost # or frans.db for sqlite3
+  # Database port
+  # Env var: FRANS_DB_PORT
+  port: 5432 # or 3306 for mysql
+  # Database name
+  # Env var: FRANS_DB_NAME
+  name: frans
+  # Database user
+  # Env var: FRANS_DB_USER
+  user: frans
+  # Database password (required for postgres and mysql)
+  # Env var: FRANS_DB_PASSWORD
+  password:
+
+smtp:
+  # SMTP server host (required)
+  # Env var: FRANS_SMTP_SERVER
+  server:
+  # SMTP server port
+  # Env var: FRANS_SMTP_PORT
+  port: 25
+  # SMTP server user
+  # Env var: FRANS_SMTP_USERNAME
+  username: null
+  # SMTP server password
+  # Env var: FRANS_SMTP_PASSWORD
+  password: null
+  # SMTP default sender from address (required)
+  # Env var: FRANS_SMTP_FROM
+  from:
+
+files:
+  # Path to directory where files will be stored
+  # Env var: FRANS_FILES_DIR
+  dir: files
+  # Max files per upload
+  # Env var: FRANS_FILES_MAX_PER_UPLOAD
+  max_per_upload: 20
+  # Max size per uploaded file
+  # Env var: FRANS_FILES_MAX_SIZE
+  max_size: 2_000_000_000 # (2 GB)
+
+expiry:
+  # Default expiry days since last download
+  # Env var: FRANS_EXPIRY_DAYS_SINCE_LAST_DOWNLOAD
+  days_since_last_download: 7
+  # Default expiry after total downloads
+  # Env var: FRANS_EXPIRY_TOTAL_DOWNLOADS
+  total_downloads: 10
+  # Default expiry after total days
+  # Env var: FRANS_EXPIRY_TOTAL_DAYS
+  total_days: 30
+
+grant_expiry:
+  # Default grant expiry days since last upload
+  # Env var: FRANS_GRANT_EXPIRY_DAYS_SINCE_LAST_UPLOAD
+  days_since_last_upload: 7
+  # Default grant expiry after total uploads
+  # Env var: FRANS_GRANT_EXPIRY_TOTAL_UPLOADS
+  total_uploads: 10
+  # Default grant expiry after total days
+  # Env var: FRANS_GRANT_EXPIRY_TOTAL_DAYS
+  total_days: 30
+
+log:
+  # Whether log messages should be in JSON format
+  # Env var: FRANS_LOG_JSON
+  json: false
+
+colors:
+  # Color preset to use
+  # One of https://mantine.dev/theming/colors/#default-colors in lowercase or `custom`
+  # Env var: FRANS_COLOR_PRESET
+  preset: blue
+  # Custom color palette consisting of 10 color hex values.
+  # Can be generated via https://mantine.dev/colors-generator/
+  # Env var: FRANS_COLOR_CUSTOM_PRESET
+  custom_preset:
+    - "#000000"
+    - "#000000"
+    - "#000000"
+    - "#000000"
+    - "#000000"
+    - "#000000"
+    - "#000000"
+    - "#000000"
+    - "#000000"
+    - "#000000"

@@ -10,40 +10,58 @@ import (
 	"github.com/spf13/viper"
 )
 
+type OidcConfig struct {
+	OidcIssuer     string `mapstructure:"issuer"`
+	OidcClientID   string `mapstructure:"client_id"`
+	OidcAdminGroup string `mapstructure:"admin_group"`
+}
+
+type SMTPConfig struct {
+	SMTPServer   string  `mapstructure:"server"`
+	SMTPPort     int     `mapstructure:"port"`
+	SMTPFrom     string  `mapstructure:"from"`
+	SMTPUsername *string `mapstructure:"username"`
+	SMTPPassword *string `mapstructure:"password"`
+}
+
+type FilesConfig struct {
+	FilesDir string `mapstructure:"dir"`
+	MaxSizes int64  `mapstructure:"max_size"`
+	MaxFiles uint8  `mapstructure:"max_per_upload"`
+}
+
+type ExpiryConfig struct {
+	DefaultExpiryDaysSinceLastDownload uint8 `mapstructure:"days_since_last_download"`
+	DefaultExpiryTotalDownloads        uint8 `mapstructure:"total_downloads"`
+	DefaultExpiryTotalDays             uint8 `mapstructure:"total_days"`
+}
+
+type GrantExpiryConfig struct {
+	GrantDefaultExpiryDaysSinceLastUpload uint8 `mapstructure:"days_since_last_upload"`
+	GrantDefaultExpiryTotalUploads        uint8 `mapstructure:"total_uploads"`
+	GrantDefaultExpiryTotalDays           uint8 `mapstructure:"total_days"`
+}
+
+type ColorsConfig struct {
+	Color       string     `mapstructure:"preset"`
+	CustomColor [10]string `mapstructure:"custom_preset"`
+}
+
 type Config struct {
-	DBConfig  `mapstructure:",squash"`
-	LogConfig `mapstructure:",squash"`
+	OidcConfig        `mapstructure:"oidc"`
+	DBConfig          `mapstructure:"db"`
+	SMTPConfig        `mapstructure:"smtp"`
+	FilesConfig       `mapstructure:"files"`
+	ExpiryConfig      `mapstructure:"expiry"`
+	GrantExpiryConfig `mapstructure:"grant_expiry"`
+	LogConfig         `mapstructure:"log"`
+	ColorsConfig      `mapstructure:"colors"`
 
 	DevMode bool `mapstructure:"dev_mode"`
 
 	Host     string `mapstructure:"host"`
 	Port     uint16 `mapstructure:"port"`
 	RootPath string `mapstructure:"root_path"`
-
-	OidcIssuer     string `mapstructure:"oidc_issuer"`
-	OidcClientID   string `mapstructure:"oidc_client_id"`
-	OidcAdminGroup string `mapstructure:"oidc_admin_group"`
-
-	FilesDir string `mapstructure:"files_dir"`
-	MaxSizes int64  `mapstructure:"max_sizes"`
-	MaxFiles uint8  `mapstructure:"max_files"`
-
-	DefaultExpiryDaysSinceLastDownload uint8 `mapstructure:"expiry_days_since"`
-	DefaultExpiryTotalDownloads        uint8 `mapstructure:"expiry_total_dl"`
-	DefaultExpiryTotalDays             uint8 `mapstructure:"expiry_total_days"`
-
-	GrantDefaultExpiryDaysSinceLastUpload uint8 `mapstructure:"grant_expiry_days_since"`
-	GrantDefaultExpiryTotalUploads        uint8 `mapstructure:"grant_expiry_total_up"`
-	GrantDefaultExpiryTotalDays           uint8 `mapstructure:"grant_expiry_total_days"`
-
-	SMTPServer   string  `mapstructure:"smtp_server"`
-	SMTPPort     int     `mapstructure:"smtp_port"`
-	SMTPFrom     string  `mapstructure:"smtp_from"`
-	SMTPUsername *string `mapstructure:"smtp_username"`
-	SMTPPassword *string `mapstructure:"smtp_password"`
-
-	Color       string     `mapstructure:"color"`
-	CustomColor [10]string `mapstructure:"custom_color"`
 }
 
 func setConfigSearchStrategy(viper *viper.Viper) {
@@ -65,30 +83,30 @@ func NewConfig() (Config, error) {
 	fransConf.SetDefault("host", "127.0.0.1")
 	fransConf.SetDefault("port", 8080)
 
-	fransConf.SetDefault("files_dir", "files")
-	fransConf.SetDefault("max_files", 20)
-	fransConf.SetDefault("max_sizes", 2_000_000_000) // 2GB
+	fransConf.SetDefault("files.dir", "files")
+	fransConf.SetDefault("files.max_per_upload", 20)
+	fransConf.SetDefault("files.max_size", 2_000_000_000) // 2GB
 
-	fransConf.SetDefault("expiry_days_since", 7)
-	fransConf.SetDefault("expiry_total_dl", 10)
-	fransConf.SetDefault("expiry_total_days", 30)
+	fransConf.SetDefault("expiry.days_since", 7)
+	fransConf.SetDefault("expiry.total_dl", 10)
+	fransConf.SetDefault("expiry.total_days", 30)
 
-	fransConf.SetDefault("grant_expiry_days_since", 7)
-	fransConf.SetDefault("grant_expiry_total_up", 10)
-	fransConf.SetDefault("grant_expiry_total_days", 30)
+	fransConf.SetDefault("grant_expiry.days_since", 7)
+	fransConf.SetDefault("grant_expiry.total_up", 10)
+	fransConf.SetDefault("grant_expiry.total_days", 30)
 
 	setDBConfigDefaults(fransConf)
 
-	fransConf.SetDefault("oidc_admin_group", "admin")
+	fransConf.SetDefault("oidc.admin_group", "admin")
 
 	setLogConfigDefaults(fransConf)
 
-	fransConf.SetDefault("smtp_port", 25)
-	fransConf.SetDefault("smtp_username", nil)
-	fransConf.SetDefault("smtp_password", nil)
+	fransConf.SetDefault("smtp.port", 25)
+	fransConf.SetDefault("smtp.username", nil)
+	fransConf.SetDefault("smtp.password", nil)
 
-	fransConf.SetDefault("color", "blue")
-	fransConf.SetDefault("custom_color", [10]string{
+	fransConf.SetDefault("colors.preset", "blue")
+	fransConf.SetDefault("colors.custom_preset", [10]string{
 		"#000000",
 		"#000000",
 		"#000000",
