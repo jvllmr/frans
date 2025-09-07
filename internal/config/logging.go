@@ -8,11 +8,11 @@ import (
 )
 
 type LogConfig struct {
-	LogJSON bool `mapstructure:"log_json"`
+	LogJSON bool `mapstructure:"json"`
 }
 
 func setLogConfigDefaults(viper *viper.Viper) {
-	viper.SetDefault("log_json", false)
+	viper.SetDefault("log.json", false)
 }
 
 func NewLogConfig() (LogConfig, error) {

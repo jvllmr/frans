@@ -8,25 +8,29 @@ import (
 )
 
 type DBConfig struct {
-	DBType     string `mapstructure:"db_type"`
-	DBHost     string `mapstructure:"db_host"`
-	DBPort     uint16 `mapstructure:"db_port"`
-	DBName     string `mapstructure:"db_name"`
-	DBUser     string `mapstructure:"db_user"`
-	DBPassword string `mapstructure:"db_password"`
+	DBType     string `mapstructure:"type"`
+	DBHost     string `mapstructure:"host"`
+	DBPort     uint16 `mapstructure:"port"`
+	DBName     string `mapstructure:"name"`
+	DBUser     string `mapstructure:"user"`
+	DBPassword string `mapstructure:"password"`
+}
+
+type ExclusiveDBConfig struct {
+	DBConfig `mapstructure:"db"`
 }
 
 func setDBConfigDefaults(viper *viper.Viper) {
-	viper.SetDefault("db_type", "postgres")
-	viper.SetDefault("db_host", "localhost")
-	viper.SetDefault("db_port", 0)
-	viper.SetDefault("db_name", "frans")
-	viper.SetDefault("db_user", "frans")
-	viper.SetDefault("db_password", "")
+	viper.SetDefault("db.type", "postgres")
+	viper.SetDefault("db.host", "localhost")
+	viper.SetDefault("db.port", 0)
+	viper.SetDefault("db.name", "frans")
+	viper.SetDefault("db.user", "frans")
+	viper.SetDefault("db.password", "")
 }
 
-func NewDBConfig() (DBConfig, error) {
-	var config DBConfig
+func NewDBConfig() (ExclusiveDBConfig, error) {
+	var config ExclusiveDBConfig
 	dbConf := viper.New()
 	setDBConfigDefaults(dbConf)
 	setConfigSearchStrategy(dbConf)

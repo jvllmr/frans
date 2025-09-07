@@ -96,7 +96,7 @@ func Migrate() {
 	if err != nil {
 		log.Fatalf("Could not get database config: %v", err)
 	}
-	dsn, err := buildMigrationDsn(dbConfig)
+	dsn, err := buildMigrationDsn(dbConfig.DBConfig)
 
 	if err != nil {
 		log.Fatalf("Could not build database dsn: %v", err)
