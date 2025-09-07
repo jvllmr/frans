@@ -7,7 +7,7 @@
     "build": "tsc -b && vite build && cp -r locales/ internal/mail/ && go build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev:go": "go run github.com/air-verse/air@latest",
+    "dev:go": "go run github.com/air-verse/air@v1.62.0",
     "services": "docker compose -f docker-compose.dev.yaml up",
     "keycloak:export": "./keycloak/keycloak_export.sh",
     "ent": "go run entgo.io/ent/cmd/ent@latest",

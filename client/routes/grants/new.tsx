@@ -1,12 +1,24 @@
-import { Box, Button, Flex, SimpleGrid } from "@mantine/core";
+import {
+  Anchor,
+  Box,
+  Button,
+  Center,
+  Flex,
+  Group,
+  SimpleGrid,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CreateGrant,
   createGrantSchemaFactory,
+  grantsKey,
   useCreateGrantMutation,
 } from "~/api/grant";
 import { FormDebugInfo } from "~/components/dev/FormDebugInfo";
@@ -16,7 +28,9 @@ import { HisHerEmailSection } from "~/components/form/HisHerEmailSection";
 import { MyEmailSection } from "~/components/form/MyEmailSection";
 import { PasswordSection } from "~/components/form/PasswordSection";
 import { CommentInput } from "~/components/inputs/CommentInput";
+import { CopyShareLinkButton } from "~/components/share/ShareLink";
 import { AvailableLanguage } from "~/i18n";
+import { getShareLink } from "~/util/link";
 
 export const Route = createFileRoute("/grants/new")({
   component: RouteComponent,
@@ -51,10 +65,53 @@ function RouteComponent() {
     validate: zod4Resolver(translatedCreateGrantSchema),
   });
   const createGrantMutation = useCreateGrantMutation();
-  return (
+  const queryClient = useQueryClient();
+  const [grantId, setGrantId] = useState<string | null>(null);
+  const shareLink = getShareLink(grantId ?? "");
+  return grantId ? (
+    <Stack>
+      <Center>
+        <Text>{t("grant_available")}</Text>
+      </Center>
+      <Center>
+        <Box>
+          <Group gap={2}>
+            <b>
+              {t("url", { ns: "translation" })}:{" "}
+              <Anchor href={shareLink}>{shareLink}</Anchor>
+            </b>
+            <CopyShareLinkButton
+              variant="subtle"
+              color="gray"
+              shareId={grantId}
+            />
+          </Group>
+          <Text>
+            <b>{t("password", { ns: "translation" })}:</b>{" "}
+            {form.values.password}
+          </Text>
+        </Box>
+      </Center>
+
+      <Button
+        fullWidth
+        onClick={() => {
+          form.reset();
+          setGrantId(null);
+        }}
+      >
+        {t("grant_another")}
+      </Button>
+    </Stack>
+  ) : (
     <form
       onSubmit={form.onSubmit((values) => {
-        createGrantMutation.mutate(values);
+        createGrantMutation.mutate(values, {
+          onSuccess(data) {
+            setGrantId(data.id);
+            queryClient.invalidateQueries({ queryKey: grantsKey });
+          },
+        });
       })}
     >
       <Box p="lg">

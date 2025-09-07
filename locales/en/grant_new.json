@@ -1,7 +1,9 @@
 {
-  "title_create": "Create grant",
-  "label_create": "Create grant",
+  "title_create": "Create upload grant",
+  "label_create": "Create upload grant",
   "title_reset": "Reset form fields",
-  "label_expiry": "Grant expiry",
-  "label_download_expiry": "Uploaded files expiry"
+  "label_expiry": "Upload grant expiry",
+  "label_download_expiry": "Uploaded files expiry",
+  "grant_available": "Your upload grant is now available!",
+  "grant_another": "Create another upload grant"
 }

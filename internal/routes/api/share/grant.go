@@ -80,12 +80,15 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 			grantValue.FileExpiryTotalDays,
 			grantValue.FileExpiryTotalDownloads,
 		)
-		var errFileTooBig *services.ErrFileTooBig
-		if errors.As(err, &errFileTooBig) {
-			c.AbortWithError(http.StatusBadRequest, err)
-		} else {
-			c.AbortWithError(http.StatusInternalServerError, err)
+		if err != nil {
+			var errFileTooBig *services.ErrFileTooBig
+			if errors.As(err, &errFileTooBig) {
+				c.AbortWithError(http.StatusBadRequest, err)
+			} else {
+				c.AbortWithError(http.StatusInternalServerError, err)
+			}
 		}
+
 		tx.Grant.UpdateOne(grantValue).
 			AddFiles(dbFile).
 			SaveX(c.Request.Context())

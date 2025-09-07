@@ -1,9 +1,19 @@
-import { Box, Button, Flex, SimpleGrid } from "@mantine/core";
+import {
+  Anchor,
+  Box,
+  Button,
+  Center,
+  Flex,
+  Group,
+  SimpleGrid,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 import { createFileRoute } from "@tanstack/react-router";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { I18nextProvider, useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
 import {
@@ -20,7 +30,9 @@ import { PasswordSection } from "~/components/form/PasswordSection";
 import { ProgressBar } from "~/components/form/ProgressBar";
 import { CommentInput } from "~/components/inputs/CommentInput";
 import { FilesInput } from "~/components/inputs/FilesInput";
+import { CopyShareLinkButton } from "~/components/share/ShareLink";
 import i18n, { AvailableLanguage } from "~/i18n";
+import { getShareLink } from "~/util/link";
 import { useProgressHandle } from "~/util/progress";
 export const Route = createFileRoute("/")({
   component: Index,
@@ -54,13 +66,52 @@ function NewTicketForm() {
   });
   const progressHandle = useProgressHandle();
   const createTicketMutation = useCreateTicketMutation(progressHandle);
+  const [ticketId, setTicketId] = useState<string | null>(null);
+  const shareLink = getShareLink(ticketId ?? "");
 
-  return (
+  return ticketId ? (
+    <Stack>
+      <ProgressBar state={progressHandle.state} />
+      <Center>
+        <Text>{t("ticket_available")}</Text>
+      </Center>
+      <Center>
+        <Box>
+          <Group gap={2}>
+            <b>
+              {t("url", { ns: "translation" })}:{" "}
+              <Anchor href={shareLink}>{shareLink}</Anchor>
+            </b>
+            <CopyShareLinkButton
+              variant="subtle"
+              color="gray"
+              shareId={ticketId}
+            />
+          </Group>
+          <Text>
+            <b>{t("password", { ns: "translation" })}:</b>{" "}
+            {form.values.password}
+          </Text>
+        </Box>
+      </Center>
+
+      <Button
+        fullWidth
+        onClick={() => {
+          form.reset();
+          setTicketId(null);
+          progressHandle.reset();
+        }}
+      >
+        {t("ticket_another")}
+      </Button>
+    </Stack>
+  ) : (
     <form
       onSubmit={form.onSubmit((values) => {
         createTicketMutation.mutate(values, {
-          onSuccess() {
-            form.reset();
+          onSuccess(data) {
+            setTicketId(data.id);
             queryClient.invalidateQueries({ queryKey: ticketsKey });
           },
         });

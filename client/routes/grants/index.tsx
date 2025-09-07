@@ -3,10 +3,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { receivedFilesQueryOptions } from "~/api/file";
+import { queryClient } from "~/api";
+import { filesKey, receivedFilesQueryOptions } from "~/api/file";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
+import { FileRef } from "~/components/file/FileRef";
 import { useDateFormatter, useFileSizeFormatter } from "~/i18n";
+import { getInternalFileLink } from "~/util/link";
 
 export const Route = createFileRoute("/grants/")({
   component: RouteComponent,
@@ -28,6 +31,7 @@ function RouteComponent() {
         <Table.Thead>
           <Table.Tr>
             <Table.Th />
+            <Table.Th>{t("table_title_file")}</Table.Th>
             <Table.Th>{t("table_title_size")}</Table.Th>
             <Table.Th>{t("table_title_date")}</Table.Th>
             <Table.Th>{t("table_title_expiration")}</Table.Th>
@@ -42,7 +46,18 @@ function RouteComponent() {
                   timesDownloaded={receivedFile.timesDownloaded}
                 />
               </Table.Td>
+              <Table.Td>
+                <FileRef
+                  file={receivedFile}
+                  link={getInternalFileLink(receivedFile.id)}
+                  withoutSize
+                  onClick={() => {
+                    queryClient.invalidateQueries({ queryKey: filesKey });
+                  }}
+                />
+              </Table.Td>
               <Table.Td>{fileSizeFormatter(receivedFile.size)}</Table.Td>
+
               <Table.Td>
                 {dateFormatter.format(receivedFile.createdAt)}
               </Table.Td>

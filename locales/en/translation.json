@@ -8,5 +8,7 @@
   "session_expired": "Your login session expired",
   "session_renew": "Login again",
   "expiration_type_none": "Never",
-  "file_downloaded_success": "Successfully downloaded"
+  "file_downloaded_success": "Successfully downloaded",
+  "url": "URL",
+  "password": "Password"
 }
