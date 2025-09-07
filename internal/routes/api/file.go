@@ -2,6 +2,7 @@ package apiRoutes
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -57,9 +58,17 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 	if !util.UserHasFileAccess(c.Request.Context(), currentUser, fileValue) {
 		c.AbortWithStatus(http.StatusForbidden)
 	}
+
+	addDownload := c.Query("addDownload")
+	if len(addDownload) > 0 {
+		fc.db.File.UpdateOne(fileValue).
+			AddTimesDownloaded(1).
+			SetLastDownload(time.Now()).
+			ExecX(c.Request.Context())
+	}
+
 	filePath := fc.fileService.FilesFilePath(fileValue.Sha512)
 	c.FileAttachment(filePath, fileValue.Name)
-
 }
 
 func setupFileGroup(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
