@@ -2,9 +2,11 @@ package clientRoutes
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/fs"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -161,6 +163,12 @@ func SetupClientRoutes(
 	staticFiles, _ := fs.Sub(clientFiles, "assets")
 	rGroup.StaticFS("/static", http.FS(staticFiles))
 
+	customColorJsonBytes, err := json.Marshal(configValue.CustomColor)
+	if err != nil {
+		log.Fatalf("Could not generate json from custom color setting.")
+	}
+	customColorJson := string(customColorJsonBytes)
+
 	r.NoRoute(middleware.Auth(oidcProvider, true), func(c *gin.Context) {
 		// Fallback to index.html for React Router
 		c.HTML(http.StatusOK, "index", gin.H{
@@ -174,6 +182,8 @@ func SetupClientRoutes(
 			"grantDefaultExpiryTotalDays":           configValue.GrantDefaultExpiryTotalDays,
 			"grantDefaultExpiryTotalUploads":        configValue.GrantDefaultExpiryTotalUploads,
 			"grantDefaultExpiryDaysSinceLastUpload": configValue.GrantDefaultExpiryDaysSinceLastUpload,
+			"color":                                 configValue.Color,
+			"customColor":                           customColorJson,
 		})
 	})
 
