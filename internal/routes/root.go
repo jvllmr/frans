@@ -20,6 +20,7 @@ func SetupRootRouter(configValue config.Config, db *ent.Client) (*gin.Engine, er
 
 	r := gin.New()
 
+	r.SetTrustedProxies(configValue.TrustedProxies)
 	var stdoutHandler slog.Handler
 	if configValue.LogJSON {
 		stdoutHandler = slog.NewJSONHandler(os.Stdout, nil)

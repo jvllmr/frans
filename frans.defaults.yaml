@@ -7,6 +7,10 @@ port: 8081
 # The root path from where frans serves its content (i.e. /files)
 # Env var: FRANS_ROOT_PATH
 root_path: ""
+# A list of proxies to trust
+# accepts ipv4 and ipv6 addresses and CIDRs
+# Env var: FRANS_TRUSTED_PROXIES
+trusted_proxies: []
 
 oidc:
   # URL to the OIDC provider (required)
