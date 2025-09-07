@@ -35,6 +35,7 @@ import { useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
 import { meQueryOptions } from "~/api/user";
 import i18n, { availableLanguages, availableLanguagesLabels } from "~/i18n";
+import { BASE_THEME } from "~/util/theme";
 function LanguageControls() {
   const [language, setLanguage] = useState(i18n.language);
   return (
@@ -197,7 +198,7 @@ function DevTools() {
 function RootRoute() {
   return (
     <>
-      <MantineProvider>
+      <MantineProvider theme={BASE_THEME}>
         <QueryClientProvider client={queryClient}>
           <Container pt={50}>
             <Paper withBorder p="lg" mb="xs">

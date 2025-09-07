@@ -41,6 +41,9 @@ type Config struct {
 	SMTPFrom     string  `mapstructure:"smtp_from"`
 	SMTPUsername *string `mapstructure:"smtp_username"`
 	SMTPPassword *string `mapstructure:"smtp_password"`
+
+	Color       string     `mapstructure:"color"`
+	CustomColor [10]string `mapstructure:"custom_color"`
 }
 
 func setConfigSearchStrategy(viper *viper.Viper) {
@@ -83,6 +86,20 @@ func NewConfig() (Config, error) {
 	fransConf.SetDefault("smtp_port", 25)
 	fransConf.SetDefault("smtp_username", nil)
 	fransConf.SetDefault("smtp_password", nil)
+
+	fransConf.SetDefault("color", "blue")
+	fransConf.SetDefault("custom_color", [10]string{
+		"#000000",
+		"#000000",
+		"#000000",
+		"#000000",
+		"#000000",
+		"#000000",
+		"#000000",
+		"#000000",
+		"#000000",
+		"#000000",
+	})
 
 	setConfigSearchStrategy(fransConf)
 
