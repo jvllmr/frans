@@ -1,23 +1,5 @@
 {
-  "label_comment": "Anmerkung",
-  "label_email": "Link an folgende E-Mail Adresse verschicken",
-  "label_password": "Passwort",
-  "label_password_email": "Versende Passwort im Klartext mit Benachrichtigung",
-  "label_password_email_highlight": "Klartext",
-  "label_expiry": "Ticket-Verfall",
-  "expiry_automatic": "Automatisch",
-  "expiry_single_use": "Einmaliger Download",
-  "expiry_none": "Keine Verfallsfrist",
-  "expiry_custom": "Benutzerdefiniert",
-  "label_expiry_total_days": "Verfall nach # Tagen",
-  "label_expiry_last_download": "Verfall # Tage nach dem letzten Download",
-  "label_expiry_total_downloads": "Verfall nach # Downloads",
-  "label_notify_email": "Bei Download folgende E-Mail Adresse benachrichtigen",
-  "label_own_email": "Meine E-Mail benutzen",
-  "title_own_email": "Die eigene E-Mail für Benachrichtigungen über Downloads nutzen",
-  "label_your_lang": "Deine Sprache",
-  "label_receiver_lang": "Sprache des Empfängers",
-  "title_generate_password": "Ein neues Passwort generieren lassen",
   "title_upload": "Dateien hochladen",
-  "title_reset": "Formularfelder zurücksetzen"
+  "title_reset": "Formularfelder zurücksetzen",
+  "label_expiry": "Ticket Verfallsparameter"
 }

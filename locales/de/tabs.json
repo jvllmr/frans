@@ -6,5 +6,6 @@
   "grants": "Empfangene Dateien",
   "share": "Freigabe",
   "ticket_share": "Freigegebenes Ticket",
-  "users": "Benutzer"
+  "users": "Benutzer",
+  "grant_share": "Freigegebene Upload-Erlaubnis"
 }

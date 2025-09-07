@@ -4,6 +4,9 @@
   "upload": "Hochladen",
   "reset": "Zurücksetzen",
   "generate": "Generieren",
+  "comment": "Anmerkung",
   "session_expired": "Ihre Sitzung ist abgelaufen",
-  "session_renew": "Neu anmelden"
+  "session_renew": "Neu anmelden",
+  "expiration_type_none": "Nie",
+  "file_downloaded_success": "Erfolgreich heruntergeladen"
 }

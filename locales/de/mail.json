@@ -1,9 +1,13 @@
 {
-  "comment": "Anmerkung",
+  "ticket_comment": "Anmerkung zum Ticket",
+  "grant_comment": "Anmerkung zur Upload-Erlaubnis",
   "contents": "Inhalte des Tickets",
   "url": "Link",
   "password": "Passwort",
   "subject_ticket": "Download-Link für {{.FileName}}",
   "subject_download": "Download-Benachrichtigung für Ticket",
-  "notification_download": "Die Datei {{.FileName}} (Ticket {{.Ticket}}) wurde durch {{.Address}} heruntergeladen"
+  "notification_download": "Die Datei {{.FileName}} (Ticket {{.Ticket}}) wurde durch {{.Address}} heruntergeladen",
+  "subject_upload": "Upload-Erlaubnis upload",
+  "notification_upload": "Dateien wurden von {{.Address}} zur Upload-Erlaubnis {{.GrantName}} hochgeladen",
+  "subject_grant": "Link für Upload-Erlaubnis"
 }

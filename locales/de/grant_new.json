@@ -1,0 +1,7 @@
+{
+  "title_create": "Upload-Erlaubnis erstellen",
+  "label_create": "Upload-Erlaubnis erstellen",
+  "title_reset": "Formulatfelder zurücksetzen",
+  "label_expiry": "Upload-Erlaubnis Verfallsparameter",
+  "label_download_expiry": "Dateien Verfallsparameter"
+}
