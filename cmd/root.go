@@ -9,6 +9,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/db"
 	"github.com/jvllmr/frans/internal/logging"
 	"github.com/spf13/cobra"
 )
@@ -17,10 +18,13 @@ var rootCmd = &cobra.Command{
 	Use:   "frans",
 	Short: "A simple file-sharing tool ready for cloud native",
 	Run: func(cmd *cobra.Command, args []string) {
-		configValue, db := getConfigAndDBClient()
-		defer db.Close()
-		go startCronScheduler(configValue, db)
-		startGin(configValue, db)
+		configValue, dbCon := getConfigAndDBClient()
+		defer dbCon.Close()
+		if !configValue.DevMode {
+			db.Migrate()
+		}
+		go startCronScheduler(configValue, dbCon)
+		startGin(configValue, dbCon)
 	},
 }
 
