@@ -49,7 +49,7 @@ function RouteComponent() {
               <Table.Td>
                 <FileRef
                   file={receivedFile}
-                  link={getInternalFileLink(receivedFile.id)}
+                  link={getInternalFileLink(receivedFile.id, true)}
                   withoutSize
                   onClick={() => {
                     queryClient.invalidateQueries({ queryKey: filesKey });

@@ -54,7 +54,7 @@ function RouteComponent() {
                   <Table.Td>
                     <FileRef
                       file={file}
-                      link={getInternalFileLink(file.id)}
+                      link={getInternalFileLink(file.id, true)}
                       onClick={() => {
                         queryClient.invalidateQueries({ queryKey: grantsKey });
                       }}
