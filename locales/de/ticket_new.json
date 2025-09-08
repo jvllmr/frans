@@ -1,5 +1,7 @@
 {
   "title_upload": "Dateien hochladen",
   "title_reset": "Formularfelder zurücksetzen",
-  "label_expiry": "Ticket Verfallsparameter"
+  "label_expiry": "Ticket Verfallsparameter",
+  "ticket_available": "Ihr Ticket ist jetzt verfügbar!",
+  "ticket_another": "Weiteres Ticket erstellen"
 }
