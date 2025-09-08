@@ -220,7 +220,7 @@ function RootRoute() {
           </Container>
           <DevTools />
         </QueryClientProvider>
-        <Notifications position="bottom-center" />
+        <Notifications position="top-center" />
       </MantineProvider>
     </>
   );
