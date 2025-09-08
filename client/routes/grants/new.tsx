@@ -38,8 +38,8 @@ export const Route = createFileRoute("/grants/new")({
 
 function RouteComponent() {
   const { t, i18n } = useTranslation("grant_new");
-  const translatedCreateGrantSchema = useMemo(
-    () => createGrantSchemaFactory(t),
+  const translatedValidator = useMemo(
+    () => zod4Resolver(createGrantSchemaFactory(t)),
     [t],
   );
   const form = useForm<CreateGrant>({
@@ -62,7 +62,7 @@ function RouteComponent() {
       receiverLang: i18n.language as AvailableLanguage,
       creatorLang: i18n.language as AvailableLanguage,
     },
-    validate: zod4Resolver(translatedCreateGrantSchema),
+    validate: translatedValidator,
   });
   const createGrantMutation = useCreateGrantMutation();
   const queryClient = useQueryClient();

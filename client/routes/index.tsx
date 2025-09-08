@@ -41,8 +41,8 @@ export const Route = createFileRoute("/")({
 function NewTicketForm() {
   const { t, i18n } = useTranslation();
 
-  const translatedCreateTicketSchema = useMemo(
-    () => createTicketSchemaFactory(t),
+  const translatedValidator = useMemo(
+    () => zod4Resolver(createTicketSchemaFactory(t)),
     [t],
   );
 
@@ -62,7 +62,7 @@ function NewTicketForm() {
       creatorLang: i18n.language as AvailableLanguage,
       files: [],
     },
-    validate: zod4Resolver(translatedCreateTicketSchema),
+    validate: translatedValidator,
   });
   const progressHandle = useProgressHandle();
   const createTicketMutation = useCreateTicketMutation(progressHandle);
