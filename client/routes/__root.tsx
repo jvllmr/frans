@@ -23,6 +23,7 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRouteWithContext,
+  HeadContent,
   Outlet,
   Register,
   useChildMatches,
@@ -30,6 +31,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { isAxiosError } from "axios";
+import { type i18n as i18nType } from "i18next";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
@@ -38,6 +40,7 @@ import i18n, { availableLanguages, availableLanguagesLabels } from "~/i18n";
 import { BASE_THEME } from "~/util/theme";
 function LanguageControls() {
   const [language, setLanguage] = useState(i18n.language);
+
   return (
     <SegmentedControl
       data={availableLanguages.map((lang) => ({
@@ -198,6 +201,7 @@ function DevTools() {
 function RootRoute() {
   return (
     <>
+      <HeadContent />
       <MantineProvider theme={BASE_THEME}>
         <QueryClientProvider client={queryClient}>
           <Container pt={50}>
@@ -228,8 +232,24 @@ function RootRoute() {
 
 interface RoutingContext {
   queryClient: QueryClient;
+  i18n: i18nType;
 }
 
 export const Route = createRootRouteWithContext<RoutingContext>()({
+  head(ctx): { meta: { title: string }[] } {
+    const routeId = ctx.matches.at(-1)?.routeId as
+      | keyof Register["router"]["routesById"]
+      | undefined;
+    if (!routeId || routeId === "__root__")
+      return { meta: [{ title: "Root" }] };
+    const { translationKey } = hiddenTabTitles[routeId];
+    return {
+      meta: [
+        {
+          title: `${ctx.match.context.i18n.t(translationKey, { ns: "tabs" })} - Frans`,
+        },
+      ],
+    };
+  },
   component: RootRoute,
 });
