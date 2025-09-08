@@ -1,7 +1,5 @@
 {
   "table_title_file": "Upload-Erlaubnis",
   "table_title_created_at": "Datum",
-  "table_title_expiration": "Verfallsfrist",
-  "title_open_share": "Freigabe in einem neuen Tab öffnen",
-  "title_copy_link": "Link zur Freigabe kopieren"
+  "table_title_expiration": "Verfallsfrist"
 }
