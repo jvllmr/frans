@@ -3,6 +3,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { queryClient } from "~/api";
 import { PendingComponent } from "./components/routing/PendingComponent";
+import i18n from "./i18n";
 import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({
@@ -12,6 +13,7 @@ const router = createRouter({
   defaultPreloadStaleTime: 0,
   context: {
     queryClient,
+    i18n,
   },
 });
 
