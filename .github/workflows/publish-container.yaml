@@ -8,8 +8,8 @@ on:
       - main
 
 jobs:
-  publish:
-    name: publish
+  publish-container:
+    name: publish-container
     permissions:
       contents: read
       packages: write
