@@ -30,7 +30,7 @@ jobs:
             ghcr.io/jvllmr/frans
           tags: |
             type=ref,event=pr
-            type=ref,event=branch
+            type=ref,event=branch,enable={{is_default_branch}}
             type=semver,pattern={{major}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{version}}
