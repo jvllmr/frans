@@ -3,9 +3,11 @@
     <meta charset="UTF-8" />
     <script type="module">
       window.fransRootPath = "{{.rootPath}}"
-      window.__fransAssetUrl = (filename) => `${window.mciCompanionRootPath}/static/${filename}`
+      window.__fransAssetUrl = (filename) => `${window.fransRootPath}/static/${filename}`
+
       window.fransMaxFiles = {{.maxFiles}}
       window.fransMaxSizes = {{.maxSizes}}
+
       window.fransDefaultExpiryTotalDays = {{.defaultExpiryTotalDays}}
       window.fransDefaultExpiryTotalDownloads = {{.defaultExpiryTotalDownloads}}
       window.fransDefaultExpiryDaysSinceLastDownload = {{.defaultExpiryDaysSinceLastDownload}}
@@ -13,8 +15,10 @@
       window.fransGrantDefaultExpiryTotalUploads = {{.grantDefaultExpiryTotalUploads}}
       window.fransGrantDefaultExpiryDaysSinceLastUpload = {{.grantDefaultExpiryDaysSinceLastUpload}}
       
-      window.fransColor = {{.color}}
-      window.fransCustomColor = {{.customColor}}
+      window.fransVersion = "{{.fransVersion}}"
+      
+      window.fransColor = "{{.color}}"
+      window.fransCustomColor = "{{.customColor}}"
     </script>
     {{if .devMode}}
     <script type="module">
@@ -27,7 +31,7 @@
     <script type="module" src="{{asset "@vite/client"}}"></script>
     {{end}}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.7" />
     <title>Frans</title>
     <script type="module" crossorigin src="{{asset "client/main.tsx"}}"></script>
     {{range imports "client/main.tsx"}}

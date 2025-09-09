@@ -8,3 +8,4 @@ frans
 tmp
 migrations/*.sql
 migration.db
+/internal/config/version.go

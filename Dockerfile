@@ -28,6 +28,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     go mod download
 
 COPY --from=client-builder /workspace/internal ./internal
+COPY ./internal/config/version.go ./internal/config/version.go
 COPY . .
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build sh ./scripts/build_server.sh

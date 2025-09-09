@@ -10,5 +10,8 @@
   "expiration_type_none": "Nie",
   "file_downloaded_success": "Erfolgreich heruntergeladen",
   "url": "URL",
-  "password": "Passwort"
+  "password": "Passwort",
+  "view_on_github": "Projekt auf GitHub ansehen",
+  "powered_by_frans": "Angetrieben durch Frans Version",
+  "licensed": "Lizenziert unter GPL-2.0"
 }

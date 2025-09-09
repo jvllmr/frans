@@ -10,5 +10,7 @@
   "expiration_type_none": "Never",
   "file_downloaded_success": "Successfully downloaded",
   "url": "URL",
-  "password": "Password"
+  "password": "Password",
+  "view_on_github": "View project on GitHub",
+  "licensed": "Licensed under GPL-2.0"
 }

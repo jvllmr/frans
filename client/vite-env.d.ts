@@ -13,6 +13,8 @@ interface Window {
   fransGrantDefaultExpiryDaysSinceLastUpload: number;
   fransColor: string;
   fransCustomColor: string;
+
+  fransVersion: string;
 }
 
 declare module "virtual:*";
