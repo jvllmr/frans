@@ -31,9 +31,9 @@ jobs:
           tags: |
             type=ref,event=pr
             type=ref,event=branch
-            type=version,pattern={{major}}
-            type=version,pattern={{major}}.{{minor}}
-            type=version,pattern={{version}}
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
