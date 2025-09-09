@@ -54,16 +54,16 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           annotations: ${{ steps.metadata.outputs.annotations }}
           # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#registry-cache
-          cache-from: type=registry,ref=ghcr.io/jvllmr/flay:buildcache
-          cache-to: type=registry,ref=ghcr.io/jvllmr/flay:buildcache,mode=max
+          cache-from: type=registry,ref=ghcr.io/jvllmr/frans:buildcache
+          cache-to: type=registry,ref=ghcr.io/jvllmr/frans:buildcache,mode=max
       - name: Comment PR
         if: github.repository == 'jvllmr/frans' && github.event_name == 'pull_request'
         uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc # v2.8.2
         with:
           message: |
-            🔄 Building container image `ghcr.io/jvllmr/flay:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
+            🔄 Building container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
           message-success: |
-            ✅ Successfully built and pushed container image `ghcr.io/jvllmr/flay:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`.
+            ✅ Successfully built and pushed container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`.
                You can try it out now
           message-failure: |
-            ❌ Failed to build container image `ghcr.io/jvllmr/flay:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
+            ❌ Failed to build container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
