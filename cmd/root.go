@@ -4,8 +4,8 @@ import (
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/jackc/pgx/v5/stdlib"
+	_ "github.com/jvllmr/frans/internal/db/sqlite3"
 
 	"github.com/joho/godotenv"
 	"github.com/jvllmr/frans/internal/config"
