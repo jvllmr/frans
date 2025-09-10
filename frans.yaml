@@ -11,7 +11,7 @@ files:
 smtp:
   server: 127.0.0.1
   port: 2525
-  smtp_from: frans@vllmr.dev
+  from: frans@vllmr.dev
 colors:
   preset: "custom"
   custom_preset:
