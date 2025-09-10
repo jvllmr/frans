@@ -182,6 +182,7 @@ func SetupClientRoutes(
 			"grantDefaultExpiryTotalDays":           configValue.GrantDefaultExpiryTotalDays,
 			"grantDefaultExpiryTotalUploads":        configValue.GrantDefaultExpiryTotalUploads,
 			"grantDefaultExpiryDaysSinceLastUpload": configValue.GrantDefaultExpiryDaysSinceLastUpload,
+			"fransVersion":                          config.FransVersion,
 			"color":                                 configValue.Color,
 			"customColor":                           customColorJson,
 		})

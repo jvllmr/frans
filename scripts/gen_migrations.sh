@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 if [ $# -lt 1 ]; then
     echo "Usage: $0 <arg>" >&2
     exit 1

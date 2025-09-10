@@ -1,4 +1,5 @@
 import {
+  Anchor,
   Box,
   Button,
   Center,
@@ -199,6 +200,7 @@ function DevTools() {
 }
 
 function RootRoute() {
+  const { t } = useTranslation();
   return (
     <>
       <HeadContent />
@@ -221,6 +223,18 @@ function RootRoute() {
                 <Outlet />
               </AuthGuard>
             </Paper>
+
+            <Center my="xl">
+              <Anchor
+                c="gray.5"
+                href="https://github.com/jvllmr/frans"
+                title={t("view_on_github")}
+                size="sm"
+              >
+                <Center>{t("licensed")}</Center>
+                <Center>Version {window.fransVersion}</Center>
+              </Anchor>
+            </Center>
           </Container>
           <DevTools />
         </QueryClientProvider>

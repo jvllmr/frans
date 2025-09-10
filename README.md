@@ -29,7 +29,17 @@ Feel free to contribute or improve translations via [Crowdin](https://crowdin.co
 
 ## Installation
 
+### Helm Chart
+
 TODO...
+
+### Docker Compose
+
+See [docker-compose.minimal.yaml](docker-compose.minimal.yaml) for a minimal example.
+
+### Pre-compiled binaries
+
+Take a look at [Frans GitHub Releases](https://github.com/jvllmr/frans/releases) for pre-compiled binaries for linux, macOS and windows!
 
 ## Requirements
 

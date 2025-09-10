@@ -1,5 +1,6 @@
 
 [build]
-pre_cmd = ["cp -r locales/ internal/mail/"]
+pre_cmd = ["./scripts/gen_version.sh","cp -r locales/ internal/mail/"]
 exclude_dir = ["assets", "tmp", "vendor", "testdata", "client", "public", "build", "scripts", "dist", "node_modules", "internal/mail/locales"]
+exclude_file = ["internal/config/version.go"]
 include_ext = ["go", "tpl", "tmpl", "html", "json"]

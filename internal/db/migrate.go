@@ -102,7 +102,13 @@ func Migrate() {
 		log.Fatalf("Could not build database dsn: %v", err)
 	}
 
-	db, err := sql.Open(dbConfig.DBType, dsn)
+	dbType := dbConfig.DBType
+
+	if dbType == "postgres" {
+		dbType = "pgx"
+	}
+
+	db, err := sql.Open(dbType, dsn)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v", err)
 	}

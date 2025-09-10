@@ -1,8 +1,12 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 
+	"entgo.io/ent/dialect"
+
+	entsql "entgo.io/ent/dialect/sql"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
 )
@@ -15,13 +19,20 @@ func NewDBClient(dbConfig config.DBConfig) (*ent.Client, error) {
 			dbConfig.DBPort = 5432
 		}
 		connString = fmt.Sprintf(
-			"host=%s port=%d user=%s dbname=%s password=%s",
+			"host=%s port=%d user=%s dbname=%s password=%s sslmode=allow",
 			dbConfig.DBHost,
 			dbConfig.DBPort,
 			dbConfig.DBUser,
 			dbConfig.DBName,
 			dbConfig.DBPassword,
 		)
+		db, err := sql.Open("pgx", connString)
+		if err != nil {
+			return nil, err
+		}
+
+		drv := entsql.OpenDB(dialect.Postgres, db)
+		return ent.NewClient(ent.Driver(drv)), nil
 	case "mysql":
 		if dbConfig.DBPort == 0 {
 			dbConfig.DBPort = 3306

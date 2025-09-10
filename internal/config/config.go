@@ -89,12 +89,12 @@ func NewConfig() (Config, error) {
 	fransConf.SetDefault("files.max_per_upload", 20)
 	fransConf.SetDefault("files.max_size", 2_000_000_000) // 2GB
 
-	fransConf.SetDefault("expiry.days_since", 7)
-	fransConf.SetDefault("expiry.total_dl", 10)
+	fransConf.SetDefault("expiry.days_since_last_download", 7)
+	fransConf.SetDefault("expiry.total_downloads", 10)
 	fransConf.SetDefault("expiry.total_days", 30)
 
-	fransConf.SetDefault("grant_expiry.days_since", 7)
-	fransConf.SetDefault("grant_expiry.total_up", 10)
+	fransConf.SetDefault("grant_expiry.days_since_last_upload", 7)
+	fransConf.SetDefault("grant_expiry.total_uploads", 10)
 	fransConf.SetDefault("grant_expiry.total_days", 30)
 
 	setDBConfigDefaults(fransConf)

@@ -15,7 +15,7 @@ func RefreshUserTotalDataSize(ctx context.Context, userValue *ent.User, tx *ent.
 		return err
 	} else {
 		if tx != nil {
-			tx.User.UpdateOne(userValue).SetTotalDataSize(int64(totalDataSize)).Exec(ctx)
+			return tx.User.UpdateOne(userValue).SetTotalDataSize(int64(totalDataSize)).Exec(ctx)
 		}
 
 		return userValue.Update().SetTotalDataSize(int64(totalDataSize)).Exec(ctx)
