@@ -37,7 +37,7 @@ RUN chmod +x /workspace/frans
 
 FROM scratch AS runner
 COPY --from=server-builder --chown=1001:1001 /emptyd /tmp
-COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/files
+# COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/files
 COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/migrations
 COPY --from=server-builder --chown=1001:1001 /emptyf /opt/frans/frans.db
 COPY --from=server-builder /workspace/frans /opt/frans/
