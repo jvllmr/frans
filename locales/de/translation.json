@@ -10,5 +10,7 @@
   "expiration_type_none": "Nie",
   "file_downloaded_success": "Erfolgreich heruntergeladen",
   "url": "URL",
-  "password": "Passwort"
+  "password": "Passwort",
+  "view_on_github": "Projekt auf GitHub ansehen",
+  "licensed": "Diese Software ist lizenziert unter GPL-2.0"
 }
