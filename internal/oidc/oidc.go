@@ -18,7 +18,7 @@ type oidcProviderExtraEndpoints struct {
 
 type FransOidcProvider struct {
 	*oidc.Provider
-	*PKCECache
+	*PKCEManager
 	extraEndpoints oidcProviderExtraEndpoints
 	config         config.Config
 	OidcConfig     oidc.Config
@@ -43,7 +43,7 @@ func NewOIDC(configValue config.Config, db *ent.Client) (*FransOidcProvider, err
 		config:         configValue,
 		Provider:       oidcProvider,
 		extraEndpoints: extraEndpoints,
-		PKCECache:      NewPKCECache(),
+		PKCEManager:    NewPKCEManager(),
 		OidcConfig: oidc.Config{
 			ClientID: configValue.OidcClientID,
 		},
@@ -73,7 +73,7 @@ func (f *FransOidcProvider) MissingAuthResponse(
 	redirect bool,
 ) {
 	if redirect {
-		state, verifier := f.PKCECache.CreateChallenge()
+		state, verifier := f.PKCEManager.CreateChallenge(c)
 		c.SetCookie(config.AuthOriginCookieName, c.Request.URL.String(), 3_600, "", "", true, true)
 		c.Redirect(
 			http.StatusTemporaryRedirect,
