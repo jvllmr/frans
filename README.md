@@ -14,16 +14,16 @@ It took heavy inspiration from [DownloadTicketService](https://www.thregr.org/wa
 
 The goal is to translate `frans` to the following languages:
 
-- `German`
-- `French`
-- `Spanish`
-- `Russian`
-- `Simplified chinese`
-- `Japanese`
-- `Dutch`
-- `Portuguese, Brazilian`
-- `Czech`
-- `Italian`
+- [x] `German`
+- [ ] `French`
+- [ ] `Spanish`
+- [ ] `Russian`
+- [ ] `Simplified chinese`
+- [ ] `Japanese`
+- [ ] `Dutch`
+- [ ] `Portuguese, Brazilian`
+- [ ] `Czech`
+- [ ] `Italian`
 
 Feel free to contribute or improve translations via [Crowdin](https://crowdin.com/project/go-frans)
 
