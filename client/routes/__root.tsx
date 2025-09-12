@@ -6,6 +6,7 @@ import {
   Container,
   Divider,
   Flex,
+  Group,
   MantineProvider,
   Paper,
   SegmentedControl,
@@ -13,6 +14,7 @@ import {
   Title,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
+import { useColorScheme } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import {
@@ -37,6 +39,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
 import { meQueryOptions } from "~/api/user";
+import { ColorSchemeSwitch } from "~/components/common/ColorSchemeSwitch";
 import i18n, { availableLanguages, availableLanguagesLabels } from "~/i18n";
 import { BASE_THEME } from "~/util/theme";
 function LanguageControls() {
@@ -201,16 +204,23 @@ function DevTools() {
 
 function RootRoute() {
   const { t } = useTranslation();
+  const colorScheme = useColorScheme(undefined, {
+    getInitialValueInEffect: false,
+  });
+
   return (
     <>
       <HeadContent />
-      <MantineProvider theme={BASE_THEME}>
+      <MantineProvider theme={BASE_THEME} defaultColorScheme={colorScheme}>
         <QueryClientProvider client={queryClient}>
           <Container pt={50}>
             <Paper withBorder p="lg" mb="xs">
               <AuthGuard>
                 <Flex justify="space-between" p={3}>
-                  <LanguageControls />
+                  <Group align="center">
+                    <LanguageControls />
+                    <ColorSchemeSwitch />
+                  </Group>
                   <LogoutButton />
                 </Flex>
                 <Flex p={3}>
