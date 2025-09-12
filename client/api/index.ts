@@ -1,7 +1,7 @@
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, replaceEqualDeep } from "@tanstack/react-query";
 import axios, { AxiosRequestConfig } from "axios";
+import { isDate, isEqual } from "date-fns";
 import z, { ZodType } from "zod/v4";
-
 export function v1Url(url: string) {
   return `${window.fransRootPath}/api/v1${url}`;
 }
@@ -40,6 +40,11 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 120_000, // 2 minutes
+      structuralSharing(a, b) {
+        // enable structural sharing for dates
+        if (isDate(a) && isDate(b) && isEqual(a, b)) return a;
+        return replaceEqualDeep(a, b);
+      },
     },
   },
 });
