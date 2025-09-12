@@ -7,33 +7,33 @@ import { useMemo } from "react";
 import resources from "virtual:i18next-loader";
 
 export const availableLanguages = [
-  "pt-BR",
-  "cz",
+  // "pt-BR",
+  // "cz",
   "de",
   "en",
-  "es",
-  "fr",
-  "it",
-  "ja",
-  "nl",
-  "ru",
-  "zh",
+  //"es",
+  //"fr",
+  //"it",
+  //"ja",
+  //"nl",
+  //"ru",
+  //"zh",
 ] as const;
 
 export type AvailableLanguage = (typeof availableLanguages)[number];
 
 export const availableLanguagesLabels: Record<AvailableLanguage, string> = {
-  "pt-BR": "BR",
-  cz: "CZ",
+  // "pt-BR": "BR",
+  // cz: "CZ",
   de: "DE",
   en: "EN",
-  es: "ES",
-  fr: "FR",
-  it: "IT",
-  ja: "JA",
-  nl: "NL",
-  ru: "RU",
-  zh: "ZH",
+  // es: "ES",
+  // fr: "FR",
+  // it: "IT",
+  // ja: "JA",
+  // nl: "NL",
+  // ru: "RU",
+  // zh: "ZH",
 };
 
 export function useFileSizeFormatter() {
