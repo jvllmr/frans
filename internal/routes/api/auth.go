@@ -18,7 +18,7 @@ type authController struct {
 }
 
 func (ac *authController) redirectToAuth(c *gin.Context, oauth2Config oauth2.Config) {
-	state, verifier := ac.provider.CreateChallenge()
+	state, verifier := ac.provider.CreateChallenge(c)
 
 	c.Redirect(
 		http.StatusTemporaryRedirect,
@@ -30,8 +30,7 @@ func (ac *authController) authCallback(c *gin.Context) {
 	code := c.Request.URL.Query().Get("code")
 	oauth2Config := ac.provider.NewOauth2Config(c.Request)
 
-	var state oidc.OidcState = c.Request.URL.Query().Get("state")
-	pkceVerifier, err := ac.provider.GetVerifier(state)
+	pkceVerifier, err := ac.provider.GetVerifier(c)
 
 	if err != nil {
 		slog.Error("Failed at Oauth2 token exchange", "err", err)
