@@ -19,8 +19,6 @@ func (File) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Unique(),
 		field.String("name"),
-		field.Uint64("size"),
-		field.String("sha512"),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("last_download").Nillable().Optional(),
@@ -37,5 +35,6 @@ func (File) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("tickets", Ticket.Type).Ref("files"),
 		edge.From("grants", Grant.Type).Ref("files"),
+		edge.To("data", FileData.Type).Unique().Required(),
 	}
 }

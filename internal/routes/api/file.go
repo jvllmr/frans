@@ -67,7 +67,7 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 			ExecX(c.Request.Context())
 	}
 
-	filePath := fc.fileService.FilesFilePath(fileValue.Sha512)
+	filePath := fc.fileService.FilesFilePath(fileValue.Edges.Data.ID)
 	c.FileAttachment(filePath, fileValue.Name)
 }
 

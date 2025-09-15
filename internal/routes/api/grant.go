@@ -83,7 +83,9 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 		tx.User.UpdateOne(currentUser).AddSubmittedGrants(1).SaveX(c.Request.Context())
 		grantValue = tx.Grant.Query().
 			WithOwner().
-			WithFiles().
+			WithFiles(func(fq *ent.FileQuery) {
+				fq.WithData()
+			}).
 			Where(grant.ID(grantValue.ID)).
 			OnlyX(c.Request.Context())
 		c.JSON(
@@ -114,7 +116,7 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 
 func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
-	query := gc.db.Grant.Query().WithFiles().WithOwner()
+	query := gc.db.Grant.Query().WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).WithOwner()
 
 	if !currentUser.IsAdmin {
 		query = query.Where(grant.HasOwnerWith(user.ID(currentUser.ID)))
@@ -126,12 +128,10 @@ func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
 	}
 	publicGrants := make([]services.PublicGrant, 0, len(grants))
 	for _, grantValue := range grants {
-		if !gc.grantService.GrantExpired(grantValue) {
-			publicGrants = append(
-				publicGrants,
-				gc.grantService.ToPublicGrant(gc.fileService, grantValue, grantValue.Edges.Files),
-			)
-		}
+		publicGrants = append(
+			publicGrants,
+			gc.grantService.ToPublicGrant(gc.fileService, grantValue, grantValue.Edges.Files),
+		)
 	}
 	c.JSON(http.StatusOK, publicGrants)
 }

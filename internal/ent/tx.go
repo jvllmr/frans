@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FileData is the client for interacting with the FileData builders.
+	FileData *FileDataClient
 	// Grant is the client for interacting with the Grant builders.
 	Grant *GrantClient
 	// Session is the client for interacting with the Session builders.
@@ -156,6 +158,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.File = NewFileClient(tx.config)
+	tx.FileData = NewFileDataClient(tx.config)
 	tx.Grant = NewGrantClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.ShareAccessToken = NewShareAccessTokenClient(tx.config)

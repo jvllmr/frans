@@ -16,10 +16,6 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldSize holds the string denoting the size field in the database.
-	FieldSize = "size"
-	// FieldSha512 holds the string denoting the sha512 field in the database.
-	FieldSha512 = "sha512"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldLastDownload holds the string denoting the last_download field in the database.
@@ -38,6 +34,8 @@ const (
 	EdgeTickets = "tickets"
 	// EdgeGrants holds the string denoting the grants edge name in mutations.
 	EdgeGrants = "grants"
+	// EdgeData holds the string denoting the data edge name in mutations.
+	EdgeData = "data"
 	// Table holds the table name of the file in the database.
 	Table = "files"
 	// TicketsTable is the table that holds the tickets relation/edge. The primary key declared below.
@@ -50,14 +48,19 @@ const (
 	// GrantsInverseTable is the table name for the Grant entity.
 	// It exists in this package in order to avoid circular dependency with the "grant" package.
 	GrantsInverseTable = "grants"
+	// DataTable is the table that holds the data relation/edge.
+	DataTable = "files"
+	// DataInverseTable is the table name for the FileData entity.
+	// It exists in this package in order to avoid circular dependency with the "filedata" package.
+	DataInverseTable = "file_data"
+	// DataColumn is the table column denoting the data relation/edge.
+	DataColumn = "file_data"
 )
 
 // Columns holds all SQL columns for file fields.
 var Columns = []string{
 	FieldID,
 	FieldName,
-	FieldSize,
-	FieldSha512,
 	FieldCreatedAt,
 	FieldLastDownload,
 	FieldTimesDownloaded,
@@ -65,6 +68,12 @@ var Columns = []string{
 	FieldExpiryTotalDays,
 	FieldExpiryDaysSinceLastDownload,
 	FieldExpiryTotalDownloads,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "files"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"file_data",
 }
 
 var (
@@ -80,6 +89,11 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -104,16 +118,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
-}
-
-// BySize orders the results by the size field.
-func BySize(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSize, opts...).ToFunc()
-}
-
-// BySha512 orders the results by the sha512 field.
-func BySha512(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSha512, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.
@@ -178,6 +182,13 @@ func ByGrants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newGrantsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByDataField orders the results by data field.
+func ByDataField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDataStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newTicketsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -190,5 +201,12 @@ func newGrantsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(GrantsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, GrantsTable, GrantsPrimaryKey...),
+	)
+}
+func newDataStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DataInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, DataTable, DataColumn),
 	)
 }

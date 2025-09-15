@@ -38,6 +38,8 @@ const (
 	EdgeTickets = "tickets"
 	// EdgeGrants holds the string denoting the grants edge name in mutations.
 	EdgeGrants = "grants"
+	// EdgeFileinfos holds the string denoting the fileinfos edge name in mutations.
+	EdgeFileinfos = "fileinfos"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// SessionsTable is the table that holds the sessions relation/edge.
@@ -61,6 +63,11 @@ const (
 	GrantsInverseTable = "grants"
 	// GrantsColumn is the table column denoting the grants relation/edge.
 	GrantsColumn = "user_grants"
+	// FileinfosTable is the table that holds the fileinfos relation/edge. The primary key declared below.
+	FileinfosTable = "user_fileinfos"
+	// FileinfosInverseTable is the table name for the FileData entity.
+	// It exists in this package in order to avoid circular dependency with the "filedata" package.
+	FileinfosInverseTable = "file_data"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -76,6 +83,12 @@ var Columns = []string{
 	FieldSubmittedGrants,
 	FieldTotalDataSize,
 }
+
+var (
+	// FileinfosPrimaryKey and FileinfosColumn2 are the table columns denoting the
+	// primary key for the fileinfos relation (M2M).
+	FileinfosPrimaryKey = []string{"user_id", "file_data_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -187,6 +200,20 @@ func ByGrants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newGrantsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByFileinfosCount orders the results by fileinfos count.
+func ByFileinfosCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFileinfosStep(), opts...)
+	}
+}
+
+// ByFileinfos orders the results by fileinfos terms.
+func ByFileinfos(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFileinfosStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newSessionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -206,5 +233,12 @@ func newGrantsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(GrantsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, GrantsTable, GrantsColumn),
+	)
+}
+func newFileinfosStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FileinfosInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, FileinfosTable, FileinfosPrimaryKey...),
 	)
 }

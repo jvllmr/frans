@@ -74,7 +74,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	for i, fileHeader := range files {
 		dbFile, err := gsc.fileService.CreateFile(
 			c.Request.Context(),
-			tx, fileHeader,
+			tx, fileHeader, grantValue.Edges.Owner,
 			grantValue.ExpiryType,
 			grantValue.FileExpiryDaysSinceLastDownload,
 			grantValue.FileExpiryTotalDays,
@@ -120,7 +120,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	tx.Commit()
 	grantValue = gsc.db.Grant.Query().
 		Where(grant.ID(grantValue.ID)).
-		WithFiles().
+		WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
 		WithOwner().
 		OnlyX(c.Request.Context())
 
@@ -161,7 +161,7 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 		grantValue, err := db.Grant.Query().
 			Where(grant.ID(uuidValue)).
 			WithOwner().
-			WithFiles().
+			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
 			Only(c.Request.Context())
 
 		if err != nil {
