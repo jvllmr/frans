@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/filedata"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 )
@@ -26,18 +27,6 @@ type FileCreate struct {
 // SetName sets the "name" field.
 func (_c *FileCreate) SetName(v string) *FileCreate {
 	_c.mutation.SetName(v)
-	return _c
-}
-
-// SetSize sets the "size" field.
-func (_c *FileCreate) SetSize(v uint64) *FileCreate {
-	_c.mutation.SetSize(v)
-	return _c
-}
-
-// SetSha512 sets the "sha512" field.
-func (_c *FileCreate) SetSha512(v string) *FileCreate {
-	_c.mutation.SetSha512(v)
 	return _c
 }
 
@@ -143,6 +132,17 @@ func (_c *FileCreate) AddGrants(v ...*Grant) *FileCreate {
 	return _c.AddGrantIDs(ids...)
 }
 
+// SetDataID sets the "data" edge to the FileData entity by ID.
+func (_c *FileCreate) SetDataID(id string) *FileCreate {
+	_c.mutation.SetDataID(id)
+	return _c
+}
+
+// SetData sets the "data" edge to the FileData entity.
+func (_c *FileCreate) SetData(v *FileData) *FileCreate {
+	return _c.SetDataID(v.ID)
+}
+
 // Mutation returns the FileMutation object of the builder.
 func (_c *FileCreate) Mutation() *FileMutation {
 	return _c.mutation
@@ -193,12 +193,6 @@ func (_c *FileCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "File.name"`)}
 	}
-	if _, ok := _c.mutation.Size(); !ok {
-		return &ValidationError{Name: "size", err: errors.New(`ent: missing required field "File.size"`)}
-	}
-	if _, ok := _c.mutation.Sha512(); !ok {
-		return &ValidationError{Name: "sha512", err: errors.New(`ent: missing required field "File.sha512"`)}
-	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "File.created_at"`)}
 	}
@@ -216,6 +210,9 @@ func (_c *FileCreate) check() error {
 	}
 	if _, ok := _c.mutation.ExpiryTotalDownloads(); !ok {
 		return &ValidationError{Name: "expiry_total_downloads", err: errors.New(`ent: missing required field "File.expiry_total_downloads"`)}
+	}
+	if len(_c.mutation.DataIDs()) == 0 {
+		return &ValidationError{Name: "data", err: errors.New(`ent: missing required edge "File.data"`)}
 	}
 	return nil
 }
@@ -255,14 +252,6 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(file.FieldName, field.TypeString, value)
 		_node.Name = value
-	}
-	if value, ok := _c.mutation.Size(); ok {
-		_spec.SetField(file.FieldSize, field.TypeUint64, value)
-		_node.Size = value
-	}
-	if value, ok := _c.mutation.Sha512(); ok {
-		_spec.SetField(file.FieldSha512, field.TypeString, value)
-		_node.Sha512 = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
@@ -322,6 +311,23 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.DataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.DataTable,
+			Columns: []string{file.DataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(filedata.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.file_data = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

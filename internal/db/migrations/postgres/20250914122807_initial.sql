@@ -1,9 +1,13 @@
+-- Create "file_data" table
+CREATE TABLE "file_data" (
+  "id" character varying NOT NULL,
+  "size" bigint NOT NULL,
+  PRIMARY KEY ("id")
+);
 -- Create "files" table
 CREATE TABLE "files" (
   "id" uuid NOT NULL,
   "name" character varying NOT NULL,
-  "size" bigint NOT NULL,
-  "sha512" character varying NOT NULL,
   "created_at" timestamptz NOT NULL,
   "last_download" timestamptz NULL,
   "times_downloaded" bigint NOT NULL DEFAULT 0,
@@ -11,7 +15,9 @@ CREATE TABLE "files" (
   "expiry_total_days" smallint NOT NULL,
   "expiry_days_since_last_download" smallint NOT NULL,
   "expiry_total_downloads" smallint NOT NULL,
-  PRIMARY KEY ("id")
+  "file_data" character varying NOT NULL,
+  PRIMARY KEY ("id"),
+  CONSTRAINT "files_file_data_data" FOREIGN KEY ("file_data") REFERENCES "file_data" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 -- Create "users" table
 CREATE TABLE "users" (
@@ -104,4 +110,12 @@ CREATE TABLE "ticket_files" (
   PRIMARY KEY ("ticket_id", "file_id"),
   CONSTRAINT "ticket_files_file_id" FOREIGN KEY ("file_id") REFERENCES "files" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT "ticket_files_ticket_id" FOREIGN KEY ("ticket_id") REFERENCES "tickets" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+);
+-- Create "user_fileinfos" table
+CREATE TABLE "user_fileinfos" (
+  "user_id" uuid NOT NULL,
+  "file_data_id" character varying NOT NULL,
+  PRIMARY KEY ("user_id", "file_data_id"),
+  CONSTRAINT "user_fileinfos_file_data_id" FOREIGN KEY ("file_data_id") REFERENCES "file_data" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT "user_fileinfos_user_id" FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
 );

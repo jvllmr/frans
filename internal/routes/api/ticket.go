@@ -1,6 +1,7 @@
 package apiRoutes
 
 import (
+	"database/sql"
 	"encoding/hex"
 	"errors"
 	"log/slog"
@@ -43,7 +44,7 @@ type ticketForm struct {
 func (tc *ticketController) createTicketHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
 	var form ticketForm
-	tx, err := tc.db.Tx(c.Request.Context())
+	tx, err := tc.db.BeginTx(c.Request.Context(), &sql.TxOptions{})
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -86,7 +87,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 		for _, fileHeader := range files {
 			dbFile, err := tc.fileService.CreateFile(
 				c.Request.Context(),
-				tx, fileHeader,
+				tx, fileHeader, currentUser,
 				ticketValue.ExpiryType,
 				ticketValue.ExpiryDaysSinceLastDownload,
 				ticketValue.ExpiryTotalDays,
@@ -108,7 +109,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 		ticketValue = tx.Ticket.Query().
 			Where(ticket.ID(ticketValue.ID)).
-			WithFiles().
+			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
 			WithOwner().
 			OnlyX(c.Request.Context())
 
@@ -148,7 +149,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 func (tc *ticketController) fetchTicketsHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
-	query := tc.db.Ticket.Query().WithFiles().WithOwner()
+	query := tc.db.Ticket.Query().WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).WithOwner()
 
 	if !currentUser.IsAdmin {
 		query = query.Where(ticket.HasOwnerWith(user.ID(currentUser.ID)))

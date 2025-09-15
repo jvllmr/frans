@@ -31,7 +31,7 @@ func (gs GrantService) GrantEstimatedExpiry(grantValue *ent.Grant) *time.Time {
 	)
 }
 
-func (gs GrantService) GrantExpired(grantValue *ent.Grant) bool {
+func (gs GrantService) ShouldDeleteGrant(grantValue *ent.Grant) bool {
 	if grantValue.ExpiryType == config.TicketExpiryTypeNone {
 		return false
 	}
@@ -49,10 +49,6 @@ func (gs GrantService) GrantExpired(grantValue *ent.Grant) bool {
 	return grantValue.TimesUploaded >= uint64(gs.config.GrantDefaultExpiryTotalUploads) ||
 		estimatedExpiryValue.Before(now)
 
-}
-
-func (gs GrantService) ShouldDeleteGrant(grantValue *ent.Grant) bool {
-	return len(grantValue.Edges.Files) == 0 && gs.GrantExpired(grantValue)
 }
 
 type PublicGrant struct {

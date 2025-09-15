@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/filedata"
 )
 
 // File is the model entity for the File schema.
@@ -20,10 +21,6 @@ type File struct {
 	ID uuid.UUID `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// Size holds the value of the "size" field.
-	Size uint64 `json:"size,omitempty"`
-	// Sha512 holds the value of the "sha512" field.
-	Sha512 string `json:"sha512,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// LastDownload holds the value of the "last_download" field.
@@ -41,6 +38,7 @@ type File struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FileQuery when eager-loading is set.
 	Edges        FileEdges `json:"edges"`
+	file_data    *string
 	selectValues sql.SelectValues
 }
 
@@ -50,9 +48,11 @@ type FileEdges struct {
 	Tickets []*Ticket `json:"tickets,omitempty"`
 	// Grants holds the value of the grants edge.
 	Grants []*Grant `json:"grants,omitempty"`
+	// Data holds the value of the data edge.
+	Data *FileData `json:"data,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // TicketsOrErr returns the Tickets value or an error if the edge
@@ -73,19 +73,32 @@ func (e FileEdges) GrantsOrErr() ([]*Grant, error) {
 	return nil, &NotLoadedError{edge: "grants"}
 }
 
+// DataOrErr returns the Data value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FileEdges) DataOrErr() (*FileData, error) {
+	if e.Data != nil {
+		return e.Data, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: filedata.Label}
+	}
+	return nil, &NotLoadedError{edge: "data"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*File) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case file.FieldSize, file.FieldTimesDownloaded, file.FieldExpiryTotalDays, file.FieldExpiryDaysSinceLastDownload, file.FieldExpiryTotalDownloads:
+		case file.FieldTimesDownloaded, file.FieldExpiryTotalDays, file.FieldExpiryDaysSinceLastDownload, file.FieldExpiryTotalDownloads:
 			values[i] = new(sql.NullInt64)
-		case file.FieldName, file.FieldSha512, file.FieldExpiryType:
+		case file.FieldName, file.FieldExpiryType:
 			values[i] = new(sql.NullString)
 		case file.FieldCreatedAt, file.FieldLastDownload:
 			values[i] = new(sql.NullTime)
 		case file.FieldID:
 			values[i] = new(uuid.UUID)
+		case file.ForeignKeys[0]: // file_data
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -112,18 +125,6 @@ func (_m *File) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
-			}
-		case file.FieldSize:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field size", values[i])
-			} else if value.Valid {
-				_m.Size = uint64(value.Int64)
-			}
-		case file.FieldSha512:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field sha512", values[i])
-			} else if value.Valid {
-				_m.Sha512 = value.String
 			}
 		case file.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -168,6 +169,13 @@ func (_m *File) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.ExpiryTotalDownloads = uint8(value.Int64)
 			}
+		case file.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field file_data", values[i])
+			} else if value.Valid {
+				_m.file_data = new(string)
+				*_m.file_data = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -189,6 +197,11 @@ func (_m *File) QueryTickets() *TicketQuery {
 // QueryGrants queries the "grants" edge of the File entity.
 func (_m *File) QueryGrants() *GrantQuery {
 	return NewFileClient(_m.config).QueryGrants(_m)
+}
+
+// QueryData queries the "data" edge of the File entity.
+func (_m *File) QueryData() *FileDataQuery {
+	return NewFileClient(_m.config).QueryData(_m)
 }
 
 // Update returns a builder for updating this File.
@@ -216,12 +229,6 @@ func (_m *File) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
-	builder.WriteString(", ")
-	builder.WriteString("size=")
-	builder.WriteString(fmt.Sprintf("%v", _m.Size))
-	builder.WriteString(", ")
-	builder.WriteString("sha512=")
-	builder.WriteString(_m.Sha512)
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

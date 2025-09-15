@@ -34,9 +34,9 @@ func FileLifecycleTask(db *ent.Client, fs services.FileService) {
 		}
 
 		if fs.ShouldDeleteFile(fileValue) {
-			err := fs.DeleteFile(fileValue)
+			err := fs.DeleteFile(context.Background(), fileValue)
 			if err != nil {
-				filePath := fs.FilesFilePath(fileValue.Sha512)
+				filePath := fs.FilesFilePath(fileValue.Edges.Data.ID)
 				slog.Error("Could not delete file", "file", filePath, "err", err)
 				continue
 			}

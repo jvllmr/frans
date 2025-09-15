@@ -68,7 +68,7 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 		SetLastDownload(time.Now()).
 		AddTimesDownloaded(1).
 		SaveX(c.Request.Context())
-	filePath := tsc.fileService.FilesFilePath(fileValue.Sha512)
+	filePath := tsc.fileService.FilesFilePath(fileValue.Edges.Data.ID)
 	c.FileAttachment(filePath, fileValue.Name)
 	ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
 	if ticketValue.EmailOnDownload != nil &&
