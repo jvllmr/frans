@@ -78,7 +78,9 @@ function RouteComponent() {
           <Group gap={2}>
             <b>
               {t("url", { ns: "translation" })}:{" "}
-              <Anchor href={shareLink}>{shareLink}</Anchor>
+              <Anchor target="_blank" href={shareLink}>
+                {shareLink}
+              </Anchor>
             </b>
             <CopyShareLinkButton
               variant="subtle"

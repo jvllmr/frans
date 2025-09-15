@@ -240,6 +240,7 @@ function RootRoute() {
                 href="https://github.com/jvllmr/frans"
                 title={t("view_on_github")}
                 size="sm"
+                target="_blank"
               >
                 <Center>{t("licensed")}</Center>
                 <Center>Version {window.fransVersion}</Center>
