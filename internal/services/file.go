@@ -56,7 +56,6 @@ func (fs FileService) FilesFilePath(fileName string) string {
 }
 
 func (fs FileService) ShouldDeleteFile(
-
 	fileValue *ent.File,
 ) bool {
 	if fileValue.ExpiryType == config.TicketExpiryTypeNone {
@@ -80,6 +79,7 @@ func (fs FileService) CreateFile(
 	ctx context.Context,
 	tx *ent.Tx,
 	fileHeader *multipart.FileHeader,
+	user *ent.User,
 	expiryType string,
 	expiryDaysSinceLastDownload uint8,
 	expiryTotalDays uint8,
@@ -103,25 +103,45 @@ func (fs FileService) CreateFile(
 	if err != nil {
 		return nil, fmt.Errorf("create file: %w", err)
 	}
+	defer tmpFileHandle.Close()
 	defer os.Remove(tmpFilePath)
 	writer := io.MultiWriter(hasher, tmpFileHandle)
 	_, err = io.Copy(writer, incomingFileHandle)
 	if err != nil {
 		return nil, fmt.Errorf("create file: %w", err)
 	}
-	tmpFileHandle.Close()
 
 	hash := hasher.Sum(nil)
 	sha512sum := hex.EncodeToString(hash)
+
+	fileData, err := tx.FileData.Get(ctx, sha512sum)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return nil, err
+		}
+		fileData, err = tx.FileData.Create().
+			SetID(sha512sum).
+			SetSize(uint64(fileHeader.Size)).
+			AddUsers(user).
+			Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+	fileData, err = tx.FileData.UpdateOne(fileData).
+		AddUsers(user).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
 	dbFile, err := tx.File.Create().
 		SetID(uuid.New()).
 		SetName(fileHeader.Filename).
-		SetSize(uint64(fileHeader.Size)).
-		SetSha512(sha512sum).
 		SetExpiryType(expiryType).
 		SetExpiryDaysSinceLastDownload(expiryDaysSinceLastDownload).
 		SetExpiryTotalDays(expiryTotalDays).
 		SetExpiryTotalDownloads(expiryTotalDownloads).
+		SetData(fileData).
 		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("create file: %w", err)
@@ -134,13 +154,23 @@ func (fs FileService) CreateFile(
 	return dbFile, nil
 }
 
-func (fs FileService) DeleteFile(fileValue *ent.File) error {
-	filePath := fs.FilesFilePath(fileValue.Sha512)
-	err := os.Remove(filePath)
-	if err != nil {
-		return err
+func (fs FileService) DeleteFile(ctx context.Context, fileValue *ent.File) error {
+	ticketsCount := len(fileValue.Edges.Tickets)
+	grantsCount := len(fileValue.Edges.Grants)
+	deleteFromFS := (ticketsCount <= 1 && grantsCount <= 1)
+	if deleteFromFS {
+		filePath := fs.FilesFilePath(fileValue.Edges.Data.ID)
+		err := os.Remove(filePath)
+		if err != nil {
+			return err
+		}
+		err = fs.db.FileData.DeleteOne(fileValue.Edges.Data).Exec(ctx)
+		if err != nil {
+			return err
+		}
 	}
-	err = fs.db.File.DeleteOne(fileValue).Exec(context.Background())
+
+	err := fs.db.File.DeleteOne(fileValue).Exec(ctx)
 	return err
 }
 
@@ -183,8 +213,8 @@ func (fs FileService) ToPublicFile(file *ent.File) PublicFile {
 
 	return PublicFile{
 		Id:              file.ID,
-		Sha512:          file.Sha512,
-		Size:            file.Size,
+		Sha512:          file.Edges.Data.ID,
+		Size:            file.Edges.Data.Size,
 		Name:            file.Name,
 		CreatedAt:       file.CreatedAt.UTC().Format(http.TimeFormat),
 		TimesDownloaded: file.TimesDownloaded,

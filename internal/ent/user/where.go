@@ -530,6 +530,29 @@ func HasGrantsWith(preds ...predicate.Grant) predicate.User {
 	})
 }
 
+// HasFileinfos applies the HasEdge predicate on the "fileinfos" edge.
+func HasFileinfos() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FileinfosTable, FileinfosPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFileinfosWith applies the HasEdge predicate on the "fileinfos" edge with a given conditions (other predicates).
+func HasFileinfosWith(preds ...predicate.FileData) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newFileinfosStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

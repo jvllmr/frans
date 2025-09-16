@@ -61,16 +61,6 @@ func Name(v string) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldName, v))
 }
 
-// Size applies equality check predicate on the "size" field. It's identical to SizeEQ.
-func Size(v uint64) predicate.File {
-	return predicate.File(sql.FieldEQ(FieldSize, v))
-}
-
-// Sha512 applies equality check predicate on the "sha512" field. It's identical to Sha512EQ.
-func Sha512(v string) predicate.File {
-	return predicate.File(sql.FieldEQ(FieldSha512, v))
-}
-
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.File {
 	return predicate.File(sql.FieldEQ(FieldCreatedAt, v))
@@ -169,111 +159,6 @@ func NameEqualFold(v string) predicate.File {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.File {
 	return predicate.File(sql.FieldContainsFold(FieldName, v))
-}
-
-// SizeEQ applies the EQ predicate on the "size" field.
-func SizeEQ(v uint64) predicate.File {
-	return predicate.File(sql.FieldEQ(FieldSize, v))
-}
-
-// SizeNEQ applies the NEQ predicate on the "size" field.
-func SizeNEQ(v uint64) predicate.File {
-	return predicate.File(sql.FieldNEQ(FieldSize, v))
-}
-
-// SizeIn applies the In predicate on the "size" field.
-func SizeIn(vs ...uint64) predicate.File {
-	return predicate.File(sql.FieldIn(FieldSize, vs...))
-}
-
-// SizeNotIn applies the NotIn predicate on the "size" field.
-func SizeNotIn(vs ...uint64) predicate.File {
-	return predicate.File(sql.FieldNotIn(FieldSize, vs...))
-}
-
-// SizeGT applies the GT predicate on the "size" field.
-func SizeGT(v uint64) predicate.File {
-	return predicate.File(sql.FieldGT(FieldSize, v))
-}
-
-// SizeGTE applies the GTE predicate on the "size" field.
-func SizeGTE(v uint64) predicate.File {
-	return predicate.File(sql.FieldGTE(FieldSize, v))
-}
-
-// SizeLT applies the LT predicate on the "size" field.
-func SizeLT(v uint64) predicate.File {
-	return predicate.File(sql.FieldLT(FieldSize, v))
-}
-
-// SizeLTE applies the LTE predicate on the "size" field.
-func SizeLTE(v uint64) predicate.File {
-	return predicate.File(sql.FieldLTE(FieldSize, v))
-}
-
-// Sha512EQ applies the EQ predicate on the "sha512" field.
-func Sha512EQ(v string) predicate.File {
-	return predicate.File(sql.FieldEQ(FieldSha512, v))
-}
-
-// Sha512NEQ applies the NEQ predicate on the "sha512" field.
-func Sha512NEQ(v string) predicate.File {
-	return predicate.File(sql.FieldNEQ(FieldSha512, v))
-}
-
-// Sha512In applies the In predicate on the "sha512" field.
-func Sha512In(vs ...string) predicate.File {
-	return predicate.File(sql.FieldIn(FieldSha512, vs...))
-}
-
-// Sha512NotIn applies the NotIn predicate on the "sha512" field.
-func Sha512NotIn(vs ...string) predicate.File {
-	return predicate.File(sql.FieldNotIn(FieldSha512, vs...))
-}
-
-// Sha512GT applies the GT predicate on the "sha512" field.
-func Sha512GT(v string) predicate.File {
-	return predicate.File(sql.FieldGT(FieldSha512, v))
-}
-
-// Sha512GTE applies the GTE predicate on the "sha512" field.
-func Sha512GTE(v string) predicate.File {
-	return predicate.File(sql.FieldGTE(FieldSha512, v))
-}
-
-// Sha512LT applies the LT predicate on the "sha512" field.
-func Sha512LT(v string) predicate.File {
-	return predicate.File(sql.FieldLT(FieldSha512, v))
-}
-
-// Sha512LTE applies the LTE predicate on the "sha512" field.
-func Sha512LTE(v string) predicate.File {
-	return predicate.File(sql.FieldLTE(FieldSha512, v))
-}
-
-// Sha512Contains applies the Contains predicate on the "sha512" field.
-func Sha512Contains(v string) predicate.File {
-	return predicate.File(sql.FieldContains(FieldSha512, v))
-}
-
-// Sha512HasPrefix applies the HasPrefix predicate on the "sha512" field.
-func Sha512HasPrefix(v string) predicate.File {
-	return predicate.File(sql.FieldHasPrefix(FieldSha512, v))
-}
-
-// Sha512HasSuffix applies the HasSuffix predicate on the "sha512" field.
-func Sha512HasSuffix(v string) predicate.File {
-	return predicate.File(sql.FieldHasSuffix(FieldSha512, v))
-}
-
-// Sha512EqualFold applies the EqualFold predicate on the "sha512" field.
-func Sha512EqualFold(v string) predicate.File {
-	return predicate.File(sql.FieldEqualFold(FieldSha512, v))
-}
-
-// Sha512ContainsFold applies the ContainsFold predicate on the "sha512" field.
-func Sha512ContainsFold(v string) predicate.File {
-	return predicate.File(sql.FieldContainsFold(FieldSha512, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -629,6 +514,29 @@ func HasGrants() predicate.File {
 func HasGrantsWith(preds ...predicate.Grant) predicate.File {
 	return predicate.File(func(s *sql.Selector) {
 		step := newGrantsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasData applies the HasEdge predicate on the "data" edge.
+func HasData() predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, DataTable, DataColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDataWith applies the HasEdge predicate on the "data" edge with a given conditions (other predicates).
+func HasDataWith(preds ...predicate.FileData) predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := newDataStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/filedata"
+	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 func RefreshUserTotalDataSize(ctx context.Context, userValue *ent.User, tx *ent.Tx) error {
-	if totalDataSize, err := userValue.QueryTickets().
-		QueryFiles().
-		Aggregate(ent.Sum(file.FieldSize)).
+	if totalDataSize, err := tx.User.Query().Where(user.ID(userValue.ID)).QueryFileinfos().
+		Aggregate(ent.Sum(filedata.FieldSize)).
 		Int(ctx); err != nil {
 		return err
 	} else {

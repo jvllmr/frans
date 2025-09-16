@@ -12,8 +12,6 @@ var (
 	FilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "size", Type: field.TypeUint64},
-		{Name: "sha512", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "last_download", Type: field.TypeTime, Nullable: true},
 		{Name: "times_downloaded", Type: field.TypeUint64, Default: 0},
@@ -21,12 +19,32 @@ var (
 		{Name: "expiry_total_days", Type: field.TypeUint8},
 		{Name: "expiry_days_since_last_download", Type: field.TypeUint8},
 		{Name: "expiry_total_downloads", Type: field.TypeUint8},
+		{Name: "file_data", Type: field.TypeString},
 	}
 	// FilesTable holds the schema information for the "files" table.
 	FilesTable = &schema.Table{
 		Name:       "files",
 		Columns:    FilesColumns,
 		PrimaryKey: []*schema.Column{FilesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "files_file_data_data",
+				Columns:    []*schema.Column{FilesColumns[9]},
+				RefColumns: []*schema.Column{FileDataColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// FileDataColumns holds the columns for the "file_data" table.
+	FileDataColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "size", Type: field.TypeUint64},
+	}
+	// FileDataTable holds the schema information for the "file_data" table.
+	FileDataTable = &schema.Table{
+		Name:       "file_data",
+		Columns:    FileDataColumns,
+		PrimaryKey: []*schema.Column{FileDataColumns[0]},
 	}
 	// GrantsColumns holds the columns for the "grants" table.
 	GrantsColumns = []*schema.Column{
@@ -210,9 +228,35 @@ var (
 			},
 		},
 	}
+	// UserFileinfosColumns holds the columns for the "user_fileinfos" table.
+	UserFileinfosColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "file_data_id", Type: field.TypeString},
+	}
+	// UserFileinfosTable holds the schema information for the "user_fileinfos" table.
+	UserFileinfosTable = &schema.Table{
+		Name:       "user_fileinfos",
+		Columns:    UserFileinfosColumns,
+		PrimaryKey: []*schema.Column{UserFileinfosColumns[0], UserFileinfosColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_fileinfos_user_id",
+				Columns:    []*schema.Column{UserFileinfosColumns[0]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_fileinfos_file_data_id",
+				Columns:    []*schema.Column{UserFileinfosColumns[1]},
+				RefColumns: []*schema.Column{FileDataColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		FilesTable,
+		FileDataTable,
 		GrantsTable,
 		SessionsTable,
 		ShareAccessTokensTable,
@@ -220,10 +264,12 @@ var (
 		UsersTable,
 		GrantFilesTable,
 		TicketFilesTable,
+		UserFileinfosTable,
 	}
 )
 
 func init() {
+	FilesTable.ForeignKeys[0].RefTable = FileDataTable
 	GrantsTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	ShareAccessTokensTable.ForeignKeys[0].RefTable = GrantsTable
@@ -233,4 +279,6 @@ func init() {
 	GrantFilesTable.ForeignKeys[1].RefTable = FilesTable
 	TicketFilesTable.ForeignKeys[0].RefTable = TicketsTable
 	TicketFilesTable.ForeignKeys[1].RefTable = FilesTable
+	UserFileinfosTable.ForeignKeys[0].RefTable = UsersTable
+	UserFileinfosTable.ForeignKeys[1].RefTable = FileDataTable
 }

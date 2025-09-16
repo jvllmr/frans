@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/filedata"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -41,41 +42,6 @@ func (_u *FileUpdate) SetName(v string) *FileUpdate {
 func (_u *FileUpdate) SetNillableName(v *string) *FileUpdate {
 	if v != nil {
 		_u.SetName(*v)
-	}
-	return _u
-}
-
-// SetSize sets the "size" field.
-func (_u *FileUpdate) SetSize(v uint64) *FileUpdate {
-	_u.mutation.ResetSize()
-	_u.mutation.SetSize(v)
-	return _u
-}
-
-// SetNillableSize sets the "size" field if the given value is not nil.
-func (_u *FileUpdate) SetNillableSize(v *uint64) *FileUpdate {
-	if v != nil {
-		_u.SetSize(*v)
-	}
-	return _u
-}
-
-// AddSize adds value to the "size" field.
-func (_u *FileUpdate) AddSize(v int64) *FileUpdate {
-	_u.mutation.AddSize(v)
-	return _u
-}
-
-// SetSha512 sets the "sha512" field.
-func (_u *FileUpdate) SetSha512(v string) *FileUpdate {
-	_u.mutation.SetSha512(v)
-	return _u
-}
-
-// SetNillableSha512 sets the "sha512" field if the given value is not nil.
-func (_u *FileUpdate) SetNillableSha512(v *string) *FileUpdate {
-	if v != nil {
-		_u.SetSha512(*v)
 	}
 	return _u
 }
@@ -242,6 +208,17 @@ func (_u *FileUpdate) AddGrants(v ...*Grant) *FileUpdate {
 	return _u.AddGrantIDs(ids...)
 }
 
+// SetDataID sets the "data" edge to the FileData entity by ID.
+func (_u *FileUpdate) SetDataID(id string) *FileUpdate {
+	_u.mutation.SetDataID(id)
+	return _u
+}
+
+// SetData sets the "data" edge to the FileData entity.
+func (_u *FileUpdate) SetData(v *FileData) *FileUpdate {
+	return _u.SetDataID(v.ID)
+}
+
 // Mutation returns the FileMutation object of the builder.
 func (_u *FileUpdate) Mutation() *FileMutation {
 	return _u.mutation
@@ -289,6 +266,12 @@ func (_u *FileUpdate) RemoveGrants(v ...*Grant) *FileUpdate {
 	return _u.RemoveGrantIDs(ids...)
 }
 
+// ClearData clears the "data" edge to the FileData entity.
+func (_u *FileUpdate) ClearData() *FileUpdate {
+	_u.mutation.ClearData()
+	return _u
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *FileUpdate) Save(ctx context.Context) (int, error) {
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
@@ -316,7 +299,18 @@ func (_u *FileUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *FileUpdate) check() error {
+	if _u.mutation.DataCleared() && len(_u.mutation.DataIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "File.data"`)
+	}
+	return nil
+}
+
 func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -327,15 +321,6 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(file.FieldName, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.Size(); ok {
-		_spec.SetField(file.FieldSize, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.AddedSize(); ok {
-		_spec.AddField(file.FieldSize, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.Sha512(); ok {
-		_spec.SetField(file.FieldSha512, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
@@ -463,6 +448,35 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.DataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.DataTable,
+			Columns: []string{file.DataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(filedata.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.DataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.DataTable,
+			Columns: []string{file.DataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(filedata.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{file.Label}
@@ -493,41 +507,6 @@ func (_u *FileUpdateOne) SetName(v string) *FileUpdateOne {
 func (_u *FileUpdateOne) SetNillableName(v *string) *FileUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
-	}
-	return _u
-}
-
-// SetSize sets the "size" field.
-func (_u *FileUpdateOne) SetSize(v uint64) *FileUpdateOne {
-	_u.mutation.ResetSize()
-	_u.mutation.SetSize(v)
-	return _u
-}
-
-// SetNillableSize sets the "size" field if the given value is not nil.
-func (_u *FileUpdateOne) SetNillableSize(v *uint64) *FileUpdateOne {
-	if v != nil {
-		_u.SetSize(*v)
-	}
-	return _u
-}
-
-// AddSize adds value to the "size" field.
-func (_u *FileUpdateOne) AddSize(v int64) *FileUpdateOne {
-	_u.mutation.AddSize(v)
-	return _u
-}
-
-// SetSha512 sets the "sha512" field.
-func (_u *FileUpdateOne) SetSha512(v string) *FileUpdateOne {
-	_u.mutation.SetSha512(v)
-	return _u
-}
-
-// SetNillableSha512 sets the "sha512" field if the given value is not nil.
-func (_u *FileUpdateOne) SetNillableSha512(v *string) *FileUpdateOne {
-	if v != nil {
-		_u.SetSha512(*v)
 	}
 	return _u
 }
@@ -694,6 +673,17 @@ func (_u *FileUpdateOne) AddGrants(v ...*Grant) *FileUpdateOne {
 	return _u.AddGrantIDs(ids...)
 }
 
+// SetDataID sets the "data" edge to the FileData entity by ID.
+func (_u *FileUpdateOne) SetDataID(id string) *FileUpdateOne {
+	_u.mutation.SetDataID(id)
+	return _u
+}
+
+// SetData sets the "data" edge to the FileData entity.
+func (_u *FileUpdateOne) SetData(v *FileData) *FileUpdateOne {
+	return _u.SetDataID(v.ID)
+}
+
 // Mutation returns the FileMutation object of the builder.
 func (_u *FileUpdateOne) Mutation() *FileMutation {
 	return _u.mutation
@@ -741,6 +731,12 @@ func (_u *FileUpdateOne) RemoveGrants(v ...*Grant) *FileUpdateOne {
 	return _u.RemoveGrantIDs(ids...)
 }
 
+// ClearData clears the "data" edge to the FileData entity.
+func (_u *FileUpdateOne) ClearData() *FileUpdateOne {
+	_u.mutation.ClearData()
+	return _u
+}
+
 // Where appends a list predicates to the FileUpdate builder.
 func (_u *FileUpdateOne) Where(ps ...predicate.File) *FileUpdateOne {
 	_u.mutation.Where(ps...)
@@ -781,7 +777,18 @@ func (_u *FileUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *FileUpdateOne) check() error {
+	if _u.mutation.DataCleared() && len(_u.mutation.DataIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "File.data"`)
+	}
+	return nil
+}
+
 func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(file.Table, file.Columns, sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -809,15 +816,6 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(file.FieldName, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.Size(); ok {
-		_spec.SetField(file.FieldSize, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.AddedSize(); ok {
-		_spec.AddField(file.FieldSize, field.TypeUint64, value)
-	}
-	if value, ok := _u.mutation.Sha512(); ok {
-		_spec.SetField(file.FieldSha512, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
@@ -938,6 +936,35 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.DataCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.DataTable,
+			Columns: []string{file.DataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(filedata.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.DataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.DataTable,
+			Columns: []string{file.DataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(filedata.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

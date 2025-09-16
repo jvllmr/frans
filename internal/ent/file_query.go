@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/filedata"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -28,6 +29,8 @@ type FileQuery struct {
 	predicates  []predicate.File
 	withTickets *TicketQuery
 	withGrants  *GrantQuery
+	withData    *FileDataQuery
+	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -101,6 +104,28 @@ func (_q *FileQuery) QueryGrants() *GrantQuery {
 			sqlgraph.From(file.Table, file.FieldID, selector),
 			sqlgraph.To(grant.Table, grant.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, file.GrantsTable, file.GrantsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryData chains the current query on the "data" edge.
+func (_q *FileQuery) QueryData() *FileDataQuery {
+	query := (&FileDataClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, selector),
+			sqlgraph.To(filedata.Table, filedata.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, file.DataTable, file.DataColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -302,6 +327,7 @@ func (_q *FileQuery) Clone() *FileQuery {
 		predicates:  append([]predicate.File{}, _q.predicates...),
 		withTickets: _q.withTickets.Clone(),
 		withGrants:  _q.withGrants.Clone(),
+		withData:    _q.withData.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -327,6 +353,17 @@ func (_q *FileQuery) WithGrants(opts ...func(*GrantQuery)) *FileQuery {
 		opt(query)
 	}
 	_q.withGrants = query
+	return _q
+}
+
+// WithData tells the query-builder to eager-load the nodes that are connected to
+// the "data" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *FileQuery) WithData(opts ...func(*FileDataQuery)) *FileQuery {
+	query := (&FileDataClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withData = query
 	return _q
 }
 
@@ -407,12 +444,20 @@ func (_q *FileQuery) prepareQuery(ctx context.Context) error {
 func (_q *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, error) {
 	var (
 		nodes       = []*File{}
+		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withTickets != nil,
 			_q.withGrants != nil,
+			_q.withData != nil,
 		}
 	)
+	if _q.withData != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, file.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*File).scanValues(nil, columns)
 	}
@@ -442,6 +487,12 @@ func (_q *FileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*File, e
 		if err := _q.loadGrants(ctx, query, nodes,
 			func(n *File) { n.Edges.Grants = []*Grant{} },
 			func(n *File, e *Grant) { n.Edges.Grants = append(n.Edges.Grants, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withData; query != nil {
+		if err := _q.loadData(ctx, query, nodes, nil,
+			func(n *File, e *FileData) { n.Edges.Data = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -566,6 +617,38 @@ func (_q *FileQuery) loadGrants(ctx context.Context, query *GrantQuery, nodes []
 		}
 		for kn := range nodes {
 			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (_q *FileQuery) loadData(ctx context.Context, query *FileDataQuery, nodes []*File, init func(*File), assign func(*File, *FileData)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*File)
+	for i := range nodes {
+		if nodes[i].file_data == nil {
+			continue
+		}
+		fk := *nodes[i].file_data
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(filedata.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "file_data" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil
