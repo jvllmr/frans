@@ -3,6 +3,7 @@
     "golang.go",
     "esbenp.prettier-vscode",
     "yoavbls.pretty-ts-errors",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "ms-kubernetes-tools.vscode-kubernetes-tools"
   ]
 }

@@ -20,8 +20,9 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, dbCon := getConfigAndDBClient()
 		defer dbCon.Close()
+
 		if !configValue.DevMode {
-			db.Migrate()
+			db.Migrate(configValue.DBConfig)
 		}
 		go startCronScheduler(configValue, dbCon)
 		startGin(configValue, dbCon)

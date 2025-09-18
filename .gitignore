@@ -10,3 +10,5 @@ migrations/*.sql
 migration.db
 /internal/config/version.go
 *.db-journal
+*.out
+coverage.txt
