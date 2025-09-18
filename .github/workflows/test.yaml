@@ -27,6 +27,8 @@ jobs:
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
       - name: Run pre-build steps
         run: ./scripts/prebuild.sh
+      - name: Generate version
+        run: ./scripts/gen_version.sh
       - name: Run tests
         run: pnpm test:cover
       - name: Upload coverage to codecov
