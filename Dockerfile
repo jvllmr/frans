@@ -30,8 +30,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 COPY --from=client-builder /workspace/internal ./internal
 COPY ./internal/config/version.go ./internal/config/version.go
 COPY . .
+RUN sh ./scripts/prebuild.sh
 RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build sh ./scripts/build_server.sh
+    --mount=type=cache,target=/root/.cache/go-build go build
 RUN chmod +x /workspace/frans
 
 
