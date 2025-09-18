@@ -1,10 +1,16 @@
 {
-  "label_comment": "Anmerkung",
+  "label_notify_email_download": "Bei Download folgende E-Mail Adresse benachrichtigen",
+  "label_notify_email_upload": "Bei Upload folgende E-Mail Adresse benachrichtigen",
+  "label_own_email_download": "Meine E-Mail benutzen",
+  "label_own_email_upload": "Meine E-Mail benutzen",
+  "title_own_email_download": "Die eigene E-Mail für Benachrichtigungen über Downloads nutzen",
+  "title_own_email_upload": "Die eigene E-Mail für Benachrichtigungen über Uploads nutzen",
+  "label_your_lang": "Sprache",
   "label_email": "Link an folgende E-Mail Adresse verschicken",
+  "label_receiver_lang": "Sprache",
   "label_password": "Passwort",
   "label_password_email": "Versende Passwort im Klartext mit Benachrichtigung",
   "label_password_email_highlight": "Klartext",
-  "label_expiry": "Ticket-Verfall",
   "expiry_automatic": "Automatisch",
   "expiry_single_use": "Einmaliger Download",
   "expiry_none": "Keine Verfallsfrist",
@@ -12,17 +18,7 @@
   "label_expiry_total_days": "Verfall nach # Tagen",
   "label_expiry_last_download": "Verfall # Tage nach dem letzten Download",
   "label_expiry_total_downloads": "Verfall nach # Downloads",
-
-  "label_your_lang": "Sprache",
-  "label_receiver_lang": "Sprache",
-  "title_generate_password": "Ein neues Passwort generieren lassen",
-  "label_notify_email_download": "Bei Download folgende E-Mail Adresse benachrichtigen",
-  "label_notify_email_upload": "Bei Upload folgende E-Mail Adresse benachrichtigen",
-  "label_own_email_download": "Meine E-Mail benutzen",
-  "label_own_email_upload": "Meine E-Mail benutzen",
-  "title_own_email_download": "Die eigene E-Mail für Benachrichtigungen über Downloads nutzen",
-  "title_own_email_upload": "Die eigene E-Mail für Benachrichtigungen über Uploads nutzen",
-
   "label_expiry_last_upload": "Verfall # Tage nach dem letzten Upload",
-  "label_expiry_total_uploads": "Verfall nach # Uploads"
+  "label_expiry_total_uploads": "Verfall nach # Uploads",
+  "title_generate_password": "Ein neues Passwort generieren lassen"
 }
