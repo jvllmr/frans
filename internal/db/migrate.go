@@ -91,12 +91,9 @@ func getMigrationDriver(db *sql.DB, dbType string) (migrate.Driver, error) {
 	return drv, err
 }
 
-func Migrate() {
-	dbConfig, err := config.NewDBConfig()
-	if err != nil {
-		log.Fatalf("Could not get database config: %v", err)
-	}
-	dsn, err := buildMigrationDsn(dbConfig.DBConfig)
+func Migrate(dbConfig config.DBConfig) {
+
+	dsn, err := buildMigrationDsn(dbConfig)
 
 	if err != nil {
 		log.Fatalf("Could not build database dsn: %v", err)

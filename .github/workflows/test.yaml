@@ -8,6 +8,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    permissions:
+      contents: read
+    name: unittest
+    runs-on: ubuntu-latest
+    environment:
+      name: unittest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        with:
+          run_install: false
+      - name: Setup go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+      - name: Run tests
+        run: pnpm test:cover
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
   build:
     permissions:
       contents: read

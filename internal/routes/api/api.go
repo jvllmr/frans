@@ -25,7 +25,7 @@ func SetupAPIRoutes(
 	v1Group := apiGroup.Group("/v1")
 
 	userGroup := v1Group.Group("/user", auth)
-	setupUserGroup(userGroup, db, oidcProvider)
+	setupUserGroup(userGroup, db)
 
 	ticketGroup := v1Group.Group("/ticket", auth)
 	setupTicketGroup(ticketGroup, configValue, db)
