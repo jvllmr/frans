@@ -15,6 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: unittest
+    services:
+      smtp:
+        image: docker.io/rnwood/smtp4dev:3.10.1
+        ports:
+          - 127.0.0.1:2525:25
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:

@@ -7,6 +7,7 @@ require (
 	entgo.io/ent v0.14.5
 	github.com/coreos/go-oidc/v3 v3.15.0
 	github.com/gin-gonic/gin v1.10.1
+	github.com/go-playground/form/v4 v4.2.1
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.6
