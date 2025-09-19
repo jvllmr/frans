@@ -12,3 +12,4 @@ migration.db
 *.db-journal
 *.out
 coverage.txt
+testfiles

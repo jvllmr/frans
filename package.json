@@ -20,7 +20,7 @@
     "db:migrate": "go run main.go migrate",
     "db:diff": "./scripts/gen_migrations.sh",
     "test": "go test ./...",
-    "test:cover": "go test -coverprofile=coverage.txt ./...",
+    "test:cover": "./scripts/test_coverage.sh",
     "test:html": "go tool cover -html=coverage.txt"
   },
   "dependencies": {

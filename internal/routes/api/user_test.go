@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setupTestUserRouter(t *testing.T, db *ent.Client, middlewares ...gin.HandlerFunc) *gin.Engine {
+func setupTestUserRouter(db *ent.Client, middlewares ...gin.HandlerFunc) *gin.Engine {
 	r := gin.Default()
 	group := r.Group("", middlewares...)
 	setupUserGroup(group, db)
@@ -24,8 +24,8 @@ func setupTestUserRouter(t *testing.T, db *ent.Client, middlewares ...gin.Handle
 
 func TestFetchMe(t *testing.T) {
 	db := testutil.SetupTestDBClient(t)
-	testUser := testutil.SetupTestUser(t, db)
-	router := setupTestUserRouter(t, db, testutil.NewTestAuthMiddleware(testUser))
+	testUser := testutil.SetupTestUser(t, db, nil)
+	router := setupTestUserRouter(db, testutil.NewTestAuthMiddleware(testUser))
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/me", nil)
 	router.ServeHTTP(w, req)
@@ -42,13 +42,16 @@ func TestFetchMe(t *testing.T) {
 
 func TestFetchUsers(t *testing.T) {
 	db := testutil.SetupTestDBClient(t)
-	users := []*ent.User{testutil.SetupTestUser(t, db), testutil.SetupTestAdminUser(t, db)}
+	users := []*ent.User{
+		testutil.SetupTestUser(t, db, nil),
+		testutil.SetupTestAdminUser(t, db, nil),
+	}
 	usersData := make([]services.AdminViewUser, len(users))
 	for i, testUser := range users {
 		usersData[i] = services.ToAdminViewUser(testUser, 0, 0)
 	}
 	for _, testUser := range users {
-		router := setupTestUserRouter(t, db, testutil.NewTestAuthMiddleware(testUser))
+		router := setupTestUserRouter(db, testutil.NewTestAuthMiddleware(testUser))
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/", nil)
 		router.ServeHTTP(w, req)

@@ -10,14 +10,21 @@ import (
 	"github.com/jvllmr/frans/internal/ent"
 )
 
-func SetupTestUser(t *testing.T, db *ent.Client) *ent.User {
-	user := db.User.Create().
+func SetupTestUser(
+	t *testing.T,
+	db *ent.Client,
+	modifier func(*ent.UserCreate) *ent.UserCreate,
+) *ent.User {
+	if modifier == nil {
+		modifier = func(uc *ent.UserCreate) *ent.UserCreate { return uc }
+	}
+	user := modifier(db.User.Create().
 		SetID(uuid.New()).
 		SetGroups([]string{}).
 		SetFullName("Test User").
 		SetEmail("testuser@vllmr.dev").
 		SetUsername("testuser").
-		SetIsAdmin(false).
+		SetIsAdmin(false)).
 		SaveX(t.Context())
 
 	t.Cleanup(func() {
@@ -27,14 +34,21 @@ func SetupTestUser(t *testing.T, db *ent.Client) *ent.User {
 	return user
 }
 
-func SetupTestAdminUser(t *testing.T, db *ent.Client) *ent.User {
-	user := db.User.Create().
+func SetupTestAdminUser(
+	t *testing.T,
+	db *ent.Client,
+	modifier func(*ent.UserCreate) *ent.UserCreate,
+) *ent.User {
+	if modifier == nil {
+		modifier = func(uc *ent.UserCreate) *ent.UserCreate { return uc }
+	}
+	user := modifier(db.User.Create().
 		SetID(uuid.New()).
 		SetGroups([]string{}).
 		SetFullName("Test Admin").
 		SetEmail("testadmin@vllmr.dev").
 		SetUsername("testadmin").
-		SetIsAdmin(true).
+		SetIsAdmin(true)).
 		SaveX(t.Context())
 
 	t.Cleanup(func() {
