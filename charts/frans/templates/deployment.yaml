@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "frans.fullname" . }}
+  labels:
+    {{- include "frans.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "frans.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "frans.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+          {{- with .Values.oidc.issuer }}
+            - name: FRANS_OIDC_ISSUER
+              value: {{ . }}
+          {{- end}}
+          {{- with .Values.oidc.client_id }}
+            - name: FRANS_OIDC_CLIENT_ID
+              value: {{ . }}
+          {{- end}}
+          {{- with .Values.oidc.admin_group }}
+            - name: FRANS_OIDC_ADMIN_GROUP
+              value: {{ . }}
+          {{- end}}
+          {{- with .Values.db.type }}
+            - name: FRANS_DB_TYPE
+              value: {{ . }}
+          {{- end}}
+          {{- with .Values.db.host }}
+            - name: FRANS_DB_HOST
+              value: {{ . }}
+          {{- end}}
+          {{- with .Values.db.port }}
+            - name: FRANS_DB_PORT
+              value: {{ . }}
+          {{- end}}
+          {{- with .Values.db.name }}
+            - name: FRANS_DB_NAME
+              value: {{ . }}
+          {{- end}}
+          {{- with .Values.db.user }}
+            - name: FRANS_DB_USER
+              value: {{ . }}
+          {{- end}}
+          {{- with .Values.db.password }}
+            - name: FRANS_DB_PASSWORD
+              value: {{ . }}
+          {{- end}}
+{{- if .Values.extraEnv }}
+{{- toYaml .Values.extraEnv | nindent 12 }}
+{{- end}}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

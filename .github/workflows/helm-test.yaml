@@ -1,0 +1,43 @@
+name: Helm Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  helm-tests:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          persist-credentials: false
+
+      - name: Set up Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+
+      - name: Set up Kind
+        uses: engineerd/setup-kind@71e45b960fc8dd50b4aeabf6eb6ef2ca0920b4c1 # v0.6.2
+
+      - name: Load kubeconfig
+        run: kind get kubeconfig > kubeconfig.yaml
+
+      - name: Set KUBECONFIG
+        run: export KUBECONFIG=$(pwd)/kubeconfig.yaml
+
+      - name: Helm dependency build
+        run: helm dependency build ./charts/frans
+
+      - name: Install Helm chart
+        run: helm install frans ./charts/frans
+
+      - name: Run Helm tests
+        run: helm test frans --timeout 5m
+
+      - name: Uninstall Helm release
+        if: always()
+        run: helm uninstall frans
