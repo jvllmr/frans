@@ -1,4 +1,4 @@
-name: Helm Test
+name: Helm
 
 on:
   push:
