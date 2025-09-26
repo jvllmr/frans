@@ -88,6 +88,6 @@ jobs:
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --target-branch ${GITHUB_EVENT_REPOSITORY_DEFAULT_BRANCH}
+        run: ct install --chart-dirs charts --target-branch ${GITHUB_EVENT_REPOSITORY_DEFAULT_BRANCH}
         env:
           GITHUB_EVENT_REPOSITORY_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
