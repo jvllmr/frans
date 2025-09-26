@@ -11,7 +11,6 @@ on:
 
 jobs:
   publish:
-    if: startsWith(github.ref, 'refs/tags/')
     needs: lint-test
     runs-on: ubuntu-latest
     permissions:
@@ -24,7 +23,20 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Set version
-        run: sed -i "s/%VERSION%/$GITHUB_REF_NAME/g" charts/frans/Chart.yaml
+        run: |
+          BRANCH="${GITHUB_REF_NAME//[^a-zA-Z0-9]/-}" # sanitize branch name
+          SHA=$(git rev-parse --short HEAD)
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            # Use tag, strip leading 'v'
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            # Get previous tag (most recent tag reachable from current commit)
+            PREV_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
+            PREV_TAG="${PREV_TAG#v}"
+            VERSION="${PREV_TAG}+${BRANCH}-${SHA}"
+          fi
+
+          sed -i "s/%VERSION%/$VERSION/g" charts/frans/Chart.yaml
       - name: Log in to GitHub Container Registry
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io \
