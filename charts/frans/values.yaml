@@ -107,7 +107,7 @@ db:
   host: localhost  #
   # Database port
   # i.e. 3306 for mysql
-  port: 5432 
+  port: 5432
   # Database name
   name: frans
   # Database user
