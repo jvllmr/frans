@@ -64,7 +64,7 @@ spec:
 {{- end }}
 {{- if .Values.db.port | quote }}
             - name: FRANS_DB_PORT
-              value: {{ .Values.db.port }}
+              value: {{ .Values.db.port | quote }}
 {{- end }}
 {{- if .Values.db.name }}
             - name: FRANS_DB_NAME
