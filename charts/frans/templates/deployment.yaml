@@ -42,45 +42,65 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           env:
-          {{- with .Values.oidc.issuer }}
+{{- if .Values.oidc.issuer }}
             - name: FRANS_OIDC_ISSUER
-              value: {{ . }}
-          {{- end}}
-          {{- with .Values.oidc.client_id }}
+              value: {{ .Values.oidc.issuer }}
+{{- end }}
+{{- if .Values.oidc.client_id }}
             - name: FRANS_OIDC_CLIENT_ID
-              value: {{ . }}
-          {{- end}}
-          {{- with .Values.oidc.admin_group }}
+              value: {{ .Values.oidc.client_id }}
+{{- end }}
+{{- if .Values.oidc.admin_group }}
             - name: FRANS_OIDC_ADMIN_GROUP
-              value: {{ . }}
-          {{- end}}
-          {{- with .Values.db.type }}
+              value: {{ .Values.oidc.admin_group }}
+{{- end }}
+{{- if .Values.db.type }}
             - name: FRANS_DB_TYPE
-              value: {{ . }}
-          {{- end}}
-          {{- with .Values.db.host }}
+              value: {{ .Values.db.type }}
+{{- end }}
+{{- if .Values.db.host }}
             - name: FRANS_DB_HOST
-              value: {{ . }}
-          {{- end}}
-          {{- with .Values.db.port }}
+              value: {{ .Values.db.host }}
+{{- end }}
+{{- if .Values.db.port | quote }}
             - name: FRANS_DB_PORT
-              value: {{ . }}
-          {{- end}}
-          {{- with .Values.db.name }}
+              value: {{ .Values.db.port }}
+{{- end }}
+{{- if .Values.db.name }}
             - name: FRANS_DB_NAME
-              value: {{ . }}
-          {{- end}}
-          {{- with .Values.db.user }}
+              value: {{ .Values.db.name }}
+{{- end }}
+{{- if .Values.db.user }}
             - name: FRANS_DB_USER
-              value: {{ . }}
-          {{- end}}
-          {{- with .Values.db.password }}
+              value: {{ .Values.db.user }}
+{{- end }}
+{{- if .Values.db.password }}
             - name: FRANS_DB_PASSWORD
-              value: {{ . }}
-          {{- end}}
+              value: {{ .Values.db.password }}
+{{- end }}
+{{- if .Values.smtp.server }}
+            - name: FRANS_SMTP_SERVER
+              value: {{ .Values.smtp.server }}
+{{- end }}
+{{- if .Values.smtp.port }}
+            - name: FRANS_SMTP_PORT
+              value: {{ .Values.smtp.port | quote }}
+{{- end }}
+{{- if .Values.smtp.username }}
+            - name: FRANS_SMTP_USERNAME
+              value: {{ .Values.smtp.username }}
+{{- end }}
+{{- if .Values.smtp.password }}
+            - name: FRANS_SMTP_PASSWORD
+              value: {{ .Values.smtp.password }}
+{{- end }}
+{{- if .Values.smtp.from }}
+            - name: FRANS_SMTP_FROM
+              value: {{ .Values.smtp.from }}
+{{- end }}
 {{- if .Values.extraEnv }}
 {{- toYaml .Values.extraEnv | nindent 12 }}
-{{- end}}
+{{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
