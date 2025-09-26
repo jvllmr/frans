@@ -24,5 +24,6 @@ version: "%VERSION%"
 appVersion: "%VERSION%"
 
 maintainers:
-  - name: Jan Vollmer
+  - name: jvllmr
     email: jan@vllmr.dev
+    url: https://github.com/jvllmr
