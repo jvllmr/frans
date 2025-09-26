@@ -142,7 +142,6 @@ jobs:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          BRANCH="${GITHUB_REF_NAME//[^a-zA-Z0-9]/-}" # sanitize branch name
           SHA=$(git rev-parse --short HEAD)
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             # Use tag, strip leading 'v'
@@ -152,12 +151,13 @@ jobs:
             # Get previous tag (most recent tag reachable from current commit)
             PREV_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
             PREV_TAG="${PREV_TAG#v}"
-            VERSION="${PREV_TAG}+${BRANCH}-${SHA}"
-
+            
             if [[ "${GITHUB_REF_TYPE}" == "pull_request" ]]; then
               APPVERSION="pr-${GITHUB_PR_NUMBER}"
+              VERSION="${PREV_TAG}+pr-${GITHUB_PR_NUMBER}-${SHA}"
             else
               APPVERSION="main"
+              VERSION="${PREV_TAG}+main-${SHA}"
             fi
           fi
 
