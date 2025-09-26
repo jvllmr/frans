@@ -4,16 +4,51 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "*.*.*"
   pull_request:
+  workflow_dispatch:
 
 jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    # if: github.ref_name == 'main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set version
+        run: sed -i "s/%VERSION%/$(git describe --always)/g" charts/frans/Chart.yaml
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io \
+            --username ${GITHUB_ACTOR} \
+            --password-stdin
+      - name: Package and Push Helm Chart
+        run: |
+          CHART_NAME=frans
+          CHART_PATH=charts/${CHART_NAME}
+          VERSION=$(grep '^version:' ${CHART_PATH}/Chart.yaml | awk '{print $2}')
+
+          echo "Packaging ${CHART_NAME} version ${VERSION}"
+          helm package ${CHART_PATH} --destination packaged
+
+          echo "Pushing to ghcr.io/${{ github.repository_owner }}/${CHART_NAME}:${VERSION}"
+          helm push packaged/${CHART_NAME}-${VERSION}.tgz \
+            oci://ghcr.io/${{ github.repository_owner }}
+
   lint-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0
           persist-credentials: false
