@@ -70,6 +70,8 @@ jobs:
           message-failure: |
             ❌ Failed to build container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
   helm-lint-test:
+    needs:
+      - container-publish
     name: Test Helm
     runs-on: ubuntu-latest
     permissions:
@@ -84,8 +86,16 @@ jobs:
         run: sed -i "s/%VERSION%/0.1.0/g" charts/frans/Chart.yaml
 
       - name: Set app version
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          sed -i "s/%APPVERSION%/main/g" charts/frans/Chart.yaml
+          if [[ "${GITHUB_REF_TYPE}" == "pull_request" ]]; then
+              APPVERSION="pr-${GITHUB_PR_NUMBER}"
+            else
+              APPVERSION="main"
+            fi
+          sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
       - name: Set up Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
 
