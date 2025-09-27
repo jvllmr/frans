@@ -90,11 +90,12 @@ jobs:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if [[ "${GITHUB_REF_TYPE}" == "pull_request" ]]; then
-              APPVERSION="pr-${GITHUB_PR_NUMBER}"
-            else
-              APPVERSION="main"
-            fi
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            APPVERSION="pr-${GITHUB_PR_NUMBER}"
+          else
+            APPVERSION="main"
+          fi
+          echo "Set app version to $APPVERSION"
           sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
       - name: Set up Helm
         uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
@@ -175,7 +176,7 @@ jobs:
             PREV_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
             PREV_TAG="${PREV_TAG#v}"
             
-            if [[ "${GITHUB_REF_TYPE}" == "pull_request" ]]; then
+            if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
               APPVERSION="pr-${GITHUB_PR_NUMBER}"
               VERSION="${PREV_TAG}+pr-${GITHUB_PR_NUMBER}-${SHA}"
             else
@@ -183,7 +184,8 @@ jobs:
               VERSION="${PREV_TAG}+main-${SHA}"
             fi
           fi
-
+          echo "Set chart version to $VERSION"
+          echo "Set app version to $APPVERSION"
           sed -i "s/%VERSION%/$VERSION/g" charts/frans/Chart.yaml
           sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
       - name: Log in to GitHub Container Registry
