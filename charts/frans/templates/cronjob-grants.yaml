@@ -15,7 +15,7 @@ spec:
         spec:
           restartPolicy: OnFailure
           initContainers:
-            - name: {{ include "frans.fullname" . }}-lifecycle-tickets-migrate
+            - name: {{ include "frans.fullname" . }}-lifecycle-grants-migrate
               {{- with .Values.securityContext }}
               securityContext:
                 {{- toYaml . | nindent 12 }}
