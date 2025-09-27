@@ -140,7 +140,7 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           sed -i 's|issuer: ""|issuer: "http://pocket-id:1411"|' charts/frans/values.yaml
-      - name: Waiting for postgres to be ready
+      - name: Waiting for pods to be ready
         if: steps.list-changed.outputs.changed == 'true'
         run: kubectl wait --for=condition=Ready pod --all --namespace=default --timeout=180s
       - name: Run chart-testing (install)
