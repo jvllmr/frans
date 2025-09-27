@@ -104,7 +104,7 @@ db:
   type: postgres
   # Database host (file path in case of `sqlite3`)
   # i.e. frans.db for sqlite3
-  host: localhost  #
+  host: localhost
   # Database port
   # i.e. 3306 for mysql
   port: 5432

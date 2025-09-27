@@ -14,6 +14,41 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          initContainers:
+            - name: {{ include "frans.fullname" . }}-lifecycle-tickets-migrate
+              {{- with .Values.securityContext }}
+              securityContext:
+                {{- toYaml . | nindent 12 }}
+              {{- end }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args:
+                - migrate
+              env:
+{{- if .Values.db.type }}
+                - name: FRANS_DB_TYPE
+                  value: {{ .Values.db.type }}
+{{- end }}
+{{- if .Values.db.host }}
+                - name: FRANS_DB_HOST
+                  value: {{ .Values.db.host }}
+{{- end }}
+{{- if .Values.db.port | quote }}
+                - name: FRANS_DB_PORT
+                  value: {{ .Values.db.port | quote }}
+{{- end }}
+{{- if .Values.db.name }}
+                - name: FRANS_DB_NAME
+                  value: {{ .Values.db.name }}
+{{- end }}
+{{- if .Values.db.user }}
+                - name: FRANS_DB_USER
+                  value: {{ .Values.db.user }}
+{{- end }}
+{{- if .Values.db.password }}
+                - name: FRANS_DB_PASSWORD
+                  value: {{ .Values.db.password }}
+{{- end }}
           containers:
             - name: {{ include "frans.fullname" . }}-lifecycle-files
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion}}"
