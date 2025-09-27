@@ -119,7 +119,7 @@ jobs:
         uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3 # v1.12.0
       - name: Setup pocket-id
         if: steps.list-changed.outputs.changed == 'true'
-        run: kubectl apply -f .github/manifests/pocketid.yaml
+        run: kubectl apply -f .github/workflows/manifests/pocketid.yaml
       - name: Change database type
         if: steps.list-changed.outputs.changed == 'true'
         run: "sed -i 's/type: postgres/type: sqlite3/' charts/frans/values.yaml"
