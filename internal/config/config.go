@@ -134,14 +134,6 @@ func NewConfig() (Config, error) {
 	return config, nil
 }
 
-func NewSafeConfig() Config {
-	configValue, err := NewConfig()
-	if err != nil {
-		panic(err)
-	}
-	return configValue
-}
-
 func (c *Config) GetBaseURL(request *http.Request) string {
 	proto := "http"
 	if request.TLS != nil {
