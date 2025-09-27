@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: postgres
+  namespace: postgres
   labels:
     app.kubernetes.io/name: postgres
 spec:
@@ -10,6 +11,16 @@ spec:
       image: postgres:18
       ports:
         - containerPort: 5432
+      readinessProbe:
+        exec:
+          command:
+            - sh
+            - -c
+            - PGPASS=frans pg_isready -U frans -h 127.0.0.1 -p 5432
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        timeoutSeconds: 5
+        failureThreshold: 6
       env:
         - name: POSTGRES_USER
           value: frans
@@ -22,6 +33,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgres
+  namespace: postgres
 spec:
   selector:
     app.kubernetes.io/name: postgres
