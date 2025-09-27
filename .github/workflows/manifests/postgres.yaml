@@ -21,7 +21,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ppostgres
+  name: postgres
 spec:
   selector:
     app.kubernetes.io/name: postgres
