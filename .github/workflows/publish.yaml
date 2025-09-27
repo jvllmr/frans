@@ -136,6 +136,9 @@ jobs:
       - name: Change database address
         if: steps.list-changed.outputs.changed == 'true'
         run: "sed -i 's/host: localhost/host: postgres/' charts/frans/values.yaml"
+      - name: Set database password
+        if: steps.list-changed.outputs.changed == 'true'
+        run: 'sed -i ''s/password: ""/password: frans/'' charts/frans/values.yaml'
       - name: Change oidc issuer
         if: steps.list-changed.outputs.changed == 'true'
         run: |
