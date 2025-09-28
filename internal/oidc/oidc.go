@@ -3,6 +3,7 @@ package oidc
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -30,7 +31,7 @@ func (f *FransOidcProvider) EndSessionEndpoint() string {
 }
 
 func NewOIDC(configValue config.Config, db *ent.Client) (*FransOidcProvider, error) {
-	var err error
+	slog.Info("Connecting with oidc issuer", "issuer", configValue.OidcIssuer)
 	oidcProvider, err := oidc.NewProvider(context.Background(), configValue.OidcIssuer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create OIDC provider: %w", err)
