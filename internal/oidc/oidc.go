@@ -31,7 +31,15 @@ func (f *FransOidcProvider) EndSessionEndpoint() string {
 }
 
 func NewOIDC(configValue config.Config, db *ent.Client) (*FransOidcProvider, error) {
-	slog.Info("Connecting with oidc issuer", "issuer", configValue.OidcIssuer)
+	slog.Info(
+		"Connecting with oidc issuer",
+		"issuer",
+		configValue.OidcIssuer,
+		"client_id",
+		configValue.OidcClientID,
+		"admin_group",
+		configValue.OidcAdminGroup,
+	)
 	oidcProvider, err := oidc.NewProvider(context.Background(), configValue.OidcIssuer)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create OIDC provider: %w", err)
