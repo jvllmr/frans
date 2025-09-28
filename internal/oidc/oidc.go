@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/gin-gonic/gin"
@@ -31,6 +32,7 @@ func (f *FransOidcProvider) EndSessionEndpoint() string {
 }
 
 func NewOIDC(configValue config.Config, db *ent.Client) (*FransOidcProvider, error) {
+	slog.Info("Env vars", "issuer_env", os.Getenv("FRANS_OIDC_ISSUER"))
 	slog.Info(
 		"Connecting with oidc issuer",
 		"issuer",
