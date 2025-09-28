@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 
 	"ariga.io/atlas/sql/migrate"
@@ -69,6 +70,7 @@ func getMigrationDriver(db *sql.DB, dbType string) (migrate.Driver, error) {
 	case "postgres":
 		drv, err = postgres.Open(db)
 		if err != nil {
+			slog.Info("Something is wrong:", "db", db)
 			return nil, err
 		}
 
