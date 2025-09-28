@@ -135,7 +135,7 @@ jobs:
         run: kubectl apply -f .github/manifests/pocketid.yaml
       - name: Change database address
         if: steps.list-changed.outputs.changed == 'true'
-        run: "sed -i 's/host: localhost/host: postgres/' charts/frans/values.yaml"
+        run: "sed -i 's/host: localhost/host: postgres.default.svc.cluster.local/' charts/frans/values.yaml"
       - name: Set database password
         if: steps.list-changed.outputs.changed == 'true'
         run: |
@@ -143,7 +143,7 @@ jobs:
       - name: Change oidc issuer
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          sed -i 's|issuer: ""|issuer: "http://pocket-id:1411"|' charts/frans/values.yaml
+          sed -i 's|issuer: ""|issuer: "http://pocket-id.default.svc.cluster.local:1411"|' charts/frans/values.yaml
       - name: Waiting for pods to be ready
         if: steps.list-changed.outputs.changed == 'true'
         run: kubectl wait --for=condition=Ready pod --all --namespace=default --timeout=180s

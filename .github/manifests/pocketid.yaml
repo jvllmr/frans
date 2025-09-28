@@ -12,7 +12,7 @@ spec:
         - containerPort: 1411
       env:
         - name: APP_URL
-          value: http://pocket-id:1411
+          value: http://pocket-id.default.svc.cluster.local:1411
         - name: TRUST_PROXY
           value: "false"
         - name: PUID
