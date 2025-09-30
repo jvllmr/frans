@@ -208,7 +208,7 @@ jobs:
         run: |
           CHART_NAME=frans
           CHART_PATH=charts/${CHART_NAME}
-          VERSION=$(grep '^version:' ${CHART_PATH}/Chart.yaml | awk '{print $2}')
+          VERSION=$(yq -r '.version' ${CHART_PATH}/Chart.yaml)
 
           echo "Packaging ${CHART_NAME} version ${VERSION}"
           helm package ${CHART_PATH} --destination packaged
