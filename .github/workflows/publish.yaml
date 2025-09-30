@@ -33,9 +33,9 @@ jobs:
           tags: |
             type=ref,event=pr
             type=ref,event=branch,enable={{is_default_branch}}
-            type=semver,pattern={{major}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{version}}
+            type=semver,pattern=v{{major}}
+            type=semver,pattern=v{{major}}.{{minor}}
+            type=semver,pattern=v{{version}}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
@@ -181,7 +181,7 @@ jobs:
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             # Use tag, strip leading 'v'
             VERSION="${GITHUB_REF_NAME#v}"
-            APPVERSION="${GITHUB_REF_NAME#v}"
+            APPVERSION="${GITHUB_REF_NAME}"
           else
             # Get previous tag (most recent tag reachable from current commit)
             PREV_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
