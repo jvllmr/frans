@@ -189,10 +189,10 @@ jobs:
             
             if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
               APPVERSION="pr-${GITHUB_PR_NUMBER}"
-              VERSION="${PREV_TAG}+pr-${GITHUB_PR_NUMBER}-${SHA}"
+              VERSION="${PREV_TAG}+pr-${GITHUB_PR_NUMBER}"
             else
               APPVERSION="main"
-              VERSION="${PREV_TAG}+main-${SHA}"
+              VERSION="${PREV_TAG}+main"
             fi
           fi
           echo "Set chart version to $VERSION"
