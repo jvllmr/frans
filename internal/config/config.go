@@ -99,10 +99,13 @@ func NewConfig() (Config, error) {
 
 	setDBConfigDefaults(fransConf)
 
+	fransConf.SetDefault("oidc.issuer", "")
+	fransConf.SetDefault("oidc.client_id", "")
 	fransConf.SetDefault("oidc.admin_group", "admin")
 
 	setLogConfigDefaults(fransConf)
 
+	fransConf.SetDefault("smtp.server", 25)
 	fransConf.SetDefault("smtp.port", 25)
 	fransConf.SetDefault("smtp.username", nil)
 	fransConf.SetDefault("smtp.password", nil)
