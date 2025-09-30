@@ -1,6 +1,6 @@
 module github.com/jvllmr/frans
 
-go 1.24.0
+go 1.24.7
 
 require (
 	ariga.io/atlas v0.36.1
