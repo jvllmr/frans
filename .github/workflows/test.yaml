@@ -13,8 +13,6 @@ jobs:
       contents: read
     name: unittest
     runs-on: ubuntu-latest
-    environment:
-      name: unittest
     services:
       smtp:
         image: docker.io/rnwood/smtp4dev:3.10.1
