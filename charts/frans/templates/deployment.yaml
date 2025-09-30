@@ -1,0 +1,172 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "frans.fullname" . }}
+  labels:
+    {{- include "frans.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "frans.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "frans.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: {{ .Chart.Name }}-migrate
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - migrate
+          env:
+{{- if .Values.db.type }}
+            - name: FRANS_DB_TYPE
+              value: {{ .Values.db.type }}
+{{- end }}
+{{- if .Values.db.host }}
+            - name: FRANS_DB_HOST
+              value: {{ .Values.db.host }}
+{{- end }}
+{{- if .Values.db.port | quote }}
+            - name: FRANS_DB_PORT
+              value: {{ .Values.db.port | quote }}
+{{- end }}
+{{- if .Values.db.name }}
+            - name: FRANS_DB_NAME
+              value: {{ .Values.db.name }}
+{{- end }}
+{{- if .Values.db.user }}
+            - name: FRANS_DB_USER
+              value: {{ .Values.db.user }}
+{{- end }}
+{{- if .Values.db.password }}
+            - name: FRANS_DB_PASSWORD
+              value: {{ .Values.db.password }}
+{{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - serve
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+{{- if .Values.oidc.issuer }}
+            - name: FRANS_OIDC_ISSUER
+              value: {{ .Values.oidc.issuer }}
+{{- end }}
+{{- if .Values.oidc.client_id }}
+            - name: FRANS_OIDC_CLIENT_ID
+              value: {{ .Values.oidc.client_id }}
+{{- end }}
+{{- if .Values.oidc.admin_group }}
+            - name: FRANS_OIDC_ADMIN_GROUP
+              value: {{ .Values.oidc.admin_group }}
+{{- end }}
+{{- if .Values.db.type }}
+            - name: FRANS_DB_TYPE
+              value: {{ .Values.db.type }}
+{{- end }}
+{{- if .Values.db.host }}
+            - name: FRANS_DB_HOST
+              value: {{ .Values.db.host }}
+{{- end }}
+{{- if .Values.db.port | quote }}
+            - name: FRANS_DB_PORT
+              value: {{ .Values.db.port | quote }}
+{{- end }}
+{{- if .Values.db.name }}
+            - name: FRANS_DB_NAME
+              value: {{ .Values.db.name }}
+{{- end }}
+{{- if .Values.db.user }}
+            - name: FRANS_DB_USER
+              value: {{ .Values.db.user }}
+{{- end }}
+{{- if .Values.db.password }}
+            - name: FRANS_DB_PASSWORD
+              value: {{ .Values.db.password }}
+{{- end }}
+{{- if .Values.smtp.server }}
+            - name: FRANS_SMTP_SERVER
+              value: {{ .Values.smtp.server }}
+{{- end }}
+{{- if .Values.smtp.port }}
+            - name: FRANS_SMTP_PORT
+              value: {{ .Values.smtp.port | quote }}
+{{- end }}
+{{- if .Values.smtp.username }}
+            - name: FRANS_SMTP_USERNAME
+              value: {{ .Values.smtp.username }}
+{{- end }}
+{{- if .Values.smtp.password }}
+            - name: FRANS_SMTP_PASSWORD
+              value: {{ .Values.smtp.password }}
+{{- end }}
+{{- if .Values.smtp.from }}
+            - name: FRANS_SMTP_FROM
+              value: {{ .Values.smtp.from }}
+{{- end }}
+{{- if .Values.extraEnv }}
+{{- toYaml .Values.extraEnv | nindent 12 }}
+{{- end }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

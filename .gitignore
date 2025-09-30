@@ -1,7 +1,7 @@
 node_modules
 internal/routes/client/assets/*
 !internal/routes/client/assets/.gitkeep
-frans
+/frans
 *.exe
 *.db
 .tanstack
