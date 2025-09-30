@@ -31,7 +31,45 @@ Feel free to contribute or improve translations via [Crowdin](https://crowdin.co
 
 ### Helm Chart
 
-TODO...
+Frans comes with a Helm chart hosted via GitHub Container Registry.
+The helm chart is unopinionated about anything outside of `frans` and therefore doesn't install anything besides `frans` itself.
+This means that you will have to prepare a database server, OIDC provider and a SMTP Server beforehand.
+
+Your `values.yaml` should at least include the following values to connect with these services:
+
+```yaml
+db:
+  # Database type to use. One of `postgres`, `mysql` or `sqlite3`
+  type: postgres
+  # Database host (file path in case of `sqlite3`)
+  host: localhost # or frans.db for sqlite3
+  # Database port
+  port: 5432 # or 3306 for mysql
+  # Database name
+  name: frans
+  # Database user
+  user: frans
+  # Database password (required for postgres and mysql)
+  password: frans
+
+oidc:
+  issuer: https://your-oidc-provider
+  client_id: your-client-id
+
+smtp:
+  server: smtp-server-host
+  port: 25
+```
+
+After your preparations are done, simply run
+
+```shell
+helm install frans oci://ghcr.io/jvllmr/frans --values values.yaml
+```
+
+to install the helm chart.
+
+For more `values.yaml` options, look inside the default [values.yaml](charts/frans/values.yaml).
 
 ### Docker Compose
 
