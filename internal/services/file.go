@@ -14,6 +14,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
+	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/filedata"
 )
 
 type ErrFileTooBig struct {
@@ -84,7 +86,6 @@ func (fs FileService) CreateFile(
 	expiryDaysSinceLastDownload uint8,
 	expiryTotalDays uint8,
 	expiryTotalDownloads uint8,
-
 ) (*ent.File, error) {
 	if fileHeader.Size > fs.config.MaxSizes {
 		return nil, &ErrFileTooBig{
@@ -155,9 +156,18 @@ func (fs FileService) CreateFile(
 }
 
 func (fs FileService) DeleteFile(ctx context.Context, fileValue *ent.File) error {
-	ticketsCount := len(fileValue.Edges.Tickets)
-	grantsCount := len(fileValue.Edges.Grants)
-	deleteFromFS := (ticketsCount <= 1 && grantsCount <= 1)
+	fileDataFilesCount, err := fs.db.FileData.Query().
+		Where(filedata.HasFilesWith(file.ID(fileValue.ID))).
+		QueryFiles().
+		Count(ctx)
+	if err != nil {
+		return err
+	}
+	err = fs.db.File.DeleteOne(fileValue).Exec(ctx)
+	if err != nil {
+		return err
+	}
+	deleteFromFS := fileDataFilesCount <= 1
 	if deleteFromFS {
 		filePath := fs.FilesFilePath(fileValue.Edges.Data.ID)
 		err := os.Remove(filePath)
@@ -170,7 +180,6 @@ func (fs FileService) DeleteFile(ctx context.Context, fileValue *ent.File) error
 		}
 	}
 
-	err := fs.db.File.DeleteOne(fileValue).Exec(ctx)
 	return err
 }
 
@@ -225,5 +234,7 @@ func (fs FileService) ToPublicFile(file *ent.File) PublicFile {
 }
 
 func NewFileService(c config.Config, db *ent.Client) FileService {
-	return FileService{config: c, db: db}
+	fs := FileService{config: c, db: db}
+	fs.EnsureFilesTmpPath()
+	return fs
 }
