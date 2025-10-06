@@ -13,6 +13,7 @@ import (
 func FileLifecycleTask(db *ent.Client, fs services.FileService) {
 	files := db.File.Query().
 		Where(file.TimesDownloadedGT(0)).
+		WithData().
 		WithTickets(func(ticketQuery *ent.TicketQuery) {
 			ticketQuery.WithOwner()
 		}).
