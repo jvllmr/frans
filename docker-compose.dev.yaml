@@ -14,7 +14,7 @@ services:
       - keycloak
   keycloak:
     container_name: frans_dev_keycloak
-    image: quay.io/keycloak/keycloak:26.3.4
+    image: quay.io/keycloak/keycloak:26.4.0
     command: start-dev --import-realm --verbose
     ports:
       - 127.0.0.1:8080:8080
@@ -31,7 +31,7 @@ services:
       - ./keycloak/realm_import:/opt/keycloak/data/import:Z
   smtp:
     container_name: frans_dev_smtp
-    image: docker.io/rnwood/smtp4dev:3.10.1
+    image: docker.io/rnwood/smtp4dev:3.10.3
     ports:
       - 127.0.0.1:5000:80
       - 127.0.0.1:2525:25

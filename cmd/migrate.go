@@ -15,7 +15,6 @@ var migrateCmd = &cobra.Command{
 		dbConfig, err := config.NewDBConfig()
 		if err != nil {
 			log.Fatalf("Could not get database config: %v", err)
-
 		}
 		db.Migrate(dbConfig.DBConfig)
 	},

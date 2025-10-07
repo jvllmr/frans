@@ -30,8 +30,6 @@ services:
     image: ghcr.io/jvllmr/frans:1
     command:
       - cron
-    ports:
-      - 8081:8081
     environment:
       # keys needed for minimal setup
       FRANS_DB_TYPE: ... # default is `postgres`
@@ -39,13 +37,6 @@ services:
       FRANS_DB_USER: ... # default is `frans`
       FRANS_DB_PASSWORD: ...
       FRANS_DB_NAME: ... # default is `frans`
-      FRANS_OIDC_ISSUER: ...
-      FRANS_OIDC_CLIENT_ID: ...
-      FRANS_OIDC_ADMIN_GROUP: ... # default is `admin`
-      FRANS_SMTP_SERVER: ...
-      FRANS_SMTP_PORT: ... # default is 25
-      FRANS_SMTP_USERNAME: ... # can be left empty
-      FRANS_SMTP_PASSWORD: ... # can be left empty
     volumes:
       - files:/opt/frans/files
   migrator:

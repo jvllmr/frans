@@ -1,9 +1,16 @@
 package testutil
 
-import "github.com/jvllmr/frans/internal/config"
+import (
+	"log"
+
+	"github.com/jvllmr/frans/internal/config"
+)
 
 func SetupTestConfig() config.Config {
-	configValue := config.NewSafeConfig()
+	configValue, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Could not parse config: %v", err)
+	}
 	configValue.FilesDir = "testfiles"
 	configValue.SMTPServer = "127.0.0.1"
 	configValue.SMTPPort = 2525

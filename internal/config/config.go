@@ -99,10 +99,13 @@ func NewConfig() (Config, error) {
 
 	setDBConfigDefaults(fransConf)
 
+	fransConf.SetDefault("oidc.issuer", "")
+	fransConf.SetDefault("oidc.client_id", "")
 	fransConf.SetDefault("oidc.admin_group", "admin")
 
 	setLogConfigDefaults(fransConf)
 
+	fransConf.SetDefault("smtp.server", 25)
 	fransConf.SetDefault("smtp.port", 25)
 	fransConf.SetDefault("smtp.username", nil)
 	fransConf.SetDefault("smtp.password", nil)
@@ -132,14 +135,6 @@ func NewConfig() (Config, error) {
 	}
 
 	return config, nil
-}
-
-func NewSafeConfig() Config {
-	configValue, err := NewConfig()
-	if err != nil {
-		panic(err)
-	}
-	return configValue
 }
 
 func (c *Config) GetBaseURL(request *http.Request) string {
