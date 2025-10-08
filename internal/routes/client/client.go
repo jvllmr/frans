@@ -21,7 +21,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-//go:embed assets/*
+//go:embed all:assets/*
 var clientFiles embed.FS
 
 //go:embed index.gohtml
