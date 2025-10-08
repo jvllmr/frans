@@ -128,7 +128,7 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 	if targetTicket != nil {
 		c.Redirect(
 			http.StatusPermanentRedirect,
-			fmt.Sprintf("/share/ticket/%s", targetTicket.ID.String()),
+			fmt.Sprintf("%s/share/ticket/%s", cc.config.RootPath, targetTicket.ID.String()),
 		)
 		return
 	}
@@ -139,7 +139,7 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 	if targetGrant != nil {
 		c.Redirect(
 			http.StatusPermanentRedirect,
-			fmt.Sprintf("/share/grant/%s", targetGrant.ID.String()),
+			fmt.Sprintf("%s/share/grant/%s", cc.config.RootPath, targetGrant.ID.String()),
 		)
 		return
 	}
