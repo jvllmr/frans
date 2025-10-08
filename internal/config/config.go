@@ -105,8 +105,9 @@ func NewConfig() (Config, error) {
 
 	setLogConfigDefaults(fransConf)
 
-	fransConf.SetDefault("smtp.server", 25)
+	fransConf.SetDefault("smtp.server", "")
 	fransConf.SetDefault("smtp.port", 25)
+	fransConf.SetDefault("smtp.from", "")
 	fransConf.SetDefault("smtp.username", nil)
 	fransConf.SetDefault("smtp.password", nil)
 
