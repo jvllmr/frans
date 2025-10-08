@@ -24,7 +24,7 @@ import (
 //go:embed all:assets/*
 var clientFiles embed.FS
 
-//go:embed index.html.tmpl
+//go:embed index.gohtml
 var indexFileContent string
 
 func loadManifest() gjson.Result {
