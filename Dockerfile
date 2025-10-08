@@ -37,6 +37,7 @@ RUN chmod +x /workspace/frans
 
 
 FROM scratch AS runner
+COPY --from=server-builder /etc/ssl/certs /etc/ssl/certs
 COPY --from=server-builder --chown=1001:1001 /emptyd /tmp
 COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/files
 COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/migrations
