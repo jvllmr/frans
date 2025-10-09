@@ -109,7 +109,8 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 			grantValue.Edges.Owner,
 		)
 	}
-	if grantValue.EmailOnUpload != nil && grantValue.TimesUploaded == 1 {
+	// we have an outdated reference to the grant; therefore we check if TimesUploaded is 0
+	if grantValue.EmailOnUpload != nil && grantValue.TimesUploaded == 0 {
 		gsc.mailer.SendFileUploadNotification(
 			c,
 			*grantValue.EmailOnUpload,
