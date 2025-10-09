@@ -65,10 +65,14 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
-	fileValue = tsc.db.File.UpdateOne(fileValue).
+	_, err = tsc.db.File.UpdateOne(fileValue).
 		SetLastDownload(time.Now()).
 		AddTimesDownloaded(1).
-		SaveX(c.Request.Context())
+		Save(c.Request.Context())
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 	filePath := tsc.fileService.FilesFilePath(fileValue.Edges.Data.ID)
 	c.FileAttachment(filePath, fileValue.Name)
 	ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
