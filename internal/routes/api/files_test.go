@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/services"
@@ -80,6 +81,17 @@ func TestFetchFile(t *testing.T) {
 	rWithAdminUser.ServeHTTP(wWithAdminUser, req)
 	assert.Equal(t, http.StatusOK, wWithAdminUser.Code)
 
+}
+
+func TestFetchFileNotFound(t *testing.T) {
+	cfg := testutil.SetupTestConfig()
+	db := testutil.SetupTestDBClient(t)
+	testUser := testutil.SetupTestUser(t, db, nil)
+	r := setupTestFileRouter(cfg, db, testutil.NewTestAuthMiddleware(testUser))
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/%s", uuid.New()), nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusNotFound, w.Code)
 }
 
 func TestFetchReceivedFiles(t *testing.T) {
