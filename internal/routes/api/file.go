@@ -26,7 +26,7 @@ type fileController struct {
 func (fc *fileController) fetchReceivedFilesHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
 
-	files := fc.db.File.Query().
+	files := fc.db.File.Query().WithData().
 		Where(file.HasGrantsWith(grant.HasOwnerWith(user.ID(currentUser.ID)))).
 		AllX(c.Request.Context())
 
