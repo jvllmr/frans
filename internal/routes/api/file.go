@@ -45,10 +45,10 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	fileValue, err := fc.db.File.Get(
-		c.Request.Context(),
-		uuid.MustParse(requestedFile.ID),
-	)
+	fileValue, err := fc.db.File.Query().
+		WithData().
+		Where(file.ID(uuid.MustParse(requestedFile.ID))).
+		Only(c.Request.Context())
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
