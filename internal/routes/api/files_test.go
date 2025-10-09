@@ -52,6 +52,21 @@ func TestFetchFile(t *testing.T) {
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
+	testFile = db.File.GetX(t.Context(), testFile.ID)
+	assert.True(t, nil == testFile.LastDownload)
+	assert.Equal(t, uint64(0), testFile.TimesDownloaded)
+
+	reqWithDownload := httptest.NewRequest(
+		http.MethodGet,
+		fmt.Sprintf("/%s?addDownload=1", testFile.ID),
+		nil,
+	)
+	wDownload := httptest.NewRecorder()
+	r.ServeHTTP(wDownload, reqWithDownload)
+	assert.Equal(t, http.StatusOK, wDownload.Code)
+	testFile = db.File.GetX(t.Context(), testFile.ID)
+	assert.True(t, nil != testFile.LastDownload)
+	assert.Equal(t, uint64(1), testFile.TimesDownloaded)
 }
 
 func TestFetchReceivedFiles(t *testing.T) {
