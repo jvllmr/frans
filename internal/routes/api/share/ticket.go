@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
+	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/mail"
 	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
@@ -57,10 +58,10 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	fileValue, err := tsc.db.File.Get(
-		c.Request.Context(),
-		uuid.MustParse(requestedFile.ID),
-	)
+	fileValue, err := tsc.db.File.Query().
+		WithData().
+		Where(file.ID(uuid.MustParse(requestedFile.ID))).
+		Only(c.Request.Context())
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
