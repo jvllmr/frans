@@ -10,4 +10,7 @@ go test -coverprofile=coverage.txt \
 ./internal/util,\
 ./internal/testutil,\
 ./internal/routes/api/types,\
-./internal/mail
+./internal/mail,\
+./internal/routes/api,\
+./internal/tasks,\
+./internal/routes/api/share
