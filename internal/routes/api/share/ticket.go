@@ -109,7 +109,7 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 		ticketValue, err := db.Ticket.Query().
 			Where(ticket.ID(uuidValue)).
 			WithOwner().
-			WithFiles().Only(c.Request.Context())
+			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).Only(c.Request.Context())
 
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
