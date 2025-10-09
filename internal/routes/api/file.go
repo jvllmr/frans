@@ -51,12 +51,14 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 		Only(c.Request.Context())
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
+		return
 	}
 
 	currentUser := middleware.GetCurrentUser(c)
 
 	if !util.UserHasFileAccess(c.Request.Context(), currentUser, fileValue) {
 		c.AbortWithStatus(http.StatusForbidden)
+		return
 	}
 
 	addDownload := c.Query("addDownload")

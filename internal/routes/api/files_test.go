@@ -67,6 +67,19 @@ func TestFetchFile(t *testing.T) {
 	testFile = db.File.GetX(t.Context(), testFile.ID)
 	assert.True(t, nil != testFile.LastDownload)
 	assert.Equal(t, uint64(1), testFile.TimesDownloaded)
+
+	forbiddenUser := testutil.SetupTestUser(t, db, nil)
+	rWithWrongUser := setupTestFileRouter(cfg, db, testutil.NewTestAuthMiddleware(forbiddenUser))
+	wWithWrongUser := httptest.NewRecorder()
+	rWithWrongUser.ServeHTTP(wWithWrongUser, req)
+	assert.Equal(t, http.StatusForbidden, wWithWrongUser.Code)
+
+	adminUser := testutil.SetupTestAdminUser(t, db, nil)
+	rWithAdminUser := setupTestFileRouter(cfg, db, testutil.NewTestAuthMiddleware(adminUser))
+	wWithAdminUser := httptest.NewRecorder()
+	rWithAdminUser.ServeHTTP(wWithAdminUser, req)
+	assert.Equal(t, http.StatusOK, wWithAdminUser.Code)
+
 }
 
 func TestFetchReceivedFiles(t *testing.T) {
