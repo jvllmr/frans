@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -148,42 +149,50 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 func SetupClientRoutes(
 	r *gin.Engine,
 	rGroup *gin.RouterGroup,
-	configValue config.Config,
+	cfg config.Config,
 	db *ent.Client,
 	oidcProvider *oidc.FransOidcProvider,
 ) {
 	controller := clientController{
-		config: configValue,
+		config: cfg,
 		db:     db,
 	}
 
 	rGroup.GET("/s/:id", controller.redirectShareLink)
 
-	setIndexTemplate(r, configValue)
+	setIndexTemplate(r, cfg)
 	staticFiles, _ := fs.Sub(clientFiles, "assets")
 	rGroup.StaticFS("/static", http.FS(staticFiles))
 
-	customColorJsonBytes, err := json.Marshal(configValue.CustomColor)
+	customColorJsonBytes, err := json.Marshal(cfg.CustomColor)
 	if err != nil {
 		log.Fatalf("Could not generate json from custom color setting.")
 	}
 	customColorJson := string(customColorJsonBytes)
 
-	r.NoRoute(middleware.Auth(oidcProvider, true), func(c *gin.Context) {
+	authMiddleware := middleware.Auth(oidcProvider, true)
+	clientAuthMiddleware := func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, fmt.Sprintf("%s/share", cfg.RootPath)) {
+			return
+		}
+		authMiddleware(c)
+	}
+
+	r.NoRoute(clientAuthMiddleware, func(c *gin.Context) {
 		// Fallback to index.html for React Router
 		c.HTML(http.StatusOK, "index", gin.H{
-			"rootPath":                              configValue.RootPath,
-			"devMode":                               configValue.DevMode,
-			"maxFiles":                              configValue.MaxFiles,
-			"maxSizes":                              configValue.MaxSizes,
-			"defaultExpiryTotalDays":                configValue.DefaultExpiryTotalDays,
-			"defaultExpiryTotalDownloads":           configValue.DefaultExpiryTotalDownloads,
-			"defaultExpiryDaysSinceLastDownload":    configValue.DefaultExpiryDaysSinceLastDownload,
-			"grantDefaultExpiryTotalDays":           configValue.GrantDefaultExpiryTotalDays,
-			"grantDefaultExpiryTotalUploads":        configValue.GrantDefaultExpiryTotalUploads,
-			"grantDefaultExpiryDaysSinceLastUpload": configValue.GrantDefaultExpiryDaysSinceLastUpload,
+			"rootPath":                              cfg.RootPath,
+			"devMode":                               cfg.DevMode,
+			"maxFiles":                              cfg.MaxFiles,
+			"maxSizes":                              cfg.MaxSizes,
+			"defaultExpiryTotalDays":                cfg.DefaultExpiryTotalDays,
+			"defaultExpiryTotalDownloads":           cfg.DefaultExpiryTotalDownloads,
+			"defaultExpiryDaysSinceLastDownload":    cfg.DefaultExpiryDaysSinceLastDownload,
+			"grantDefaultExpiryTotalDays":           cfg.GrantDefaultExpiryTotalDays,
+			"grantDefaultExpiryTotalUploads":        cfg.GrantDefaultExpiryTotalUploads,
+			"grantDefaultExpiryDaysSinceLastUpload": cfg.GrantDefaultExpiryDaysSinceLastUpload,
 			"fransVersion":                          config.FransVersion,
-			"color":                                 configValue.Color,
+			"color":                                 cfg.Color,
 			"customColor":                           customColorJson,
 		})
 	})
