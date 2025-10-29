@@ -56,6 +56,7 @@ type Config struct {
 	GrantExpiryConfig `mapstructure:"grant_expiry"`
 	LogConfig         `mapstructure:"log"`
 	ColorsConfig      `mapstructure:"colors"`
+	Otel              `mapstructure:"otel"`
 
 	DevMode bool `mapstructure:"dev_mode"`
 

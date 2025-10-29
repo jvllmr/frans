@@ -117,3 +117,61 @@ colors:
     - "#000000"
     - "#000000"
     - "#000000"
+
+otel:
+  # OpenTelemetry service name
+  # Env var: FRANS_OTEL_SERVICE_NAME
+  service_name: frans
+  # OpenTelemetry resource attributes
+  # Env var: FRANS_OTEL_RESOURCE_ATTRIBUTES
+  resource_attributes: {}
+  # OpenTelemetry push interval
+  # Env var: FRANS_OTEL_PUSH_INTERVAL
+  push_interval: 10
+  grpc:
+    # OpenTelemetry GRPC endpoint
+    # set to non-empty string to enable
+    # usually something like `localhost:4317`
+    # Env var: FRANS_OTEL_GRPC_ENDPOINT
+    endpoint: ""
+    # Whether the GRPC endpoint is insecure (no TLS)
+    # Env var: FRANS_OTEL_GRPC_INSECURE
+    insecure: false
+    # Headers to send with GRPC requests
+    # Env var: FRANS_OTEL_GRPC_HEADERS
+    headers: {}
+    tls:
+      # Certificate authority to use with GRPC endpoint
+      # Env var: FRANS_OTEL_GRPC_TLS_CA
+      ca: ""
+      # TLS key to use with GRPC endpoint
+      # Env var: FRANS_OTEL_GRPC_TLS_KEY
+      key: ""
+      # TLS cert to use with GRPC endpoint
+      # Env var: FRANS_OTEL_GRPC_TLS_CERT
+      cert: ""
+      # Whether the certificate of the GRPC endpoint should be verified
+      # Env var: FRANS_OTEL_GRPC_TLS_INSECURE_SKIP_VERIFY
+      insecure_skip_verify: false
+  http:
+    # OpenTelemetry HTTP endpoint
+    # set to non-empty string to enable
+    # usually something like `http://localhost:4318` or `https://localhost:4318`
+    # Env var: FRANS_OTEL_HTTP_ENDPOINT
+    endpoint: ""
+    # Headers to send with HTTP requests
+    # Env var: FRANS_OTEL_HTTP_HEADERS
+    headers: {}
+    tls:
+      # Certificate authority to use with HTTP endpoint
+      # Env var: FRANS_OTEL_HTTP_TLS_CA
+      ca: ""
+      # TLS key to use with HTTP endpoint
+      # Env var: FRANS_OTEL_HTTP_TLS_KEY
+      key: ""
+      # TLS cert to use with HTTP endpoint
+      # Env var: FRANS_OTEL_HTTP_TLS_CERT
+      cert: ""
+      # Whether the certificate of the HTTP endpoint should be verified
+      # Env var: FRANS_OTEL_HTTP_TLS_INSECURE_SKIP_VERIFY
+      insecure_skip_verify: false

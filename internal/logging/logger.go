@@ -2,6 +2,7 @@ package logging
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -9,6 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
+	"github.com/jvllmr/frans/internal/otel"
+	slogmulti "github.com/samber/slog-multi"
+	"go.opentelemetry.io/contrib/bridges/otelslog"
 )
 
 // adapted from https://github.com/FabienMht/ginslog
@@ -48,12 +52,36 @@ func GinLogger(logger *slog.Logger) gin.HandlerFunc {
 	}
 }
 
-func SetupLogging(logConfig config.LogConfig) {
-	var logHandler slog.Handler = slog.NewTextHandler(os.Stdout, nil)
-	if logConfig.LogJSON {
-		logHandler = slog.NewJSONHandler(os.Stdout, nil)
+func SetupLogging() error {
+	logCfg, err := config.NewLogConfig()
+	if err != nil {
+		return fmt.Errorf("get log config: %w", err)
 	}
 
-	basicLogger := slog.New(logHandler)
-	slog.SetDefault(basicLogger)
+	var stdoutHandler slog.Handler = slog.NewTextHandler(os.Stdout, nil)
+	if logCfg.LogJSON {
+		stdoutHandler = slog.NewJSONHandler(os.Stdout, nil)
+	}
+
+	otelCfg, err := config.NewOtelConfig()
+
+	if err != nil {
+		return fmt.Errorf("get otel config: %w", err)
+	}
+
+	loggingProvider, err := otel.NewLoggerProvider(context.Background(), otelCfg)
+
+	if err != nil {
+		return fmt.Errorf("setup otel logging: %v", err)
+	}
+
+	logger := slog.New(
+		slogmulti.Fanout(
+			otelslog.NewHandler("frans", otelslog.WithLoggerProvider(loggingProvider)),
+			stdoutHandler,
+		),
+	)
+
+	slog.SetDefault(logger)
+	return nil
 }

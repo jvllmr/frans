@@ -35,9 +35,20 @@ services:
     ports:
       - 127.0.0.1:5000:80
       - 127.0.0.1:2525:25
+  openobserve:
+    image: public.ecr.aws/zinclabs/openobserve:v0.15.3
+    environment:
+      ZO_ROOT_USER_EMAIL: "root@example.com"
+      ZO_ROOT_USER_PASSWORD: "admin"
+    ports:
+      - "127.0.0.1:5080:5080"
+      - "127.0.0.1:5081:5081"
+    volumes:
+      - o2-data:/data
 
 volumes:
   keycloak-db-data:
+  o2-data:
 
 networks:
   keycloak:
