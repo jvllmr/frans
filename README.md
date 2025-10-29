@@ -137,7 +137,7 @@ It starts:
 
 - a keycloak instance available under `http://localhost:8080`
 - a smtp4dev instance available under `http://localhost:5000`
-- an openobserve instance available under `http://localhost:580`
+- an OpenObserve instance available under `http://localhost:5080`
 
 Keycloak can be managed via the credentials `admin`/`admin`.
 OpenObserve can be accessed via `root@example.net`/ `admin`.
