@@ -19,9 +19,13 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/tidwall/gjson v1.18.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.13.0
+	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.63.0
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.14.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.14.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.38.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.38.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.38.0
 	go.opentelemetry.io/otel/sdk v1.38.0
 	go.opentelemetry.io/otel/sdk/log v0.14.0
 	golang.org/x/oauth2 v0.32.0
@@ -76,7 +80,7 @@ require (
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.10 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.3 // indirect
 	github.com/go-openapi/inflect v0.21.2 // indirect

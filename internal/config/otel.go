@@ -20,7 +20,7 @@ type ClientTLS struct {
 }
 
 func (c *ClientTLS) IsSet() bool {
-	return c.CA != "" || c.Cert != "" || c.Key != "" || c.InsecureSkipVerify != false
+	return c != nil && (c.CA != "" || c.Cert != "" || c.Key != "" || c.InsecureSkipVerify != false)
 }
 
 func (c *ClientTLS) CreateTLSConfig(ctx context.Context) (*tls.Config, error) {
@@ -117,6 +117,7 @@ type Otel struct {
 	PushInterval       int               `mapstructure:"push_interval,omitempty"`
 	ResourceAttributes map[string]string `mapstructure:"resource_attributes,omitempty"`
 	ServiceName        string            `mapstructure:"service_name,omitempty"`
+	SampleRate         float64           `mapstructure:"sample_rate,omitempty"`
 }
 
 type OtelExclusive struct {
@@ -128,6 +129,7 @@ func setOtelConfigDefaults(viper *viper.Viper) {
 	viper.SetDefault("otel.service_name", "frans")
 	viper.SetDefault("otel.resource_attributes", map[string]string{})
 	viper.SetDefault("otel.push_interval", 10)
+	viper.SetDefault("otel.sample_rate", 1.0)
 
 	// grpc
 	viper.SetDefault("otel.grpc.endpoint", "")

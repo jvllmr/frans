@@ -69,7 +69,7 @@ func SetupLogging() error {
 		return fmt.Errorf("get otel config: %w", err)
 	}
 
-	loggingProvider, err := otel.NewLoggerProvider(context.Background(), otelCfg)
+	loggingProvider, err := otel.NewLoggerProvider(context.Background(), otelCfg.Otel)
 
 	if err != nil {
 		return fmt.Errorf("setup otel logging: %v", err)

@@ -128,6 +128,9 @@ otel:
   # OpenTelemetry push interval
   # Env var: FRANS_OTEL_PUSH_INTERVAL
   push_interval: 10
+  # OpenTelemetry sample rate
+  # Env var: FRANS_OTEL_SAMPLE_RATE
+  sample_rate: 1.0
   grpc:
     # OpenTelemetry GRPC endpoint
     # set to non-empty string to enable

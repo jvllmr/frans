@@ -24,7 +24,7 @@ var rootCmd = &cobra.Command{
 			db.Migrate(configValue.DBConfig)
 		}
 		go startCronScheduler(configValue, dbCon)
-		startGin(configValue, dbCon)
+		startGin(cmd.Context(), configValue, dbCon)
 	},
 }
 

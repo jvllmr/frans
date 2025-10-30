@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/encoding/gzip"
 )
 
-func buildHTTPLogExporter(cfg config.OtelExclusive) (*otlploghttp.Exporter, error) {
+func buildHTTPLogExporter(cfg config.Otel) (*otlploghttp.Exporter, error) {
 	endpoint, err := url.Parse(cfg.HTTP.Endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("invalid collector endpoint %q: %w", cfg.HTTP.Endpoint, err)
@@ -50,7 +50,7 @@ func buildHTTPLogExporter(cfg config.OtelExclusive) (*otlploghttp.Exporter, erro
 	return otlploghttp.New(context.Background(), opts...)
 }
 
-func buildGRPCLogExporter(cfg config.OtelExclusive) (*otlploggrpc.Exporter, error) {
+func buildGRPCLogExporter(cfg config.Otel) (*otlploggrpc.Exporter, error) {
 	host, port, err := net.SplitHostPort(cfg.GRPC.Endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("invalid collector endpoint %q: %w", cfg.GRPC.Endpoint, err)
@@ -80,7 +80,7 @@ func buildGRPCLogExporter(cfg config.OtelExclusive) (*otlploggrpc.Exporter, erro
 
 func NewLoggerProvider(
 	ctx context.Context,
-	cfg config.OtelExclusive,
+	cfg config.Otel,
 ) (*otelsdk.LoggerProvider, error) {
 	var (
 		err      error
