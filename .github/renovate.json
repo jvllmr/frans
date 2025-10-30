@@ -12,9 +12,9 @@
     ":semanticCommitTypeAll(chore)",
     "helpers:pinGitHubActionDigests"
   ],
+  "pre-commit": {
+    "enabled": true
+  },
   "labels": ["dependencies"],
-  "rangeStrategy": "bump",
-  "packageRules": [
-    { "matchDepTypes": ["golang", "toolchain"], "enabled": false }
-  ]
+  "rangeStrategy": "bump"
 }
