@@ -11,6 +11,9 @@ It took heavy inspiration from [DownloadTicketService](https://www.thregr.org/wa
 
 - Create file shares and share them with others
 - Create upload grants which allow others to upload their files to you
+- Container/Cloud-Native focused architecture
+- OpenID Connect authentication only
+- OpenTelemetry included
 
 The goal is to translate `frans` to the following languages:
 
@@ -134,8 +137,10 @@ It starts:
 
 - a keycloak instance available under `http://localhost:8080`
 - a smtp4dev instance available under `http://localhost:5000`
+- an OpenObserve instance available under `http://localhost:5080`
 
 Keycloak can be managed via the credentials `admin`/`admin`.
+OpenObserve can be accessed via `root@example.net`/ `admin`.
 
 Frans authentication is managed via the `dev` realm.
 

@@ -16,7 +16,7 @@ type DBConfig struct {
 	DBPassword string `mapstructure:"password"`
 }
 
-type ExclusiveDBConfig struct {
+type DBExclusive struct {
 	DBConfig `mapstructure:"db"`
 }
 
@@ -29,8 +29,8 @@ func setDBConfigDefaults(viper *viper.Viper) {
 	viper.SetDefault("db.password", "")
 }
 
-func NewDBConfig() (ExclusiveDBConfig, error) {
-	var config ExclusiveDBConfig
+func NewDBConfig() (DBExclusive, error) {
+	var config DBExclusive
 	dbConf := viper.New()
 	setDBConfigDefaults(dbConf)
 	setConfigSearchStrategy(dbConf)

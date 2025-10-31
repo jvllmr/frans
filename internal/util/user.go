@@ -6,9 +6,12 @@ import (
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/filedata"
 	"github.com/jvllmr/frans/internal/ent/user"
+	"github.com/jvllmr/frans/internal/otel"
 )
 
 func RefreshUserTotalDataSize(ctx context.Context, userValue *ent.User, tx *ent.Tx) error {
+	ctx, span := otel.NewSpan(ctx, "refreshUserTotalDataSize")
+	defer span.End()
 	if totalDataSize, err := tx.User.Query().Where(user.ID(userValue.ID)).QueryFileinfos().
 		Aggregate(ent.Sum(filedata.FieldSize)).
 		Int(ctx); err != nil {

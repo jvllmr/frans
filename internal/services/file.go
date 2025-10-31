@@ -16,6 +16,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/filedata"
+	"github.com/jvllmr/frans/internal/otel"
 )
 
 type ErrFileTooBig struct {
@@ -87,6 +88,8 @@ func (fs FileService) CreateFile(
 	expiryTotalDays uint8,
 	expiryTotalDownloads uint8,
 ) (*ent.File, error) {
+	ctx, span := otel.NewSpan(ctx, "createFile")
+	defer span.End()
 	if fileHeader.Size > fs.config.MaxSizes {
 		return nil, &ErrFileTooBig{
 			size:    fileHeader.Size,
@@ -156,6 +159,8 @@ func (fs FileService) CreateFile(
 }
 
 func (fs FileService) DeleteFile(ctx context.Context, fileValue *ent.File) error {
+	ctx, span := otel.NewSpan(ctx, "DeleteFile")
+	defer span.End()
 	fileDataFilesCount, err := fs.db.FileData.Query().
 		Where(filedata.HasFilesWith(file.ID(fileValue.ID))).
 		QueryFiles().

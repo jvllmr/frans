@@ -8,6 +8,11 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"github.com/gin-gonic/gin"
+
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func UnpackFSToPath(fsys fs.FS, targetPath string) error {
@@ -81,4 +86,11 @@ func VerifyPassword(password string, hashedPassword string, salt string) bool {
 		panic(err)
 	}
 	return compareStringsTimingSafe(HashPassword(password, decodedSalt), hashedPassword)
+}
+
+func GinAbortWithError(c *gin.Context, code int, err error) {
+	span := trace.SpanFromContext(c.Request.Context())
+	span.RecordError(err)
+	span.SetStatus(codes.Error, "route logic expected error")
+	c.AbortWithError(code, err)
 }
