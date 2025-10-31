@@ -15,6 +15,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent/user"
 	"github.com/jvllmr/frans/internal/mail"
 	"github.com/jvllmr/frans/internal/middleware"
+	"github.com/jvllmr/frans/internal/otel"
 	"github.com/jvllmr/frans/internal/services"
 	"github.com/jvllmr/frans/internal/util"
 )
@@ -42,9 +43,12 @@ type ticketForm struct {
 }
 
 func (tc *ticketController) createTicketHandler(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "createTicket")
+	defer span.End()
+
 	currentUser := middleware.GetCurrentUser(c)
 	var form ticketForm
-	tx, err := tc.db.BeginTx(c.Request.Context(), &sql.TxOptions{})
+	tx, err := tc.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -71,7 +75,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 			ticketBuilder = ticketBuilder.SetEmailOnDownload(*form.EmailOnDownload)
 		}
 
-		ticketValue, err := ticketBuilder.Save(c.Request.Context())
+		ticketValue, err := ticketBuilder.Save(ctx)
 		if err != nil {
 			c.AbortWithError(400, err)
 		}
@@ -86,7 +90,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 		for _, fileHeader := range files {
 			dbFile, err := tc.fileService.CreateFile(
-				c.Request.Context(),
+				ctx,
 				tx, fileHeader, currentUser,
 				ticketValue.ExpiryType,
 				ticketValue.ExpiryDaysSinceLastDownload,
@@ -104,16 +108,16 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 			}
 			ticketValue = tx.Ticket.UpdateOne(ticketValue).
 				AddFiles(dbFile).
-				SaveX(c.Request.Context())
+				SaveX(ctx)
 		}
 
 		ticketValue = tx.Ticket.Query().
 			Where(ticket.ID(ticketValue.ID)).
 			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
 			WithOwner().
-			OnlyX(c.Request.Context())
+			OnlyX(ctx)
 
-		err = util.RefreshUserTotalDataSize(c.Request.Context(), currentUser, tx)
+		err = util.RefreshUserTotalDataSize(ctx, currentUser, tx)
 		if err != nil {
 			slog.Error(
 				"Could not refresh total data size of user",
@@ -123,7 +127,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 				currentUser.Username,
 			)
 		}
-		tx.User.UpdateOne(currentUser).AddSubmittedTickets(1).SaveX(c.Request.Context())
+		tx.User.UpdateOne(currentUser).AddSubmittedTickets(1).SaveX(ctx)
 		c.JSON(http.StatusCreated, tc.ticketService.ToPublicTicket(tc.fileService, ticketValue))
 		if form.Email != nil {
 			var toBeEmailedPassword *string = nil
@@ -148,6 +152,8 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 }
 
 func (tc *ticketController) fetchTicketsHandler(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "fetchTickets")
+	defer span.End()
 	currentUser := middleware.GetCurrentUser(c)
 	query := tc.db.Ticket.Query().WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).WithOwner()
 
@@ -155,7 +161,7 @@ func (tc *ticketController) fetchTicketsHandler(c *gin.Context) {
 		query = query.Where(ticket.HasOwnerWith(user.ID(currentUser.ID)))
 	}
 
-	tickets, err := query.All(c.Request.Context())
+	tickets, err := query.All(ctx)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}

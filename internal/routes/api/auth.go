@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/oidc"
+	"github.com/jvllmr/frans/internal/otel"
 	"golang.org/x/oauth2"
 )
 
@@ -27,6 +28,8 @@ func (ac *authController) redirectToAuth(c *gin.Context, oauth2Config oauth2.Con
 }
 
 func (ac *authController) authCallback(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "authCallback")
+	defer span.End()
 	code := c.Request.URL.Query().Get("code")
 	oauth2Config := ac.provider.NewOauth2Config(c.Request)
 
@@ -39,7 +42,7 @@ func (ac *authController) authCallback(c *gin.Context) {
 	}
 
 	oauth2Token, err := oauth2Config.Exchange(
-		c.Request.Context(),
+		ctx,
 		code,
 		oauth2.VerifierOption(pkceVerifier),
 	)
@@ -56,15 +59,15 @@ func (ac *authController) authCallback(c *gin.Context) {
 	}
 
 	verifier := ac.provider.Verifier(&ac.provider.OidcConfig)
-	idToken, err := verifier.Verify(c.Request.Context(), rawIDToken)
+	idToken, err := verifier.Verify(ctx, rawIDToken)
 	if err != nil {
 		slog.Error("Failed to verify id token", "err", err)
 		ac.redirectToAuth(c, oauth2Config)
 		return
 	}
-	tokenSource := oauth2Config.TokenSource(c.Request.Context(), oauth2Token)
+	tokenSource := oauth2Config.TokenSource(ctx, oauth2Token)
 
-	user, err := ac.provider.ProvisionUser(c.Request.Context(), idToken, &tokenSource)
+	user, err := ac.provider.ProvisionUser(ctx, idToken, &tokenSource)
 	if err != nil {
 		slog.Error("Could not provision user", "err", err)
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -73,7 +76,7 @@ func (ac *authController) authCallback(c *gin.Context) {
 
 	oidc.SetIdTokenCookie(c, rawIDToken)
 	oidc.SetAccessTokenCookie(c, oauth2Token.AccessToken)
-	err = ac.provider.CreateSession(c.Request.Context(), user, oauth2Token, rawIDToken)
+	err = ac.provider.CreateSession(ctx, user, oauth2Token, rawIDToken)
 	if err != nil {
 		slog.Error("could not store session", "err", err)
 	}

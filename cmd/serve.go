@@ -29,7 +29,7 @@ func startGin(ctx context.Context, configValue config.Config, db *ent.Client) {
 	}
 	defer tracingCleanup()
 	r := gin.New()
-	r.Use(otelgin.Middleware("frans"))
+	r.Use(otelgin.Middleware(otel.TracingService))
 	err = routes.SetupRootRouter(r, configValue, db)
 	if err != nil {
 		slog.Error("Setup failed", "err", err)

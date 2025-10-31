@@ -14,6 +14,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/mail"
+	"github.com/jvllmr/frans/internal/otel"
 	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
 	"github.com/jvllmr/frans/internal/services"
 	"github.com/jvllmr/frans/internal/util"
@@ -28,6 +29,8 @@ type grantShareController struct {
 }
 
 func (gsc *grantShareController) fetchGrant(c *gin.Context) {
+	_, span := otel.NewSpan(c.Request.Context(), "fetchGrantShare")
+	defer span.End()
 	grantValue := c.MustGet(config.ShareGrantContext).(*ent.Grant)
 	c.JSON(
 		http.StatusOK,
@@ -36,13 +39,15 @@ func (gsc *grantShareController) fetchGrant(c *gin.Context) {
 }
 
 func (gsc *grantShareController) fetchGrantAccessToken(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "fetchGrantShareAccessToken")
+	defer span.End()
 	tokenValueBytes := util.GenerateSalt()
 
 	tokenValue := hex.EncodeToString(tokenValueBytes)
 	token := gsc.db.ShareAccessToken.Create().
 		SetID(tokenValue).
 		SetExpiry(time.Now().Add(10 * time.Second)).
-		SaveX(c.Request.Context())
+		SaveX(ctx)
 	c.SetCookie(
 		config.ShareAccessTokenCookieName,
 		token.ID,
@@ -56,6 +61,8 @@ func (gsc *grantShareController) fetchGrantAccessToken(c *gin.Context) {
 }
 
 func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "postGrantShareFiles")
+	defer span.End()
 	multipartForm, _ := c.MultipartForm()
 	files := multipartForm.File["files[]"]
 	grantValue := c.MustGet(config.ShareGrantContext).(*ent.Grant)
@@ -65,7 +72,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 		return
 	}
 	gsc.fileService.EnsureFilesTmpPath()
-	tx, err := gsc.db.Tx(c.Request.Context())
+	tx, err := gsc.db.Tx(ctx)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -73,7 +80,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	dbFiles := make([]*ent.File, len(files))
 	for i, fileHeader := range files {
 		dbFile, err := gsc.fileService.CreateFile(
-			c.Request.Context(),
+			ctx,
 			tx, fileHeader, grantValue.Edges.Owner,
 			grantValue.ExpiryType,
 			grantValue.FileExpiryDaysSinceLastDownload,
@@ -91,15 +98,15 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 
 		tx.Grant.UpdateOne(grantValue).
 			AddFiles(dbFile).
-			SaveX(c.Request.Context())
+			SaveX(ctx)
 		dbFiles[i] = dbFile
 	}
 	tx.Grant.UpdateOne(grantValue).
 		SetLastUpload(time.Now()).
 		AddTimesUploaded(1).
-		SaveX(c.Request.Context())
+		SaveX(ctx)
 
-	err = util.RefreshUserTotalDataSize(c.Request.Context(), grantValue.Edges.Owner, tx)
+	err = util.RefreshUserTotalDataSize(ctx, grantValue.Edges.Owner, tx)
 	if err != nil {
 		slog.Error(
 			"Could not refresh total data size of user",
@@ -123,7 +130,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 		Where(grant.ID(grantValue.ID)).
 		WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
 		WithOwner().
-		OnlyX(c.Request.Context())
+		OnlyX(ctx)
 
 	c.JSON(
 		http.StatusOK,
@@ -133,6 +140,8 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 
 func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
 	getGrantMiddleware := func(c *gin.Context) {
+		ctx, span := otel.NewSpan(c.Request.Context(), "checkGrantShareAuth")
+		defer span.End()
 		grantId := c.Param("grantId")
 		username, password, ok := c.Request.BasicAuth()
 
@@ -142,7 +151,7 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
-			token, err := db.ShareAccessToken.Get(c.Request.Context(), tokenCookie)
+			token, err := db.ShareAccessToken.Get(ctx, tokenCookie)
 			if err != nil {
 				c.AbortWithError(http.StatusUnauthorized, err)
 				return
@@ -163,7 +172,7 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 			Where(grant.ID(uuidValue)).
 			WithOwner().
 			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
-			Only(c.Request.Context())
+			Only(ctx)
 
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)

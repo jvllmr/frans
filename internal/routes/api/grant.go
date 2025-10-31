@@ -12,6 +12,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent/user"
 	"github.com/jvllmr/frans/internal/mail"
 	"github.com/jvllmr/frans/internal/middleware"
+	"github.com/jvllmr/frans/internal/otel"
 	"github.com/jvllmr/frans/internal/services"
 	"github.com/jvllmr/frans/internal/util"
 )
@@ -43,9 +44,11 @@ type grantForm struct {
 }
 
 func (gc *grantController) createGrantHandler(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "createGrant")
+	defer span.End()
 	currentUser := middleware.GetCurrentUser(c)
 	var form grantForm
-	tx, err := gc.db.Tx(c.Request.Context())
+	tx, err := gc.db.Tx(ctx)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
@@ -76,18 +79,18 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 			grantBuilder = grantBuilder.SetEmailOnUpload(*form.EmailOnUpload)
 		}
 
-		grantValue, err := grantBuilder.Save(c.Request.Context())
+		grantValue, err := grantBuilder.Save(ctx)
 		if err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 		}
-		tx.User.UpdateOne(currentUser).AddSubmittedGrants(1).SaveX(c.Request.Context())
+		tx.User.UpdateOne(currentUser).AddSubmittedGrants(1).SaveX(ctx)
 		grantValue = tx.Grant.Query().
 			WithOwner().
 			WithFiles(func(fq *ent.FileQuery) {
 				fq.WithData()
 			}).
 			Where(grant.ID(grantValue.ID)).
-			OnlyX(c.Request.Context())
+			OnlyX(ctx)
 		c.JSON(
 			http.StatusCreated,
 			gc.grantService.ToPublicGrant(gc.fileService, grantValue, make([]*ent.File, 0)),
@@ -115,6 +118,8 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 }
 
 func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "fetchGrants")
+	defer span.End()
 	currentUser := middleware.GetCurrentUser(c)
 	query := gc.db.Grant.Query().WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).WithOwner()
 
@@ -122,7 +127,7 @@ func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
 		query = query.Where(grant.HasOwnerWith(user.ID(currentUser.ID)))
 	}
 
-	grants, err := query.All(c.Request.Context())
+	grants, err := query.All(ctx)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}

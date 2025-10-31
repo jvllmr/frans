@@ -126,6 +126,8 @@ func NewConfig() (Config, error) {
 		"#000000",
 	})
 
+	setOtelConfigDefaults(fransConf)
+
 	setConfigSearchStrategy(fransConf)
 
 	if err := fransConf.ReadInConfig(); err != nil {

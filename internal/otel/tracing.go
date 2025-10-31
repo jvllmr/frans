@@ -18,9 +18,12 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/encoding/gzip"
 )
+
+const TracingService = "frans"
 
 func buildHTTPTracingExporter(cfg config.Otel) (*otlptrace.Exporter, error) {
 	endpoint, err := url.Parse(cfg.HTTP.Endpoint)
@@ -138,4 +141,13 @@ func NewTracerProvider(ctx context.Context, cfg config.Otel) (func(), error) {
 			log.Fatalf("failed to shut down tracer provider: %v", err)
 		}
 	}, err
+}
+
+func GetFransTracer() trace.Tracer {
+	return otel.Tracer(TracingService)
+}
+
+func NewSpan(ctx context.Context, spanName string) (context.Context, trace.Span) {
+	tr := GetFransTracer()
+	return tr.Start(ctx, spanName)
 }
