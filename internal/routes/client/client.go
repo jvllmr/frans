@@ -18,6 +18,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/middleware"
 	"github.com/jvllmr/frans/internal/oidc"
+	"github.com/jvllmr/frans/internal/util"
 
 	"github.com/tidwall/gjson"
 )
@@ -120,7 +121,7 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 	id := c.Param("id")
 	uuid, err := uuid.Parse(id)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		util.GinAbortWithError(c, http.StatusBadRequest, err)
 	}
 
 	targetTicket := cc.db.Ticket.Query().

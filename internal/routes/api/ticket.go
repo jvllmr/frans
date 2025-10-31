@@ -50,7 +50,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 	var form ticketForm
 	tx, err := tc.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		util.GinAbortWithError(c, http.StatusInternalServerError, err)
 	}
 	if err := c.ShouldBind(&form); err == nil {
 		salt := util.GenerateSalt()
@@ -77,7 +77,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 		ticketValue, err := ticketBuilder.Save(ctx)
 		if err != nil {
-			c.AbortWithError(400, err)
+			util.GinAbortWithError(c, 400, err)
 		}
 
 		multipartForm, _ := c.MultipartForm()
@@ -100,9 +100,9 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 			if err != nil {
 				var errFileTooBig *services.ErrFileTooBig
 				if errors.As(err, &errFileTooBig) {
-					c.AbortWithError(http.StatusBadRequest, err)
+					util.GinAbortWithError(c, http.StatusBadRequest, err)
 				} else {
-					c.AbortWithError(http.StatusInternalServerError, err)
+					util.GinAbortWithError(c, http.StatusInternalServerError, err)
 				}
 				return
 			}
@@ -146,7 +146,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 		tx.Commit()
 	} else {
-		c.AbortWithError(422, err)
+		util.GinAbortWithError(c, 422, err)
 	}
 
 }
@@ -163,7 +163,7 @@ func (tc *ticketController) fetchTicketsHandler(c *gin.Context) {
 
 	tickets, err := query.All(ctx)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		util.GinAbortWithError(c, http.StatusInternalServerError, err)
 	}
 	publicTickets := make([]services.PublicTicket, len(tickets))
 	for i, ticketValue := range tickets {

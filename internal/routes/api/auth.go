@@ -10,6 +10,7 @@ import (
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/oidc"
 	"github.com/jvllmr/frans/internal/otel"
+	"github.com/jvllmr/frans/internal/util"
 	"golang.org/x/oauth2"
 )
 
@@ -70,7 +71,7 @@ func (ac *authController) authCallback(c *gin.Context) {
 	user, err := ac.provider.ProvisionUser(ctx, idToken, &tokenSource)
 	if err != nil {
 		slog.Error("Could not provision user", "err", err)
-		c.AbortWithError(http.StatusInternalServerError, err)
+		util.GinAbortWithError(c, http.StatusInternalServerError, err)
 		return
 	}
 

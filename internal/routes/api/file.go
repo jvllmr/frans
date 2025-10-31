@@ -46,7 +46,7 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 	defer span.End()
 	var requestedFile apiTypes.RequestedFileParam
 	if err := c.ShouldBindUri(&requestedFile); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		util.GinAbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
 	fileValue, err := fc.db.File.Query().

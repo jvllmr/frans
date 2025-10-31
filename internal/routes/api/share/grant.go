@@ -74,7 +74,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	gsc.fileService.EnsureFilesTmpPath()
 	tx, err := gsc.db.Tx(ctx)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		util.GinAbortWithError(c, http.StatusInternalServerError, err)
 	}
 
 	dbFiles := make([]*ent.File, len(files))
@@ -90,9 +90,9 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 		if err != nil {
 			var errFileTooBig *services.ErrFileTooBig
 			if errors.As(err, &errFileTooBig) {
-				c.AbortWithError(http.StatusBadRequest, err)
+				util.GinAbortWithError(c, http.StatusBadRequest, err)
 			} else {
-				c.AbortWithError(http.StatusInternalServerError, err)
+				util.GinAbortWithError(c, http.StatusInternalServerError, err)
 			}
 		}
 
@@ -153,7 +153,7 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 			}
 			token, err := db.ShareAccessToken.Get(ctx, tokenCookie)
 			if err != nil {
-				c.AbortWithError(http.StatusUnauthorized, err)
+				util.GinAbortWithError(c, http.StatusUnauthorized, err)
 				return
 			} else if token.Expiry.Before(time.Now()) {
 				c.AbortWithStatus(http.StatusUnauthorized)
@@ -165,7 +165,7 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 		}
 		uuidValue, err := uuid.Parse(grantId)
 		if err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
+			util.GinAbortWithError(c, http.StatusBadRequest, err)
 			return
 		}
 		grantValue, err := db.Grant.Query().

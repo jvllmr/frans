@@ -38,7 +38,7 @@ func RecoveryLogger(logger *slog.Logger) gin.HandlerFunc {
 					err = fmt.Errorf("%v", r)
 				}
 				span := trace.SpanFromContext(c.Request.Context())
-				span.RecordError(err)
+				span.RecordError(err, trace.WithStackTrace(true))
 				span.SetStatus(codes.Error, "internal error")
 			}
 		}()

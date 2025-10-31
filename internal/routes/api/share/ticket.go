@@ -62,7 +62,7 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 	defer span.End()
 	var requestedFile apiTypes.RequestedFileParam
 	if err := c.ShouldBindUri(&requestedFile); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		util.GinAbortWithError(c, http.StatusBadRequest, err)
 		return
 	}
 	fileValue, err := tsc.db.File.Query().
@@ -77,7 +77,7 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 		AddTimesDownloaded(1).
 		Save(ctx)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		util.GinAbortWithError(c, http.StatusInternalServerError, err)
 		return
 	}
 	filePath := tsc.fileService.FilesFilePath(fileValue.Edges.Data.ID)
@@ -108,7 +108,7 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 			}
 			token, err := db.ShareAccessToken.Get(ctx, tokenCookie)
 			if err != nil {
-				c.AbortWithError(http.StatusUnauthorized, err)
+				util.GinAbortWithError(c, http.StatusUnauthorized, err)
 			} else if token.Expiry.Before(time.Now()) {
 				c.AbortWithStatus(http.StatusUnauthorized)
 			}
@@ -117,7 +117,7 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 		}
 		uuidValue, err := uuid.Parse(ticketId)
 		if err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
+			util.GinAbortWithError(c, http.StatusBadRequest, err)
 		}
 		ticketValue, err := db.Ticket.Query().
 			Where(ticket.ID(uuidValue)).
