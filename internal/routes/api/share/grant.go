@@ -3,6 +3,7 @@ package shareRoutes
 import (
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -68,7 +69,15 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	grantValue := c.MustGet(config.ShareGrantContext).(*ent.Grant)
 
 	if len(files) > int(gsc.config.MaxFiles) {
-		c.AbortWithStatus(http.StatusBadRequest)
+		util.GinAbortWithError(
+			c,
+			http.StatusBadRequest,
+			fmt.Errorf(
+				"maximum of %d files allowed per upload. %d uploaded",
+				gsc.config.MaxFiles,
+				len(files),
+			),
+		)
 		return
 	}
 	gsc.fileService.EnsureFilesTmpPath()
@@ -148,7 +157,7 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 		if !ok {
 			tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
 			if err != nil {
-				c.AbortWithStatus(http.StatusUnauthorized)
+				util.GinAbortWithError(c, http.StatusUnauthorized, err)
 				return
 			}
 			token, err := db.ShareAccessToken.Get(ctx, tokenCookie)
@@ -156,11 +165,11 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 				util.GinAbortWithError(c, http.StatusUnauthorized, err)
 				return
 			} else if token.Expiry.Before(time.Now()) {
-				c.AbortWithStatus(http.StatusUnauthorized)
+				util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("token expired"))
 				return
 			}
 		} else if username != grantId {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
 			return
 		}
 		uuidValue, err := uuid.Parse(grantId)
@@ -175,12 +184,12 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 			Only(ctx)
 
 		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(c, http.StatusUnauthorized, err)
 			return
 		}
 
 		if ok && !util.VerifyPassword(password, grantValue.HashedPassword, grantValue.Salt) {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("password incorrect"))
 			return
 		}
 

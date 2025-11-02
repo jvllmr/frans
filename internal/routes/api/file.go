@@ -1,6 +1,7 @@
 package apiRoutes
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -54,14 +55,18 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 		Where(file.ID(uuid.MustParse(requestedFile.ID))).
 		Only(ctx)
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		util.GinAbortWithError(c, http.StatusNotFound, err)
 		return
 	}
 
 	currentUser := middleware.GetCurrentUser(c)
 
 	if !util.UserHasFileAccess(ctx, currentUser, fileValue) {
-		c.AbortWithStatus(http.StatusForbidden)
+		util.GinAbortWithError(
+			c,
+			http.StatusForbidden,
+			fmt.Errorf("user %s does not have access to file", currentUser.Username),
+		)
 		return
 	}
 

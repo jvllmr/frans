@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -77,13 +78,21 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 		ticketValue, err := ticketBuilder.Save(ctx)
 		if err != nil {
-			util.GinAbortWithError(c, 400, err)
+			util.GinAbortWithError(c, http.StatusBadRequest, err)
 		}
 
 		multipartForm, _ := c.MultipartForm()
 		files := multipartForm.File["files[]"]
 		if len(files) > int(tc.config.MaxFiles) {
-			c.AbortWithStatus(http.StatusBadRequest)
+			util.GinAbortWithError(
+				c,
+				http.StatusBadRequest,
+				fmt.Errorf(
+					"maximum of %d files allowed per upload. %d uploaded",
+					tc.config.MaxFiles,
+					len(files),
+				),
+			)
 			return
 		}
 		tc.fileService.EnsureFilesTmpPath()
@@ -146,7 +155,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 		tx.Commit()
 	} else {
-		util.GinAbortWithError(c, 422, err)
+		util.GinAbortWithError(c, http.StatusUnprocessableEntity, err)
 	}
 
 }

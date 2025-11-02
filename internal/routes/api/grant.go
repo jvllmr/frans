@@ -112,7 +112,7 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 
 		tx.Commit()
 	} else {
-		util.GinAbortWithError(c, 422, err)
+		util.GinAbortWithError(c, http.StatusUnprocessableEntity, err)
 	}
 
 }

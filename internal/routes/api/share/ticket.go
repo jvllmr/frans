@@ -2,6 +2,7 @@ package shareRoutes
 
 import (
 	"encoding/hex"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -70,7 +71,7 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 		Where(file.ID(uuid.MustParse(requestedFile.ID))).
 		Only(ctx)
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		util.GinAbortWithError(c, http.StatusNotFound, err)
 	}
 	_, err = tsc.db.File.UpdateOne(fileValue).
 		SetLastDownload(time.Now()).
@@ -104,16 +105,19 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 		if !ok {
 			tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
 			if err != nil {
-				c.AbortWithStatus(http.StatusUnauthorized)
+				util.GinAbortWithError(c, http.StatusUnauthorized, err)
+				return
 			}
 			token, err := db.ShareAccessToken.Get(ctx, tokenCookie)
 			if err != nil {
 				util.GinAbortWithError(c, http.StatusUnauthorized, err)
 			} else if token.Expiry.Before(time.Now()) {
-				c.AbortWithStatus(http.StatusUnauthorized)
+				util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("token expired"))
+				return
 			}
 		} else if username != ticketId {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
+			return
 		}
 		uuidValue, err := uuid.Parse(ticketId)
 		if err != nil {
@@ -125,11 +129,12 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).Only(ctx)
 
 		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(c, http.StatusUnauthorized, err)
+			return
 		}
 
 		if ok && !util.VerifyPassword(password, ticketValue.HashedPassword, ticketValue.Salt) {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("password incorrect"))
 		}
 
 		c.Set(config.ShareTicketContext, ticketValue)
