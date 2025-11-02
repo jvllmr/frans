@@ -50,7 +50,7 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 	var form grantForm
 	tx, err := gc.db.Tx(ctx)
 	if err != nil {
-		util.GinAbortWithError(c, http.StatusInternalServerError, err)
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 	}
 	if err := c.ShouldBind(&form); err == nil {
 		salt := util.GenerateSalt()
@@ -81,7 +81,7 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 
 		grantValue, err := grantBuilder.Save(ctx)
 		if err != nil {
-			util.GinAbortWithError(c, http.StatusBadRequest, err)
+			util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
 		}
 		tx.User.UpdateOne(currentUser).AddSubmittedGrants(1).SaveX(ctx)
 		grantValue = tx.Grant.Query().
@@ -112,7 +112,7 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 
 		tx.Commit()
 	} else {
-		util.GinAbortWithError(c, http.StatusUnprocessableEntity, err)
+		util.GinAbortWithError(ctx, c, http.StatusUnprocessableEntity, err)
 	}
 
 }
@@ -129,7 +129,7 @@ func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
 
 	grants, err := query.All(ctx)
 	if err != nil {
-		util.GinAbortWithError(c, http.StatusInternalServerError, err)
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 	}
 	publicGrants := make([]services.PublicGrant, 0, len(grants))
 	for _, grantValue := range grants {

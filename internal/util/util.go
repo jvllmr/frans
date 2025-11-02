@@ -1,11 +1,13 @@
 package util
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/hex"
 	"io/fs"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -88,9 +90,10 @@ func VerifyPassword(password string, hashedPassword string, salt string) bool {
 	return compareStringsTimingSafe(HashPassword(password, decodedSalt), hashedPassword)
 }
 
-func GinAbortWithError(c *gin.Context, code int, err error) {
-	span := trace.SpanFromContext(c.Request.Context())
+func GinAbortWithError(ctx context.Context, c *gin.Context, code int, err error) {
+	span := trace.SpanFromContext(ctx)
 	span.RecordError(err)
 	span.SetStatus(codes.Error, "route logic expected error")
 	c.AbortWithError(code, err)
+	slog.ErrorContext(ctx, "route resulted in error", "err", err)
 }

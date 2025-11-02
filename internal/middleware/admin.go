@@ -10,11 +10,12 @@ import (
 )
 
 func AdminRequired(c *gin.Context) {
-	_, span := otel.NewSpan(c.Request.Context(), "adminRequired")
+	ctx, span := otel.NewSpan(c.Request.Context(), "adminRequired")
 	defer span.End()
 	currentUser := GetCurrentUser(c)
 	if !currentUser.IsAdmin {
 		util.GinAbortWithError(
+			ctx,
 			c,
 			http.StatusForbidden,
 			fmt.Errorf("user %s is not an administrator", currentUser.Username),

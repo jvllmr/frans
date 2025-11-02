@@ -18,6 +18,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/middleware"
 	"github.com/jvllmr/frans/internal/oidc"
+	"github.com/jvllmr/frans/internal/otel"
 	"github.com/jvllmr/frans/internal/util"
 
 	"github.com/tidwall/gjson"
@@ -118,10 +119,13 @@ type clientController struct {
 }
 
 func (cc *clientController) redirectShareLink(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "shareLinkRedirect")
+	defer span.End()
 	id := c.Param("id")
 	uuid, err := uuid.Parse(id)
 	if err != nil {
-		util.GinAbortWithError(c, http.StatusBadRequest, err)
+		util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
+		return
 	}
 
 	targetTicket := cc.db.Ticket.Query().

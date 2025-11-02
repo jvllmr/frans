@@ -63,7 +63,7 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 	defer span.End()
 	var requestedFile apiTypes.RequestedFileParam
 	if err := c.ShouldBindUri(&requestedFile); err != nil {
-		util.GinAbortWithError(c, http.StatusBadRequest, err)
+		util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
 		return
 	}
 	fileValue, err := tsc.db.File.Query().
@@ -71,14 +71,14 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 		Where(file.ID(uuid.MustParse(requestedFile.ID))).
 		Only(ctx)
 	if err != nil {
-		util.GinAbortWithError(c, http.StatusNotFound, err)
+		util.GinAbortWithError(ctx, c, http.StatusNotFound, err)
 	}
 	_, err = tsc.db.File.UpdateOne(fileValue).
 		SetLastDownload(time.Now()).
 		AddTimesDownloaded(1).
 		Save(ctx)
 	if err != nil {
-		util.GinAbortWithError(c, http.StatusInternalServerError, err)
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 		return
 	}
 	filePath := tsc.fileService.FilesFilePath(fileValue.Edges.Data.ID)
@@ -105,23 +105,23 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 		if !ok {
 			tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
 			if err != nil {
-				util.GinAbortWithError(c, http.StatusUnauthorized, err)
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
 				return
 			}
 			token, err := db.ShareAccessToken.Get(ctx, tokenCookie)
 			if err != nil {
-				util.GinAbortWithError(c, http.StatusUnauthorized, err)
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
 			} else if token.Expiry.Before(time.Now()) {
-				util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("token expired"))
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, fmt.Errorf("token expired"))
 				return
 			}
 		} else if username != ticketId {
-			util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
+			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
 			return
 		}
 		uuidValue, err := uuid.Parse(ticketId)
 		if err != nil {
-			util.GinAbortWithError(c, http.StatusBadRequest, err)
+			util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
 		}
 		ticketValue, err := db.Ticket.Query().
 			Where(ticket.ID(uuidValue)).
@@ -129,12 +129,17 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).Only(ctx)
 
 		if err != nil {
-			util.GinAbortWithError(c, http.StatusUnauthorized, err)
+			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
 			return
 		}
 
 		if ok && !util.VerifyPassword(password, ticketValue.HashedPassword, ticketValue.Salt) {
-			util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("password incorrect"))
+			util.GinAbortWithError(
+				ctx,
+				c,
+				http.StatusUnauthorized,
+				fmt.Errorf("password incorrect"),
+			)
 		}
 
 		c.Set(config.ShareTicketContext, ticketValue)

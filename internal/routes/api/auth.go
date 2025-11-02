@@ -71,7 +71,7 @@ func (ac *authController) authCallback(c *gin.Context) {
 	user, err := ac.provider.ProvisionUser(ctx, idToken, &tokenSource)
 	if err != nil {
 		slog.Error("Could not provision user", "err", err)
-		util.GinAbortWithError(c, http.StatusInternalServerError, err)
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 		return
 	}
 

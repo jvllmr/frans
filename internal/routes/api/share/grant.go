@@ -70,6 +70,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 
 	if len(files) > int(gsc.config.MaxFiles) {
 		util.GinAbortWithError(
+			ctx,
 			c,
 			http.StatusBadRequest,
 			fmt.Errorf(
@@ -83,7 +84,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	gsc.fileService.EnsureFilesTmpPath()
 	tx, err := gsc.db.Tx(ctx)
 	if err != nil {
-		util.GinAbortWithError(c, http.StatusInternalServerError, err)
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 	}
 
 	dbFiles := make([]*ent.File, len(files))
@@ -99,9 +100,9 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 		if err != nil {
 			var errFileTooBig *services.ErrFileTooBig
 			if errors.As(err, &errFileTooBig) {
-				util.GinAbortWithError(c, http.StatusBadRequest, err)
+				util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
 			} else {
-				util.GinAbortWithError(c, http.StatusInternalServerError, err)
+				util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 			}
 		}
 
@@ -157,24 +158,24 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 		if !ok {
 			tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
 			if err != nil {
-				util.GinAbortWithError(c, http.StatusUnauthorized, err)
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
 				return
 			}
 			token, err := db.ShareAccessToken.Get(ctx, tokenCookie)
 			if err != nil {
-				util.GinAbortWithError(c, http.StatusUnauthorized, err)
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
 				return
 			} else if token.Expiry.Before(time.Now()) {
-				util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("token expired"))
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, fmt.Errorf("token expired"))
 				return
 			}
 		} else if username != grantId {
-			util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
+			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
 			return
 		}
 		uuidValue, err := uuid.Parse(grantId)
 		if err != nil {
-			util.GinAbortWithError(c, http.StatusBadRequest, err)
+			util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
 			return
 		}
 		grantValue, err := db.Grant.Query().
@@ -184,12 +185,17 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 			Only(ctx)
 
 		if err != nil {
-			util.GinAbortWithError(c, http.StatusUnauthorized, err)
+			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
 			return
 		}
 
 		if ok && !util.VerifyPassword(password, grantValue.HashedPassword, grantValue.Salt) {
-			util.GinAbortWithError(c, http.StatusUnauthorized, fmt.Errorf("password incorrect"))
+			util.GinAbortWithError(
+				ctx,
+				c,
+				http.StatusUnauthorized,
+				fmt.Errorf("password incorrect"),
+			)
 			return
 		}
 

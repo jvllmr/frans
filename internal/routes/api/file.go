@@ -47,7 +47,7 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 	defer span.End()
 	var requestedFile apiTypes.RequestedFileParam
 	if err := c.ShouldBindUri(&requestedFile); err != nil {
-		util.GinAbortWithError(c, http.StatusBadRequest, err)
+		util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
 		return
 	}
 	fileValue, err := fc.db.File.Query().
@@ -55,14 +55,14 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 		Where(file.ID(uuid.MustParse(requestedFile.ID))).
 		Only(ctx)
 	if err != nil {
-		util.GinAbortWithError(c, http.StatusNotFound, err)
+		util.GinAbortWithError(ctx, c, http.StatusNotFound, err)
 		return
 	}
 
 	currentUser := middleware.GetCurrentUser(c)
 
 	if !util.UserHasFileAccess(ctx, currentUser, fileValue) {
-		util.GinAbortWithError(
+		util.GinAbortWithError(ctx,
 			c,
 			http.StatusForbidden,
 			fmt.Errorf("user %s does not have access to file", currentUser.Username),
