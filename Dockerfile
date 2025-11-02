@@ -48,6 +48,7 @@ COPY --from=server-builder /workspace/frans /opt/frans/
 USER 1001:1001
 WORKDIR /opt/frans
 VOLUME /opt/frans/files
+ENV USER=1001
 ENV FRANS_HOST=0.0.0.0
 ENV FRANS_DEV_MODE=false
 
