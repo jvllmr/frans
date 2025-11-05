@@ -28,6 +28,8 @@ jobs:
           run_install: false
       - name: Setup go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version: ">=1.25.0"
       - name: Run pre-build steps
         run: ./scripts/prebuild.sh
       - name: Generate version
@@ -58,6 +60,8 @@ jobs:
           cache: "pnpm"
       - name: Setup go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version: ">=1.25.0"
       - name: Install dependencies
         run: pnpm install --frozen-lock
       - name: Build
