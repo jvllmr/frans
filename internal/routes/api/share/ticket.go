@@ -2,6 +2,7 @@ package shareRoutes
 
 import (
 	"encoding/hex"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/mail"
+	"github.com/jvllmr/frans/internal/otel"
 	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
 	"github.com/jvllmr/frans/internal/services"
 
@@ -28,18 +30,22 @@ type ticketShareController struct {
 }
 
 func (tsc *ticketShareController) fetchTicket(c *gin.Context) {
+	_, span := otel.NewSpan(c.Request.Context(), "fetchTicketShare")
+	defer span.End()
 	ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
 	c.JSON(http.StatusOK, tsc.ticketService.ToPublicTicket(tsc.fileService, ticketValue))
 }
 
 func (tsc *ticketShareController) fetchTicketAccessToken(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "fetchTicketShareAccessToken")
+	defer span.End()
 	tokenValueBytes := util.GenerateSalt()
 
 	tokenValue := hex.EncodeToString(tokenValueBytes)
 	token := tsc.db.ShareAccessToken.Create().
 		SetID(tokenValue).
 		SetExpiry(time.Now().Add(10 * time.Second)).
-		SaveX(c.Request.Context())
+		SaveX(ctx)
 	c.SetCookie(
 		config.ShareAccessTokenCookieName,
 		token.ID,
@@ -53,24 +59,26 @@ func (tsc *ticketShareController) fetchTicketAccessToken(c *gin.Context) {
 }
 
 func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "fetchTicketShareFile")
+	defer span.End()
 	var requestedFile apiTypes.RequestedFileParam
 	if err := c.ShouldBindUri(&requestedFile); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
 		return
 	}
 	fileValue, err := tsc.db.File.Query().
 		WithData().
 		Where(file.ID(uuid.MustParse(requestedFile.ID))).
-		Only(c.Request.Context())
+		Only(ctx)
 	if err != nil {
-		c.AbortWithStatus(http.StatusNotFound)
+		util.GinAbortWithError(ctx, c, http.StatusNotFound, err)
 	}
 	_, err = tsc.db.File.UpdateOne(fileValue).
 		SetLastDownload(time.Now()).
 		AddTimesDownloaded(1).
-		Save(c.Request.Context())
+		Save(ctx)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 		return
 	}
 	filePath := tsc.fileService.FilesFilePath(fileValue.Edges.Data.ID)
@@ -89,38 +97,49 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 
 func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
 	getTicketMiddleware := func(c *gin.Context) {
+		ctx, span := otel.NewSpan(c.Request.Context(), "checkTicketShareAuth")
+		defer span.End()
 		ticketId := c.Param("ticketId")
 		username, password, ok := c.Request.BasicAuth()
 
 		if !ok {
 			tokenCookie, err := c.Cookie(config.ShareAccessTokenCookieName)
 			if err != nil {
-				c.AbortWithStatus(http.StatusUnauthorized)
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
+				return
 			}
-			token, err := db.ShareAccessToken.Get(c.Request.Context(), tokenCookie)
+			token, err := db.ShareAccessToken.Get(ctx, tokenCookie)
 			if err != nil {
-				c.AbortWithError(http.StatusUnauthorized, err)
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
 			} else if token.Expiry.Before(time.Now()) {
-				c.AbortWithStatus(http.StatusUnauthorized)
+				util.GinAbortWithError(ctx, c, http.StatusUnauthorized, fmt.Errorf("token expired"))
+				return
 			}
 		} else if username != ticketId {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
+			return
 		}
 		uuidValue, err := uuid.Parse(ticketId)
 		if err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
+			util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
 		}
 		ticketValue, err := db.Ticket.Query().
 			Where(ticket.ID(uuidValue)).
 			WithOwner().
-			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).Only(c.Request.Context())
+			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).Only(ctx)
 
 		if err != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)
+			return
 		}
 
 		if ok && !util.VerifyPassword(password, ticketValue.HashedPassword, ticketValue.Salt) {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			util.GinAbortWithError(
+				ctx,
+				c,
+				http.StatusUnauthorized,
+				fmt.Errorf("password incorrect"),
+			)
 		}
 
 		c.Set(config.ShareTicketContext, ticketValue)

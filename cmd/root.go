@@ -8,7 +8,6 @@ import (
 	_ "github.com/jvllmr/frans/internal/db/sqlite3"
 
 	"github.com/joho/godotenv"
-	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/db"
 	"github.com/jvllmr/frans/internal/logging"
 	"github.com/spf13/cobra"
@@ -25,17 +24,16 @@ var rootCmd = &cobra.Command{
 			db.Migrate(configValue.DBConfig)
 		}
 		go startCronScheduler(configValue, dbCon)
-		startGin(configValue, dbCon)
+		startGin(cmd.Context(), configValue, dbCon)
 	},
 }
 
 func Main() {
 	godotenv.Load()
-	logConfig, err := config.NewLogConfig()
+	err := logging.SetupLogging()
 	if err != nil {
-		log.Fatalf("Could not parse logging config: %v", err)
+		log.Fatalf("could not setup logging: %v", err)
 	}
-	logging.SetupLogging(logConfig)
 
 	taskCommand.AddCommand(
 		sessionLifecycleTaskCommand,

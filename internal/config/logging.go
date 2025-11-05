@@ -15,18 +15,22 @@ func setLogConfigDefaults(viper *viper.Viper) {
 	viper.SetDefault("log.json", false)
 }
 
-func NewLogConfig() (LogConfig, error) {
-	var config LogConfig
+type LogExclusive struct {
+	LogConfig `mapstructure:"log"`
+}
+
+func NewLogConfig() (LogExclusive, error) {
+	var cfg LogExclusive
 	logConf := viper.New()
-	setDBConfigDefaults(logConf)
+	setLogConfigDefaults(logConf)
 	setConfigSearchStrategy(logConf)
 	if err := logConf.ReadInConfig(); err != nil {
 		slog.Warn("No config file found, falling back to environment variables.")
 	}
 
-	if err := logConf.Unmarshal(&config); err != nil {
-		return config, fmt.Errorf("unable to decode into struct: %w", err)
+	if err := logConf.Unmarshal(&cfg); err != nil {
+		return cfg, fmt.Errorf("unable to decode into struct: %w", err)
 	}
 
-	return config, nil
+	return cfg, nil
 }

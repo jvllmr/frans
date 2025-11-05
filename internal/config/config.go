@@ -56,6 +56,7 @@ type Config struct {
 	GrantExpiryConfig `mapstructure:"grant_expiry"`
 	LogConfig         `mapstructure:"log"`
 	ColorsConfig      `mapstructure:"colors"`
+	Otel              `mapstructure:"otel"`
 
 	DevMode bool `mapstructure:"dev_mode"`
 
@@ -124,6 +125,8 @@ func NewConfig() (Config, error) {
 		"#000000",
 		"#000000",
 	})
+
+	setOtelConfigDefaults(fransConf)
 
 	setConfigSearchStrategy(fransConf)
 
