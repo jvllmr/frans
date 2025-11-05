@@ -40,6 +40,7 @@ services:
     environment:
       ZO_ROOT_USER_EMAIL: "root@example.com"
       ZO_ROOT_USER_PASSWORD: "admin"
+      ZO_ROOT_USER_TOKEN: "admin"
     ports:
       - "127.0.0.1:5080:5080"
       - "127.0.0.1:5081:5081"

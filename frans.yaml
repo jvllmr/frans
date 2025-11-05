@@ -32,7 +32,7 @@ otel:
   grpc:
     endpoint: localhost:5081
     headers:
-      Authorization: "Basic cm9vdEBleGFtcGxlLmNvbTpSdzBDbmtNZ1FRUk1zQ1dY"
+      Authorization: "Basic cm9vdEBleGFtcGxlLmNvbTphZG1pbg=="
       organization: default
       stream-name: default
     insecure: true
