@@ -3,15 +3,16 @@ package mail
 import (
 	"log/slog"
 
+	"github.com/wneessen/go-mail"
+
 	"github.com/jvllmr/frans/internal/config"
-	gomail "gopkg.in/mail.v2"
 )
 
 type Mailer struct {
 	config config.Config
 }
 
-func (m *Mailer) sendMail(message *gomail.Message) {
+func (m *Mailer) sendMail(message *mail.Msg) {
 	username := ""
 	if m.config.SMTPUsername != nil {
 		username = *m.config.SMTPUsername
@@ -21,13 +22,24 @@ func (m *Mailer) sendMail(message *gomail.Message) {
 		password = *m.config.SMTPPassword
 	}
 
-	dialer := gomail.NewDialer(m.config.SMTPServer, m.config.SMTPPort, username, password)
-	message.SetHeader("From", m.config.SMTPFrom)
+	dialer, err := mail.NewClient(
+		m.config.SMTPServer,
+		mail.WithPort(m.config.SMTPPort),
+		mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover),
+		mail.WithUsername(username),
+		mail.WithPassword(password),
+		mail.WithTLSPortPolicy(mail.TLSOpportunistic),
+	)
+	if err != nil {
+		slog.Error("Could not setup mail client", "err", err)
+		panic(err)
+	}
+	message.From(m.config.SMTPFrom)
 	if err := dialer.DialAndSend(message); err != nil {
-		slog.Error("Could not send mail", "err", err, "recipients", message.GetHeader("To"))
+		slog.Error("Could not send mail", "err", err, "recipients", message.GetToString())
 		panic(err)
 	} else {
-		slog.Info("Sent mail", "recipients", message.GetHeader("To"))
+		slog.Info("Sent mail", "recipients", message.GetToString())
 	}
 }
 

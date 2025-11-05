@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/services"
-	gomail "gopkg.in/mail.v2"
+	"github.com/wneessen/go-mail"
 )
 
 func (m *Mailer) SendTicketSharedNotification(
@@ -20,9 +20,9 @@ func (m *Mailer) SendTicketSharedNotification(
 	password *string,
 ) {
 	getTranslation := getTranslationFactory(locale)
-	message := gomail.NewMessage()
+	message := mail.NewMsg()
 
-	message.SetHeader("To", to)
+	message.To(to)
 
 	subjectTmpl := getTranslation("subject_ticket")
 
@@ -40,7 +40,7 @@ func (m *Mailer) SendTicketSharedNotification(
 		panic(err)
 	}
 
-	message.SetHeader("Subject", subject.String())
+	message.Subject(subject.String())
 
 	body := fmt.Sprintf(
 		"%s: %s",
@@ -69,7 +69,7 @@ func (m *Mailer) SendTicketSharedNotification(
 		) + body
 	}
 
-	message.SetBody("text/plain", body)
+	message.SetBodyString(mail.TypeTextPlain, body)
 	m.sendMail(message)
 }
 
@@ -82,13 +82,13 @@ func (m *Mailer) SendGrantSharedNotification(
 	password *string,
 ) {
 	getTranslation := getTranslationFactory(locale)
-	message := gomail.NewMessage()
+	message := mail.NewMsg()
 
-	message.SetHeader("To", to)
+	message.To(to)
 
 	subject := getTranslation("subject_grant")
 
-	message.SetHeader("Subject", subject)
+	message.Subject(subject)
 
 	body := fmt.Sprintf(
 		"%s: %s",
@@ -108,6 +108,6 @@ func (m *Mailer) SendGrantSharedNotification(
 		) + body
 	}
 
-	message.SetBody("text/plain", body)
+	message.SetBodyString(mail.TypeTextPlain, body)
 	m.sendMail(message)
 }
