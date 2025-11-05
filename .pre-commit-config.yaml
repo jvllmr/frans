@@ -8,7 +8,7 @@ ci:
     - go-tidy
 repos:
   - repo: https://github.com/woodruffw/zizmor-pre-commit
-    rev: v1.14.2
+    rev: v1.16.2
     hooks:
       - id: zizmor
         args:
