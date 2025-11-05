@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/ent"
-	gomail "gopkg.in/mail.v2"
+	"github.com/wneessen/go-mail"
 )
 
 func (m *Mailer) SendFileUploadNotification(
@@ -18,16 +18,16 @@ func (m *Mailer) SendFileUploadNotification(
 	files []*ent.File,
 ) {
 	getTranslation := getTranslationFactory(grantValue.CreatorLang)
-	message := gomail.NewMessage()
+	message := mail.NewMsg()
 
-	message.SetHeader("To", to)
+	message.To(to)
 
 	subject := fmt.Sprintf(
 		"%s %s",
 		getTranslation("subject_upload"),
 		grantValue.ID.String(),
 	)
-	message.SetHeader("Subject", subject)
+	message.Subject(subject)
 
 	bodyTmpl := getTranslation("notification_upload")
 	bodyData := map[string]string{
@@ -54,6 +54,6 @@ func (m *Mailer) SendFileUploadNotification(
 		) + bodyStr
 	}
 
-	message.SetBody("text/plain", bodyStr)
+	message.SetBodyString(mail.TypeTextPlain, bodyStr)
 	m.sendMail(message)
 }

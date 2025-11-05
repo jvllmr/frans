@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jvllmr/frans/internal/ent"
-	gomail "gopkg.in/mail.v2"
+	"github.com/wneessen/go-mail"
 )
 
 func (m *Mailer) SendFileDownloadNotification(
@@ -17,9 +17,9 @@ func (m *Mailer) SendFileDownloadNotification(
 	fileValue *ent.File,
 ) {
 	getTranslation := getTranslationFactory(ticketValue.CreatorLang)
-	message := gomail.NewMessage()
+	message := mail.NewMsg()
 
-	message.SetHeader("To", to)
+	message.To(to)
 
 	subject := fmt.Sprintf(
 		"%s %s (%s)",
@@ -27,7 +27,7 @@ func (m *Mailer) SendFileDownloadNotification(
 		ticketValue.ID.String(),
 		fileValue.Name,
 	)
-	message.SetHeader("Subject", subject)
+	message.Subject(subject)
 
 	bodyTmpl := getTranslation("notification_download")
 	bodyData := map[string]string{
@@ -39,6 +39,6 @@ func (m *Mailer) SendFileDownloadNotification(
 	if err := template.Must(template.New("").Parse(bodyTmpl)).Execute(&body, bodyData); err != nil {
 		panic(err)
 	}
-	message.SetBody("text/plain", body.String())
+	message.SetBodyString(mail.TypeTextPlain, body.String())
 	m.sendMail(message)
 }
