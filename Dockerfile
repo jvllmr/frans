@@ -1,6 +1,6 @@
-FROM golang:1.25.3-alpine AS server-base
+FROM golang:1.25.4-alpine AS server-base
 
-FROM node:24.10.0-alpine AS client-base
+FROM node:24.11.0-alpine AS client-base
 WORKDIR /workspace
 COPY ./package.json ./pnpm-workspace.yaml ./pnpm-lock.yaml ./
 RUN corepack prepare && corepack enable

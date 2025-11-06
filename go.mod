@@ -1,9 +1,9 @@
 module github.com/jvllmr/frans
 
-go 1.24.7
+go 1.25.4
 
 require (
-	ariga.io/atlas v0.37.0
+	ariga.io/atlas v0.38.0
 	entgo.io/ent v0.14.5
 	github.com/coreos/go-oidc/v3 v3.16.0
 	github.com/gin-gonic/gin v1.11.0
@@ -118,5 +118,5 @@ require (
 	golang.org/x/text v0.29.0 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/sqlite v1.39.1
+	modernc.org/sqlite v1.40.0
 )
