@@ -65,6 +65,8 @@ type FileMutation struct {
 	grants                             map[uuid.UUID]struct{}
 	removedgrants                      map[uuid.UUID]struct{}
 	clearedgrants                      bool
+	owner                              *uuid.UUID
+	clearedowner                       bool
 	data                               *string
 	cleareddata                        bool
 	done                               bool
@@ -665,6 +667,45 @@ func (m *FileMutation) ResetGrants() {
 	m.removedgrants = nil
 }
 
+// SetOwnerID sets the "owner" edge to the User entity by id.
+func (m *FileMutation) SetOwnerID(id uuid.UUID) {
+	m.owner = &id
+}
+
+// ClearOwner clears the "owner" edge to the User entity.
+func (m *FileMutation) ClearOwner() {
+	m.clearedowner = true
+}
+
+// OwnerCleared reports if the "owner" edge to the User entity was cleared.
+func (m *FileMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *FileMutation) OwnerID() (id uuid.UUID, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *FileMutation) OwnerIDs() (ids []uuid.UUID) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *FileMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
 // SetDataID sets the "data" edge to the FileData entity by id.
 func (m *FileMutation) SetDataID(id string) {
 	m.data = &id
@@ -1016,12 +1057,15 @@ func (m *FileMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *FileMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.tickets != nil {
 		edges = append(edges, file.EdgeTickets)
 	}
 	if m.grants != nil {
 		edges = append(edges, file.EdgeGrants)
+	}
+	if m.owner != nil {
+		edges = append(edges, file.EdgeOwner)
 	}
 	if m.data != nil {
 		edges = append(edges, file.EdgeData)
@@ -1045,6 +1089,10 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case file.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
 	case file.EdgeData:
 		if id := m.data; id != nil {
 			return []ent.Value{*id}
@@ -1055,7 +1103,7 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *FileMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedtickets != nil {
 		edges = append(edges, file.EdgeTickets)
 	}
@@ -1087,12 +1135,15 @@ func (m *FileMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *FileMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedtickets {
 		edges = append(edges, file.EdgeTickets)
 	}
 	if m.clearedgrants {
 		edges = append(edges, file.EdgeGrants)
+	}
+	if m.clearedowner {
+		edges = append(edges, file.EdgeOwner)
 	}
 	if m.cleareddata {
 		edges = append(edges, file.EdgeData)
@@ -1108,6 +1159,8 @@ func (m *FileMutation) EdgeCleared(name string) bool {
 		return m.clearedtickets
 	case file.EdgeGrants:
 		return m.clearedgrants
+	case file.EdgeOwner:
+		return m.clearedowner
 	case file.EdgeData:
 		return m.cleareddata
 	}
@@ -1118,6 +1171,9 @@ func (m *FileMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *FileMutation) ClearEdge(name string) error {
 	switch name {
+	case file.EdgeOwner:
+		m.ClearOwner()
+		return nil
 	case file.EdgeData:
 		m.ClearData()
 		return nil
@@ -1135,6 +1191,9 @@ func (m *FileMutation) ResetEdge(name string) error {
 	case file.EdgeGrants:
 		m.ResetGrants()
 		return nil
+	case file.EdgeOwner:
+		m.ResetOwner()
+		return nil
 	case file.EdgeData:
 		m.ResetData()
 		return nil
@@ -1151,9 +1210,6 @@ type FileDataMutation struct {
 	size          *uint64
 	addsize       *int64
 	clearedFields map[string]struct{}
-	users         map[uuid.UUID]struct{}
-	removedusers  map[uuid.UUID]struct{}
-	clearedusers  bool
 	files         map[uuid.UUID]struct{}
 	removedfiles  map[uuid.UUID]struct{}
 	clearedfiles  bool
@@ -1320,60 +1376,6 @@ func (m *FileDataMutation) AddedSize() (r int64, exists bool) {
 func (m *FileDataMutation) ResetSize() {
 	m.size = nil
 	m.addsize = nil
-}
-
-// AddUserIDs adds the "users" edge to the User entity by ids.
-func (m *FileDataMutation) AddUserIDs(ids ...uuid.UUID) {
-	if m.users == nil {
-		m.users = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		m.users[ids[i]] = struct{}{}
-	}
-}
-
-// ClearUsers clears the "users" edge to the User entity.
-func (m *FileDataMutation) ClearUsers() {
-	m.clearedusers = true
-}
-
-// UsersCleared reports if the "users" edge to the User entity was cleared.
-func (m *FileDataMutation) UsersCleared() bool {
-	return m.clearedusers
-}
-
-// RemoveUserIDs removes the "users" edge to the User entity by IDs.
-func (m *FileDataMutation) RemoveUserIDs(ids ...uuid.UUID) {
-	if m.removedusers == nil {
-		m.removedusers = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		delete(m.users, ids[i])
-		m.removedusers[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedUsers returns the removed IDs of the "users" edge to the User entity.
-func (m *FileDataMutation) RemovedUsersIDs() (ids []uuid.UUID) {
-	for id := range m.removedusers {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// UsersIDs returns the "users" edge IDs in the mutation.
-func (m *FileDataMutation) UsersIDs() (ids []uuid.UUID) {
-	for id := range m.users {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetUsers resets all changes to the "users" edge.
-func (m *FileDataMutation) ResetUsers() {
-	m.users = nil
-	m.clearedusers = false
-	m.removedusers = nil
 }
 
 // AddFileIDs adds the "files" edge to the File entity by ids.
@@ -1578,10 +1580,7 @@ func (m *FileDataMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *FileDataMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.users != nil {
-		edges = append(edges, filedata.EdgeUsers)
-	}
+	edges := make([]string, 0, 1)
 	if m.files != nil {
 		edges = append(edges, filedata.EdgeFiles)
 	}
@@ -1592,12 +1591,6 @@ func (m *FileDataMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *FileDataMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case filedata.EdgeUsers:
-		ids := make([]ent.Value, 0, len(m.users))
-		for id := range m.users {
-			ids = append(ids, id)
-		}
-		return ids
 	case filedata.EdgeFiles:
 		ids := make([]ent.Value, 0, len(m.files))
 		for id := range m.files {
@@ -1610,10 +1603,7 @@ func (m *FileDataMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *FileDataMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removedusers != nil {
-		edges = append(edges, filedata.EdgeUsers)
-	}
+	edges := make([]string, 0, 1)
 	if m.removedfiles != nil {
 		edges = append(edges, filedata.EdgeFiles)
 	}
@@ -1624,12 +1614,6 @@ func (m *FileDataMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *FileDataMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case filedata.EdgeUsers:
-		ids := make([]ent.Value, 0, len(m.removedusers))
-		for id := range m.removedusers {
-			ids = append(ids, id)
-		}
-		return ids
 	case filedata.EdgeFiles:
 		ids := make([]ent.Value, 0, len(m.removedfiles))
 		for id := range m.removedfiles {
@@ -1642,10 +1626,7 @@ func (m *FileDataMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *FileDataMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedusers {
-		edges = append(edges, filedata.EdgeUsers)
-	}
+	edges := make([]string, 0, 1)
 	if m.clearedfiles {
 		edges = append(edges, filedata.EdgeFiles)
 	}
@@ -1656,8 +1637,6 @@ func (m *FileDataMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *FileDataMutation) EdgeCleared(name string) bool {
 	switch name {
-	case filedata.EdgeUsers:
-		return m.clearedusers
 	case filedata.EdgeFiles:
 		return m.clearedfiles
 	}
@@ -1676,9 +1655,6 @@ func (m *FileDataMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *FileDataMutation) ResetEdge(name string) error {
 	switch name {
-	case filedata.EdgeUsers:
-		m.ResetUsers()
-		return nil
 	case filedata.EdgeFiles:
 		m.ResetFiles()
 		return nil
@@ -5541,9 +5517,9 @@ type UserMutation struct {
 	grants               map[uuid.UUID]struct{}
 	removedgrants        map[uuid.UUID]struct{}
 	clearedgrants        bool
-	fileinfos            map[string]struct{}
-	removedfileinfos     map[string]struct{}
-	clearedfileinfos     bool
+	files                map[uuid.UUID]struct{}
+	removedfiles         map[uuid.UUID]struct{}
+	clearedfiles         bool
 	done                 bool
 	oldValue             func(context.Context) (*User, error)
 	predicates           []predicate.User
@@ -6214,58 +6190,58 @@ func (m *UserMutation) ResetGrants() {
 	m.removedgrants = nil
 }
 
-// AddFileinfoIDs adds the "fileinfos" edge to the FileData entity by ids.
-func (m *UserMutation) AddFileinfoIDs(ids ...string) {
-	if m.fileinfos == nil {
-		m.fileinfos = make(map[string]struct{})
+// AddFileIDs adds the "files" edge to the File entity by ids.
+func (m *UserMutation) AddFileIDs(ids ...uuid.UUID) {
+	if m.files == nil {
+		m.files = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
-		m.fileinfos[ids[i]] = struct{}{}
+		m.files[ids[i]] = struct{}{}
 	}
 }
 
-// ClearFileinfos clears the "fileinfos" edge to the FileData entity.
-func (m *UserMutation) ClearFileinfos() {
-	m.clearedfileinfos = true
+// ClearFiles clears the "files" edge to the File entity.
+func (m *UserMutation) ClearFiles() {
+	m.clearedfiles = true
 }
 
-// FileinfosCleared reports if the "fileinfos" edge to the FileData entity was cleared.
-func (m *UserMutation) FileinfosCleared() bool {
-	return m.clearedfileinfos
+// FilesCleared reports if the "files" edge to the File entity was cleared.
+func (m *UserMutation) FilesCleared() bool {
+	return m.clearedfiles
 }
 
-// RemoveFileinfoIDs removes the "fileinfos" edge to the FileData entity by IDs.
-func (m *UserMutation) RemoveFileinfoIDs(ids ...string) {
-	if m.removedfileinfos == nil {
-		m.removedfileinfos = make(map[string]struct{})
+// RemoveFileIDs removes the "files" edge to the File entity by IDs.
+func (m *UserMutation) RemoveFileIDs(ids ...uuid.UUID) {
+	if m.removedfiles == nil {
+		m.removedfiles = make(map[uuid.UUID]struct{})
 	}
 	for i := range ids {
-		delete(m.fileinfos, ids[i])
-		m.removedfileinfos[ids[i]] = struct{}{}
+		delete(m.files, ids[i])
+		m.removedfiles[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedFileinfos returns the removed IDs of the "fileinfos" edge to the FileData entity.
-func (m *UserMutation) RemovedFileinfosIDs() (ids []string) {
-	for id := range m.removedfileinfos {
+// RemovedFiles returns the removed IDs of the "files" edge to the File entity.
+func (m *UserMutation) RemovedFilesIDs() (ids []uuid.UUID) {
+	for id := range m.removedfiles {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// FileinfosIDs returns the "fileinfos" edge IDs in the mutation.
-func (m *UserMutation) FileinfosIDs() (ids []string) {
-	for id := range m.fileinfos {
+// FilesIDs returns the "files" edge IDs in the mutation.
+func (m *UserMutation) FilesIDs() (ids []uuid.UUID) {
+	for id := range m.files {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetFileinfos resets all changes to the "fileinfos" edge.
-func (m *UserMutation) ResetFileinfos() {
-	m.fileinfos = nil
-	m.clearedfileinfos = false
-	m.removedfileinfos = nil
+// ResetFiles resets all changes to the "files" edge.
+func (m *UserMutation) ResetFiles() {
+	m.files = nil
+	m.clearedfiles = false
+	m.removedfiles = nil
 }
 
 // Where appends a list predicates to the UserMutation builder.
@@ -6586,8 +6562,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.grants != nil {
 		edges = append(edges, user.EdgeGrants)
 	}
-	if m.fileinfos != nil {
-		edges = append(edges, user.EdgeFileinfos)
+	if m.files != nil {
+		edges = append(edges, user.EdgeFiles)
 	}
 	return edges
 }
@@ -6614,9 +6590,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeFileinfos:
-		ids := make([]ent.Value, 0, len(m.fileinfos))
-		for id := range m.fileinfos {
+	case user.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.files))
+		for id := range m.files {
 			ids = append(ids, id)
 		}
 		return ids
@@ -6636,8 +6612,8 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removedgrants != nil {
 		edges = append(edges, user.EdgeGrants)
 	}
-	if m.removedfileinfos != nil {
-		edges = append(edges, user.EdgeFileinfos)
+	if m.removedfiles != nil {
+		edges = append(edges, user.EdgeFiles)
 	}
 	return edges
 }
@@ -6664,9 +6640,9 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeFileinfos:
-		ids := make([]ent.Value, 0, len(m.removedfileinfos))
-		for id := range m.removedfileinfos {
+	case user.EdgeFiles:
+		ids := make([]ent.Value, 0, len(m.removedfiles))
+		for id := range m.removedfiles {
 			ids = append(ids, id)
 		}
 		return ids
@@ -6686,8 +6662,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedgrants {
 		edges = append(edges, user.EdgeGrants)
 	}
-	if m.clearedfileinfos {
-		edges = append(edges, user.EdgeFileinfos)
+	if m.clearedfiles {
+		edges = append(edges, user.EdgeFiles)
 	}
 	return edges
 }
@@ -6702,8 +6678,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedtickets
 	case user.EdgeGrants:
 		return m.clearedgrants
-	case user.EdgeFileinfos:
-		return m.clearedfileinfos
+	case user.EdgeFiles:
+		return m.clearedfiles
 	}
 	return false
 }
@@ -6729,8 +6705,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeGrants:
 		m.ResetGrants()
 		return nil
-	case user.EdgeFileinfos:
-		m.ResetFileinfos()
+	case user.EdgeFiles:
+		m.ResetFiles()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

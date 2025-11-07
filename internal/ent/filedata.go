@@ -26,28 +26,17 @@ type FileData struct {
 
 // FileDataEdges holds the relations/edges for other nodes in the graph.
 type FileDataEdges struct {
-	// Users holds the value of the users edge.
-	Users []*User `json:"users,omitempty"`
 	// Files holds the value of the files edge.
 	Files []*File `json:"files,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
-}
-
-// UsersOrErr returns the Users value or an error if the edge
-// was not loaded in eager-loading.
-func (e FileDataEdges) UsersOrErr() ([]*User, error) {
-	if e.loadedTypes[0] {
-		return e.Users, nil
-	}
-	return nil, &NotLoadedError{edge: "users"}
+	loadedTypes [1]bool
 }
 
 // FilesOrErr returns the Files value or an error if the edge
 // was not loaded in eager-loading.
 func (e FileDataEdges) FilesOrErr() ([]*File, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[0] {
 		return e.Files, nil
 	}
 	return nil, &NotLoadedError{edge: "files"}
@@ -100,11 +89,6 @@ func (_m *FileData) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *FileData) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
-}
-
-// QueryUsers queries the "users" edge of the FileData entity.
-func (_m *FileData) QueryUsers() *UserQuery {
-	return NewFileDataClient(_m.config).QueryUsers(_m)
 }
 
 // QueryFiles queries the "files" edge of the FileData entity.

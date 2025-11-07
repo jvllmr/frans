@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/filedata"
+	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/session"
 	"github.com/jvllmr/frans/internal/ent/ticket"
@@ -162,19 +162,19 @@ func (_c *UserCreate) AddGrants(v ...*Grant) *UserCreate {
 	return _c.AddGrantIDs(ids...)
 }
 
-// AddFileinfoIDs adds the "fileinfos" edge to the FileData entity by IDs.
-func (_c *UserCreate) AddFileinfoIDs(ids ...string) *UserCreate {
-	_c.mutation.AddFileinfoIDs(ids...)
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (_c *UserCreate) AddFileIDs(ids ...uuid.UUID) *UserCreate {
+	_c.mutation.AddFileIDs(ids...)
 	return _c
 }
 
-// AddFileinfos adds the "fileinfos" edges to the FileData entity.
-func (_c *UserCreate) AddFileinfos(v ...*FileData) *UserCreate {
-	ids := make([]string, len(v))
+// AddFiles adds the "files" edges to the File entity.
+func (_c *UserCreate) AddFiles(v ...*File) *UserCreate {
+	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddFileinfoIDs(ids...)
+	return _c.AddFileIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -378,15 +378,15 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.FileinfosIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.FilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.FileinfosTable,
-			Columns: user.FileinfosPrimaryKey,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(filedata.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(file.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

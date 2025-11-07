@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -35,6 +36,11 @@ func (File) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("tickets", Ticket.Type).Ref("files"),
 		edge.From("grants", Grant.Type).Ref("files"),
+		edge.From("owner", User.Type).
+			Ref("files").
+			Unique().
+			Required().
+			Annotations(entsql.OnDelete(entsql.Restrict)),
 		edge.To("data", FileData.Type).Unique().Required(),
 	}
 }

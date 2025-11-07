@@ -12,11 +12,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/filedata"
 	"github.com/jvllmr/frans/internal/ent/predicate"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // FileDataQuery is the builder for querying FileData entities.
@@ -26,7 +24,6 @@ type FileDataQuery struct {
 	order      []filedata.OrderOption
 	inters     []Interceptor
 	predicates []predicate.FileData
-	withUsers  *UserQuery
 	withFiles  *FileQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -62,28 +59,6 @@ func (_q *FileDataQuery) Unique(unique bool) *FileDataQuery {
 func (_q *FileDataQuery) Order(o ...filedata.OrderOption) *FileDataQuery {
 	_q.order = append(_q.order, o...)
 	return _q
-}
-
-// QueryUsers chains the current query on the "users" edge.
-func (_q *FileDataQuery) QueryUsers() *UserQuery {
-	query := (&UserClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(filedata.Table, filedata.FieldID, selector),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, filedata.UsersTable, filedata.UsersPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // QueryFiles chains the current query on the "files" edge.
@@ -300,23 +275,11 @@ func (_q *FileDataQuery) Clone() *FileDataQuery {
 		order:      append([]filedata.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
 		predicates: append([]predicate.FileData{}, _q.predicates...),
-		withUsers:  _q.withUsers.Clone(),
 		withFiles:  _q.withFiles.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
-}
-
-// WithUsers tells the query-builder to eager-load the nodes that are connected to
-// the "users" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *FileDataQuery) WithUsers(opts ...func(*UserQuery)) *FileDataQuery {
-	query := (&UserClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withUsers = query
-	return _q
 }
 
 // WithFiles tells the query-builder to eager-load the nodes that are connected to
@@ -408,8 +371,7 @@ func (_q *FileDataQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Fil
 	var (
 		nodes       = []*FileData{}
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
-			_q.withUsers != nil,
+		loadedTypes = [1]bool{
 			_q.withFiles != nil,
 		}
 	)
@@ -431,13 +393,6 @@ func (_q *FileDataQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Fil
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withUsers; query != nil {
-		if err := _q.loadUsers(ctx, query, nodes,
-			func(n *FileData) { n.Edges.Users = []*User{} },
-			func(n *FileData, e *User) { n.Edges.Users = append(n.Edges.Users, e) }); err != nil {
-			return nil, err
-		}
-	}
 	if query := _q.withFiles; query != nil {
 		if err := _q.loadFiles(ctx, query, nodes,
 			func(n *FileData) { n.Edges.Files = []*File{} },
@@ -448,67 +403,6 @@ func (_q *FileDataQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Fil
 	return nodes, nil
 }
 
-func (_q *FileDataQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*FileData, init func(*FileData), assign func(*FileData, *User)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[string]*FileData)
-	nids := make(map[uuid.UUID]map[*FileData]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
-		}
-	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(filedata.UsersTable)
-		s.Join(joinT).On(s.C(user.FieldID), joinT.C(filedata.UsersPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(filedata.UsersPrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(filedata.UsersPrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullString)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := values[0].(*sql.NullString).String
-				inValue := *values[1].(*uuid.UUID)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*FileData]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected "users" node returned %v`, n.ID)
-		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
-	}
-	return nil
-}
 func (_q *FileDataQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []*FileData, init func(*FileData), assign func(*FileData, *File)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*FileData)

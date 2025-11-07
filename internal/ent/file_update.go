@@ -17,6 +17,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/predicate"
 	"github.com/jvllmr/frans/internal/ent/ticket"
+	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // FileUpdate is the builder for updating File entities.
@@ -208,6 +209,17 @@ func (_u *FileUpdate) AddGrants(v ...*Grant) *FileUpdate {
 	return _u.AddGrantIDs(ids...)
 }
 
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (_u *FileUpdate) SetOwnerID(id uuid.UUID) *FileUpdate {
+	_u.mutation.SetOwnerID(id)
+	return _u
+}
+
+// SetOwner sets the "owner" edge to the User entity.
+func (_u *FileUpdate) SetOwner(v *User) *FileUpdate {
+	return _u.SetOwnerID(v.ID)
+}
+
 // SetDataID sets the "data" edge to the FileData entity by ID.
 func (_u *FileUpdate) SetDataID(id string) *FileUpdate {
 	_u.mutation.SetDataID(id)
@@ -266,6 +278,12 @@ func (_u *FileUpdate) RemoveGrants(v ...*Grant) *FileUpdate {
 	return _u.RemoveGrantIDs(ids...)
 }
 
+// ClearOwner clears the "owner" edge to the User entity.
+func (_u *FileUpdate) ClearOwner() *FileUpdate {
+	_u.mutation.ClearOwner()
+	return _u
+}
+
 // ClearData clears the "data" edge to the FileData entity.
 func (_u *FileUpdate) ClearData() *FileUpdate {
 	_u.mutation.ClearData()
@@ -301,6 +319,9 @@ func (_u *FileUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *FileUpdate) check() error {
+	if _u.mutation.OwnerCleared() && len(_u.mutation.OwnerIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "File.owner"`)
+	}
 	if _u.mutation.DataCleared() && len(_u.mutation.DataIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "File.data"`)
 	}
@@ -441,6 +462,35 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.OwnerTable,
+			Columns: []string{file.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.OwnerTable,
+			Columns: []string{file.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -673,6 +723,17 @@ func (_u *FileUpdateOne) AddGrants(v ...*Grant) *FileUpdateOne {
 	return _u.AddGrantIDs(ids...)
 }
 
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (_u *FileUpdateOne) SetOwnerID(id uuid.UUID) *FileUpdateOne {
+	_u.mutation.SetOwnerID(id)
+	return _u
+}
+
+// SetOwner sets the "owner" edge to the User entity.
+func (_u *FileUpdateOne) SetOwner(v *User) *FileUpdateOne {
+	return _u.SetOwnerID(v.ID)
+}
+
 // SetDataID sets the "data" edge to the FileData entity by ID.
 func (_u *FileUpdateOne) SetDataID(id string) *FileUpdateOne {
 	_u.mutation.SetDataID(id)
@@ -731,6 +792,12 @@ func (_u *FileUpdateOne) RemoveGrants(v ...*Grant) *FileUpdateOne {
 	return _u.RemoveGrantIDs(ids...)
 }
 
+// ClearOwner clears the "owner" edge to the User entity.
+func (_u *FileUpdateOne) ClearOwner() *FileUpdateOne {
+	_u.mutation.ClearOwner()
+	return _u
+}
+
 // ClearData clears the "data" edge to the FileData entity.
 func (_u *FileUpdateOne) ClearData() *FileUpdateOne {
 	_u.mutation.ClearData()
@@ -779,6 +846,9 @@ func (_u *FileUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *FileUpdateOne) check() error {
+	if _u.mutation.OwnerCleared() && len(_u.mutation.OwnerIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "File.owner"`)
+	}
 	if _u.mutation.DataCleared() && len(_u.mutation.DataIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "File.data"`)
 	}
@@ -936,6 +1006,35 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.OwnerTable,
+			Columns: []string{file.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.OwnerTable,
+			Columns: []string{file.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

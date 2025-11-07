@@ -108,29 +108,6 @@ func SizeLTE(v uint64) predicate.FileData {
 	return predicate.FileData(sql.FieldLTE(FieldSize, v))
 }
 
-// HasUsers applies the HasEdge predicate on the "users" edge.
-func HasUsers() predicate.FileData {
-	return predicate.FileData(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasUsersWith applies the HasEdge predicate on the "users" edge with a given conditions (other predicates).
-func HasUsersWith(preds ...predicate.User) predicate.FileData {
-	return predicate.FileData(func(s *sql.Selector) {
-		step := newUsersStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasFiles applies the HasEdge predicate on the "files" edge.
 func HasFiles() predicate.FileData {
 	return predicate.FileData(func(s *sql.Selector) {

@@ -522,6 +522,29 @@ func HasGrantsWith(preds ...predicate.Grant) predicate.File {
 	})
 }
 
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.User) predicate.File {
+	return predicate.File(func(s *sql.Selector) {
+		step := newOwnerStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasData applies the HasEdge predicate on the "data" edge.
 func HasData() predicate.File {
 	return predicate.File(func(s *sql.Selector) {

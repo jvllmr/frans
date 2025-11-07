@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
+	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 func SetupTestUser(
@@ -18,7 +20,7 @@ func SetupTestUser(
 	if modifier == nil {
 		modifier = func(uc *ent.UserCreate) *ent.UserCreate { return uc }
 	}
-	user := modifier(db.User.Create().
+	u := modifier(db.User.Create().
 		SetID(uuid.New()).
 		SetGroups([]string{}).
 		SetFullName("Test User").
@@ -28,10 +30,11 @@ func SetupTestUser(
 		SaveX(t.Context())
 
 	t.Cleanup(func() {
-		db.User.DeleteOne(user).ExecX(context.Background())
+		db.File.Delete().Where(file.HasOwnerWith(user.ID(u.ID))).ExecX(context.Background())
+		db.User.DeleteOne(u).ExecX(context.Background())
 	})
 
-	return user
+	return u
 }
 
 func SetupTestAdminUser(
@@ -42,7 +45,7 @@ func SetupTestAdminUser(
 	if modifier == nil {
 		modifier = func(uc *ent.UserCreate) *ent.UserCreate { return uc }
 	}
-	user := modifier(db.User.Create().
+	u := modifier(db.User.Create().
 		SetID(uuid.New()).
 		SetGroups([]string{}).
 		SetFullName("Test Admin").
@@ -52,10 +55,11 @@ func SetupTestAdminUser(
 		SaveX(t.Context())
 
 	t.Cleanup(func() {
-		db.User.DeleteOne(user).ExecX(context.Background())
+		db.File.Delete().Where(file.HasOwnerWith(user.ID(u.ID))).ExecX(context.Background())
+		db.User.DeleteOne(u).ExecX(context.Background())
 	})
 
-	return user
+	return u
 }
 
 func NewTestAuthMiddleware(testUser *ent.User) gin.HandlerFunc {

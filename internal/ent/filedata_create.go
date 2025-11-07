@@ -12,7 +12,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/filedata"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // FileDataCreate is the builder for creating a FileData entity.
@@ -32,21 +31,6 @@ func (_c *FileDataCreate) SetSize(v uint64) *FileDataCreate {
 func (_c *FileDataCreate) SetID(v string) *FileDataCreate {
 	_c.mutation.SetID(v)
 	return _c
-}
-
-// AddUserIDs adds the "users" edge to the User entity by IDs.
-func (_c *FileDataCreate) AddUserIDs(ids ...uuid.UUID) *FileDataCreate {
-	_c.mutation.AddUserIDs(ids...)
-	return _c
-}
-
-// AddUsers adds the "users" edges to the User entity.
-func (_c *FileDataCreate) AddUsers(v ...*User) *FileDataCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddUserIDs(ids...)
 }
 
 // AddFileIDs adds the "files" edge to the File entity by IDs.
@@ -101,9 +85,6 @@ func (_c *FileDataCreate) check() error {
 	if _, ok := _c.mutation.Size(); !ok {
 		return &ValidationError{Name: "size", err: errors.New(`ent: missing required field "FileData.size"`)}
 	}
-	if len(_c.mutation.UsersIDs()) == 0 {
-		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "FileData.users"`)}
-	}
 	return nil
 }
 
@@ -142,22 +123,6 @@ func (_c *FileDataCreate) createSpec() (*FileData, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Size(); ok {
 		_spec.SetField(filedata.FieldSize, field.TypeUint64, value)
 		_node.Size = value
-	}
-	if nodes := _c.mutation.UsersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   filedata.UsersTable,
-			Columns: filedata.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.FilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

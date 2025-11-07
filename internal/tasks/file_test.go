@@ -38,22 +38,20 @@ func TestFileLifecycleTaskPreserveFileData(t *testing.T) {
 		1,
 	)
 
-	filesDatas := db.FileData.Query().WithFiles().WithUsers().AllX(t.Context())
+	filesDatas := db.FileData.Query().WithFiles().AllX(t.Context())
 	assert.Equal(t, 1, len(filesDatas))
 	assert.Equal(t, 2, len(filesDatas[0].Edges.Files))
-	assert.Equal(t, 1, len(filesDatas[0].Edges.Users))
 
 	db.File.UpdateOne(testFile).SetTimesDownloaded(1).ExecX(t.Context())
 	FileLifecycleTask(db, fs)
 
-	filesDatas = db.FileData.Query().WithFiles().WithUsers().AllX(t.Context())
+	filesDatas = db.FileData.Query().WithFiles().AllX(t.Context())
 	assert.Equal(t, 1, len(filesDatas))
 	assert.Equal(t, 1, len(filesDatas[0].Edges.Files))
-	assert.Equal(t, 1, len(filesDatas[0].Edges.Users))
 
 	db.File.UpdateOne(testFile2).SetTimesDownloaded(1).ExecX(t.Context())
 	FileLifecycleTask(db, fs)
 
-	filesDatas = db.FileData.Query().WithFiles().WithUsers().AllX(t.Context())
+	filesDatas = db.FileData.Query().WithFiles().AllX(t.Context())
 	assert.Equal(t, 0, len(filesDatas))
 }

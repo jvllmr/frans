@@ -51,8 +51,8 @@ type UserEdges struct {
 	Tickets []*Ticket `json:"tickets,omitempty"`
 	// Grants holds the value of the grants edge.
 	Grants []*Grant `json:"grants,omitempty"`
-	// Fileinfos holds the value of the fileinfos edge.
-	Fileinfos []*FileData `json:"fileinfos,omitempty"`
+	// Files holds the value of the files edge.
+	Files []*File `json:"files,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [4]bool
@@ -85,13 +85,13 @@ func (e UserEdges) GrantsOrErr() ([]*Grant, error) {
 	return nil, &NotLoadedError{edge: "grants"}
 }
 
-// FileinfosOrErr returns the Fileinfos value or an error if the edge
+// FilesOrErr returns the Files value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) FileinfosOrErr() ([]*FileData, error) {
+func (e UserEdges) FilesOrErr() ([]*File, error) {
 	if e.loadedTypes[3] {
-		return e.Fileinfos, nil
+		return e.Files, nil
 	}
-	return nil, &NotLoadedError{edge: "fileinfos"}
+	return nil, &NotLoadedError{edge: "files"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -216,9 +216,9 @@ func (_m *User) QueryGrants() *GrantQuery {
 	return NewUserClient(_m.config).QueryGrants(_m)
 }
 
-// QueryFileinfos queries the "fileinfos" edge of the User entity.
-func (_m *User) QueryFileinfos() *FileDataQuery {
-	return NewUserClient(_m.config).QueryFileinfos(_m)
+// QueryFiles queries the "files" edge of the User entity.
+func (_m *User) QueryFiles() *FileQuery {
+	return NewUserClient(_m.config).QueryFiles(_m)
 }
 
 // Update returns a builder for updating this User.

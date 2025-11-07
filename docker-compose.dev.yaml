@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: secret
     volumes:
-      - keycloak-db-data:/var/lib/postgresql/data
+      - keycloak-db-data:/var/lib/postgresql/18/docker
     networks:
       - keycloak
   keycloak:
@@ -36,6 +36,7 @@ services:
       - 127.0.0.1:5000:80
       - 127.0.0.1:2525:25
   openobserve:
+    container_name: frans_dev_openobserve
     image: public.ecr.aws/zinclabs/openobserve:v0.15.3
     environment:
       ZO_ROOT_USER_EMAIL: "root@example.com"
