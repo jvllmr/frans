@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
 import { filesKey, receivedFilesQueryOptions } from "~/api/file";
+import { meQueryOptions } from "~/api/user";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
 import { FileRef } from "~/components/file/FileRef";
@@ -20,6 +21,7 @@ function RouteComponent() {
   const { t } = useTranslation("files_received");
   const dateFormatter = useDateFormatter();
   const fileSizeFormatter = useFileSizeFormatter();
+  const { data: me } = useSuspenseQuery(meQueryOptions);
   const totalSize = useMemo(
     () =>
       receivedFiles.reduce((prev, receivedFile) => prev + receivedFile.size, 0),
@@ -32,6 +34,9 @@ function RouteComponent() {
           <Table.Tr>
             <Table.Th />
             <Table.Th>{t("table_title_file")}</Table.Th>
+            {me.isAdmin ? (
+              <Table.Th>{t("owner", { ns: "translation" })}</Table.Th>
+            ) : null}
             <Table.Th>{t("table_title_size")}</Table.Th>
             <Table.Th>{t("table_title_date")}</Table.Th>
             <Table.Th>{t("table_title_expiration")}</Table.Th>
@@ -56,6 +61,9 @@ function RouteComponent() {
                   }}
                 />
               </Table.Td>
+              {me.isAdmin ? (
+                <Table.Td>{receivedFile.owner.name}</Table.Td>
+              ) : null}
               <Table.Td>{fileSizeFormatter(receivedFile.size)}</Table.Td>
 
               <Table.Td>

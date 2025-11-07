@@ -3,6 +3,7 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Grant, grantQueryOptions, grantsKey } from "~/api/grant";
+import { meQueryOptions } from "~/api/user";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
 import { FileRef } from "~/components/file/FileRef";
@@ -23,6 +24,7 @@ function RouteComponent() {
   const { data: grants } = useSuspenseQuery(grantQueryOptions);
   const dateFormatter = useDateFormatter();
   const queryClient = useQueryClient();
+  const { data: me } = useSuspenseQuery(meQueryOptions);
   return (
     <Table withColumnBorders withTableBorder withRowBorders>
       <Table.Thead>
@@ -30,6 +32,9 @@ function RouteComponent() {
           <Table.Th />
           <Table.Th />
           <Table.Th>{t("table_title_file")}</Table.Th>
+          {me.isAdmin ? (
+            <Table.Th>{t("owner", { ns: "translation" })}</Table.Th>
+          ) : null}
           <Table.Th>{t("table_title_created_at")}</Table.Th>
           <Table.Th>{t("table_title_expiration")}</Table.Th>
         </Table.Tr>
@@ -60,6 +65,11 @@ function RouteComponent() {
                       }}
                     />
                   </Table.Td>
+                  {index === 0 && me.isAdmin ? (
+                    <Table.Td rowSpan={grant.files.length}>
+                      {grant.owner.name}
+                    </Table.Td>
+                  ) : null}
                   {index === 0 ? (
                     <Table.Td rowSpan={grant.files.length}>
                       {dateFormatter.format(grant.createdAt)}
@@ -79,7 +89,9 @@ function RouteComponent() {
                   <Table.Td colSpan={2}>
                     <GrantButtons grant={grant} />
                   </Table.Td>
+                  <Table.Td />
                   <Table.Td>{grant.id}</Table.Td>
+                  {me.isAdmin ? <Table.Td>{grant.owner.name}</Table.Td> : null}
                   <Table.Td>{dateFormatter.format(grant.createdAt)}</Table.Td>
                   <Table.Td>
                     <EstimatedExpiry estimatedExpiry={grant.estimatedExpiry} />
