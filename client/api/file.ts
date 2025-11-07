@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod/v4";
 import { baseFetchJSON, v1Url } from ".";
+import { publicUserSchema } from "./user";
 
 export const filesKey = ["FILES"];
 
@@ -17,6 +18,7 @@ export const fileSchema = z.object({
   createdAt: z.coerce.date(),
   lastDownloaded: z.coerce.date().nullable(),
   estimatedExpiry: z.coerce.date().nullable(),
+  owner: publicUserSchema,
 });
 
 export function fetchReceivedFiles() {

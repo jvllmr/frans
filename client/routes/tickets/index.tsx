@@ -3,6 +3,7 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { ticketQueryOptions, ticketsKey } from "~/api/ticket";
+import { meQueryOptions } from "~/api/user";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
 import { FileRef } from "~/components/file/FileRef";
@@ -18,6 +19,7 @@ function RouteComponent() {
   const { data: tickets } = useSuspenseQuery(ticketQueryOptions);
   const dateFormatter = useDateFormatter();
   const queryClient = useQueryClient();
+  const { data: me } = useSuspenseQuery(meQueryOptions);
   return (
     <Table withColumnBorders withTableBorder withRowBorders>
       <Table.Thead>
@@ -25,6 +27,9 @@ function RouteComponent() {
           <Table.Th />
           <Table.Th />
           <Table.Th>{t("table_title_file")}</Table.Th>
+          {me.isAdmin ? (
+            <Table.Th>{t("owner", { ns: "translation" })}</Table.Th>
+          ) : null}
           <Table.Th>{t("table_title_created_at")}</Table.Th>
           <Table.Th>{t("table_title_expiration")}</Table.Th>
         </Table.Tr>
@@ -55,6 +60,11 @@ function RouteComponent() {
                   }}
                 />
               </Table.Td>
+              {index === 0 && me.isAdmin ? (
+                <Table.Td rowSpan={ticket.files.length}>
+                  {ticket.owner.name}
+                </Table.Td>
+              ) : null}
               {index === 0 ? (
                 <Table.Td rowSpan={ticket.files.length}>
                   {dateFormatter.format(ticket.createdAt)}
