@@ -14,5 +14,6 @@
   "view_on_github": "View project on GitHub",
   "licensed": "This Software is licensed under GPL-2.0",
   "switch_color_scheme_dark": "Switch to dark mode",
-  "switch_color_scheme_light": "Switch to light mode"
+  "switch_color_scheme_light": "Switch to light mode",
+  "owner": "Owner"
 }
