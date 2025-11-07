@@ -28,6 +28,12 @@ func startGin(ctx context.Context, configValue config.Config, db *ent.Client) {
 		os.Exit(1)
 	}
 	defer tracingCleanup()
+	metricsCleanup, err := otel.NewMeterProvider(ctx, configValue.Otel)
+	if err != nil {
+		slog.Error("Setup failed", "err", err)
+		os.Exit(1)
+	}
+	defer metricsCleanup()
 	r := gin.New()
 	r.Use(otelgin.Middleware(otel.TracingService))
 	err = routes.SetupRootRouter(r, configValue, db)
