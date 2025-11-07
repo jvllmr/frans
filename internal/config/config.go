@@ -146,6 +146,11 @@ func (c *Config) GetBaseURL(request *http.Request) string {
 	if request.TLS != nil {
 		proto = "https"
 	}
+	// TODO: do not always trust this info
+	xForwardedProto := request.Header.Get("X-Forwarded-Proto")
+	if xForwardedProto != "" {
+		proto = xForwardedProto
+	}
 	host := request.Host
 	patchedRootPath := c.RootPath
 	if len(patchedRootPath) == 0 {
