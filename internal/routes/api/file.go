@@ -35,7 +35,7 @@ func (fc *fileController) fetchReceivedFilesHandler(c *gin.Context) {
 
 	if !currentUser.IsAdmin {
 		filesQuery = filesQuery.Where(
-			file.HasGrantsWith(grant.HasOwnerWith(user.ID(currentUser.ID))),
+			file.HasGrantWith(grant.HasOwnerWith(user.ID(currentUser.ID))),
 		)
 	}
 

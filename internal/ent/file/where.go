@@ -476,21 +476,21 @@ func ExpiryTotalDownloadsLTE(v uint8) predicate.File {
 	return predicate.File(sql.FieldLTE(FieldExpiryTotalDownloads, v))
 }
 
-// HasTickets applies the HasEdge predicate on the "tickets" edge.
-func HasTickets() predicate.File {
+// HasTicket applies the HasEdge predicate on the "ticket" edge.
+func HasTicket() predicate.File {
 	return predicate.File(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, TicketsTable, TicketsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, TicketTable, TicketColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasTicketsWith applies the HasEdge predicate on the "tickets" edge with a given conditions (other predicates).
-func HasTicketsWith(preds ...predicate.Ticket) predicate.File {
+// HasTicketWith applies the HasEdge predicate on the "ticket" edge with a given conditions (other predicates).
+func HasTicketWith(preds ...predicate.Ticket) predicate.File {
 	return predicate.File(func(s *sql.Selector) {
-		step := newTicketsStep()
+		step := newTicketStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -499,21 +499,21 @@ func HasTicketsWith(preds ...predicate.Ticket) predicate.File {
 	})
 }
 
-// HasGrants applies the HasEdge predicate on the "grants" edge.
-func HasGrants() predicate.File {
+// HasGrant applies the HasEdge predicate on the "grant" edge.
+func HasGrant() predicate.File {
 	return predicate.File(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, GrantsTable, GrantsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, GrantTable, GrantColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasGrantsWith applies the HasEdge predicate on the "grants" edge with a given conditions (other predicates).
-func HasGrantsWith(preds ...predicate.Grant) predicate.File {
+// HasGrantWith applies the HasEdge predicate on the "grant" edge with a given conditions (other predicates).
+func HasGrantWith(preds ...predicate.Grant) predicate.File {
 	return predicate.File(func(s *sql.Selector) {
-		step := newGrantsStep()
+		step := newGrantStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

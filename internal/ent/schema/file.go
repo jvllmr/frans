@@ -34,8 +34,8 @@ func (File) Fields() []ent.Field {
 // Edges of the File.
 func (File) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("tickets", Ticket.Type).Ref("files"),
-		edge.From("grants", Grant.Type).Ref("files"),
+		edge.From("ticket", Ticket.Type).Ref("files").Unique(),
+		edge.From("grant", Grant.Type).Ref("files").Unique(),
 		edge.From("owner", User.Type).
 			Ref("files").
 			Unique().

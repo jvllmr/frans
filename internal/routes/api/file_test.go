@@ -116,7 +116,7 @@ func TestFetchReceivedFiles(t *testing.T) {
 		0,
 		1,
 	)
-	db.File.UpdateOne(testFile).AddGrants(userGrantValue).SaveX(t.Context())
+	db.File.UpdateOne(testFile).SetGrant(userGrantValue).SaveX(t.Context())
 
 	testFileAdmin := testutil.SetupTestFile(
 		t,
@@ -130,7 +130,7 @@ func TestFetchReceivedFiles(t *testing.T) {
 		0,
 		1,
 	)
-	db.File.UpdateOne(testFileAdmin).AddGrants(adminGrantValue).SaveX(t.Context())
+	db.File.UpdateOne(testFileAdmin).SetGrant(adminGrantValue).SaveX(t.Context())
 
 	rUser := setupTestFileRouter(cfg, db, testutil.NewTestAuthMiddleware(testUser))
 	rAdmin := setupTestFileRouter(cfg, db, testutil.NewTestAuthMiddleware(testAdmin))
