@@ -59,12 +59,10 @@ type FileMutation struct {
 	expiry_total_downloads             *uint8
 	addexpiry_total_downloads          *int8
 	clearedFields                      map[string]struct{}
-	tickets                            map[uuid.UUID]struct{}
-	removedtickets                     map[uuid.UUID]struct{}
-	clearedtickets                     bool
-	grants                             map[uuid.UUID]struct{}
-	removedgrants                      map[uuid.UUID]struct{}
-	clearedgrants                      bool
+	ticket                             *uuid.UUID
+	clearedticket                      bool
+	grant                              *uuid.UUID
+	clearedgrant                       bool
 	owner                              *uuid.UUID
 	clearedowner                       bool
 	data                               *string
@@ -559,112 +557,82 @@ func (m *FileMutation) ResetExpiryTotalDownloads() {
 	m.addexpiry_total_downloads = nil
 }
 
-// AddTicketIDs adds the "tickets" edge to the Ticket entity by ids.
-func (m *FileMutation) AddTicketIDs(ids ...uuid.UUID) {
-	if m.tickets == nil {
-		m.tickets = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		m.tickets[ids[i]] = struct{}{}
-	}
+// SetTicketID sets the "ticket" edge to the Ticket entity by id.
+func (m *FileMutation) SetTicketID(id uuid.UUID) {
+	m.ticket = &id
 }
 
-// ClearTickets clears the "tickets" edge to the Ticket entity.
-func (m *FileMutation) ClearTickets() {
-	m.clearedtickets = true
+// ClearTicket clears the "ticket" edge to the Ticket entity.
+func (m *FileMutation) ClearTicket() {
+	m.clearedticket = true
 }
 
-// TicketsCleared reports if the "tickets" edge to the Ticket entity was cleared.
-func (m *FileMutation) TicketsCleared() bool {
-	return m.clearedtickets
+// TicketCleared reports if the "ticket" edge to the Ticket entity was cleared.
+func (m *FileMutation) TicketCleared() bool {
+	return m.clearedticket
 }
 
-// RemoveTicketIDs removes the "tickets" edge to the Ticket entity by IDs.
-func (m *FileMutation) RemoveTicketIDs(ids ...uuid.UUID) {
-	if m.removedtickets == nil {
-		m.removedtickets = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		delete(m.tickets, ids[i])
-		m.removedtickets[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedTickets returns the removed IDs of the "tickets" edge to the Ticket entity.
-func (m *FileMutation) RemovedTicketsIDs() (ids []uuid.UUID) {
-	for id := range m.removedtickets {
-		ids = append(ids, id)
+// TicketID returns the "ticket" edge ID in the mutation.
+func (m *FileMutation) TicketID() (id uuid.UUID, exists bool) {
+	if m.ticket != nil {
+		return *m.ticket, true
 	}
 	return
 }
 
-// TicketsIDs returns the "tickets" edge IDs in the mutation.
-func (m *FileMutation) TicketsIDs() (ids []uuid.UUID) {
-	for id := range m.tickets {
-		ids = append(ids, id)
+// TicketIDs returns the "ticket" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TicketID instead. It exists only for internal usage by the builders.
+func (m *FileMutation) TicketIDs() (ids []uuid.UUID) {
+	if id := m.ticket; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetTickets resets all changes to the "tickets" edge.
-func (m *FileMutation) ResetTickets() {
-	m.tickets = nil
-	m.clearedtickets = false
-	m.removedtickets = nil
+// ResetTicket resets all changes to the "ticket" edge.
+func (m *FileMutation) ResetTicket() {
+	m.ticket = nil
+	m.clearedticket = false
 }
 
-// AddGrantIDs adds the "grants" edge to the Grant entity by ids.
-func (m *FileMutation) AddGrantIDs(ids ...uuid.UUID) {
-	if m.grants == nil {
-		m.grants = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		m.grants[ids[i]] = struct{}{}
-	}
+// SetGrantID sets the "grant" edge to the Grant entity by id.
+func (m *FileMutation) SetGrantID(id uuid.UUID) {
+	m.grant = &id
 }
 
-// ClearGrants clears the "grants" edge to the Grant entity.
-func (m *FileMutation) ClearGrants() {
-	m.clearedgrants = true
+// ClearGrant clears the "grant" edge to the Grant entity.
+func (m *FileMutation) ClearGrant() {
+	m.clearedgrant = true
 }
 
-// GrantsCleared reports if the "grants" edge to the Grant entity was cleared.
-func (m *FileMutation) GrantsCleared() bool {
-	return m.clearedgrants
+// GrantCleared reports if the "grant" edge to the Grant entity was cleared.
+func (m *FileMutation) GrantCleared() bool {
+	return m.clearedgrant
 }
 
-// RemoveGrantIDs removes the "grants" edge to the Grant entity by IDs.
-func (m *FileMutation) RemoveGrantIDs(ids ...uuid.UUID) {
-	if m.removedgrants == nil {
-		m.removedgrants = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		delete(m.grants, ids[i])
-		m.removedgrants[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedGrants returns the removed IDs of the "grants" edge to the Grant entity.
-func (m *FileMutation) RemovedGrantsIDs() (ids []uuid.UUID) {
-	for id := range m.removedgrants {
-		ids = append(ids, id)
+// GrantID returns the "grant" edge ID in the mutation.
+func (m *FileMutation) GrantID() (id uuid.UUID, exists bool) {
+	if m.grant != nil {
+		return *m.grant, true
 	}
 	return
 }
 
-// GrantsIDs returns the "grants" edge IDs in the mutation.
-func (m *FileMutation) GrantsIDs() (ids []uuid.UUID) {
-	for id := range m.grants {
-		ids = append(ids, id)
+// GrantIDs returns the "grant" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GrantID instead. It exists only for internal usage by the builders.
+func (m *FileMutation) GrantIDs() (ids []uuid.UUID) {
+	if id := m.grant; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetGrants resets all changes to the "grants" edge.
-func (m *FileMutation) ResetGrants() {
-	m.grants = nil
-	m.clearedgrants = false
-	m.removedgrants = nil
+// ResetGrant resets all changes to the "grant" edge.
+func (m *FileMutation) ResetGrant() {
+	m.grant = nil
+	m.clearedgrant = false
 }
 
 // SetOwnerID sets the "owner" edge to the User entity by id.
@@ -1058,11 +1026,11 @@ func (m *FileMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *FileMutation) AddedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.tickets != nil {
-		edges = append(edges, file.EdgeTickets)
+	if m.ticket != nil {
+		edges = append(edges, file.EdgeTicket)
 	}
-	if m.grants != nil {
-		edges = append(edges, file.EdgeGrants)
+	if m.grant != nil {
+		edges = append(edges, file.EdgeGrant)
 	}
 	if m.owner != nil {
 		edges = append(edges, file.EdgeOwner)
@@ -1077,18 +1045,14 @@ func (m *FileMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *FileMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case file.EdgeTickets:
-		ids := make([]ent.Value, 0, len(m.tickets))
-		for id := range m.tickets {
-			ids = append(ids, id)
+	case file.EdgeTicket:
+		if id := m.ticket; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
-	case file.EdgeGrants:
-		ids := make([]ent.Value, 0, len(m.grants))
-		for id := range m.grants {
-			ids = append(ids, id)
+	case file.EdgeGrant:
+		if id := m.grant; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case file.EdgeOwner:
 		if id := m.owner; id != nil {
 			return []ent.Value{*id}
@@ -1104,43 +1068,23 @@ func (m *FileMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *FileMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.removedtickets != nil {
-		edges = append(edges, file.EdgeTickets)
-	}
-	if m.removedgrants != nil {
-		edges = append(edges, file.EdgeGrants)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *FileMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case file.EdgeTickets:
-		ids := make([]ent.Value, 0, len(m.removedtickets))
-		for id := range m.removedtickets {
-			ids = append(ids, id)
-		}
-		return ids
-	case file.EdgeGrants:
-		ids := make([]ent.Value, 0, len(m.removedgrants))
-		for id := range m.removedgrants {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *FileMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.clearedtickets {
-		edges = append(edges, file.EdgeTickets)
+	if m.clearedticket {
+		edges = append(edges, file.EdgeTicket)
 	}
-	if m.clearedgrants {
-		edges = append(edges, file.EdgeGrants)
+	if m.clearedgrant {
+		edges = append(edges, file.EdgeGrant)
 	}
 	if m.clearedowner {
 		edges = append(edges, file.EdgeOwner)
@@ -1155,10 +1099,10 @@ func (m *FileMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *FileMutation) EdgeCleared(name string) bool {
 	switch name {
-	case file.EdgeTickets:
-		return m.clearedtickets
-	case file.EdgeGrants:
-		return m.clearedgrants
+	case file.EdgeTicket:
+		return m.clearedticket
+	case file.EdgeGrant:
+		return m.clearedgrant
 	case file.EdgeOwner:
 		return m.clearedowner
 	case file.EdgeData:
@@ -1171,6 +1115,12 @@ func (m *FileMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *FileMutation) ClearEdge(name string) error {
 	switch name {
+	case file.EdgeTicket:
+		m.ClearTicket()
+		return nil
+	case file.EdgeGrant:
+		m.ClearGrant()
+		return nil
 	case file.EdgeOwner:
 		m.ClearOwner()
 		return nil
@@ -1185,11 +1135,11 @@ func (m *FileMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *FileMutation) ResetEdge(name string) error {
 	switch name {
-	case file.EdgeTickets:
-		m.ResetTickets()
+	case file.EdgeTicket:
+		m.ResetTicket()
 		return nil
-	case file.EdgeGrants:
-		m.ResetGrants()
+	case file.EdgeGrant:
+		m.ResetGrant()
 		return nil
 	case file.EdgeOwner:
 		m.ResetOwner()

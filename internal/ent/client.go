@@ -362,15 +362,15 @@ func (c *FileClient) GetX(ctx context.Context, id uuid.UUID) *File {
 	return obj
 }
 
-// QueryTickets queries the tickets edge of a File.
-func (c *FileClient) QueryTickets(_m *File) *TicketQuery {
+// QueryTicket queries the ticket edge of a File.
+func (c *FileClient) QueryTicket(_m *File) *TicketQuery {
 	query := (&TicketClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(file.Table, file.FieldID, id),
 			sqlgraph.To(ticket.Table, ticket.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, file.TicketsTable, file.TicketsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, file.TicketTable, file.TicketColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -378,15 +378,15 @@ func (c *FileClient) QueryTickets(_m *File) *TicketQuery {
 	return query
 }
 
-// QueryGrants queries the grants edge of a File.
-func (c *FileClient) QueryGrants(_m *File) *GrantQuery {
+// QueryGrant queries the grant edge of a File.
+func (c *FileClient) QueryGrant(_m *File) *GrantQuery {
 	query := (&GrantClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(file.Table, file.FieldID, id),
 			sqlgraph.To(grant.Table, grant.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, file.GrantsTable, file.GrantsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, file.GrantTable, file.GrantColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -716,7 +716,7 @@ func (c *GrantClient) QueryFiles(_m *Grant) *FileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(grant.Table, grant.FieldID, id),
 			sqlgraph.To(file.Table, file.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, grant.FilesTable, grant.FilesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, grant.FilesTable, grant.FilesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1211,7 +1211,7 @@ func (c *TicketClient) QueryFiles(_m *Ticket) *FileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(ticket.Table, ticket.FieldID, id),
 			sqlgraph.To(file.Table, file.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, ticket.FilesTable, ticket.FilesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, ticket.FilesTable, ticket.FilesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

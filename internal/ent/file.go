@@ -12,6 +12,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/filedata"
+	"github.com/jvllmr/frans/internal/ent/grant"
+	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/ent/user"
 )
 
@@ -40,16 +42,18 @@ type File struct {
 	// The values are being populated by the FileQuery when eager-loading is set.
 	Edges        FileEdges `json:"edges"`
 	file_data    *string
+	grant_files  *uuid.UUID
+	ticket_files *uuid.UUID
 	user_files   *uuid.UUID
 	selectValues sql.SelectValues
 }
 
 // FileEdges holds the relations/edges for other nodes in the graph.
 type FileEdges struct {
-	// Tickets holds the value of the tickets edge.
-	Tickets []*Ticket `json:"tickets,omitempty"`
-	// Grants holds the value of the grants edge.
-	Grants []*Grant `json:"grants,omitempty"`
+	// Ticket holds the value of the ticket edge.
+	Ticket *Ticket `json:"ticket,omitempty"`
+	// Grant holds the value of the grant edge.
+	Grant *Grant `json:"grant,omitempty"`
 	// Owner holds the value of the owner edge.
 	Owner *User `json:"owner,omitempty"`
 	// Data holds the value of the data edge.
@@ -59,22 +63,26 @@ type FileEdges struct {
 	loadedTypes [4]bool
 }
 
-// TicketsOrErr returns the Tickets value or an error if the edge
-// was not loaded in eager-loading.
-func (e FileEdges) TicketsOrErr() ([]*Ticket, error) {
-	if e.loadedTypes[0] {
-		return e.Tickets, nil
+// TicketOrErr returns the Ticket value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FileEdges) TicketOrErr() (*Ticket, error) {
+	if e.Ticket != nil {
+		return e.Ticket, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: ticket.Label}
 	}
-	return nil, &NotLoadedError{edge: "tickets"}
+	return nil, &NotLoadedError{edge: "ticket"}
 }
 
-// GrantsOrErr returns the Grants value or an error if the edge
-// was not loaded in eager-loading.
-func (e FileEdges) GrantsOrErr() ([]*Grant, error) {
-	if e.loadedTypes[1] {
-		return e.Grants, nil
+// GrantOrErr returns the Grant value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FileEdges) GrantOrErr() (*Grant, error) {
+	if e.Grant != nil {
+		return e.Grant, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: grant.Label}
 	}
-	return nil, &NotLoadedError{edge: "grants"}
+	return nil, &NotLoadedError{edge: "grant"}
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -114,7 +122,11 @@ func (*File) scanValues(columns []string) ([]any, error) {
 			values[i] = new(uuid.UUID)
 		case file.ForeignKeys[0]: // file_data
 			values[i] = new(sql.NullString)
-		case file.ForeignKeys[1]: // user_files
+		case file.ForeignKeys[1]: // grant_files
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case file.ForeignKeys[2]: // ticket_files
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case file.ForeignKeys[3]: // user_files
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -195,6 +207,20 @@ func (_m *File) assignValues(columns []string, values []any) error {
 			}
 		case file.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field grant_files", values[i])
+			} else if value.Valid {
+				_m.grant_files = new(uuid.UUID)
+				*_m.grant_files = *value.S.(*uuid.UUID)
+			}
+		case file.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field ticket_files", values[i])
+			} else if value.Valid {
+				_m.ticket_files = new(uuid.UUID)
+				*_m.ticket_files = *value.S.(*uuid.UUID)
+			}
+		case file.ForeignKeys[3]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field user_files", values[i])
 			} else if value.Valid {
 				_m.user_files = new(uuid.UUID)
@@ -213,14 +239,14 @@ func (_m *File) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryTickets queries the "tickets" edge of the File entity.
-func (_m *File) QueryTickets() *TicketQuery {
-	return NewFileClient(_m.config).QueryTickets(_m)
+// QueryTicket queries the "ticket" edge of the File entity.
+func (_m *File) QueryTicket() *TicketQuery {
+	return NewFileClient(_m.config).QueryTicket(_m)
 }
 
-// QueryGrants queries the "grants" edge of the File entity.
-func (_m *File) QueryGrants() *GrantQuery {
-	return NewFileClient(_m.config).QueryGrants(_m)
+// QueryGrant queries the "grant" edge of the File entity.
+func (_m *File) QueryGrant() *GrantQuery {
+	return NewFileClient(_m.config).QueryGrant(_m)
 }
 
 // QueryOwner queries the "owner" edge of the File entity.

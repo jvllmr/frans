@@ -20,6 +20,8 @@ var (
 		{Name: "expiry_days_since_last_download", Type: field.TypeUint8},
 		{Name: "expiry_total_downloads", Type: field.TypeUint8},
 		{Name: "file_data", Type: field.TypeString},
+		{Name: "grant_files", Type: field.TypeUUID, Nullable: true},
+		{Name: "ticket_files", Type: field.TypeUUID, Nullable: true},
 		{Name: "user_files", Type: field.TypeUUID},
 	}
 	// FilesTable holds the schema information for the "files" table.
@@ -35,8 +37,20 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "files_users_files",
+				Symbol:     "files_grants_files",
 				Columns:    []*schema.Column{FilesColumns[10]},
+				RefColumns: []*schema.Column{GrantsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "files_tickets_files",
+				Columns:    []*schema.Column{FilesColumns[11]},
+				RefColumns: []*schema.Column{TicketsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "files_users_files",
+				Columns:    []*schema.Column{FilesColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -185,56 +199,6 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
-	// GrantFilesColumns holds the columns for the "grant_files" table.
-	GrantFilesColumns = []*schema.Column{
-		{Name: "grant_id", Type: field.TypeUUID},
-		{Name: "file_id", Type: field.TypeUUID},
-	}
-	// GrantFilesTable holds the schema information for the "grant_files" table.
-	GrantFilesTable = &schema.Table{
-		Name:       "grant_files",
-		Columns:    GrantFilesColumns,
-		PrimaryKey: []*schema.Column{GrantFilesColumns[0], GrantFilesColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "grant_files_grant_id",
-				Columns:    []*schema.Column{GrantFilesColumns[0]},
-				RefColumns: []*schema.Column{GrantsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "grant_files_file_id",
-				Columns:    []*schema.Column{GrantFilesColumns[1]},
-				RefColumns: []*schema.Column{FilesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// TicketFilesColumns holds the columns for the "ticket_files" table.
-	TicketFilesColumns = []*schema.Column{
-		{Name: "ticket_id", Type: field.TypeUUID},
-		{Name: "file_id", Type: field.TypeUUID},
-	}
-	// TicketFilesTable holds the schema information for the "ticket_files" table.
-	TicketFilesTable = &schema.Table{
-		Name:       "ticket_files",
-		Columns:    TicketFilesColumns,
-		PrimaryKey: []*schema.Column{TicketFilesColumns[0], TicketFilesColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "ticket_files_ticket_id",
-				Columns:    []*schema.Column{TicketFilesColumns[0]},
-				RefColumns: []*schema.Column{TicketsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "ticket_files_file_id",
-				Columns:    []*schema.Column{TicketFilesColumns[1]},
-				RefColumns: []*schema.Column{FilesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		FilesTable,
@@ -244,21 +208,17 @@ var (
 		ShareAccessTokensTable,
 		TicketsTable,
 		UsersTable,
-		GrantFilesTable,
-		TicketFilesTable,
 	}
 )
 
 func init() {
 	FilesTable.ForeignKeys[0].RefTable = FileDataTable
-	FilesTable.ForeignKeys[1].RefTable = UsersTable
+	FilesTable.ForeignKeys[1].RefTable = GrantsTable
+	FilesTable.ForeignKeys[2].RefTable = TicketsTable
+	FilesTable.ForeignKeys[3].RefTable = UsersTable
 	GrantsTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	ShareAccessTokensTable.ForeignKeys[0].RefTable = GrantsTable
 	ShareAccessTokensTable.ForeignKeys[1].RefTable = TicketsTable
 	TicketsTable.ForeignKeys[0].RefTable = UsersTable
-	GrantFilesTable.ForeignKeys[0].RefTable = GrantsTable
-	GrantFilesTable.ForeignKeys[1].RefTable = FilesTable
-	TicketFilesTable.ForeignKeys[0].RefTable = TicketsTable
-	TicketFilesTable.ForeignKeys[1].RefTable = FilesTable
 }

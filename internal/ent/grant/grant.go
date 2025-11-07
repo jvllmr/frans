@@ -54,11 +54,13 @@ const (
 	EdgeShareaccesstokens = "shareaccesstokens"
 	// Table holds the table name of the grant in the database.
 	Table = "grants"
-	// FilesTable is the table that holds the files relation/edge. The primary key declared below.
-	FilesTable = "grant_files"
+	// FilesTable is the table that holds the files relation/edge.
+	FilesTable = "files"
 	// FilesInverseTable is the table name for the File entity.
 	// It exists in this package in order to avoid circular dependency with the "file" package.
 	FilesInverseTable = "files"
+	// FilesColumn is the table column denoting the files relation/edge.
+	FilesColumn = "grant_files"
 	// OwnerTable is the table that holds the owner relation/edge.
 	OwnerTable = "grants"
 	// OwnerInverseTable is the table name for the User entity.
@@ -101,12 +103,6 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"user_grants",
 }
-
-var (
-	// FilesPrimaryKey and FilesColumn2 are the table columns denoting the
-	// primary key for the files relation (M2M).
-	FilesPrimaryKey = []string{"grant_id", "file_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -258,7 +254,7 @@ func newFilesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(FilesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, FilesTable, FilesPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, FilesTable, FilesColumn),
 	)
 }
 func newOwnerStep() *sqlgraph.Step {

@@ -31,7 +31,7 @@ func (fc *fileController) fetchReceivedFilesHandler(c *gin.Context) {
 	currentUser := middleware.GetCurrentUser(c)
 
 	files := fc.db.File.Query().WithData().WithOwner().
-		Where(file.HasGrantsWith(grant.HasOwnerWith(user.ID(currentUser.ID)))).
+		Where(file.HasGrantWith(grant.HasOwnerWith(user.ID(currentUser.ID)))).
 		AllX(ctx)
 
 	publicFiles := make([]services.PublicFile, len(files))
