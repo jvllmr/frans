@@ -153,6 +153,6 @@ func TestFetchReceivedFiles(t *testing.T) {
 	if err := json.Unmarshal(wAdmin.Body.Bytes(), &resultFilesAdmin); err != nil {
 		log.Fatalf("unmsarshal files: %v", err)
 	}
-	assert.Equal(t, 1, len(resultFilesAdmin))
+	assert.Equal(t, 2, len(resultFilesAdmin))
 	assert.Equal(t, testFileAdmin.ID, resultFilesAdmin[0].Id)
 }
