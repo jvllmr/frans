@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
@@ -30,9 +31,15 @@ func (fc *fileController) fetchReceivedFilesHandler(c *gin.Context) {
 	defer span.End()
 	currentUser := middleware.GetCurrentUser(c)
 
-	files := fc.db.File.Query().WithData().WithOwner().
-		Where(file.HasGrantsWith(grant.HasOwnerWith(user.ID(currentUser.ID)))).
-		AllX(ctx)
+	filesQuery := fc.db.File.Query().WithData().WithOwner().Order(file.ByCreatedAt(sql.OrderDesc()))
+
+	if !currentUser.IsAdmin {
+		filesQuery = filesQuery.Where(
+			file.HasGrantsWith(grant.HasOwnerWith(user.ID(currentUser.ID))),
+		)
+	}
+
+	files := filesQuery.AllX(ctx)
 
 	publicFiles := make([]services.PublicFile, len(files))
 	for i, fileValue := range files {
