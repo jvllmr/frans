@@ -30,7 +30,7 @@ func (fc *fileController) fetchReceivedFilesHandler(c *gin.Context) {
 	defer span.End()
 	currentUser := middleware.GetCurrentUser(c)
 
-	files := fc.db.File.Query().WithData().
+	files := fc.db.File.Query().WithData().WithOwner().
 		Where(file.HasGrantsWith(grant.HasOwnerWith(user.ID(currentUser.ID)))).
 		AllX(ctx)
 
@@ -51,7 +51,7 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 		return
 	}
 	fileValue, err := fc.db.File.Query().
-		WithData().
+		WithData().WithOwner().
 		Where(file.ID(uuid.MustParse(requestedFile.ID))).
 		Only(ctx)
 	if err != nil {

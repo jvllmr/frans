@@ -123,7 +123,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 
 		ticketValue = tx.Ticket.Query().
 			Where(ticket.ID(ticketValue.ID)).
-			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
+			WithFiles(func(fq *ent.FileQuery) { fq.WithData().WithOwner() }).
 			WithOwner().
 			OnlyX(ctx)
 
@@ -165,7 +165,9 @@ func (tc *ticketController) fetchTicketsHandler(c *gin.Context) {
 	ctx, span := otel.NewSpan(c.Request.Context(), "fetchTickets")
 	defer span.End()
 	currentUser := middleware.GetCurrentUser(c)
-	query := tc.db.Ticket.Query().WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).WithOwner()
+	query := tc.db.Ticket.Query().
+		WithFiles(func(fq *ent.FileQuery) { fq.WithData().WithOwner() }).
+		WithOwner()
 
 	if !currentUser.IsAdmin {
 		query = query.Where(ticket.HasOwnerWith(user.ID(currentUser.ID)))

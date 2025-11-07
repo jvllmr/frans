@@ -20,6 +20,7 @@ var (
 		{Name: "expiry_days_since_last_download", Type: field.TypeUint8},
 		{Name: "expiry_total_downloads", Type: field.TypeUint8},
 		{Name: "file_data", Type: field.TypeString},
+		{Name: "user_files", Type: field.TypeUUID},
 	}
 	// FilesTable holds the schema information for the "files" table.
 	FilesTable = &schema.Table{
@@ -31,6 +32,12 @@ var (
 				Symbol:     "files_file_data_data",
 				Columns:    []*schema.Column{FilesColumns[9]},
 				RefColumns: []*schema.Column{FileDataColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "files_users_files",
+				Columns:    []*schema.Column{FilesColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
@@ -228,31 +235,6 @@ var (
 			},
 		},
 	}
-	// UserFileinfosColumns holds the columns for the "user_fileinfos" table.
-	UserFileinfosColumns = []*schema.Column{
-		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "file_data_id", Type: field.TypeString},
-	}
-	// UserFileinfosTable holds the schema information for the "user_fileinfos" table.
-	UserFileinfosTable = &schema.Table{
-		Name:       "user_fileinfos",
-		Columns:    UserFileinfosColumns,
-		PrimaryKey: []*schema.Column{UserFileinfosColumns[0], UserFileinfosColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "user_fileinfos_user_id",
-				Columns:    []*schema.Column{UserFileinfosColumns[0]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "user_fileinfos_file_data_id",
-				Columns:    []*schema.Column{UserFileinfosColumns[1]},
-				RefColumns: []*schema.Column{FileDataColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		FilesTable,
@@ -264,12 +246,12 @@ var (
 		UsersTable,
 		GrantFilesTable,
 		TicketFilesTable,
-		UserFileinfosTable,
 	}
 )
 
 func init() {
 	FilesTable.ForeignKeys[0].RefTable = FileDataTable
+	FilesTable.ForeignKeys[1].RefTable = UsersTable
 	GrantsTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	ShareAccessTokensTable.ForeignKeys[0].RefTable = GrantsTable
@@ -279,6 +261,4 @@ func init() {
 	GrantFilesTable.ForeignKeys[1].RefTable = FilesTable
 	TicketFilesTable.ForeignKeys[0].RefTable = TicketsTable
 	TicketFilesTable.ForeignKeys[1].RefTable = FilesTable
-	UserFileinfosTable.ForeignKeys[0].RefTable = UsersTable
-	UserFileinfosTable.ForeignKeys[1].RefTable = FileDataTable
 }

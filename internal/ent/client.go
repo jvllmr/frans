@@ -394,6 +394,22 @@ func (c *FileClient) QueryGrants(_m *File) *GrantQuery {
 	return query
 }
 
+// QueryOwner queries the owner edge of a File.
+func (c *FileClient) QueryOwner(_m *File) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(file.Table, file.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, file.OwnerTable, file.OwnerColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryData queries the data edge of a File.
 func (c *FileClient) QueryData(_m *File) *FileDataQuery {
 	query := (&FileDataClient{config: c.config}).Query()
@@ -541,22 +557,6 @@ func (c *FileDataClient) GetX(ctx context.Context, id string) *FileData {
 		panic(err)
 	}
 	return obj
-}
-
-// QueryUsers queries the users edge of a FileData.
-func (c *FileDataClient) QueryUsers(_m *FileData) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(filedata.Table, filedata.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, filedata.UsersTable, filedata.UsersPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // QueryFiles queries the files edge of a FileData.
@@ -1432,15 +1432,15 @@ func (c *UserClient) QueryGrants(_m *User) *GrantQuery {
 	return query
 }
 
-// QueryFileinfos queries the fileinfos edge of a User.
-func (c *UserClient) QueryFileinfos(_m *User) *FileDataQuery {
-	query := (&FileDataClient{config: c.config}).Query()
+// QueryFiles queries the files edge of a User.
+func (c *UserClient) QueryFiles(_m *User) *FileQuery {
+	query := (&FileClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(filedata.Table, filedata.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.FileinfosTable, user.FileinfosPrimaryKey...),
+			sqlgraph.To(file.Table, file.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.FilesTable, user.FilesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

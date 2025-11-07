@@ -87,7 +87,7 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 		grantValue = tx.Grant.Query().
 			WithOwner().
 			WithFiles(func(fq *ent.FileQuery) {
-				fq.WithData()
+				fq.WithData().WithOwner()
 			}).
 			Where(grant.ID(grantValue.ID)).
 			OnlyX(ctx)
@@ -121,7 +121,9 @@ func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
 	ctx, span := otel.NewSpan(c.Request.Context(), "fetchGrants")
 	defer span.End()
 	currentUser := middleware.GetCurrentUser(c)
-	query := gc.db.Grant.Query().WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).WithOwner()
+	query := gc.db.Grant.Query().
+		WithFiles(func(fq *ent.FileQuery) { fq.WithData().WithOwner() }).
+		WithOwner()
 
 	if !currentUser.IsAdmin {
 		query = query.Where(grant.HasOwnerWith(user.ID(currentUser.ID)))

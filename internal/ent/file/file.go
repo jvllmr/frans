@@ -34,6 +34,8 @@ const (
 	EdgeTickets = "tickets"
 	// EdgeGrants holds the string denoting the grants edge name in mutations.
 	EdgeGrants = "grants"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
 	// EdgeData holds the string denoting the data edge name in mutations.
 	EdgeData = "data"
 	// Table holds the table name of the file in the database.
@@ -48,6 +50,13 @@ const (
 	// GrantsInverseTable is the table name for the Grant entity.
 	// It exists in this package in order to avoid circular dependency with the "grant" package.
 	GrantsInverseTable = "grants"
+	// OwnerTable is the table that holds the owner relation/edge.
+	OwnerTable = "files"
+	// OwnerInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	OwnerInverseTable = "users"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "user_files"
 	// DataTable is the table that holds the data relation/edge.
 	DataTable = "files"
 	// DataInverseTable is the table name for the FileData entity.
@@ -74,6 +83,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"file_data",
+	"user_files",
 }
 
 var (
@@ -183,6 +193,13 @@ func ByGrants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByDataField orders the results by data field.
 func ByDataField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -201,6 +218,13 @@ func newGrantsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(GrantsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, GrantsTable, GrantsPrimaryKey...),
+	)
+}
+func newOwnerStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OwnerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 	)
 }
 func newDataStep() *sqlgraph.Step {

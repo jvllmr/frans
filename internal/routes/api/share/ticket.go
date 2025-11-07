@@ -68,6 +68,7 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 	}
 	fileValue, err := tsc.db.File.Query().
 		WithData().
+		WithOwner().
 		Where(file.ID(uuid.MustParse(requestedFile.ID))).
 		Only(ctx)
 	if err != nil {
@@ -126,7 +127,7 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 		ticketValue, err := db.Ticket.Query().
 			Where(ticket.ID(uuidValue)).
 			WithOwner().
-			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).Only(ctx)
+			WithFiles(func(fq *ent.FileQuery) { fq.WithData().WithOwner() }).Only(ctx)
 
 		if err != nil {
 			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, err)

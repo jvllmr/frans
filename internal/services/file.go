@@ -126,15 +126,11 @@ func (fs FileService) CreateFile(
 		fileData, err = tx.FileData.Create().
 			SetID(sha512sum).
 			SetSize(uint64(fileHeader.Size)).
-			AddUsers(user).
 			Save(ctx)
 		if err != nil {
 			return nil, err
 		}
 	}
-	fileData, err = tx.FileData.UpdateOne(fileData).
-		AddUsers(user).
-		Save(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -146,6 +142,7 @@ func (fs FileService) CreateFile(
 		SetExpiryTotalDays(expiryTotalDays).
 		SetExpiryTotalDownloads(expiryTotalDownloads).
 		SetData(fileData).
+		SetOwner(user).
 		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("create file: %w", err)
@@ -201,14 +198,15 @@ func (fs FileService) FileEstimatedExpiry(fileValue *ent.File) *time.Time {
 }
 
 type PublicFile struct {
-	Id              uuid.UUID `json:"id"`
-	Sha512          string    `json:"sha512"`
-	Size            uint64    `json:"size"`
-	Name            string    `json:"name"`
-	CreatedAt       string    `json:"createdAt"`
-	TimesDownloaded uint64    `json:"timesDownloaded"`
-	LastDownloaded  *string   `json:"lastDownloaded"`
-	EstimatedExpiry *string   `json:"estimatedExpiry"`
+	Id              uuid.UUID  `json:"id"`
+	Sha512          string     `json:"sha512"`
+	Size            uint64     `json:"size"`
+	Name            string     `json:"name"`
+	CreatedAt       string     `json:"createdAt"`
+	TimesDownloaded uint64     `json:"timesDownloaded"`
+	LastDownloaded  *string    `json:"lastDownloaded"`
+	EstimatedExpiry *string    `json:"estimatedExpiry"`
+	User            PublicUser `json:"owner"`
 }
 
 func (fs FileService) ToPublicFile(file *ent.File) PublicFile {
@@ -234,6 +232,7 @@ func (fs FileService) ToPublicFile(file *ent.File) PublicFile {
 		TimesDownloaded: file.TimesDownloaded,
 		LastDownloaded:  lastDownloadedValue,
 		EstimatedExpiry: estimatedExpiryValue,
+		User:            ToPublicUser(file.Edges.Owner),
 	}
 
 }

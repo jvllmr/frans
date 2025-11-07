@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
 	"github.com/jvllmr/frans/internal/ent/filedata"
+	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // File is the model entity for the File schema.
@@ -39,6 +40,7 @@ type File struct {
 	// The values are being populated by the FileQuery when eager-loading is set.
 	Edges        FileEdges `json:"edges"`
 	file_data    *string
+	user_files   *uuid.UUID
 	selectValues sql.SelectValues
 }
 
@@ -48,11 +50,13 @@ type FileEdges struct {
 	Tickets []*Ticket `json:"tickets,omitempty"`
 	// Grants holds the value of the grants edge.
 	Grants []*Grant `json:"grants,omitempty"`
+	// Owner holds the value of the owner edge.
+	Owner *User `json:"owner,omitempty"`
 	// Data holds the value of the data edge.
 	Data *FileData `json:"data,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // TicketsOrErr returns the Tickets value or an error if the edge
@@ -73,12 +77,23 @@ func (e FileEdges) GrantsOrErr() ([]*Grant, error) {
 	return nil, &NotLoadedError{edge: "grants"}
 }
 
+// OwnerOrErr returns the Owner value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FileEdges) OwnerOrErr() (*User, error) {
+	if e.Owner != nil {
+		return e.Owner, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "owner"}
+}
+
 // DataOrErr returns the Data value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e FileEdges) DataOrErr() (*FileData, error) {
 	if e.Data != nil {
 		return e.Data, nil
-	} else if e.loadedTypes[2] {
+	} else if e.loadedTypes[3] {
 		return nil, &NotFoundError{label: filedata.Label}
 	}
 	return nil, &NotLoadedError{edge: "data"}
@@ -99,6 +114,8 @@ func (*File) scanValues(columns []string) ([]any, error) {
 			values[i] = new(uuid.UUID)
 		case file.ForeignKeys[0]: // file_data
 			values[i] = new(sql.NullString)
+		case file.ForeignKeys[1]: // user_files
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -176,6 +193,13 @@ func (_m *File) assignValues(columns []string, values []any) error {
 				_m.file_data = new(string)
 				*_m.file_data = value.String
 			}
+		case file.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field user_files", values[i])
+			} else if value.Valid {
+				_m.user_files = new(uuid.UUID)
+				*_m.user_files = *value.S.(*uuid.UUID)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -197,6 +221,11 @@ func (_m *File) QueryTickets() *TicketQuery {
 // QueryGrants queries the "grants" edge of the File entity.
 func (_m *File) QueryGrants() *GrantQuery {
 	return NewFileClient(_m.config).QueryGrants(_m)
+}
+
+// QueryOwner queries the "owner" edge of the File entity.
+func (_m *File) QueryOwner() *UserQuery {
+	return NewFileClient(_m.config).QueryOwner(_m)
 }
 
 // QueryData queries the "data" edge of the File entity.

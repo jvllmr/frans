@@ -22,7 +22,6 @@ func (FileData) Fields() []ent.Field {
 // Edges of the FileData.
 func (FileData) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("users", User.Type).Ref("fileinfos").Required(),
 		edge.From("files", File.Type).Ref("data"),
 	}
 }

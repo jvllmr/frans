@@ -138,7 +138,7 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	tx.Commit()
 	grantValue = gsc.db.Grant.Query().
 		Where(grant.ID(grantValue.ID)).
-		WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
+		WithFiles(func(fq *ent.FileQuery) { fq.WithData().WithOwner() }).
 		WithOwner().
 		OnlyX(ctx)
 
@@ -181,7 +181,7 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 		grantValue, err := db.Grant.Query().
 			Where(grant.ID(uuidValue)).
 			WithOwner().
-			WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
+			WithFiles(func(fq *ent.FileQuery) { fq.WithData().WithOwner() }).
 			Only(ctx)
 
 		if err != nil {

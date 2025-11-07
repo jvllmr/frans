@@ -15,6 +15,7 @@ import (
 	"github.com/jvllmr/frans/internal/ent/filedata"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/ticket"
+	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // FileCreate is the builder for creating a File entity.
@@ -132,6 +133,17 @@ func (_c *FileCreate) AddGrants(v ...*Grant) *FileCreate {
 	return _c.AddGrantIDs(ids...)
 }
 
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (_c *FileCreate) SetOwnerID(id uuid.UUID) *FileCreate {
+	_c.mutation.SetOwnerID(id)
+	return _c
+}
+
+// SetOwner sets the "owner" edge to the User entity.
+func (_c *FileCreate) SetOwner(v *User) *FileCreate {
+	return _c.SetOwnerID(v.ID)
+}
+
 // SetDataID sets the "data" edge to the FileData entity by ID.
 func (_c *FileCreate) SetDataID(id string) *FileCreate {
 	_c.mutation.SetDataID(id)
@@ -210,6 +222,9 @@ func (_c *FileCreate) check() error {
 	}
 	if _, ok := _c.mutation.ExpiryTotalDownloads(); !ok {
 		return &ValidationError{Name: "expiry_total_downloads", err: errors.New(`ent: missing required field "File.expiry_total_downloads"`)}
+	}
+	if len(_c.mutation.OwnerIDs()) == 0 {
+		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required edge "File.owner"`)}
 	}
 	if len(_c.mutation.DataIDs()) == 0 {
 		return &ValidationError{Name: "data", err: errors.New(`ent: missing required edge "File.data"`)}
@@ -311,6 +326,23 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.OwnerTable,
+			Columns: []string{file.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_files = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.DataIDs(); len(nodes) > 0 {
