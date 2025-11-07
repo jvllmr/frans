@@ -179,34 +179,42 @@ func (_u *FileUpdate) AddExpiryTotalDownloads(v int8) *FileUpdate {
 	return _u
 }
 
-// AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
-func (_u *FileUpdate) AddTicketIDs(ids ...uuid.UUID) *FileUpdate {
-	_u.mutation.AddTicketIDs(ids...)
+// SetTicketID sets the "ticket" edge to the Ticket entity by ID.
+func (_u *FileUpdate) SetTicketID(id uuid.UUID) *FileUpdate {
+	_u.mutation.SetTicketID(id)
 	return _u
 }
 
-// AddTickets adds the "tickets" edges to the Ticket entity.
-func (_u *FileUpdate) AddTickets(v ...*Ticket) *FileUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
+// SetNillableTicketID sets the "ticket" edge to the Ticket entity by ID if the given value is not nil.
+func (_u *FileUpdate) SetNillableTicketID(id *uuid.UUID) *FileUpdate {
+	if id != nil {
+		_u = _u.SetTicketID(*id)
 	}
-	return _u.AddTicketIDs(ids...)
-}
-
-// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
-func (_u *FileUpdate) AddGrantIDs(ids ...uuid.UUID) *FileUpdate {
-	_u.mutation.AddGrantIDs(ids...)
 	return _u
 }
 
-// AddGrants adds the "grants" edges to the Grant entity.
-func (_u *FileUpdate) AddGrants(v ...*Grant) *FileUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
+// SetTicket sets the "ticket" edge to the Ticket entity.
+func (_u *FileUpdate) SetTicket(v *Ticket) *FileUpdate {
+	return _u.SetTicketID(v.ID)
+}
+
+// SetGrantID sets the "grant" edge to the Grant entity by ID.
+func (_u *FileUpdate) SetGrantID(id uuid.UUID) *FileUpdate {
+	_u.mutation.SetGrantID(id)
+	return _u
+}
+
+// SetNillableGrantID sets the "grant" edge to the Grant entity by ID if the given value is not nil.
+func (_u *FileUpdate) SetNillableGrantID(id *uuid.UUID) *FileUpdate {
+	if id != nil {
+		_u = _u.SetGrantID(*id)
 	}
-	return _u.AddGrantIDs(ids...)
+	return _u
+}
+
+// SetGrant sets the "grant" edge to the Grant entity.
+func (_u *FileUpdate) SetGrant(v *Grant) *FileUpdate {
+	return _u.SetGrantID(v.ID)
 }
 
 // SetOwnerID sets the "owner" edge to the User entity by ID.
@@ -236,46 +244,16 @@ func (_u *FileUpdate) Mutation() *FileMutation {
 	return _u.mutation
 }
 
-// ClearTickets clears all "tickets" edges to the Ticket entity.
-func (_u *FileUpdate) ClearTickets() *FileUpdate {
-	_u.mutation.ClearTickets()
+// ClearTicket clears the "ticket" edge to the Ticket entity.
+func (_u *FileUpdate) ClearTicket() *FileUpdate {
+	_u.mutation.ClearTicket()
 	return _u
 }
 
-// RemoveTicketIDs removes the "tickets" edge to Ticket entities by IDs.
-func (_u *FileUpdate) RemoveTicketIDs(ids ...uuid.UUID) *FileUpdate {
-	_u.mutation.RemoveTicketIDs(ids...)
+// ClearGrant clears the "grant" edge to the Grant entity.
+func (_u *FileUpdate) ClearGrant() *FileUpdate {
+	_u.mutation.ClearGrant()
 	return _u
-}
-
-// RemoveTickets removes "tickets" edges to Ticket entities.
-func (_u *FileUpdate) RemoveTickets(v ...*Ticket) *FileUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveTicketIDs(ids...)
-}
-
-// ClearGrants clears all "grants" edges to the Grant entity.
-func (_u *FileUpdate) ClearGrants() *FileUpdate {
-	_u.mutation.ClearGrants()
-	return _u
-}
-
-// RemoveGrantIDs removes the "grants" edge to Grant entities by IDs.
-func (_u *FileUpdate) RemoveGrantIDs(ids ...uuid.UUID) *FileUpdate {
-	_u.mutation.RemoveGrantIDs(ids...)
-	return _u
-}
-
-// RemoveGrants removes "grants" edges to Grant entities.
-func (_u *FileUpdate) RemoveGrants(v ...*Grant) *FileUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveGrantIDs(ids...)
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
@@ -379,12 +357,12 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedExpiryTotalDownloads(); ok {
 		_spec.AddField(file.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
-	if _u.mutation.TicketsCleared() {
+	if _u.mutation.TicketCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.TicketsTable,
-			Columns: file.TicketsPrimaryKey,
+			Table:   file.TicketTable,
+			Columns: []string{file.TicketColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
@@ -392,28 +370,12 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !_u.mutation.TicketsCleared() {
+	if nodes := _u.mutation.TicketIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.TicketsTable,
-			Columns: file.TicketsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.TicketsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   file.TicketsTable,
-			Columns: file.TicketsPrimaryKey,
+			Table:   file.TicketTable,
+			Columns: []string{file.TicketColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
@@ -424,12 +386,12 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.GrantsCleared() {
+	if _u.mutation.GrantCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.GrantsTable,
-			Columns: file.GrantsPrimaryKey,
+			Table:   file.GrantTable,
+			Columns: []string{file.GrantColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
@@ -437,28 +399,12 @@ func (_u *FileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedGrantsIDs(); len(nodes) > 0 && !_u.mutation.GrantsCleared() {
+	if nodes := _u.mutation.GrantIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.GrantsTable,
-			Columns: file.GrantsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.GrantsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   file.GrantsTable,
-			Columns: file.GrantsPrimaryKey,
+			Table:   file.GrantTable,
+			Columns: []string{file.GrantColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
@@ -693,34 +639,42 @@ func (_u *FileUpdateOne) AddExpiryTotalDownloads(v int8) *FileUpdateOne {
 	return _u
 }
 
-// AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
-func (_u *FileUpdateOne) AddTicketIDs(ids ...uuid.UUID) *FileUpdateOne {
-	_u.mutation.AddTicketIDs(ids...)
+// SetTicketID sets the "ticket" edge to the Ticket entity by ID.
+func (_u *FileUpdateOne) SetTicketID(id uuid.UUID) *FileUpdateOne {
+	_u.mutation.SetTicketID(id)
 	return _u
 }
 
-// AddTickets adds the "tickets" edges to the Ticket entity.
-func (_u *FileUpdateOne) AddTickets(v ...*Ticket) *FileUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
+// SetNillableTicketID sets the "ticket" edge to the Ticket entity by ID if the given value is not nil.
+func (_u *FileUpdateOne) SetNillableTicketID(id *uuid.UUID) *FileUpdateOne {
+	if id != nil {
+		_u = _u.SetTicketID(*id)
 	}
-	return _u.AddTicketIDs(ids...)
-}
-
-// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
-func (_u *FileUpdateOne) AddGrantIDs(ids ...uuid.UUID) *FileUpdateOne {
-	_u.mutation.AddGrantIDs(ids...)
 	return _u
 }
 
-// AddGrants adds the "grants" edges to the Grant entity.
-func (_u *FileUpdateOne) AddGrants(v ...*Grant) *FileUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
+// SetTicket sets the "ticket" edge to the Ticket entity.
+func (_u *FileUpdateOne) SetTicket(v *Ticket) *FileUpdateOne {
+	return _u.SetTicketID(v.ID)
+}
+
+// SetGrantID sets the "grant" edge to the Grant entity by ID.
+func (_u *FileUpdateOne) SetGrantID(id uuid.UUID) *FileUpdateOne {
+	_u.mutation.SetGrantID(id)
+	return _u
+}
+
+// SetNillableGrantID sets the "grant" edge to the Grant entity by ID if the given value is not nil.
+func (_u *FileUpdateOne) SetNillableGrantID(id *uuid.UUID) *FileUpdateOne {
+	if id != nil {
+		_u = _u.SetGrantID(*id)
 	}
-	return _u.AddGrantIDs(ids...)
+	return _u
+}
+
+// SetGrant sets the "grant" edge to the Grant entity.
+func (_u *FileUpdateOne) SetGrant(v *Grant) *FileUpdateOne {
+	return _u.SetGrantID(v.ID)
 }
 
 // SetOwnerID sets the "owner" edge to the User entity by ID.
@@ -750,46 +704,16 @@ func (_u *FileUpdateOne) Mutation() *FileMutation {
 	return _u.mutation
 }
 
-// ClearTickets clears all "tickets" edges to the Ticket entity.
-func (_u *FileUpdateOne) ClearTickets() *FileUpdateOne {
-	_u.mutation.ClearTickets()
+// ClearTicket clears the "ticket" edge to the Ticket entity.
+func (_u *FileUpdateOne) ClearTicket() *FileUpdateOne {
+	_u.mutation.ClearTicket()
 	return _u
 }
 
-// RemoveTicketIDs removes the "tickets" edge to Ticket entities by IDs.
-func (_u *FileUpdateOne) RemoveTicketIDs(ids ...uuid.UUID) *FileUpdateOne {
-	_u.mutation.RemoveTicketIDs(ids...)
+// ClearGrant clears the "grant" edge to the Grant entity.
+func (_u *FileUpdateOne) ClearGrant() *FileUpdateOne {
+	_u.mutation.ClearGrant()
 	return _u
-}
-
-// RemoveTickets removes "tickets" edges to Ticket entities.
-func (_u *FileUpdateOne) RemoveTickets(v ...*Ticket) *FileUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveTicketIDs(ids...)
-}
-
-// ClearGrants clears all "grants" edges to the Grant entity.
-func (_u *FileUpdateOne) ClearGrants() *FileUpdateOne {
-	_u.mutation.ClearGrants()
-	return _u
-}
-
-// RemoveGrantIDs removes the "grants" edge to Grant entities by IDs.
-func (_u *FileUpdateOne) RemoveGrantIDs(ids ...uuid.UUID) *FileUpdateOne {
-	_u.mutation.RemoveGrantIDs(ids...)
-	return _u
-}
-
-// RemoveGrants removes "grants" edges to Grant entities.
-func (_u *FileUpdateOne) RemoveGrants(v ...*Grant) *FileUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _u.RemoveGrantIDs(ids...)
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
@@ -923,12 +847,12 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 	if value, ok := _u.mutation.AddedExpiryTotalDownloads(); ok {
 		_spec.AddField(file.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
-	if _u.mutation.TicketsCleared() {
+	if _u.mutation.TicketCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.TicketsTable,
-			Columns: file.TicketsPrimaryKey,
+			Table:   file.TicketTable,
+			Columns: []string{file.TicketColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
@@ -936,28 +860,12 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedTicketsIDs(); len(nodes) > 0 && !_u.mutation.TicketsCleared() {
+	if nodes := _u.mutation.TicketIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.TicketsTable,
-			Columns: file.TicketsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.TicketsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   file.TicketsTable,
-			Columns: file.TicketsPrimaryKey,
+			Table:   file.TicketTable,
+			Columns: []string{file.TicketColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
@@ -968,12 +876,12 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.GrantsCleared() {
+	if _u.mutation.GrantCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.GrantsTable,
-			Columns: file.GrantsPrimaryKey,
+			Table:   file.GrantTable,
+			Columns: []string{file.GrantColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
@@ -981,28 +889,12 @@ func (_u *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedGrantsIDs(); len(nodes) > 0 && !_u.mutation.GrantsCleared() {
+	if nodes := _u.mutation.GrantIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.GrantsTable,
-			Columns: file.GrantsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.GrantsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   file.GrantsTable,
-			Columns: file.GrantsPrimaryKey,
+			Table:   file.GrantTable,
+			Columns: []string{file.GrantColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),

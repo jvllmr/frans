@@ -103,34 +103,42 @@ func (_c *FileCreate) SetID(v uuid.UUID) *FileCreate {
 	return _c
 }
 
-// AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
-func (_c *FileCreate) AddTicketIDs(ids ...uuid.UUID) *FileCreate {
-	_c.mutation.AddTicketIDs(ids...)
+// SetTicketID sets the "ticket" edge to the Ticket entity by ID.
+func (_c *FileCreate) SetTicketID(id uuid.UUID) *FileCreate {
+	_c.mutation.SetTicketID(id)
 	return _c
 }
 
-// AddTickets adds the "tickets" edges to the Ticket entity.
-func (_c *FileCreate) AddTickets(v ...*Ticket) *FileCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
+// SetNillableTicketID sets the "ticket" edge to the Ticket entity by ID if the given value is not nil.
+func (_c *FileCreate) SetNillableTicketID(id *uuid.UUID) *FileCreate {
+	if id != nil {
+		_c = _c.SetTicketID(*id)
 	}
-	return _c.AddTicketIDs(ids...)
-}
-
-// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
-func (_c *FileCreate) AddGrantIDs(ids ...uuid.UUID) *FileCreate {
-	_c.mutation.AddGrantIDs(ids...)
 	return _c
 }
 
-// AddGrants adds the "grants" edges to the Grant entity.
-func (_c *FileCreate) AddGrants(v ...*Grant) *FileCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
+// SetTicket sets the "ticket" edge to the Ticket entity.
+func (_c *FileCreate) SetTicket(v *Ticket) *FileCreate {
+	return _c.SetTicketID(v.ID)
+}
+
+// SetGrantID sets the "grant" edge to the Grant entity by ID.
+func (_c *FileCreate) SetGrantID(id uuid.UUID) *FileCreate {
+	_c.mutation.SetGrantID(id)
+	return _c
+}
+
+// SetNillableGrantID sets the "grant" edge to the Grant entity by ID if the given value is not nil.
+func (_c *FileCreate) SetNillableGrantID(id *uuid.UUID) *FileCreate {
+	if id != nil {
+		_c = _c.SetGrantID(*id)
 	}
-	return _c.AddGrantIDs(ids...)
+	return _c
+}
+
+// SetGrant sets the "grant" edge to the Grant entity.
+func (_c *FileCreate) SetGrant(v *Grant) *FileCreate {
+	return _c.SetGrantID(v.ID)
 }
 
 // SetOwnerID sets the "owner" edge to the User entity by ID.
@@ -296,12 +304,12 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		_spec.SetField(file.FieldExpiryTotalDownloads, field.TypeUint8, value)
 		_node.ExpiryTotalDownloads = value
 	}
-	if nodes := _c.mutation.TicketsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TicketIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.TicketsTable,
-			Columns: file.TicketsPrimaryKey,
+			Table:   file.TicketTable,
+			Columns: []string{file.TicketColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
@@ -310,14 +318,15 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.ticket_files = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.GrantsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.GrantIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.GrantsTable,
-			Columns: file.GrantsPrimaryKey,
+			Table:   file.GrantTable,
+			Columns: []string{file.GrantColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
@@ -326,6 +335,7 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.grant_files = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.OwnerIDs(); len(nodes) > 0 {
