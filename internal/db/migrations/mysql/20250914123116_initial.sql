@@ -1,9 +1,13 @@
+-- Create "file_data" table
+CREATE TABLE `file_data` (
+  `id` varchar(255) NOT NULL,
+  `size` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) CHARSET utf8mb4 COLLATE utf8mb4_bin;
 -- Create "files" table
 CREATE TABLE `files` (
   `id` char(36) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `size` bigint unsigned NOT NULL,
-  `sha512` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL,
   `last_download` timestamp NULL,
   `times_downloaded` bigint unsigned NOT NULL DEFAULT 0,
@@ -11,7 +15,10 @@ CREATE TABLE `files` (
   `expiry_total_days` tinyint unsigned NOT NULL,
   `expiry_days_since_last_download` tinyint unsigned NOT NULL,
   `expiry_total_downloads` tinyint unsigned NOT NULL,
-  PRIMARY KEY (`id`)
+  `file_data` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `files_file_data_data` (`file_data`),
+  CONSTRAINT `files_file_data_data` FOREIGN KEY (`file_data`) REFERENCES `file_data` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
 ) CHARSET utf8mb4 COLLATE utf8mb4_bin;
 -- Create "users" table
 CREATE TABLE `users` (
@@ -110,4 +117,13 @@ CREATE TABLE `ticket_files` (
   INDEX `ticket_files_file_id` (`file_id`),
   CONSTRAINT `ticket_files_file_id` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `ticket_files_ticket_id` FOREIGN KEY (`ticket_id`) REFERENCES `tickets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) CHARSET utf8mb4 COLLATE utf8mb4_bin;
+-- Create "user_fileinfos" table
+CREATE TABLE `user_fileinfos` (
+  `user_id` char(36) NOT NULL,
+  `file_data_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`user_id`, `file_data_id`),
+  INDEX `user_fileinfos_file_data_id` (`file_data_id`),
+  CONSTRAINT `user_fileinfos_file_data_id` FOREIGN KEY (`file_data_id`) REFERENCES `file_data` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT `user_fileinfos_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) CHARSET utf8mb4 COLLATE utf8mb4_bin;

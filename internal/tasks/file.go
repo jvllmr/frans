@@ -13,59 +13,47 @@ import (
 func FileLifecycleTask(db *ent.Client, fs services.FileService) {
 	files := db.File.Query().
 		Where(file.TimesDownloadedGT(0)).
-		WithTickets(func(ticketQuery *ent.TicketQuery) {
-			ticketQuery.WithOwner()
-		}).
-		WithGrants(func(grantQuery *ent.GrantQuery) {
-			grantQuery.WithOwner()
-		}).
+		WithData().
+		WithOwner().
 		AllX(context.Background())
 	deletedCount := 0
 	var users []*ent.User
 	for _, fileValue := range files {
-		var ticketValue *ent.Ticket
-		if len(fileValue.Edges.Tickets) == 1 {
-			ticketValue = fileValue.Edges.Tickets[0]
-		}
-
-		var grantValue *ent.Grant
-		if len(fileValue.Edges.Grants) == 1 {
-			grantValue = fileValue.Edges.Grants[0]
-		}
-
 		if fs.ShouldDeleteFile(fileValue) {
-			err := fs.DeleteFile(fileValue)
+			fileOwner := fileValue.Edges.Owner
+			err := fs.DeleteFile(context.Background(), fileValue)
 			if err != nil {
-				filePath := fs.FilesFilePath(fileValue.Sha512)
+				filePath := fs.FilesFilePath(fileValue.Edges.Data.ID)
 				slog.Error("Could not delete file", "file", filePath, "err", err)
 				continue
 			}
-
 			deletedCount += 1
-			if ticketValue != nil {
-				users = append(users, ticketValue.Edges.Owner)
-			}
-
-			if grantValue != nil {
-				users = append(users, grantValue.Edges.Owner)
-			}
+			users = append(users, fileOwner)
 
 		}
 
 	}
 	slog.Info("Deleted files", "count", deletedCount)
-
-	for _, userValue := range users {
-		err := util.RefreshUserTotalDataSize(context.Background(), userValue, nil)
+	tx, err := db.Tx(context.Background())
+	if err != nil {
+		slog.Error("Could not update users data size", "err", err)
+		return
+	}
+	for _, u := range users {
+		err := util.RefreshUserTotalDataSize(context.Background(), u, tx)
 		if err != nil {
 			slog.Error(
 				"Could not refresh total data size of user",
 				"err",
 				err,
 				"user",
-				userValue.Username,
+				u.Username,
 			)
 		}
+	}
+	if err := tx.Commit(); err != nil {
+		slog.Error("Could not commit users data size updates", "err", err)
+		return
 	}
 	slog.Info(
 		"Refreshed totalDataSize field for all users affected by file deletions",

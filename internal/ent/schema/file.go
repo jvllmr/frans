@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -19,8 +20,6 @@ func (File) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Unique(),
 		field.String("name"),
-		field.Uint64("size"),
-		field.String("sha512"),
 		field.Time("created_at").
 			Default(time.Now),
 		field.Time("last_download").Nillable().Optional(),
@@ -35,7 +34,13 @@ func (File) Fields() []ent.Field {
 // Edges of the File.
 func (File) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("tickets", Ticket.Type).Ref("files"),
-		edge.From("grants", Grant.Type).Ref("files"),
+		edge.From("ticket", Ticket.Type).Ref("files").Unique(),
+		edge.From("grant", Grant.Type).Ref("files").Unique(),
+		edge.From("owner", User.Type).
+			Ref("files").
+			Unique().
+			Required().
+			Annotations(entsql.OnDelete(entsql.Restrict)),
+		edge.To("data", FileData.Type).Unique().Required(),
 	}
 }

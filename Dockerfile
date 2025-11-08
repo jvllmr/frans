@@ -1,6 +1,6 @@
-FROM golang:1.25.1-alpine AS server-base
+FROM golang:1.25.4-alpine AS server-base
 
-FROM node:24.6.0-alpine AS client-base
+FROM node:24.11.0-alpine AS client-base
 WORKDIR /workspace
 COPY ./package.json ./pnpm-workspace.yaml ./pnpm-lock.yaml ./
 RUN corepack prepare && corepack enable
@@ -30,12 +30,14 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 COPY --from=client-builder /workspace/internal ./internal
 COPY ./internal/config/version.go ./internal/config/version.go
 COPY . .
+RUN sh ./scripts/prebuild.sh
 RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build sh ./scripts/build_server.sh
+    --mount=type=cache,target=/root/.cache/go-build go build
 RUN chmod +x /workspace/frans
 
 
 FROM scratch AS runner
+COPY --from=server-builder /etc/ssl/certs /etc/ssl/certs
 COPY --from=server-builder --chown=1001:1001 /emptyd /tmp
 COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/files
 COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/migrations
@@ -46,6 +48,7 @@ COPY --from=server-builder /workspace/frans /opt/frans/
 USER 1001:1001
 WORKDIR /opt/frans
 VOLUME /opt/frans/files
+ENV USER=1001
 ENV FRANS_HOST=0.0.0.0
 ENV FRANS_DEV_MODE=false
 

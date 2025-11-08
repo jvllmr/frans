@@ -8,6 +8,38 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    permissions:
+      contents: read
+    name: unittest
+    runs-on: ubuntu-latest
+    services:
+      smtp:
+        image: docker.io/rnwood/smtp4dev:3.10.3
+        ports:
+          - 127.0.0.1:2525:25
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+        with:
+          run_install: false
+      - name: Setup go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version: ">=1.25.4"
+      - name: Run pre-build steps
+        run: ./scripts/prebuild.sh
+      - name: Generate version
+        run: ./scripts/gen_version.sh
+      - name: Run tests
+        run: pnpm test:cover
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
   build:
     permissions:
       contents: read
@@ -18,22 +50,24 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup pnpm
-        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
           run_install: false
       - name: Install Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
-          node-version: 24.7.0
+          node-version: 24.11.0
           cache: "pnpm"
       - name: Setup go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version: ">=1.25.4"
       - name: Install dependencies
         run: pnpm install --frozen-lock
       - name: Build
         run: pnpm build
       - name: Upload build
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
           name: build-output
           path: frans
@@ -48,7 +82,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: build-output
       - run: chmod +x frans
@@ -69,7 +103,7 @@ jobs:
 
     services:
       postgres:
-        image: docker.io/postgres:17-alpine
+        image: docker.io/postgres:18-alpine
         ports:
           - 5432:5432
         env:
@@ -82,7 +116,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: build-output
       - run: chmod +x frans
@@ -119,7 +153,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         with:
           name: build-output
       - run: chmod +x frans

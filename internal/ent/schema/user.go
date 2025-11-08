@@ -37,5 +37,6 @@ func (User) Edges() []ent.Edge {
 		edge.To("sessions", Session.Type),
 		edge.To("tickets", Ticket.Type),
 		edge.To("grants", Grant.Type),
+		edge.To("files", File.Type),
 	}
 }

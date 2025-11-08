@@ -16,10 +16,6 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldSize holds the string denoting the size field in the database.
-	FieldSize = "size"
-	// FieldSha512 holds the string denoting the sha512 field in the database.
-	FieldSha512 = "sha512"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldLastDownload holds the string denoting the last_download field in the database.
@@ -34,30 +30,50 @@ const (
 	FieldExpiryDaysSinceLastDownload = "expiry_days_since_last_download"
 	// FieldExpiryTotalDownloads holds the string denoting the expiry_total_downloads field in the database.
 	FieldExpiryTotalDownloads = "expiry_total_downloads"
-	// EdgeTickets holds the string denoting the tickets edge name in mutations.
-	EdgeTickets = "tickets"
-	// EdgeGrants holds the string denoting the grants edge name in mutations.
-	EdgeGrants = "grants"
+	// EdgeTicket holds the string denoting the ticket edge name in mutations.
+	EdgeTicket = "ticket"
+	// EdgeGrant holds the string denoting the grant edge name in mutations.
+	EdgeGrant = "grant"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
+	// EdgeData holds the string denoting the data edge name in mutations.
+	EdgeData = "data"
 	// Table holds the table name of the file in the database.
 	Table = "files"
-	// TicketsTable is the table that holds the tickets relation/edge. The primary key declared below.
-	TicketsTable = "ticket_files"
-	// TicketsInverseTable is the table name for the Ticket entity.
+	// TicketTable is the table that holds the ticket relation/edge.
+	TicketTable = "files"
+	// TicketInverseTable is the table name for the Ticket entity.
 	// It exists in this package in order to avoid circular dependency with the "ticket" package.
-	TicketsInverseTable = "tickets"
-	// GrantsTable is the table that holds the grants relation/edge. The primary key declared below.
-	GrantsTable = "grant_files"
-	// GrantsInverseTable is the table name for the Grant entity.
+	TicketInverseTable = "tickets"
+	// TicketColumn is the table column denoting the ticket relation/edge.
+	TicketColumn = "ticket_files"
+	// GrantTable is the table that holds the grant relation/edge.
+	GrantTable = "files"
+	// GrantInverseTable is the table name for the Grant entity.
 	// It exists in this package in order to avoid circular dependency with the "grant" package.
-	GrantsInverseTable = "grants"
+	GrantInverseTable = "grants"
+	// GrantColumn is the table column denoting the grant relation/edge.
+	GrantColumn = "grant_files"
+	// OwnerTable is the table that holds the owner relation/edge.
+	OwnerTable = "files"
+	// OwnerInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	OwnerInverseTable = "users"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "user_files"
+	// DataTable is the table that holds the data relation/edge.
+	DataTable = "files"
+	// DataInverseTable is the table name for the FileData entity.
+	// It exists in this package in order to avoid circular dependency with the "filedata" package.
+	DataInverseTable = "file_data"
+	// DataColumn is the table column denoting the data relation/edge.
+	DataColumn = "file_data"
 )
 
 // Columns holds all SQL columns for file fields.
 var Columns = []string{
 	FieldID,
 	FieldName,
-	FieldSize,
-	FieldSha512,
 	FieldCreatedAt,
 	FieldLastDownload,
 	FieldTimesDownloaded,
@@ -67,19 +83,24 @@ var Columns = []string{
 	FieldExpiryTotalDownloads,
 }
 
-var (
-	// TicketsPrimaryKey and TicketsColumn2 are the table columns denoting the
-	// primary key for the tickets relation (M2M).
-	TicketsPrimaryKey = []string{"ticket_id", "file_id"}
-	// GrantsPrimaryKey and GrantsColumn2 are the table columns denoting the
-	// primary key for the grants relation (M2M).
-	GrantsPrimaryKey = []string{"grant_id", "file_id"}
-)
+// ForeignKeys holds the SQL foreign-keys that are owned by the "files"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"file_data",
+	"grant_files",
+	"ticket_files",
+	"user_files",
+}
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -104,16 +125,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
-}
-
-// BySize orders the results by the size field.
-func BySize(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSize, opts...).ToFunc()
-}
-
-// BySha512 orders the results by the sha512 field.
-func BySha512(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSha512, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.
@@ -151,44 +162,58 @@ func ByExpiryTotalDownloads(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiryTotalDownloads, opts...).ToFunc()
 }
 
-// ByTicketsCount orders the results by tickets count.
-func ByTicketsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByTicketField orders the results by ticket field.
+func ByTicketField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newTicketsStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newTicketStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByTickets orders the results by tickets terms.
-func ByTickets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByGrantField orders the results by grant field.
+func ByGrantField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTicketsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newGrantStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByGrantsCount orders the results by grants count.
-func ByGrantsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newGrantsStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByGrants orders the results by grants terms.
-func ByGrants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByDataField orders the results by data field.
+func ByDataField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newGrantsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newDataStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newTicketsStep() *sqlgraph.Step {
+func newTicketStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(TicketsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, TicketsTable, TicketsPrimaryKey...),
+		sqlgraph.To(TicketInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, TicketTable, TicketColumn),
 	)
 }
-func newGrantsStep() *sqlgraph.Step {
+func newGrantStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(GrantsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, GrantsTable, GrantsPrimaryKey...),
+		sqlgraph.To(GrantInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, GrantTable, GrantColumn),
+	)
+}
+func newOwnerStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OwnerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+	)
+}
+func newDataStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DataInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, DataTable, DataColumn),
 	)
 }

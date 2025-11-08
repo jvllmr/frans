@@ -9,6 +9,9 @@ import (
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
+// FileData is the predicate function for filedata builders.
+type FileData func(*sql.Selector)
+
 // Grant is the predicate function for grant builders.
 type Grant func(*sql.Selector)
 

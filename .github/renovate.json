@@ -12,6 +12,9 @@
     ":semanticCommitTypeAll(chore)",
     "helpers:pinGitHubActionDigests"
   ],
+  "pre-commit": {
+    "enabled": true
+  },
   "labels": ["dependencies"],
   "rangeStrategy": "bump",
   "packageRules": [

@@ -11,6 +11,9 @@ It took heavy inspiration from [DownloadTicketService](https://www.thregr.org/wa
 
 - Create file shares and share them with others
 - Create upload grants which allow others to upload their files to you
+- Container/Cloud-Native focused architecture
+- OpenID Connect authentication only
+- OpenTelemetry included
 
 The goal is to translate `frans` to the following languages:
 
@@ -31,7 +34,45 @@ Feel free to contribute or improve translations via [Crowdin](https://crowdin.co
 
 ### Helm Chart
 
-TODO...
+Frans comes with a Helm chart hosted via GitHub Container Registry.
+The helm chart is unopinionated about anything outside of `frans` and therefore doesn't install anything besides `frans` itself.
+This means that you will have to prepare a database server, OIDC provider and a SMTP Server beforehand.
+
+Your `values.yaml` should at least include the following values to connect with these services:
+
+```yaml
+db:
+  # Database type to use. One of `postgres`, `mysql` or `sqlite3`
+  type: postgres
+  # Database host (file path in case of `sqlite3`)
+  host: localhost # or frans.db for sqlite3
+  # Database port
+  port: 5432 # or 3306 for mysql
+  # Database name
+  name: frans
+  # Database user
+  user: frans
+  # Database password (required for postgres and mysql)
+  password: frans
+
+oidc:
+  issuer: https://your-oidc-provider
+  client_id: your-client-id
+
+smtp:
+  server: smtp-server-host
+  port: 25
+```
+
+After your preparations are done, simply run
+
+```shell
+helm install frans oci://ghcr.io/jvllmr/frans --values values.yaml
+```
+
+to install the helm chart.
+
+For more `values.yaml` options, look inside the default [values.yaml](charts/frans/values.yaml).
 
 ### Docker Compose
 
@@ -96,8 +137,10 @@ It starts:
 
 - a keycloak instance available under `http://localhost:8080`
 - a smtp4dev instance available under `http://localhost:5000`
+- an OpenObserve instance available under `http://localhost:5080`
 
 Keycloak can be managed via the credentials `admin`/`admin`.
+OpenObserve can be accessed via `root@example.net`/ `admin`.
 
 Frans authentication is managed via the `dev` realm.
 

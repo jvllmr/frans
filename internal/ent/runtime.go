@@ -19,11 +19,11 @@ func init() {
 	fileFields := schema.File{}.Fields()
 	_ = fileFields
 	// fileDescCreatedAt is the schema descriptor for created_at field.
-	fileDescCreatedAt := fileFields[4].Descriptor()
+	fileDescCreatedAt := fileFields[2].Descriptor()
 	// file.DefaultCreatedAt holds the default value on creation for the created_at field.
 	file.DefaultCreatedAt = fileDescCreatedAt.Default.(func() time.Time)
 	// fileDescTimesDownloaded is the schema descriptor for times_downloaded field.
-	fileDescTimesDownloaded := fileFields[6].Descriptor()
+	fileDescTimesDownloaded := fileFields[4].Descriptor()
 	// file.DefaultTimesDownloaded holds the default value on creation for the times_downloaded field.
 	file.DefaultTimesDownloaded = fileDescTimesDownloaded.Default.(uint64)
 	grantFields := schema.Grant{}.Fields()

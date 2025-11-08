@@ -21,6 +21,18 @@ func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileMutation", m)
 }
 
+// The FileDataFunc type is an adapter to allow the use of ordinary
+// function as FileData mutator.
+type FileDataFunc func(context.Context, *ent.FileDataMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FileDataFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FileDataMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileDataMutation", m)
+}
+
 // The GrantFunc type is an adapter to allow the use of ordinary
 // function as Grant mutator.
 type GrantFunc func(context.Context, *ent.GrantMutation) (ent.Value, error)

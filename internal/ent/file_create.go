@@ -12,8 +12,10 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/filedata"
 	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/ticket"
+	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // FileCreate is the builder for creating a File entity.
@@ -26,18 +28,6 @@ type FileCreate struct {
 // SetName sets the "name" field.
 func (_c *FileCreate) SetName(v string) *FileCreate {
 	_c.mutation.SetName(v)
-	return _c
-}
-
-// SetSize sets the "size" field.
-func (_c *FileCreate) SetSize(v uint64) *FileCreate {
-	_c.mutation.SetSize(v)
-	return _c
-}
-
-// SetSha512 sets the "sha512" field.
-func (_c *FileCreate) SetSha512(v string) *FileCreate {
-	_c.mutation.SetSha512(v)
 	return _c
 }
 
@@ -113,34 +103,64 @@ func (_c *FileCreate) SetID(v uuid.UUID) *FileCreate {
 	return _c
 }
 
-// AddTicketIDs adds the "tickets" edge to the Ticket entity by IDs.
-func (_c *FileCreate) AddTicketIDs(ids ...uuid.UUID) *FileCreate {
-	_c.mutation.AddTicketIDs(ids...)
+// SetTicketID sets the "ticket" edge to the Ticket entity by ID.
+func (_c *FileCreate) SetTicketID(id uuid.UUID) *FileCreate {
+	_c.mutation.SetTicketID(id)
 	return _c
 }
 
-// AddTickets adds the "tickets" edges to the Ticket entity.
-func (_c *FileCreate) AddTickets(v ...*Ticket) *FileCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
+// SetNillableTicketID sets the "ticket" edge to the Ticket entity by ID if the given value is not nil.
+func (_c *FileCreate) SetNillableTicketID(id *uuid.UUID) *FileCreate {
+	if id != nil {
+		_c = _c.SetTicketID(*id)
 	}
-	return _c.AddTicketIDs(ids...)
-}
-
-// AddGrantIDs adds the "grants" edge to the Grant entity by IDs.
-func (_c *FileCreate) AddGrantIDs(ids ...uuid.UUID) *FileCreate {
-	_c.mutation.AddGrantIDs(ids...)
 	return _c
 }
 
-// AddGrants adds the "grants" edges to the Grant entity.
-func (_c *FileCreate) AddGrants(v ...*Grant) *FileCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
+// SetTicket sets the "ticket" edge to the Ticket entity.
+func (_c *FileCreate) SetTicket(v *Ticket) *FileCreate {
+	return _c.SetTicketID(v.ID)
+}
+
+// SetGrantID sets the "grant" edge to the Grant entity by ID.
+func (_c *FileCreate) SetGrantID(id uuid.UUID) *FileCreate {
+	_c.mutation.SetGrantID(id)
+	return _c
+}
+
+// SetNillableGrantID sets the "grant" edge to the Grant entity by ID if the given value is not nil.
+func (_c *FileCreate) SetNillableGrantID(id *uuid.UUID) *FileCreate {
+	if id != nil {
+		_c = _c.SetGrantID(*id)
 	}
-	return _c.AddGrantIDs(ids...)
+	return _c
+}
+
+// SetGrant sets the "grant" edge to the Grant entity.
+func (_c *FileCreate) SetGrant(v *Grant) *FileCreate {
+	return _c.SetGrantID(v.ID)
+}
+
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (_c *FileCreate) SetOwnerID(id uuid.UUID) *FileCreate {
+	_c.mutation.SetOwnerID(id)
+	return _c
+}
+
+// SetOwner sets the "owner" edge to the User entity.
+func (_c *FileCreate) SetOwner(v *User) *FileCreate {
+	return _c.SetOwnerID(v.ID)
+}
+
+// SetDataID sets the "data" edge to the FileData entity by ID.
+func (_c *FileCreate) SetDataID(id string) *FileCreate {
+	_c.mutation.SetDataID(id)
+	return _c
+}
+
+// SetData sets the "data" edge to the FileData entity.
+func (_c *FileCreate) SetData(v *FileData) *FileCreate {
+	return _c.SetDataID(v.ID)
 }
 
 // Mutation returns the FileMutation object of the builder.
@@ -193,12 +213,6 @@ func (_c *FileCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "File.name"`)}
 	}
-	if _, ok := _c.mutation.Size(); !ok {
-		return &ValidationError{Name: "size", err: errors.New(`ent: missing required field "File.size"`)}
-	}
-	if _, ok := _c.mutation.Sha512(); !ok {
-		return &ValidationError{Name: "sha512", err: errors.New(`ent: missing required field "File.sha512"`)}
-	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "File.created_at"`)}
 	}
@@ -216,6 +230,12 @@ func (_c *FileCreate) check() error {
 	}
 	if _, ok := _c.mutation.ExpiryTotalDownloads(); !ok {
 		return &ValidationError{Name: "expiry_total_downloads", err: errors.New(`ent: missing required field "File.expiry_total_downloads"`)}
+	}
+	if len(_c.mutation.OwnerIDs()) == 0 {
+		return &ValidationError{Name: "owner", err: errors.New(`ent: missing required edge "File.owner"`)}
+	}
+	if len(_c.mutation.DataIDs()) == 0 {
+		return &ValidationError{Name: "data", err: errors.New(`ent: missing required edge "File.data"`)}
 	}
 	return nil
 }
@@ -256,14 +276,6 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		_spec.SetField(file.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := _c.mutation.Size(); ok {
-		_spec.SetField(file.FieldSize, field.TypeUint64, value)
-		_node.Size = value
-	}
-	if value, ok := _c.mutation.Sha512(); ok {
-		_spec.SetField(file.FieldSha512, field.TypeString, value)
-		_node.Sha512 = value
-	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(file.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -292,12 +304,12 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		_spec.SetField(file.FieldExpiryTotalDownloads, field.TypeUint8, value)
 		_node.ExpiryTotalDownloads = value
 	}
-	if nodes := _c.mutation.TicketsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TicketIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.TicketsTable,
-			Columns: file.TicketsPrimaryKey,
+			Table:   file.TicketTable,
+			Columns: []string{file.TicketColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(ticket.FieldID, field.TypeUUID),
@@ -306,14 +318,15 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.ticket_files = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.GrantsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.GrantIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   file.GrantsTable,
-			Columns: file.GrantsPrimaryKey,
+			Table:   file.GrantTable,
+			Columns: []string{file.GrantColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(grant.FieldID, field.TypeUUID),
@@ -322,6 +335,41 @@ func (_c *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.grant_files = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   file.OwnerTable,
+			Columns: []string{file.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_files = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.DataIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   file.DataTable,
+			Columns: []string{file.DataColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(filedata.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.file_data = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

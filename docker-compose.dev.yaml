@@ -3,18 +3,18 @@ name: frans_dev
 services:
   keycloak-db:
     container_name: frans_dev_keycloak_db
-    image: docker.io/postgres:17
+    image: docker.io/postgres:18
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: secret
     volumes:
-      - keycloak-db-data:/var/lib/postgresql/data
+      - keycloak-db-data:/var/lib/postgresql/18/docker
     networks:
       - keycloak
   keycloak:
     container_name: frans_dev_keycloak
-    image: quay.io/keycloak/keycloak:26.3.3
+    image: quay.io/keycloak/keycloak:26.4.2
     command: start-dev --import-realm --verbose
     ports:
       - 127.0.0.1:8080:8080
@@ -31,13 +31,26 @@ services:
       - ./keycloak/realm_import:/opt/keycloak/data/import:Z
   smtp:
     container_name: frans_dev_smtp
-    image: docker.io/rnwood/smtp4dev:3.9.0
+    image: docker.io/rnwood/smtp4dev:3.10.3
     ports:
       - 127.0.0.1:5000:80
       - 127.0.0.1:2525:25
+  openobserve:
+    container_name: frans_dev_openobserve
+    image: public.ecr.aws/zinclabs/openobserve:v0.15.3
+    environment:
+      ZO_ROOT_USER_EMAIL: "root@example.com"
+      ZO_ROOT_USER_PASSWORD: "admin"
+      ZO_ROOT_USER_TOKEN: "admin"
+    ports:
+      - "127.0.0.1:5080:5080"
+      - "127.0.0.1:5081:5081"
+    volumes:
+      - o2-data:/data
 
 volumes:
   keycloak-db-data:
+  o2-data:
 
 networks:
   keycloak:

@@ -51,9 +51,11 @@ type UserEdges struct {
 	Tickets []*Ticket `json:"tickets,omitempty"`
 	// Grants holds the value of the grants edge.
 	Grants []*Grant `json:"grants,omitempty"`
+	// Files holds the value of the files edge.
+	Files []*File `json:"files,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // SessionsOrErr returns the Sessions value or an error if the edge
@@ -81,6 +83,15 @@ func (e UserEdges) GrantsOrErr() ([]*Grant, error) {
 		return e.Grants, nil
 	}
 	return nil, &NotLoadedError{edge: "grants"}
+}
+
+// FilesOrErr returns the Files value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) FilesOrErr() ([]*File, error) {
+	if e.loadedTypes[3] {
+		return e.Files, nil
+	}
+	return nil, &NotLoadedError{edge: "files"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -203,6 +214,11 @@ func (_m *User) QueryTickets() *TicketQuery {
 // QueryGrants queries the "grants" edge of the User entity.
 func (_m *User) QueryGrants() *GrantQuery {
 	return NewUserClient(_m.config).QueryGrants(_m)
+}
+
+// QueryFiles queries the "files" edge of the User entity.
+func (_m *User) QueryFiles() *FileQuery {
+	return NewUserClient(_m.config).QueryFiles(_m)
 }
 
 // Update returns a builder for updating this User.

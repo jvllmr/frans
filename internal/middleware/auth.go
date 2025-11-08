@@ -9,6 +9,7 @@ import (
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/oidc"
+	"github.com/jvllmr/frans/internal/otel"
 
 	"golang.org/x/oauth2"
 )
@@ -16,6 +17,8 @@ import (
 func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
+		ctx, span := otel.NewSpan(c.Request.Context(), "checkAuth")
+		defer span.End()
 		var err error
 		oauth2Config := p.NewOauth2Config(c.Request)
 
@@ -34,7 +37,7 @@ func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		session, err := p.GetSession(c.Request.Context(), idTokenCookie)
+		session, err := p.GetSession(ctx, idTokenCookie)
 		if err != nil {
 			slog.Debug("Not authenticated", "err", err)
 			p.MissingAuthResponse(c, oauth2Config, redirect)
@@ -49,7 +52,7 @@ func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 			Expiry:       session.Expire,
 			ExpiresIn:    session.Expire.Unix() - now.Unix(),
 		}
-		tokenSource := oauth2Config.TokenSource(c.Request.Context(), token)
+		tokenSource := oauth2Config.TokenSource(ctx, token)
 
 		newToken, err := tokenSource.Token()
 		if err != nil {
@@ -60,11 +63,11 @@ func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 		}
 
 		if newToken.Expiry.After(token.Expiry) {
-			p.UpdateSession(c.Request.Context(), session, newToken)
+			p.UpdateSession(ctx, session, newToken)
 			oidc.SetAccessTokenCookie(c, newToken.AccessToken)
 		}
 
-		userinfo, err := p.UserInfo(c.Request.Context(), tokenSource)
+		userinfo, err := p.UserInfo(ctx, tokenSource)
 
 		if err != nil {
 			slog.Debug("Not authenticated", "err", err)
@@ -87,7 +90,7 @@ func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 		}
 
 		userId, _ := uuid.Parse(userinfo.Subject)
-		user := p.MustGetUser(c.Request.Context(), userId)
+		user := p.MustGetUser(ctx, userId)
 		c.Set(config.UserGinContext, user)
 	}
 }

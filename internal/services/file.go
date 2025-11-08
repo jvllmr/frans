@@ -14,6 +14,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
+	"github.com/jvllmr/frans/internal/ent/file"
+	"github.com/jvllmr/frans/internal/ent/filedata"
+	"github.com/jvllmr/frans/internal/otel"
 )
 
 type ErrFileTooBig struct {
@@ -56,7 +59,6 @@ func (fs FileService) FilesFilePath(fileName string) string {
 }
 
 func (fs FileService) ShouldDeleteFile(
-
 	fileValue *ent.File,
 ) bool {
 	if fileValue.ExpiryType == config.TicketExpiryTypeNone {
@@ -80,12 +82,14 @@ func (fs FileService) CreateFile(
 	ctx context.Context,
 	tx *ent.Tx,
 	fileHeader *multipart.FileHeader,
+	user *ent.User,
 	expiryType string,
 	expiryDaysSinceLastDownload uint8,
 	expiryTotalDays uint8,
 	expiryTotalDownloads uint8,
-
 ) (*ent.File, error) {
+	ctx, span := otel.NewSpan(ctx, "createFile")
+	defer span.End()
 	if fileHeader.Size > fs.config.MaxSizes {
 		return nil, &ErrFileTooBig{
 			size:    fileHeader.Size,
@@ -103,25 +107,42 @@ func (fs FileService) CreateFile(
 	if err != nil {
 		return nil, fmt.Errorf("create file: %w", err)
 	}
+	defer tmpFileHandle.Close()
 	defer os.Remove(tmpFilePath)
 	writer := io.MultiWriter(hasher, tmpFileHandle)
 	_, err = io.Copy(writer, incomingFileHandle)
 	if err != nil {
 		return nil, fmt.Errorf("create file: %w", err)
 	}
-	tmpFileHandle.Close()
 
 	hash := hasher.Sum(nil)
 	sha512sum := hex.EncodeToString(hash)
+
+	fileData, err := tx.FileData.Get(ctx, sha512sum)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return nil, err
+		}
+		fileData, err = tx.FileData.Create().
+			SetID(sha512sum).
+			SetSize(uint64(fileHeader.Size)).
+			Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
 	dbFile, err := tx.File.Create().
 		SetID(uuid.New()).
 		SetName(fileHeader.Filename).
-		SetSize(uint64(fileHeader.Size)).
-		SetSha512(sha512sum).
 		SetExpiryType(expiryType).
 		SetExpiryDaysSinceLastDownload(expiryDaysSinceLastDownload).
 		SetExpiryTotalDays(expiryTotalDays).
 		SetExpiryTotalDownloads(expiryTotalDownloads).
+		SetData(fileData).
+		SetOwner(user).
 		Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("create file: %w", err)
@@ -134,13 +155,33 @@ func (fs FileService) CreateFile(
 	return dbFile, nil
 }
 
-func (fs FileService) DeleteFile(fileValue *ent.File) error {
-	filePath := fs.FilesFilePath(fileValue.Sha512)
-	err := os.Remove(filePath)
+func (fs FileService) DeleteFile(ctx context.Context, fileValue *ent.File) error {
+	ctx, span := otel.NewSpan(ctx, "DeleteFile")
+	defer span.End()
+	fileDataFilesCount, err := fs.db.FileData.Query().
+		Where(filedata.HasFilesWith(file.ID(fileValue.ID))).
+		QueryFiles().
+		Count(ctx)
 	if err != nil {
 		return err
 	}
-	err = fs.db.File.DeleteOne(fileValue).Exec(context.Background())
+	err = fs.db.File.DeleteOne(fileValue).Exec(ctx)
+	if err != nil {
+		return err
+	}
+	deleteFromFS := fileDataFilesCount <= 1
+	if deleteFromFS {
+		filePath := fs.FilesFilePath(fileValue.Edges.Data.ID)
+		err := os.Remove(filePath)
+		if err != nil {
+			return err
+		}
+		err = fs.db.FileData.DeleteOne(fileValue.Edges.Data).Exec(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
 	return err
 }
 
@@ -157,14 +198,15 @@ func (fs FileService) FileEstimatedExpiry(fileValue *ent.File) *time.Time {
 }
 
 type PublicFile struct {
-	Id              uuid.UUID `json:"id"`
-	Sha512          string    `json:"sha512"`
-	Size            uint64    `json:"size"`
-	Name            string    `json:"name"`
-	CreatedAt       string    `json:"createdAt"`
-	TimesDownloaded uint64    `json:"timesDownloaded"`
-	LastDownloaded  *string   `json:"lastDownloaded"`
-	EstimatedExpiry *string   `json:"estimatedExpiry"`
+	Id              uuid.UUID  `json:"id"`
+	Sha512          string     `json:"sha512"`
+	Size            uint64     `json:"size"`
+	Name            string     `json:"name"`
+	CreatedAt       string     `json:"createdAt"`
+	TimesDownloaded uint64     `json:"timesDownloaded"`
+	LastDownloaded  *string    `json:"lastDownloaded"`
+	EstimatedExpiry *string    `json:"estimatedExpiry"`
+	User            PublicUser `json:"owner"`
 }
 
 func (fs FileService) ToPublicFile(file *ent.File) PublicFile {
@@ -183,17 +225,20 @@ func (fs FileService) ToPublicFile(file *ent.File) PublicFile {
 
 	return PublicFile{
 		Id:              file.ID,
-		Sha512:          file.Sha512,
-		Size:            file.Size,
+		Sha512:          file.Edges.Data.ID,
+		Size:            file.Edges.Data.Size,
 		Name:            file.Name,
 		CreatedAt:       file.CreatedAt.UTC().Format(http.TimeFormat),
 		TimesDownloaded: file.TimesDownloaded,
 		LastDownloaded:  lastDownloadedValue,
 		EstimatedExpiry: estimatedExpiryValue,
+		User:            ToPublicUser(file.Edges.Owner),
 	}
 
 }
 
 func NewFileService(c config.Config, db *ent.Client) FileService {
-	return FileService{config: c, db: db}
+	fs := FileService{config: c, db: db}
+	fs.EnsureFilesTmpPath()
+	return fs
 }

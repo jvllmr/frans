@@ -56,6 +56,7 @@ type Config struct {
 	GrantExpiryConfig `mapstructure:"grant_expiry"`
 	LogConfig         `mapstructure:"log"`
 	ColorsConfig      `mapstructure:"colors"`
+	Otel              `mapstructure:"otel"`
 
 	DevMode bool `mapstructure:"dev_mode"`
 
@@ -99,11 +100,15 @@ func NewConfig() (Config, error) {
 
 	setDBConfigDefaults(fransConf)
 
+	fransConf.SetDefault("oidc.issuer", "")
+	fransConf.SetDefault("oidc.client_id", "")
 	fransConf.SetDefault("oidc.admin_group", "admin")
 
 	setLogConfigDefaults(fransConf)
 
+	fransConf.SetDefault("smtp.server", "")
 	fransConf.SetDefault("smtp.port", 25)
+	fransConf.SetDefault("smtp.from", "")
 	fransConf.SetDefault("smtp.username", nil)
 	fransConf.SetDefault("smtp.password", nil)
 
@@ -121,6 +126,8 @@ func NewConfig() (Config, error) {
 		"#000000",
 	})
 
+	setOtelConfigDefaults(fransConf)
+
 	setConfigSearchStrategy(fransConf)
 
 	if err := fransConf.ReadInConfig(); err != nil {
@@ -134,18 +141,15 @@ func NewConfig() (Config, error) {
 	return config, nil
 }
 
-func NewSafeConfig() Config {
-	configValue, err := NewConfig()
-	if err != nil {
-		panic(err)
-	}
-	return configValue
-}
-
 func (c *Config) GetBaseURL(request *http.Request) string {
 	proto := "http"
 	if request.TLS != nil {
 		proto = "https"
+	}
+	// TODO: do not always trust this info
+	xForwardedProto := request.Header.Get("X-Forwarded-Proto")
+	if xForwardedProto != "" {
+		proto = xForwardedProto
 	}
 	host := request.Host
 	patchedRootPath := c.RootPath

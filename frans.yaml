@@ -28,3 +28,11 @@ colors:
       "#424e88",
       "#36437a",
     ]
+otel:
+  grpc:
+    endpoint: localhost:5081
+    headers:
+      Authorization: "Basic cm9vdEBleGFtcGxlLmNvbTphZG1pbg=="
+      organization: default
+      stream-name: default
+    insecure: true

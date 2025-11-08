@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -17,14 +18,16 @@ import (
 	"github.com/jvllmr/frans/internal/ent/ticket"
 	"github.com/jvllmr/frans/internal/middleware"
 	"github.com/jvllmr/frans/internal/oidc"
+	"github.com/jvllmr/frans/internal/otel"
+	"github.com/jvllmr/frans/internal/util"
 
 	"github.com/tidwall/gjson"
 )
 
-//go:embed assets/*
+//go:embed all:assets/*
 var clientFiles embed.FS
 
-//go:embed index.html.tmpl
+//go:embed index.gohtml
 var indexFileContent string
 
 func loadManifest() gjson.Result {
@@ -116,10 +119,13 @@ type clientController struct {
 }
 
 func (cc *clientController) redirectShareLink(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "shareLinkRedirect")
+	defer span.End()
 	id := c.Param("id")
 	uuid, err := uuid.Parse(id)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
+		return
 	}
 
 	targetTicket := cc.db.Ticket.Query().
@@ -128,7 +134,7 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 	if targetTicket != nil {
 		c.Redirect(
 			http.StatusPermanentRedirect,
-			fmt.Sprintf("/share/ticket/%s", targetTicket.ID.String()),
+			fmt.Sprintf("%s/share/ticket/%s", cc.config.RootPath, targetTicket.ID.String()),
 		)
 		return
 	}
@@ -139,7 +145,7 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 	if targetGrant != nil {
 		c.Redirect(
 			http.StatusPermanentRedirect,
-			fmt.Sprintf("/share/grant/%s", targetGrant.ID.String()),
+			fmt.Sprintf("%s/share/grant/%s", cc.config.RootPath, targetGrant.ID.String()),
 		)
 		return
 	}
@@ -148,42 +154,50 @@ func (cc *clientController) redirectShareLink(c *gin.Context) {
 func SetupClientRoutes(
 	r *gin.Engine,
 	rGroup *gin.RouterGroup,
-	configValue config.Config,
+	cfg config.Config,
 	db *ent.Client,
 	oidcProvider *oidc.FransOidcProvider,
 ) {
 	controller := clientController{
-		config: configValue,
+		config: cfg,
 		db:     db,
 	}
 
 	rGroup.GET("/s/:id", controller.redirectShareLink)
 
-	setIndexTemplate(r, configValue)
+	setIndexTemplate(r, cfg)
 	staticFiles, _ := fs.Sub(clientFiles, "assets")
 	rGroup.StaticFS("/static", http.FS(staticFiles))
 
-	customColorJsonBytes, err := json.Marshal(configValue.CustomColor)
+	customColorJsonBytes, err := json.Marshal(cfg.CustomColor)
 	if err != nil {
 		log.Fatalf("Could not generate json from custom color setting.")
 	}
 	customColorJson := string(customColorJsonBytes)
 
-	r.NoRoute(middleware.Auth(oidcProvider, true), func(c *gin.Context) {
+	authMiddleware := middleware.Auth(oidcProvider, true)
+	clientAuthMiddleware := func(c *gin.Context) {
+		if strings.HasPrefix(c.Request.URL.Path, fmt.Sprintf("%s/share", cfg.RootPath)) {
+			return
+		}
+		authMiddleware(c)
+	}
+
+	r.NoRoute(clientAuthMiddleware, func(c *gin.Context) {
 		// Fallback to index.html for React Router
 		c.HTML(http.StatusOK, "index", gin.H{
-			"rootPath":                              configValue.RootPath,
-			"devMode":                               configValue.DevMode,
-			"maxFiles":                              configValue.MaxFiles,
-			"maxSizes":                              configValue.MaxSizes,
-			"defaultExpiryTotalDays":                configValue.DefaultExpiryTotalDays,
-			"defaultExpiryTotalDownloads":           configValue.DefaultExpiryTotalDownloads,
-			"defaultExpiryDaysSinceLastDownload":    configValue.DefaultExpiryDaysSinceLastDownload,
-			"grantDefaultExpiryTotalDays":           configValue.GrantDefaultExpiryTotalDays,
-			"grantDefaultExpiryTotalUploads":        configValue.GrantDefaultExpiryTotalUploads,
-			"grantDefaultExpiryDaysSinceLastUpload": configValue.GrantDefaultExpiryDaysSinceLastUpload,
+			"rootPath":                              cfg.RootPath,
+			"devMode":                               cfg.DevMode,
+			"maxFiles":                              cfg.MaxFiles,
+			"maxSizes":                              cfg.MaxSizes,
+			"defaultExpiryTotalDays":                cfg.DefaultExpiryTotalDays,
+			"defaultExpiryTotalDownloads":           cfg.DefaultExpiryTotalDownloads,
+			"defaultExpiryDaysSinceLastDownload":    cfg.DefaultExpiryDaysSinceLastDownload,
+			"grantDefaultExpiryTotalDays":           cfg.GrantDefaultExpiryTotalDays,
+			"grantDefaultExpiryTotalUploads":        cfg.GrantDefaultExpiryTotalUploads,
+			"grantDefaultExpiryDaysSinceLastUpload": cfg.GrantDefaultExpiryDaysSinceLastUpload,
 			"fransVersion":                          config.FransVersion,
-			"color":                                 configValue.Color,
+			"color":                                 cfg.Color,
 			"customColor":                           customColorJson,
 		})
 	})

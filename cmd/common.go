@@ -9,7 +9,10 @@ import (
 )
 
 func getConfigAndDBClient() (config.Config, *ent.Client) {
-	configValue := config.NewSafeConfig()
+	configValue, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Could not parse config: %v", err)
+	}
 	db, err := db.NewDBClient(configValue.DBConfig)
 	if err != nil {
 		log.Fatalf("Could not create db client: %v", err)

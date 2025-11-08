@@ -9,7 +9,6 @@ import {
 } from "@mantine/core";
 import { Dropzone, FileWithPath } from "@mantine/dropzone";
 import { IconPlus } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useFileSizeFormatter } from "~/i18n";
 import { FileIcon } from "../file/FileIcon";
@@ -30,21 +29,14 @@ export interface FilesInputProps {
 export function FilesInput({ onChange, value }: FilesInputProps) {
   const { t } = useTranslation("file_input");
   const fileSizeFormatter = useFileSizeFormatter();
-  const [filesCache, setFilesCache] = useState<FileWithPath[]>([]);
-  useEffect(() => {
-    if (value && value?.length < filesCache.length) {
-      setFilesCache(value);
-    }
-  }, [value, filesCache]);
 
   return (
     <Dropzone
       maxSize={window.fransMaxSizes}
       maxFiles={window.fransMaxFiles}
       onDrop={(newFiles) => {
-        const files = [...filesCache, ...newFiles];
+        const files = value ? [...value, ...newFiles] : newFiles;
         onChange(files);
-        setFilesCache(files);
       }}
       mih={200}
     >
@@ -64,11 +56,10 @@ export function FilesInput({ onChange, value }: FilesInputProps) {
                   <CloseButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      const newFiles = filesCache.filter(
+                      const newFiles = value.filter(
                         (_, index) => index !== filesIndex,
                       );
                       onChange(newFiles);
-                      setFilesCache(newFiles);
                     }}
                   />
                 </Flex>
