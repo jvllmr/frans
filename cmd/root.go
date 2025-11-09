@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+	"io/fs"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -35,7 +37,9 @@ var rootCmd = &cobra.Command{
 func Main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("loading vars from .env: %v", err)
+		if !errors.Is(err, fs.ErrNotExist) {
+			log.Fatalf("loading vars from .env: %v", err)
+		}
 	}
 	err = logging.SetupLogging()
 	if err != nil {
