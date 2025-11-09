@@ -1,0 +1,12 @@
+linters:
+  exclusions:
+    warn-unused: true
+    rules:
+      - path: '(.+)_test\.go'
+        linters:
+          - errcheck
+      - path: '.*/testutil/.*\.go'
+        linters:
+          - errcheck
+
+version: "2"

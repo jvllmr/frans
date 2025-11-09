@@ -18,11 +18,13 @@ func (m *Mailer) SendTicketSharedNotification(
 	locale string,
 	ticketValue *ent.Ticket,
 	password *string,
-) {
+) error {
 	getTranslation := getTranslationFactory(locale)
 	message := mail.NewMsg()
 
-	message.To(to)
+	if err := message.To(to); err != nil {
+		return err
+	}
 
 	subjectTmpl := getTranslation("subject_ticket")
 
@@ -70,7 +72,7 @@ func (m *Mailer) SendTicketSharedNotification(
 	}
 
 	message.SetBodyString(mail.TypeTextPlain, body)
-	m.sendMail(message)
+	return m.sendMail(message)
 }
 
 func (m *Mailer) SendGrantSharedNotification(
@@ -80,11 +82,13 @@ func (m *Mailer) SendGrantSharedNotification(
 	locale string,
 	grantValue *ent.Grant,
 	password *string,
-) {
+) error {
 	getTranslation := getTranslationFactory(locale)
 	message := mail.NewMsg()
 
-	message.To(to)
+	if err := message.To(to); err != nil {
+		return err
+	}
 
 	subject := getTranslation("subject_grant")
 
@@ -109,5 +113,5 @@ func (m *Mailer) SendGrantSharedNotification(
 	}
 
 	message.SetBodyString(mail.TypeTextPlain, body)
-	m.sendMail(message)
+	return m.sendMail(message)
 }

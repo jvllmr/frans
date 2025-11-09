@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"log/slog"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -107,8 +108,14 @@ func (fs FileService) CreateFile(
 	if err != nil {
 		return nil, fmt.Errorf("create file: %w", err)
 	}
-	defer tmpFileHandle.Close()
-	defer os.Remove(tmpFilePath)
+	defer func() {
+		if err := tmpFileHandle.Close(); err != nil {
+			slog.Warn("could not close temporary file", "path", tmpFilePath, "err", err)
+		}
+		if err := os.Remove(tmpFilePath); err != nil {
+			slog.Warn("could not remove temporary file", "path", tmpFilePath, "err", err)
+		}
+	}()
 	writer := io.MultiWriter(hasher, tmpFileHandle)
 	_, err = io.Copy(writer, incomingFileHandle)
 	if err != nil {
@@ -149,7 +156,9 @@ func (fs FileService) CreateFile(
 	}
 	targetFilePath := fs.FilesFilePath(sha512sum)
 	if _, err = os.Stat(targetFilePath); err != nil {
-		os.Rename(tmpFilePath, targetFilePath)
+		if err = os.Rename(tmpFilePath, targetFilePath); err != nil {
+			return nil, fmt.Errorf("create file: %w", err)
+		}
 	}
 
 	return dbFile, nil

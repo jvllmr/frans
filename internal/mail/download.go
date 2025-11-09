@@ -15,11 +15,13 @@ func (m *Mailer) SendFileDownloadNotification(
 	to string,
 	ticketValue *ent.Ticket,
 	fileValue *ent.File,
-) {
+) error {
 	getTranslation := getTranslationFactory(ticketValue.CreatorLang)
 	message := mail.NewMsg()
 
-	message.To(to)
+	if err := message.To(to); err != nil {
+		return err
+	}
 
 	subject := fmt.Sprintf(
 		"%s %s (%s)",
@@ -40,5 +42,5 @@ func (m *Mailer) SendFileDownloadNotification(
 		panic(err)
 	}
 	message.SetBodyString(mail.TypeTextPlain, body.String())
-	m.sendMail(message)
+	return m.sendMail(message)
 }

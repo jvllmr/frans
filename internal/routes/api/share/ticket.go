@@ -87,12 +87,15 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 	ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
 	if ticketValue.EmailOnDownload != nil &&
 		(fileValue.LastDownload == nil || fileValue.LastDownload.Before(ticketValue.CreatedAt)) {
-		tsc.mailer.SendFileDownloadNotification(
+		if err := tsc.mailer.SendFileDownloadNotification(
 			c,
 			*ticketValue.EmailOnDownload,
 			ticketValue,
 			fileValue,
-		)
+		); err != nil {
+			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+			return
+		}
 	}
 }
 

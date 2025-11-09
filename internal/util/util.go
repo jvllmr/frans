@@ -94,6 +94,7 @@ func GinAbortWithError(ctx context.Context, c *gin.Context, code int, err error)
 	span := trace.SpanFromContext(ctx)
 	span.RecordError(err)
 	span.SetStatus(codes.Error, "route logic expected error")
+	//nolint:errcheck
 	c.AbortWithError(code, err)
 	slog.ErrorContext(ctx, "route resulted in error", "err", err)
 }

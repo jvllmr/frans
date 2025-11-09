@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
 
@@ -43,7 +44,11 @@ func startGin(ctx context.Context, configValue config.Config, db *ent.Client) {
 	}
 	serveString := fmt.Sprintf("%s:%d", configValue.Host, configValue.Port)
 	slog.Info(fmt.Sprintf("Serving on %s", serveString))
-	r.Run(serveString)
+	err = r.Run(serveString)
+	if err != nil {
+		slog.Error("could not start serving:", "err", err)
+		os.Exit(1)
+	}
 }
 
 var serveCmd = &cobra.Command{
@@ -51,7 +56,11 @@ var serveCmd = &cobra.Command{
 	Short: "Start only the server",
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, db := getConfigAndDBClient()
-		defer db.Close()
+		defer func() {
+			if err := db.Close(); err != nil {
+				log.Fatalf("could not close db connection: %v", err)
+			}
+		}()
 		startGin(cmd.Context(), configValue, db)
 	},
 }

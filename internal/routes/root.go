@@ -15,7 +15,9 @@ import (
 
 func SetupRootRouter(r *gin.Engine, configValue config.Config, db *ent.Client) error {
 
-	r.SetTrustedProxies(configValue.TrustedProxies)
+	if err := r.SetTrustedProxies(configValue.TrustedProxies); err != nil {
+		return err
+	}
 
 	r.Use(logging.GinLogger(slog.Default()), logging.RecoveryLogger(slog.Default()))
 

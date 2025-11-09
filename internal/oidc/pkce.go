@@ -15,14 +15,14 @@ type PKCEManager struct {
 }
 
 func (p *PKCEManager) CreateChallenge(c *gin.Context) (OidcState, oidcVerifier) {
-	var state OidcState = uuid.New().String()
+	var state = uuid.New().String()
 	verifier := oauth2.GenerateVerifier()
 	c.SetCookie(state, verifier, 3_600, "", "", true, true)
 	return state, verifier
 }
 
 func (p *PKCEManager) GetVerifier(c *gin.Context) (oidcVerifier, error) {
-	var state OidcState = c.Query("state")
+	var state = c.Query("state")
 	verifier, err := c.Cookie(state)
 	if err != nil {
 		return "", fmt.Errorf("could not retrieve PKCE verifier for given state")

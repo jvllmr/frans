@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+	"io/fs"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -18,7 +20,11 @@ var rootCmd = &cobra.Command{
 	Short: "A simple file-sharing tool ready for cloud native",
 	Run: func(cmd *cobra.Command, args []string) {
 		configValue, dbCon := getConfigAndDBClient()
-		defer dbCon.Close()
+		defer func() {
+			if err := dbCon.Close(); err != nil {
+				log.Fatalf("could not close db connection: %v", err)
+			}
+		}()
 
 		if !configValue.DevMode {
 			db.Migrate(configValue.DBConfig)
@@ -29,8 +35,13 @@ var rootCmd = &cobra.Command{
 }
 
 func Main() {
-	godotenv.Load()
-	err := logging.SetupLogging()
+	err := godotenv.Load()
+	if err != nil {
+		if !errors.Is(err, fs.ErrNotExist) {
+			log.Fatalf("loading vars from .env: %v", err)
+		}
+	}
+	err = logging.SetupLogging()
 	if err != nil {
 		log.Fatalf("could not setup logging: %v", err)
 	}

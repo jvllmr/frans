@@ -16,11 +16,13 @@ func (m *Mailer) SendFileUploadNotification(
 	to string,
 	grantValue *ent.Grant,
 	files []*ent.File,
-) {
+) error {
 	getTranslation := getTranslationFactory(grantValue.CreatorLang)
 	message := mail.NewMsg()
 
-	message.To(to)
+	if err := message.To(to); err != nil {
+		return err
+	}
 
 	subject := fmt.Sprintf(
 		"%s %s",
@@ -55,5 +57,5 @@ func (m *Mailer) SendFileUploadNotification(
 	}
 
 	message.SetBodyString(mail.TypeTextPlain, bodyStr)
-	m.sendMail(message)
+	return m.sendMail(message)
 }

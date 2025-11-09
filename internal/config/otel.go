@@ -20,7 +20,7 @@ type ClientTLS struct {
 }
 
 func (c *ClientTLS) IsSet() bool {
-	return c != nil && (c.CA != "" || c.Cert != "" || c.Key != "" || c.InsecureSkipVerify != false)
+	return c != nil && (c.CA != "" || c.Cert != "" || c.Key != "" || c.InsecureSkipVerify)
 }
 
 func (c *ClientTLS) CreateTLSConfig(ctx context.Context) (*tls.Config, error) {
