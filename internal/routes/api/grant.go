@@ -100,17 +100,23 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 			if form.EmailPassword {
 				toBeEmailedPassword = &form.Password
 			}
-			gc.mailer.SendGrantSharedNotification(
+			if err = gc.mailer.SendGrantSharedNotification(
 				c,
 				gc.grantService,
 				*form.Email,
 				form.ReceiverLang,
 				grantValue,
 				toBeEmailedPassword,
-			)
+			); err != nil {
+				util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+				return
+			}
 		}
 
-		tx.Commit()
+		if err := tx.Commit(); err != nil {
+			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+			return
+		}
 	} else {
 		util.GinAbortWithError(ctx, c, http.StatusUnprocessableEntity, err)
 	}

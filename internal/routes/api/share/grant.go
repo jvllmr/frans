@@ -128,14 +128,20 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	}
 	// we have an outdated reference to the grant; therefore we check if TimesUploaded is 0
 	if grantValue.EmailOnUpload != nil && grantValue.TimesUploaded == 0 {
-		gsc.mailer.SendFileUploadNotification(
+		if err := gsc.mailer.SendFileUploadNotification(
 			c,
 			*grantValue.EmailOnUpload,
 			grantValue,
 			dbFiles,
-		)
+		); err != nil {
+			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+			return
+		}
 	}
-	tx.Commit()
+	if err := tx.Commit(); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
+	}
 	grantValue = gsc.db.Grant.Query().
 		Where(grant.ID(grantValue.ID)).
 		WithFiles(func(fq *ent.FileQuery) { fq.WithData().WithOwner() }).

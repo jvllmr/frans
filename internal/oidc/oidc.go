@@ -82,7 +82,7 @@ func (f *FransOidcProvider) MissingAuthResponse(
 	redirect bool,
 ) {
 	if redirect {
-		state, verifier := f.PKCEManager.CreateChallenge(c)
+		state, verifier := f.CreateChallenge(c)
 		c.SetCookie(config.AuthOriginCookieName, c.Request.URL.String(), 3_600, "", "", true, true)
 		c.Redirect(
 			http.StatusTemporaryRedirect,

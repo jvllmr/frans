@@ -2,10 +2,10 @@ ci:
   skip:
     - eslint
     - prettier
-    - eslint
     - go-fmt
     - go-vet
     - go-tidy
+    - golangci-lint-full
 repos:
   - repo: https://github.com/woodruffw/zizmor-pre-commit
     rev: v1.16.3
@@ -24,6 +24,10 @@ repos:
     rev: v0.13.0
     hooks:
       - id: golines
+  - repo: https://github.com/golangci/golangci-lint/
+    rev: v2.6.1
+    hooks:
+      - id: golangci-lint-full
   - repo: local
     hooks:
       - id: eslint
