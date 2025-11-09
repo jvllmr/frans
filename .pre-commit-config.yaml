@@ -24,6 +24,10 @@ repos:
     rev: v0.13.0
     hooks:
       - id: golines
+  - repo: https://github.com/golangci/golangci-lint/
+    rev: v2.6.1
+    hooks:
+      - id: golangci-lint-full
   - repo: local
     hooks:
       - id: eslint

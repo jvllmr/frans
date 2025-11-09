@@ -109,7 +109,11 @@ func Migrate(dbConfig config.DBConfig) {
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Fatalf("could not close db connection: %v", err)
+		}
+	}()
 
 	if err := util.UnpackFSToPath(migrationFiles, "."); err != nil {
 		log.Fatalf("Could not unpack migration files: %v", err)

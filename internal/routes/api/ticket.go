@@ -52,6 +52,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 	tx, err := tc.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
 	}
 	if err := c.ShouldBind(&form); err == nil {
 		salt := util.GenerateSalt()
@@ -79,6 +80,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 		ticketValue, err := ticketBuilder.Save(ctx)
 		if err != nil {
 			util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
+			return
 		}
 
 		multipartForm, _ := c.MultipartForm()
@@ -144,17 +146,23 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 			if form.EmailPassword {
 				toBeEmailedPassword = &form.Password
 			}
-			tc.mailer.SendTicketSharedNotification(
+			if err := tc.mailer.SendTicketSharedNotification(
 				c,
 				tc.ticketService,
 				*form.Email,
 				form.ReceiverLang,
 				ticketValue,
 				toBeEmailedPassword,
-			)
+			); err != nil {
+				util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+				return
+			}
 		}
 
-		tx.Commit()
+		if err := tx.Commit(); err != nil {
+			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+			return
+		}
 	} else {
 		util.GinAbortWithError(ctx, c, http.StatusUnprocessableEntity, err)
 	}
