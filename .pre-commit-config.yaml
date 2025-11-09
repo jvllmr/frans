@@ -1,3 +1,11 @@
+ci:
+  skip:
+    - eslint
+    - prettier
+    - go-fmt
+    - go-vet
+    - go-tidy
+    - golangci-lint-full
 repos:
   - repo: https://github.com/woodruffw/zizmor-pre-commit
     rev: v1.16.3
