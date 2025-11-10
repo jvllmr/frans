@@ -271,7 +271,7 @@ export const Route = createRootRouteWithContext<RoutingContext>()({
     return {
       meta: [
         {
-          title: `${ctx.match.context.i18n.t(translationKey, { ns: "tabs" })} - Frans`,
+          title: `${ctx.match.context.i18n.t(translationKey, { ns: "tabs" })} - ${window.fransTitle}`,
         },
       ],
     };

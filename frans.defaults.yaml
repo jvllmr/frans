@@ -12,6 +12,10 @@ root_path: ""
 # Env var: FRANS_TRUSTED_PROXIES
 trusted_proxies: []
 
+# App title. Mostly visible in browser tab title
+# Env var: FRANS_TITLE
+title: Frans
+
 oidc:
   # URL to the OIDC provider (required)
   # Env var: FRANS_OIDC_ISSUER
