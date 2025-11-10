@@ -15,6 +15,7 @@ interface Window {
   fransCustomColor: string;
 
   fransVersion: string;
+  fransTitle: string;
 }
 
 declare module "virtual:*";

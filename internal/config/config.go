@@ -64,6 +64,7 @@ type Config struct {
 	Port           uint16   `mapstructure:"port"`
 	RootPath       string   `mapstructure:"root_path"`
 	TrustedProxies []string `mapstructure:"trusted_proxies"`
+	Title          string   `mapstructure:"title"`
 }
 
 func setConfigSearchStrategy(viper *viper.Viper) {
@@ -85,6 +86,8 @@ func NewConfig() (Config, error) {
 	fransConf.SetDefault("host", "127.0.0.1")
 	fransConf.SetDefault("port", 8080)
 	fransConf.SetDefault("trusted_proxies", []string{})
+
+	fransConf.SetDefault("title", "Frans")
 
 	fransConf.SetDefault("files.dir", "files")
 	fransConf.SetDefault("files.max_per_upload", 20)
