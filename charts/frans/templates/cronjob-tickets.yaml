@@ -53,7 +53,7 @@ spec:
             - name: {{ include "frans.fullname" . }}-lifecycle-tickets
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
-              args: 
+              args:
                 - task
                 - lifecycle-ticket
               resources:
@@ -86,4 +86,3 @@ spec:
 {{- if .Values.extraEnv }}
 {{- toYaml .Values.extraEnv | nindent 16 }}
 {{- end }}
-
