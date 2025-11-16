@@ -62,6 +62,11 @@ oidc:
 smtp:
   server: smtp-server-host
   port: 25
+
+# optional. settings with types such as lists or maps can only be set via this configMap
+# which results in a frans.yaml config file
+configMap: |
+  trusted_proxies: ["192.168.31.68/32"]
 ```
 
 After your preparations are done, simply run
