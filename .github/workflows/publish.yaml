@@ -188,7 +188,7 @@ jobs:
             # Get previous tag (most recent tag reachable from current commit)
             PREV_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
             PREV_TAG="${PREV_TAG#v}"
-            
+
             if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
               APPVERSION="pr-${GITHUB_PR_NUMBER}"
               VERSION="${PREV_TAG}+helm-pr-${GITHUB_PR_NUMBER}"

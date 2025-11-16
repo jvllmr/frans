@@ -66,7 +66,7 @@ spec:
               {{- end }}
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
-              args: 
+              args:
                 - task
                 - lifecycle-ticket
               resources:
@@ -116,4 +116,3 @@ spec:
           {{- with .Values.volumes }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-
