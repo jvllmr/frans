@@ -1,5 +1,6 @@
 {
   "table_title_file": "Grant",
   "table_title_created_at": "Date",
-  "table_title_expiration": "Expiration"
+  "table_title_expiration": "Expiration",
+  "title_delete": "Delete upload grant"
 }

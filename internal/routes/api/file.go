@@ -2,6 +2,7 @@ package apiRoutes
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -11,8 +12,8 @@ import (
 	"github.com/jvllmr/frans/internal/config"
 	"github.com/jvllmr/frans/internal/ent"
 	"github.com/jvllmr/frans/internal/ent/file"
-	"github.com/jvllmr/frans/internal/ent/grant"
 	"github.com/jvllmr/frans/internal/ent/user"
+	"github.com/jvllmr/frans/internal/mail"
 	"github.com/jvllmr/frans/internal/middleware"
 	"github.com/jvllmr/frans/internal/otel"
 	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
@@ -21,9 +22,10 @@ import (
 )
 
 type fileController struct {
-	config      config.Config
+	cfg         config.Config
 	db          *ent.Client
 	fileService services.FileService
+	mailer      mail.Mailer
 }
 
 func (fc *fileController) fetchReceivedFilesHandler(c *gin.Context) {
@@ -35,7 +37,8 @@ func (fc *fileController) fetchReceivedFilesHandler(c *gin.Context) {
 
 	if !currentUser.IsAdmin {
 		filesQuery = filesQuery.Where(
-			file.HasGrantWith(grant.HasOwnerWith(user.ID(currentUser.ID))),
+			file.HasOwnerWith(user.ID(currentUser.ID)),
+			sql.NotPredicates(file.HasTicket()),
 		)
 	}
 
@@ -89,12 +92,64 @@ func (fc *fileController) fetchFileHandler(c *gin.Context) {
 	c.FileAttachment(filePath, fileValue.Name)
 }
 
-func setupFileGroup(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
+func (fc *fileController) deleteFileHandler(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "deleteFileManual")
+	defer span.End()
+	var requestedFile apiTypes.RequestedFileParam
+	if err := c.ShouldBindUri(&requestedFile); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
+		return
+	}
+	f, err := fc.db.File.Query().
+		Where(file.ID(uuid.MustParse(requestedFile.ID))).
+		WithOwner().
+		WithData().
+		WithGrant().
+		WithTicket().
+		Only(ctx)
+	if err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusNotFound, err)
+		return
+	}
+	currentUser := middleware.GetCurrentUser(c)
+	isUserOwner := f.Edges.Owner.ID == currentUser.ID
+	if !currentUser.IsAdmin && !isUserOwner {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+
+	if err := fc.fileService.DeleteFile(ctx, f); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
+	}
+
+	if !isUserOwner {
+		if err := fc.mailer.SendFileDeletionNotification(f, fc.cfg.GetBaseURL(c.Request)); err != nil {
+			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+			return
+		}
+	}
+	slog.InfoContext(
+		ctx,
+		"Manual file deletion",
+		"username",
+		currentUser.Username,
+		"owner",
+		f.Edges.Owner.Username,
+		"fileId",
+		f.ID.String(),
+	)
+	c.Status(http.StatusOK)
+}
+
+func setupFileGroup(r *gin.RouterGroup, cfg config.Config, db *ent.Client) {
 	controller := fileController{
-		config:      configValue,
+		cfg:         cfg,
 		db:          db,
-		fileService: services.NewFileService(configValue, db),
+		fileService: services.NewFileService(cfg, db),
+		mailer:      mail.NewMailer(cfg),
 	}
 	r.GET("/received", controller.fetchReceivedFilesHandler)
 	r.GET("/:fileId", controller.fetchFileHandler)
+	r.DELETE("/:fileId", controller.deleteFileHandler)
 }

@@ -9,5 +9,10 @@
   "notification_download": "The file {{.FileName}} (ticket {{.TicketName}}) was downloaded by {{.Address}}",
   "subject_upload": "Upload notification for grant",
   "notification_upload": "Files were uploaded to grant {{.GrantName}} by {{.Address}}",
-  "subject_grant": "Link for grant"
+  "subject_grant": "Link for grant",
+  "notification_deletion": "{{.Entity}} was deleted by an Administrator on {{.BaseUrl}}",
+  "subject_deletion": "Deletion Notice for",
+  "entity_ticket": "ticket {{.ID}}",
+  "entity_grant": "upload grant {{.ID}}",
+  "entity_file": "file {{.ID}}"
 }

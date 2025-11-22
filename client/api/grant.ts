@@ -1,5 +1,9 @@
-import { queryOptions, useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod/v4";
@@ -67,6 +71,25 @@ export function useCreateGrantMutation() {
     },
     onError() {
       errorNotification(t("grant_new_failed"));
+    },
+  });
+}
+
+export function deleteGrant(grantId: string) {
+  return axios.delete(v1GrantUrl(`/${grantId}`));
+}
+
+export function useDeleteGrantMutation() {
+  const { t } = useTranslation("notifications");
+  const queryClient = useQueryClient();
+  return useMutation<unknown, AxiosError, string>({
+    mutationFn: deleteGrant,
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: grantsKey });
+      successNotification(t("grant_delete_success"));
+    },
+    onError() {
+      errorNotification(t("grant_delete_failed"));
     },
   });
 }

@@ -2,6 +2,7 @@ package apiRoutes
 
 import (
 	"encoding/hex"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ import (
 	"github.com/jvllmr/frans/internal/mail"
 	"github.com/jvllmr/frans/internal/middleware"
 	"github.com/jvllmr/frans/internal/otel"
+	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
 	"github.com/jvllmr/frans/internal/services"
 	"github.com/jvllmr/frans/internal/util"
 )
@@ -149,6 +151,63 @@ func (gc *grantController) fetchGrantsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, publicGrants)
 }
 
+func (gc *grantController) deleteGrantHandler(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "deleteGrantManual")
+	defer span.End()
+	var requestedGrant apiTypes.RequestedGrantParam
+	if err := c.ShouldBindUri(&requestedGrant); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
+		return
+	}
+	g, err := gc.db.Grant.Query().
+		Where(grant.ID(uuid.MustParse(requestedGrant.ID))).
+		WithOwner().
+		Only(ctx)
+	if err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusNotFound, err)
+		return
+	}
+	currentUser := middleware.GetCurrentUser(c)
+	isUserOwner := g.Edges.Owner.ID == currentUser.ID
+	if !currentUser.IsAdmin && !isUserOwner {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+	tx, err := gc.db.Tx(ctx)
+	if err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err := gc.grantService.DeleteGrant(ctx, tx, g); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
+	}
+
+	if !isUserOwner {
+		if err := gc.mailer.SendGrantDeletionNotification(g, gc.config.GetBaseURL(c.Request)); err != nil {
+			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
+	}
+	slog.InfoContext(
+		ctx,
+		"Manual grant deletion",
+		"username",
+		currentUser.Username,
+		"owner",
+		g.Edges.Owner.Username,
+		"grantId",
+		g.ID.String(),
+	)
+	c.Status(http.StatusOK)
+}
+
 func setupGrantGroup(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
 	controller := grantController{
 		config:       configValue,
@@ -159,4 +218,5 @@ func setupGrantGroup(r *gin.RouterGroup, configValue config.Config, db *ent.Clie
 	}
 	r.POST("", controller.createGrantHandler)
 	r.GET("", controller.fetchGrantsHandler)
+	r.DELETE("/:grantId", controller.deleteGrantHandler)
 }

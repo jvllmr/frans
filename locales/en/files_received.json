@@ -3,5 +3,6 @@
   "table_title_size": "Size",
   "table_title_date": "Date",
   "table_title_expiration": "Expiration",
-  "total_size": "Total size of all files"
+  "total_size": "Total size of all files",
+  "title_delete": "Delete file"
 }

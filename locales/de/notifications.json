@@ -1,8 +1,14 @@
 {
   "ticket_new_failed": "Erstellen eines neuen Tickets ist fehlgeschlagen",
   "ticket_new_success": "Neues Ticket wurde erstellt",
+  "ticket_delete_failed": "Löschen des Tickets ist fehlgeschlagen",
+  "ticket_delete_success": "Ticket wurde gelöscht",
   "grant_new_failed": "Erstellen einer neuen Upload-Erlaubnis ist fehlgeschlagen",
   "grant_new_success": "Neue Upload-Erlaubnis wurde erstellt",
   "grant_upload_failed": "Hochladen der Dateien ist fehlgeschlagen",
-  "grant_upload_success": "Dateien wurden hochgeladen"
+  "grant_upload_success": "Dateien wurden hochgeladen",
+  "grant_delete_failed": "Löschen der Upload-Erlaubnis ist fehlgeschlagen",
+  "grant_delete_success": "Upload-Erlaubnis wurde gelöscht",
+  "file_delete_failed": "Löschen der Datei ist fehlgeschlagen",
+  "file_delete_success": "Datei wurde gelöscht"
 }

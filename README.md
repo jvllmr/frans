@@ -77,7 +77,7 @@ helm install frans oci://ghcr.io/jvllmr/frans --values values.yaml
 
 to install the helm chart.
 
-For more `values.yaml` options, look inside the default [values.yaml](charts/frans/values.yaml).
+For more `values.yaml` options, take a look inside the default [values.yaml](charts/frans/values.yaml).
 
 ### Docker Compose
 

@@ -60,22 +60,22 @@ func (fs FileService) FilesFilePath(fileName string) string {
 }
 
 func (fs FileService) ShouldDeleteFile(
-	fileValue *ent.File,
+	f *ent.File,
 ) bool {
-	if fileValue.ExpiryType == config.TicketExpiryTypeNone {
+	if f.ExpiryType == config.TicketExpiryTypeNone {
 		return false
 	}
-	if fileValue.ExpiryType == config.TicketExpiryTypeSingle {
-		return fileValue.TimesDownloaded > 0
+	if f.ExpiryType == config.TicketExpiryTypeSingle {
+		return f.TimesDownloaded > 0
 	}
-	estimatedExpiry := *fs.FileEstimatedExpiry(fileValue)
+	estimatedExpiry := *fs.FileEstimatedExpiry(f)
 	now := time.Now()
 
-	if fileValue.ExpiryType == config.TicketExpiryTypeCustom {
-		return fileValue.TimesDownloaded >= uint64(fileValue.ExpiryTotalDownloads) ||
+	if f.ExpiryType == config.TicketExpiryTypeCustom {
+		return f.TimesDownloaded >= uint64(f.ExpiryTotalDownloads) ||
 			estimatedExpiry.Before(now)
 	}
-	return fileValue.TimesDownloaded >= uint64(fs.config.DefaultExpiryTotalDownloads) ||
+	return f.TimesDownloaded >= uint64(fs.config.DefaultExpiryTotalDownloads) ||
 		estimatedExpiry.Before(now)
 }
 

@@ -15,6 +15,7 @@ func FileLifecycleTask(db *ent.Client, fs services.FileService) {
 		Where(file.TimesDownloadedGT(0)).
 		WithData().
 		WithOwner().
+		WithGrant().WithTicket().
 		AllX(context.Background())
 	deletedCount := 0
 	var users []*ent.User
@@ -46,7 +47,7 @@ func FileLifecycleTask(db *ent.Client, fs services.FileService) {
 				"Could not refresh total data size of user",
 				"err",
 				err,
-				"user",
+				"username",
 				u.Username,
 			)
 		}

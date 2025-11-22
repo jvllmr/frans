@@ -6,8 +6,13 @@
   "password": "Passwort",
   "subject_ticket": "Download-Link für {{.FileName}}",
   "subject_download": "Download-Benachrichtigung für Ticket",
-  "notification_download": "Die Datei {{.FileName}} (Ticket {{.Ticket}}) wurde durch {{.Address}} heruntergeladen",
+  "notification_download": "Die Datei {{.FileName}} (Ticket {{.TicketName}}) wurde durch {{.Address}} heruntergeladen",
   "subject_upload": "Upload-Erlaubnis upload",
   "notification_upload": "Dateien wurden von {{.Address}} zur Upload-Erlaubnis {{.GrantName}} hochgeladen",
-  "subject_grant": "Link für Upload-Erlaubnis"
+  "subject_grant": "Link für Upload-Erlaubnis",
+  "notification_deletion": "{{.Entity}} wurde auf {{.BaseUrl}} durch einen Administrator gelöscht",
+  "subject_deletion": "Lösch-Benachrichtigung für",
+  "entity_ticket": "Ticket {{.ID}}",
+  "entity_grant": "Upload-Erlaubnis {{.ID}}",
+  "entity_file": "Datei {{.ID}}"
 }

@@ -156,3 +156,65 @@ func TestFetchReceivedFiles(t *testing.T) {
 	assert.Equal(t, 2, len(resultFilesAdmin))
 	assert.Equal(t, testFileAdmin.ID, resultFilesAdmin[0].Id)
 }
+
+func TestDeleteFileManually(t *testing.T) {
+	cfg := testutil.SetupTestConfig()
+	db := testutil.SetupTestDBClient(t)
+
+	testUser := testutil.SetupTestUser(t, db, nil)
+	testOwner := testutil.SetupTestUser(t, db, nil)
+	testAdmin := testutil.SetupTestAdminUser(t, db, nil)
+
+	testFile := testutil.SetupTestFile(
+		t,
+		cfg,
+		db,
+		"test.txt",
+		"Hello there!",
+		testOwner,
+		"single",
+		0,
+		0,
+		1,
+	)
+	reqTestFile := httptest.NewRequest(http.MethodDelete, "/"+testFile.ID.String(), nil)
+	testFile2 := testutil.SetupTestFile(
+		t,
+		cfg,
+		db,
+		"test.txt",
+		"Hello there!",
+		testOwner,
+		"single",
+		0,
+		0,
+		1,
+	)
+
+	reqTestFile2 := httptest.NewRequest(http.MethodDelete, "/"+testFile2.ID.String(), nil)
+
+	rUser := setupTestFileRouter(cfg, db, testutil.NewTestAuthMiddleware(testUser))
+	rOwner := setupTestFileRouter(cfg, db, testutil.NewTestAuthMiddleware(testOwner))
+	rAdmin := setupTestFileRouter(cfg, db, testutil.NewTestAuthMiddleware(testAdmin))
+
+	w := httptest.NewRecorder()
+	rUser.ServeHTTP(w, reqTestFile)
+	assert.Equal(t, http.StatusForbidden, w.Code)
+
+	w = httptest.NewRecorder()
+	rOwner.ServeHTTP(w, reqTestFile)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	w = httptest.NewRecorder()
+	rOwner.ServeHTTP(w, reqTestFile)
+	assert.Equal(t, http.StatusNotFound, w.Code)
+
+	w = httptest.NewRecorder()
+	rAdmin.ServeHTTP(w, reqTestFile2)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	w = httptest.NewRecorder()
+	rAdmin.ServeHTTP(w, reqTestFile2)
+	assert.Equal(t, http.StatusNotFound, w.Code)
+
+}

@@ -33,7 +33,7 @@ func (tsc *ticketShareController) fetchTicket(c *gin.Context) {
 	_, span := otel.NewSpan(c.Request.Context(), "fetchTicketShare")
 	defer span.End()
 	ticketValue := c.MustGet(config.ShareTicketContext).(*ent.Ticket)
-	c.JSON(http.StatusOK, tsc.ticketService.ToPublicTicket(tsc.fileService, ticketValue))
+	c.JSON(http.StatusOK, tsc.ticketService.ToPublicTicket(ticketValue))
 }
 
 func (tsc *ticketShareController) fetchTicketAccessToken(c *gin.Context) {
@@ -99,7 +99,7 @@ func (tsc *ticketShareController) fetchTicketFile(c *gin.Context) {
 	}
 }
 
-func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
+func setupTicketShareRoutes(r *gin.RouterGroup, cfg config.Config, db *ent.Client) {
 	getTicketMiddleware := func(c *gin.Context) {
 		ctx, span := otel.NewSpan(c.Request.Context(), "checkTicketShareAuth")
 		defer span.End()
@@ -151,11 +151,11 @@ func setupTicketShareRoutes(r *gin.RouterGroup, configValue config.Config, db *e
 
 	singleTicketShareGroup := r.Group("/:ticketId", getTicketMiddleware)
 	controller := ticketShareController{
-		config:        configValue,
+		config:        cfg,
 		db:            db,
-		ticketService: services.NewTicketService(configValue),
-		fileService:   services.NewFileService(configValue, db),
-		mailer:        mail.NewMailer(configValue),
+		ticketService: services.NewTicketService(cfg, db),
+		fileService:   services.NewFileService(cfg, db),
+		mailer:        mail.NewMailer(cfg),
 	}
 
 	singleTicketShareGroup.GET("", controller.fetchTicket)

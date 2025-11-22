@@ -243,7 +243,7 @@ function RootRoute() {
                 target="_blank"
               >
                 <Center>{t("licensed")}</Center>
-                <Center>Version {window.fransVersion}</Center>
+                <Center>Software Version {window.fransVersion}</Center>
               </Anchor>
             </Center>
           </Container>

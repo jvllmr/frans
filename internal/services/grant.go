@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -49,6 +50,10 @@ func (gs GrantService) ShouldDeleteGrant(grantValue *ent.Grant) bool {
 	return grantValue.TimesUploaded >= uint64(gs.config.GrantDefaultExpiryTotalUploads) ||
 		estimatedExpiryValue.Before(now)
 
+}
+
+func (gs GrantService) DeleteGrant(ctx context.Context, tx *ent.Tx, g *ent.Grant) error {
+	return tx.Grant.DeleteOne(g).Exec(ctx)
 }
 
 type PublicGrant struct {

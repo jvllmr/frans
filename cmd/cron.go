@@ -29,7 +29,7 @@ func startCronScheduler(configValue config.Config, db *ent.Client) {
 		log.Fatalf("create files cronjob: %v", err)
 	}
 
-	ts := services.NewTicketService(configValue)
+	ts := services.NewTicketService(configValue, db)
 	_, err = cronRunner.AddFunc("@every 1m", func() {
 		fransCron.TicketsLifecycleTask(db, ts)
 	})
