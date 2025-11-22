@@ -1,5 +1,9 @@
-import { queryOptions, useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod/v4";
@@ -75,6 +79,25 @@ export function useCreateTicketMutation(progressHandle?: ProgressHandle) {
     },
     onError() {
       errorNotification(t("ticket_new_failed"));
+    },
+  });
+}
+
+export function deleteTicket(ticketId: string) {
+  return axios.delete(v1TicketUrl(`/${ticketId}`));
+}
+
+export function useDeleteTicketMutation() {
+  const { t } = useTranslation("notifications");
+  const queryClient = useQueryClient();
+  return useMutation<unknown, AxiosError, string>({
+    mutationFn: deleteTicket,
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ticketsKey });
+      successNotification(t("ticket_delete_success"));
+    },
+    onError() {
+      errorNotification(t("ticket_delete_failed"));
     },
   });
 }

@@ -47,7 +47,7 @@ func createTestTicket(
 	email := "test_receiver@vllmr.dev"
 	emailOnDownload := "test_creator@vllmr.dev"
 
-	fields := ticketForm{
+	fields := services.TicketFormParams{
 		Comment:                     &comment,
 		Email:                       &email,
 		Password:                    "abc123",
@@ -143,7 +143,7 @@ func TestFetchTickets(t *testing.T) {
 
 	newAdminTicket := createTestTicket(t, adminRouter, ticketInputModifier)
 	assert.Equal(t, 1, len(newAdminTicket.Files))
-	assert.NotEqual(t, newTicket.Id, newAdminTicket.Id)
+	assert.NotEqual(t, newTicket.ID, newAdminTicket.ID)
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 
@@ -167,5 +167,46 @@ func TestFetchTickets(t *testing.T) {
 
 	assert.Equal(t, 2, len(adminTickets))
 	assert.NotEqual(t, len(resultTickets), len(adminTickets), wAdmin.Body.String())
+
+}
+
+func TestDeleteTicketManually(t *testing.T) {
+	cfg := testutil.SetupTestConfig()
+	db := testutil.SetupTestDBClient(t)
+
+	testUser := testutil.SetupTestUser(t, db, nil)
+	testOwner := testutil.SetupTestUser(t, db, nil)
+	testAdmin := testutil.SetupTestAdminUser(t, db, nil)
+
+	rUser := setupTestTicketRouter(cfg, db, testutil.NewTestAuthMiddleware(testUser))
+	rOwner := setupTestTicketRouter(cfg, db, testutil.NewTestAuthMiddleware(testOwner))
+	rAdmin := setupTestTicketRouter(cfg, db, testutil.NewTestAuthMiddleware(testAdmin))
+
+	testTicket := createTestTicket(t, rOwner, nil)
+	testTicket2 := createTestTicket(t, rOwner, nil)
+
+	reqTestTicket := httptest.NewRequest(http.MethodDelete, "/"+testTicket.ID.String(), nil)
+
+	reqTestTicket2 := httptest.NewRequest(http.MethodDelete, "/"+testTicket2.ID.String(), nil)
+
+	w := httptest.NewRecorder()
+	rUser.ServeHTTP(w, reqTestTicket)
+	assert.Equal(t, http.StatusForbidden, w.Code)
+
+	w = httptest.NewRecorder()
+	rOwner.ServeHTTP(w, reqTestTicket)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	w = httptest.NewRecorder()
+	rOwner.ServeHTTP(w, reqTestTicket)
+	assert.Equal(t, http.StatusNotFound, w.Code)
+
+	w = httptest.NewRecorder()
+	rAdmin.ServeHTTP(w, reqTestTicket2)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	w = httptest.NewRecorder()
+	rAdmin.ServeHTTP(w, reqTestTicket2)
+	assert.Equal(t, http.StatusNotFound, w.Code)
 
 }

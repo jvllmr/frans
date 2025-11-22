@@ -37,7 +37,7 @@ var ticketLifecycleTaskCommand = &cobra.Command{
 				log.Fatalf("could not close db connection: %v", err)
 			}
 		}()
-		ts := services.NewTicketService(configValue)
+		ts := services.NewTicketService(configValue, db)
 		fransCron.TicketsLifecycleTask(db, ts)
 	},
 }

@@ -1,5 +1,6 @@
 {
   "table_title_file": "Ticket",
   "table_title_created_at": "Datum",
-  "table_title_expiration": "Verfallsfrist"
+  "table_title_expiration": "Verfallsfrist",
+  "title_delete": "Ticket löschen"
 }

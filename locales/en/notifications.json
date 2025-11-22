@@ -1,8 +1,14 @@
 {
   "ticket_new_failed": "Failed to create new ticket",
   "ticket_new_success": "Created a new ticket",
-  "grant_new_failed": "Failed to create new grant",
-  "grant_new_success": "Created a new grant",
-  "grant_upload_failed": "Failed to upload files to grant",
-  "grant_upload_success": "Uploaded files to grant"
+  "ticket_delete_failed": "Failed to delete ticket",
+  "ticket_delete_success": "Deleted ticket",
+  "grant_new_failed": "Failed to create new upload grant",
+  "grant_new_success": "Created a new upload grant",
+  "grant_upload_failed": "Failed to upload files to upload grant",
+  "grant_upload_success": "Uploaded files to upload grant",
+  "grant_delete_failed": "Failed to delete upload grant",
+  "grant_delete_success": "Deleted upload grant",
+  "file_delete_failed": "Failed to delete file",
+  "file_delete_success": "Deleted file"
 }

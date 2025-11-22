@@ -4,8 +4,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { queryClient } from "~/api";
-import { filesKey, receivedFilesQueryOptions } from "~/api/file";
+import {
+  filesKey,
+  receivedFilesQueryOptions,
+  useDeleteFileMutation,
+} from "~/api/file";
 import { meQueryOptions } from "~/api/user";
+import { DeleteButton } from "~/components/common/DeleteButton";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
 import { FileRef } from "~/components/file/FileRef";
@@ -15,6 +20,20 @@ import { getInternalFileLink } from "~/util/link";
 export const Route = createFileRoute("/grants/")({
   component: RouteComponent,
 });
+
+function DeleteFileButton({ fileId }: { fileId: string }) {
+  const mutation = useDeleteFileMutation();
+  const { t } = useTranslation("files_received");
+  return (
+    <DeleteButton
+      loading={mutation.isPending}
+      onClick={() => {
+        mutation.mutate(fileId);
+      }}
+      title={t("title_delete")}
+    />
+  );
+}
 
 function RouteComponent() {
   const { data: receivedFiles } = useSuspenseQuery(receivedFilesQueryOptions);
@@ -46,6 +65,7 @@ function RouteComponent() {
           {receivedFiles.map((receivedFile) => (
             <Table.Tr key={receivedFile.id}>
               <Table.Td>
+                <DeleteFileButton fileId={receivedFile.id} />
                 <DownloadSuccessIndicator
                   lastDownloaded={receivedFile.lastDownloaded}
                   timesDownloaded={receivedFile.timesDownloaded}

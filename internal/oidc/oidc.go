@@ -26,8 +26,8 @@ type FransOidcProvider struct {
 	db             *ent.Client
 }
 
-func (f *FransOidcProvider) EndSessionEndpoint() string {
-	return f.extraEndpoints.EndSessionEndpoint
+func (fop *FransOidcProvider) EndSessionEndpoint() string {
+	return fop.extraEndpoints.EndSessionEndpoint
 }
 
 func NewOIDC(configValue config.Config, db *ent.Client) (*FransOidcProvider, error) {
@@ -60,29 +60,29 @@ func NewOIDC(configValue config.Config, db *ent.Client) (*FransOidcProvider, err
 	}, nil
 }
 
-func (f *FransOidcProvider) buildRedirectURL(request *http.Request) string {
-	return fmt.Sprintf("%s/api/auth/callback", f.config.GetBaseURL(request))
+func (fop *FransOidcProvider) buildRedirectURL(request *http.Request) string {
+	return fmt.Sprintf("%s/api/auth/callback", fop.config.GetBaseURL(request))
 }
 
-func (f *FransOidcProvider) NewOauth2Config(request *http.Request) oauth2.Config {
-	endpoint := f.Endpoint()
+func (fop *FransOidcProvider) NewOauth2Config(request *http.Request) oauth2.Config {
+	endpoint := fop.Endpoint()
 	endpoint.AuthStyle = oauth2.AuthStyleInParams
 	return oauth2.Config{
-		ClientID:     f.config.OidcClientID,
+		ClientID:     fop.config.OidcClientID,
 		ClientSecret: "",
 		Endpoint:     endpoint,
-		RedirectURL:  f.buildRedirectURL(request),
+		RedirectURL:  fop.buildRedirectURL(request),
 		Scopes:       config.OidcScopes,
 	}
 }
 
-func (f *FransOidcProvider) MissingAuthResponse(
+func (fop *FransOidcProvider) MissingAuthResponse(
 	c *gin.Context,
 	oauth2Config oauth2.Config,
 	redirect bool,
 ) {
 	if redirect {
-		state, verifier := f.CreateChallenge(c)
+		state, verifier := fop.CreateChallenge(c)
 		c.SetCookie(config.AuthOriginCookieName, c.Request.URL.String(), 3_600, "", "", true, true)
 		c.Redirect(
 			http.StatusTemporaryRedirect,

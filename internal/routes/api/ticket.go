@@ -2,7 +2,6 @@ package apiRoutes
 
 import (
 	"database/sql"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -17,6 +16,7 @@ import (
 	"github.com/jvllmr/frans/internal/mail"
 	"github.com/jvllmr/frans/internal/middleware"
 	"github.com/jvllmr/frans/internal/otel"
+	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
 	"github.com/jvllmr/frans/internal/services"
 	"github.com/jvllmr/frans/internal/util"
 )
@@ -25,22 +25,7 @@ type ticketController struct {
 	config        config.Config
 	db            *ent.Client
 	ticketService services.TicketService
-	fileService   services.FileService
 	mailer        mail.Mailer
-}
-
-type ticketForm struct {
-	Comment                     *string `form:"comment"`
-	Email                       *string `form:"email"`
-	Password                    string  `form:"password"                    binding:"required"`
-	EmailPassword               bool    `form:"emailPassword"`
-	ExpiryType                  string  `form:"expiryType"                  binding:"required"`
-	ExpiryTotalDays             uint8   `form:"expiryTotalDays"             binding:"required"`
-	ExpiryDaysSinceLastDownload uint8   `form:"expiryDaysSinceLastDownload" binding:"required"`
-	ExpiryTotalDownloads        uint8   `form:"expiryTotalDownloads"        binding:"required"`
-	EmailOnDownload             *string `form:"emailOnDownload"`
-	CreatorLang                 string  `form:"creatorLang"                 binding:"required"`
-	ReceiverLang                string  `form:"receiverLang"                binding:"required"`
 }
 
 func (tc *ticketController) createTicketHandler(c *gin.Context) {
@@ -48,41 +33,13 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 	defer span.End()
 
 	currentUser := middleware.GetCurrentUser(c)
-	var form ticketForm
+	var form services.TicketFormParams
 	tx, err := tc.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 		return
 	}
 	if err := c.ShouldBind(&form); err == nil {
-		salt := util.GenerateSalt()
-
-		hashedPassword := util.HashPassword(form.Password, salt)
-		ticketBuilder := tx.Ticket.Create().
-			SetID(uuid.New()).
-			SetExpiryType(form.ExpiryType).
-			SetExpiryDaysSinceLastDownload(form.ExpiryDaysSinceLastDownload).
-			SetExpiryTotalDays(form.ExpiryTotalDays).
-			SetExpiryTotalDownloads(form.ExpiryTotalDownloads).
-			SetHashedPassword(hashedPassword).
-			SetSalt(hex.EncodeToString(salt)).
-			SetOwner(currentUser).
-			SetCreatorLang(form.CreatorLang)
-
-		if form.Comment != nil {
-			ticketBuilder = ticketBuilder.SetComment(*form.Comment)
-		}
-
-		if form.EmailOnDownload != nil {
-			ticketBuilder = ticketBuilder.SetEmailOnDownload(*form.EmailOnDownload)
-		}
-
-		ticketValue, err := ticketBuilder.Save(ctx)
-		if err != nil {
-			util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
-			return
-		}
-
 		multipartForm, _ := c.MultipartForm()
 		files := multipartForm.File["files[]"]
 		if len(files) > int(tc.config.MaxFiles) {
@@ -98,49 +55,16 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 			)
 			return
 		}
-		tc.fileService.EnsureFilesTmpPath()
-
-		for _, fileHeader := range files {
-			dbFile, err := tc.fileService.CreateFile(
-				ctx,
-				tx, fileHeader, currentUser,
-				ticketValue.ExpiryType,
-				ticketValue.ExpiryDaysSinceLastDownload,
-				ticketValue.ExpiryTotalDays,
-				ticketValue.ExpiryTotalDownloads,
-			)
-			if err != nil {
-				var errFileTooBig *services.ErrFileTooBig
-				if errors.As(err, &errFileTooBig) {
-					util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
-				} else {
-					util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
-				}
-				return
-			}
-			ticketValue = tx.Ticket.UpdateOne(ticketValue).
-				AddFiles(dbFile).
-				SaveX(ctx)
-		}
-
-		ticketValue = tx.Ticket.Query().
-			Where(ticket.ID(ticketValue.ID)).
-			WithFiles(func(fq *ent.FileQuery) { fq.WithData().WithOwner() }).
-			WithOwner().
-			OnlyX(ctx)
-
-		err = util.RefreshUserTotalDataSize(ctx, currentUser, tx)
+		ticketValue, err := tc.ticketService.CreateTicket(ctx, tx, currentUser, &form, files)
 		if err != nil {
-			slog.Error(
-				"Could not refresh total data size of user",
-				"err",
-				err,
-				"user",
-				currentUser.Username,
-			)
+			var errFileTooBig *services.ErrFileTooBig
+			if errors.As(err, &errFileTooBig) {
+				util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
+			} else {
+				util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+			}
 		}
-		tx.User.UpdateOne(currentUser).AddSubmittedTickets(1).SaveX(ctx)
-		c.JSON(http.StatusCreated, tc.ticketService.ToPublicTicket(tc.fileService, ticketValue))
+		c.JSON(http.StatusCreated, tc.ticketService.ToPublicTicket(ticketValue))
 		if form.Email != nil {
 			var toBeEmailedPassword *string = nil
 			if form.EmailPassword {
@@ -187,19 +111,77 @@ func (tc *ticketController) fetchTicketsHandler(c *gin.Context) {
 	}
 	publicTickets := make([]services.PublicTicket, len(tickets))
 	for i, ticketValue := range tickets {
-		publicTickets[i] = tc.ticketService.ToPublicTicket(tc.fileService, ticketValue)
+		publicTickets[i] = tc.ticketService.ToPublicTicket(ticketValue)
 	}
 	c.JSON(http.StatusOK, publicTickets)
+}
+
+func (tc *ticketController) deleteTicketHandler(c *gin.Context) {
+	ctx, span := otel.NewSpan(c.Request.Context(), "deleteTicketManual")
+	defer span.End()
+	var requestedTicket apiTypes.RequestedTicketParam
+	if err := c.ShouldBindUri(&requestedTicket); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusBadRequest, err)
+		return
+	}
+	t, err := tc.db.Ticket.Query().
+		Where(ticket.ID(uuid.MustParse(requestedTicket.ID))).
+		WithOwner().
+		WithFiles(func(fq *ent.FileQuery) { fq.WithData() }).
+		Only(ctx)
+	if err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusNotFound, err)
+		return
+	}
+	currentUser := middleware.GetCurrentUser(c)
+	isUserOwner := t.Edges.Owner.ID == currentUser.ID
+	if !currentUser.IsAdmin && !isUserOwner {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+	tx, err := tc.db.Tx(ctx)
+	if err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err := tc.ticketService.DeleteTicket(ctx, tx, t); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
+	}
+
+	if !isUserOwner {
+		if err := tc.mailer.SendTicketDeletionNotification(t, tc.config.GetBaseURL(c.Request)); err != nil {
+			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+		return
+	}
+	slog.InfoContext(
+		ctx,
+		"Manual ticket deletion",
+		"username",
+		currentUser.Username,
+		"owner",
+		t.Edges.Owner.Username,
+		"ticketId",
+		t.ID.String(),
+	)
+	c.Status(http.StatusOK)
 }
 
 func setupTicketGroup(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {
 	controller := ticketController{
 		config:        configValue,
 		db:            db,
-		ticketService: services.NewTicketService(configValue),
-		fileService:   services.NewFileService(configValue, db),
+		ticketService: services.NewTicketService(configValue, db),
 		mailer:        mail.NewMailer(configValue),
 	}
 	r.POST("", controller.createTicketHandler)
 	r.GET("", controller.fetchTicketsHandler)
+	r.DELETE("/:ticketId", controller.deleteTicketHandler)
 }

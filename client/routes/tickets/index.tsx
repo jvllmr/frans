@@ -1,9 +1,14 @@
-import { Table } from "@mantine/core";
+import { Group, Table } from "@mantine/core";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { ticketQueryOptions, ticketsKey } from "~/api/ticket";
+import {
+  ticketQueryOptions,
+  ticketsKey,
+  useDeleteTicketMutation,
+} from "~/api/ticket";
 import { meQueryOptions } from "~/api/user";
+import { DeleteButton } from "~/components/common/DeleteButton";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
 import { FileRef } from "~/components/file/FileRef";
@@ -13,6 +18,20 @@ import { getInternalFileLink } from "~/util/link";
 export const Route = createFileRoute("/tickets/")({
   component: RouteComponent,
 });
+
+function DeleteTicketButton({ ticketId }: { ticketId: string }) {
+  const mutation = useDeleteTicketMutation();
+  const { t } = useTranslation("ticket_active");
+  return (
+    <DeleteButton
+      loading={mutation.isPending}
+      onClick={() => {
+        mutation.mutate(ticketId);
+      }}
+      title={t("title_delete")}
+    />
+  );
+}
 
 function RouteComponent() {
   const { t } = useTranslation("ticket_active");
@@ -40,7 +59,10 @@ function RouteComponent() {
             <Table.Tr key={file.id}>
               {index === 0 ? (
                 <Table.Td rowSpan={ticket.files.length}>
-                  <ShareLinkButtons shareId={ticket.id} />
+                  <Group>
+                    <DeleteTicketButton ticketId={ticket.id} />
+                    <ShareLinkButtons shareId={ticket.id} />
+                  </Group>
                 </Table.Td>
               ) : null}
 

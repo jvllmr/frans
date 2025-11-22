@@ -122,8 +122,8 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 			"Could not refresh total data size of user",
 			"err",
 			err,
-			"user",
-			grantValue.Edges.Owner,
+			"username",
+			grantValue.Edges.Owner.Username,
 		)
 	}
 	// we have an outdated reference to the grant; therefore we check if TimesUploaded is 0

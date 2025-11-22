@@ -1,10 +1,4 @@
-import {
-  ActionIcon,
-  ActionIconProps,
-  CopyButton,
-  Group,
-  GroupProps,
-} from "@mantine/core";
+import { ActionIcon, ActionIconProps, CopyButton } from "@mantine/core";
 import { IconCopy, IconCopyCheck, IconFolderOpen } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import { getShareLink } from "~/util/link";
@@ -57,14 +51,11 @@ export function CopyShareLinkButton({
   );
 }
 
-export function ShareLinkButtons({
-  shareId,
-  ...props
-}: ShareLinkProps & GroupProps) {
+export function ShareLinkButtons({ shareId }: ShareLinkProps) {
   return (
-    <Group {...props}>
+    <>
       <ShareLinkButton shareId={shareId} />
       <CopyShareLinkButton shareId={shareId} />
-    </Group>
+    </>
   );
 }

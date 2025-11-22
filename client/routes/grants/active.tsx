@@ -1,9 +1,15 @@
-import { Table } from "@mantine/core";
+import { Group, Table } from "@mantine/core";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { Grant, grantQueryOptions, grantsKey } from "~/api/grant";
+import {
+  Grant,
+  grantQueryOptions,
+  grantsKey,
+  useDeleteGrantMutation,
+} from "~/api/grant";
 import { meQueryOptions } from "~/api/user";
+import { DeleteButton } from "~/components/common/DeleteButton";
 import { EstimatedExpiry } from "~/components/common/EstimatedExpiry";
 import { DownloadSuccessIndicator } from "~/components/file/DownloadSuccessIndicator";
 import { FileRef } from "~/components/file/FileRef";
@@ -15,8 +21,27 @@ export const Route = createFileRoute("/grants/active")({
   component: RouteComponent,
 });
 
+function DeleteGrantButton({ grantId }: { grantId: string }) {
+  const mutation = useDeleteGrantMutation();
+  const { t } = useTranslation("grant_active");
+  return (
+    <DeleteButton
+      loading={mutation.isPending}
+      onClick={() => {
+        mutation.mutate(grantId);
+      }}
+      title={t("title_delete")}
+    />
+  );
+}
+
 function GrantButtons({ grant }: { grant: Grant }) {
-  return <ShareLinkButtons shareId={grant.id} />;
+  return (
+    <Group>
+      <DeleteGrantButton grantId={grant.id} />
+      <ShareLinkButtons shareId={grant.id} />
+    </Group>
+  );
 }
 
 function RouteComponent() {
