@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+
+project_name: frans
+before:
+  hooks:
+    - ./scripts/prebuild.sh
+    - ./scripts/gen_version.sh
+
+builds:
+  - builder: go
+    env:
+      - CGO_ENABLED=0
+
+release:
+  github:
+    owner: jvllmr
+    name: frans
+  draft: true
+  mode: keep-existing
+
+changelog:
+  use: github
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: "Fixes"
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: "Chores"
+      regexp: '^.*?chore(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: Others
+      order: 999
+  filters:
+    exclude:
+      - "^chore(deps):"
+      - "^feat(ci):"
+      - "^fix(ci):"
+      - "^\\[pre-commit\\.ci\\]"
