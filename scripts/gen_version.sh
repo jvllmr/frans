@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION=$(git describe --always)
+VERSION=$(git describe --tags --always)
 
 echo "package config" > internal/config/version.go
 echo "" >> internal/config/version.go
