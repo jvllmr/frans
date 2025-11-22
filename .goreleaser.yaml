@@ -20,6 +20,7 @@ release:
 
 changelog:
   use: github
+  format: "{{.SHA}}: {{.Message}} (@{{.AuthorUsername}})"
   groups:
     - title: Features
       regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
@@ -34,7 +35,7 @@ changelog:
       order: 999
   filters:
     exclude:
-      - "^chore(deps):"
-      - "^feat(ci):"
-      - "^fix(ci):"
-      - "^\\[pre-commit\\.ci\\]"
+      - "^.*?chore(deps):"
+      - "^.*?feat(ci):"
+      - "^.*?fix(ci):"
+      - "^.*?\\[pre-commit\\.ci\\]"
