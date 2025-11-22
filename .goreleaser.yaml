@@ -37,3 +37,4 @@ changelog:
       - "^chore(deps):"
       - "^feat(ci):"
       - "^fix(ci):"
+      - "^\\[pre-commit\\.ci\\]"
