@@ -1,3 +1,4 @@
+#!/bin/bash
 VERSION=$(git describe --always)
 
 echo "package config" > internal/config/version.go
