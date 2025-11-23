@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "pnpm build:client && pnpm build:server",
-    "build:client": "tsc -b && vite build",
+    "build:client": "tsc -b && vite build && touch ./internal/routes/client/assets/.gitkeep",
     "build:server": "./scripts/gen_version.sh &&./scripts/prebuild.sh && go build",
     "docker:test": "./scripts/gen_version.sh && docker compose -f docker-compose.test.yaml up --build",
     "lint": "eslint .",
