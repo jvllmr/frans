@@ -1,6 +1,9 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
+    {{range .scriptAttrs}}
+      <script {{. | attr}}></script>
+    {{end}}
     <script type="module">
       window.fransRootPath = "{{.rootPath}}"
       window.__fransAssetUrl = (filename) => `${window.fransRootPath}/static/${filename}`

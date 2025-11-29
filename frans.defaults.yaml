@@ -16,6 +16,10 @@ trusted_proxies: []
 # Env var: FRANS_TITLE
 title: Frans
 
+# Scripts. List of mappings to apply to each script tag
+# Useful for integration with web analytics
+scripts: []
+
 oidc:
   # URL to the OIDC provider (required)
   # Env var: FRANS_OIDC_ISSUER
