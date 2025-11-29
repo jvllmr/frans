@@ -6,10 +6,13 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/hex"
+	"fmt"
+	"html"
 	"io/fs"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -97,4 +100,12 @@ func GinAbortWithError(ctx context.Context, c *gin.Context, code int, err error)
 	//nolint:errcheck
 	c.AbortWithError(code, err)
 	slog.ErrorContext(ctx, "route resulted in error", "err", err)
+}
+
+func MapToHTMLAttributes(attrs map[string]string) string {
+	var parts []string
+	for k, v := range attrs {
+		parts = append(parts, fmt.Sprintf(`%s="%s"`, k, html.EscapeString(v)))
+	}
+	return strings.Join(parts, " ")
 }

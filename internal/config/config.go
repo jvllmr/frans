@@ -60,11 +60,12 @@ type Config struct {
 
 	DevMode bool `mapstructure:"dev_mode"`
 
-	Host           string   `mapstructure:"host"`
-	Port           uint16   `mapstructure:"port"`
-	RootPath       string   `mapstructure:"root_path"`
-	TrustedProxies []string `mapstructure:"trusted_proxies"`
-	Title          string   `mapstructure:"title"`
+	Host           string              `mapstructure:"host"`
+	Port           uint16              `mapstructure:"port"`
+	RootPath       string              `mapstructure:"root_path"`
+	TrustedProxies []string            `mapstructure:"trusted_proxies"`
+	Title          string              `mapstructure:"title"`
+	Scripts        []map[string]string `mapstructure:"scripts"`
 }
 
 func setConfigSearchStrategy(viper *viper.Viper) {

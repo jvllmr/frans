@@ -36,3 +36,6 @@ otel:
       organization: default
       stream-name: default
     insecure: true
+scripts:
+  - defer: "true"
+    src: "http://localhost:3000/@react-refresh"

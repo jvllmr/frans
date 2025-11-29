@@ -35,9 +35,9 @@ func loadManifest() gjson.Result {
 	return gjson.ParseBytes(jsonData)
 }
 
-func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
+func setIndexTemplate(r *gin.Engine, cfg config.Config) *gin.Engine {
 	var manifest gjson.Result
-	if !configValue.DevMode {
+	if !cfg.DevMode {
 		manifest = loadManifest()
 	} else {
 		manifest = gjson.Parse("{}")
@@ -45,13 +45,13 @@ func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 
 	assetUrl := func(filePath string) string {
 
-		if configValue.DevMode {
+		if cfg.DevMode {
 			return fmt.Sprintf("http://localhost:3000/%s", filePath)
 		}
 
 		filePathResult := manifest.Get(fmt.Sprintf("%s.file", gjson.Escape(filePath)))
 
-		return fmt.Sprintf("%s/static/%s", configValue.RootPath, filePathResult.String())
+		return fmt.Sprintf("%s/static/%s", cfg.RootPath, filePathResult.String())
 	}
 	asset := func(filePath string) string {
 		return assetUrl((filePath))
@@ -65,10 +65,10 @@ func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 		}
 		for _, css_file_result := range css_files_result.Array() {
 			css_file := css_file_result.String()
-			if configValue.DevMode {
+			if cfg.DevMode {
 				urls = append(urls, fmt.Sprintf("http://localhost:3000/%s", css_file))
 			} else {
-				urls = append(urls, fmt.Sprintf("%s/static/%s", configValue.RootPath, css_file))
+				urls = append(urls, fmt.Sprintf("%s/static/%s", cfg.RootPath, css_file))
 			}
 		}
 		return urls
@@ -107,6 +107,7 @@ func setIndexTemplate(r *gin.Engine, configValue config.Config) *gin.Engine {
 		"css":        css,
 		"imports":    imports,
 		"importsCSS": importCSS,
+		"attr":       func(attr string) template.HTMLAttr { return template.HTMLAttr(attr) },
 	}).Parse(indexFileContent))
 	r.SetHTMLTemplate(tmpl)
 
@@ -163,9 +164,8 @@ func SetupClientRoutes(
 		db:     db,
 	}
 
-	rGroup.GET("/s/:id", controller.redirectShareLink)
-
 	setIndexTemplate(r, cfg)
+	rGroup.GET("/s/:id", controller.redirectShareLink)
 	staticFiles, _ := fs.Sub(clientFiles, "assets")
 	rGroup.StaticFS("/static", http.FS(staticFiles))
 
@@ -181,6 +181,11 @@ func SetupClientRoutes(
 			return
 		}
 		authMiddleware(c)
+	}
+
+	scriptAttrs := make([]string, len(cfg.Scripts))
+	for i, script := range cfg.Scripts {
+		scriptAttrs[i] = util.MapToHTMLAttributes(script)
 	}
 
 	r.NoRoute(clientAuthMiddleware, func(c *gin.Context) {
@@ -200,6 +205,7 @@ func SetupClientRoutes(
 			"fransTitle":                            cfg.Title,
 			"color":                                 cfg.Color,
 			"customColor":                           customColorJson,
+			"scriptAttrs":                           scriptAttrs,
 		})
 	})
 
