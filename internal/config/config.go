@@ -89,6 +89,7 @@ func NewConfig() (Config, error) {
 	fransConf.SetDefault("trusted_proxies", []string{})
 
 	fransConf.SetDefault("title", "Frans")
+	fransConf.SetDefault("scripts", []string{})
 
 	fransConf.SetDefault("files.dir", "files")
 	fransConf.SetDefault("files.max_per_upload", 20)
