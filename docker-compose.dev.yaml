@@ -31,13 +31,13 @@ services:
       - ./keycloak/realm_import:/opt/keycloak/data/import:Z
   smtp:
     container_name: frans_dev_smtp
-    image: docker.io/rnwood/smtp4dev:3.10.3
+    image: docker.io/rnwood/smtp4dev:3.11.0
     ports:
       - 127.0.0.1:5000:80
       - 127.0.0.1:2525:25
   openobserve:
     container_name: frans_dev_openobserve
-    image: public.ecr.aws/zinclabs/openobserve:v0.20.1
+    image: public.ecr.aws/zinclabs/openobserve:v0.20.2
     environment:
       ZO_ROOT_USER_EMAIL: "root@example.com"
       ZO_ROOT_USER_PASSWORD: "admin"

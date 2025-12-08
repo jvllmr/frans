@@ -1,4 +1,4 @@
-FROM golang:1.25.4-alpine AS server-base
+FROM golang:1.25.5-alpine AS server-base
 
 FROM node:24.11.1-alpine AS client-base
 WORKDIR /workspace
