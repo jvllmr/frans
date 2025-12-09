@@ -14,7 +14,6 @@ import {
   Title,
 } from "@mantine/core";
 import "@mantine/core/styles.css";
-import { useColorScheme } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import {
@@ -204,14 +203,11 @@ function DevTools() {
 
 function RootRoute() {
   const { t } = useTranslation();
-  const colorScheme = useColorScheme(undefined, {
-    getInitialValueInEffect: false,
-  });
 
   return (
     <>
       <HeadContent />
-      <MantineProvider theme={BASE_THEME} defaultColorScheme={colorScheme}>
+      <MantineProvider theme={BASE_THEME} defaultColorScheme="auto">
         <QueryClientProvider client={queryClient}>
           <Container pt={50}>
             <Paper withBorder p="lg" mb="xs">
