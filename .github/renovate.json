@@ -19,5 +19,9 @@
   "rangeStrategy": "bump",
   "packageRules": [
     { "matchDepTypes": ["golang", "toolchain"], "enabled": false }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
+  "osvVulnerabilityAlerts": true
 }
