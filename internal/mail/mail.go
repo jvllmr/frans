@@ -30,10 +30,16 @@ func (m *Mailer) sendMail(message *mail.Msg) (err error) {
 
 	clientOpts := []mail.Option{
 		mail.WithPort(m.cfg.SMTPPort),
-		mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover),
-		mail.WithUsername(username),
-		mail.WithPassword(password),
 		mail.WithTLSPortPolicy(mail.TLSOpportunistic),
+	}
+
+	if username != "" {
+		clientOpts = append(clientOpts, mail.WithUsername(username))
+		clientOpts = append(clientOpts, mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover))
+	}
+
+	if password != "" {
+		clientOpts = append(clientOpts, mail.WithPassword(password))
 	}
 
 	if m.cfg.SMTPInsecureSkipVerify {
