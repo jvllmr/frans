@@ -64,7 +64,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 				util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 			}
 		}
-		c.JSON(http.StatusCreated, tc.ticketService.ToPublicTicket(ticketValue))
+
 		if form.Email != nil {
 			var toBeEmailedPassword *string = nil
 			if form.EmailPassword {
@@ -87,6 +87,7 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 			return
 		}
+		c.JSON(http.StatusCreated, tc.ticketService.ToPublicTicket(ticketValue))
 	} else {
 		util.GinAbortWithError(ctx, c, http.StatusUnprocessableEntity, err)
 	}

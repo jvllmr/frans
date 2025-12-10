@@ -17,11 +17,12 @@ type OidcConfig struct {
 }
 
 type SMTPConfig struct {
-	SMTPServer   string  `mapstructure:"server"`
-	SMTPPort     int     `mapstructure:"port"`
-	SMTPFrom     string  `mapstructure:"from"`
-	SMTPUsername *string `mapstructure:"username"`
-	SMTPPassword *string `mapstructure:"password"`
+	SMTPServer             string  `mapstructure:"server"`
+	SMTPPort               int     `mapstructure:"port"`
+	SMTPFrom               string  `mapstructure:"from"`
+	SMTPUsername           *string `mapstructure:"username"`
+	SMTPPassword           *string `mapstructure:"password"`
+	SMTPInsecureSkipVerify bool    `mapstructure:"insecureSkipVerify"`
 }
 
 type FilesConfig struct {
@@ -116,6 +117,7 @@ func NewConfig() (Config, error) {
 	fransConf.SetDefault("smtp.from", "")
 	fransConf.SetDefault("smtp.username", nil)
 	fransConf.SetDefault("smtp.password", nil)
+	fransConf.SetDefault("smtp.insecureSkipVerify", false)
 
 	fransConf.SetDefault("colors.preset", "blue")
 	fransConf.SetDefault("colors.custom_preset", [10]string{

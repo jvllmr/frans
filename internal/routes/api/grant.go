@@ -93,10 +93,7 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 			}).
 			Where(grant.ID(grantValue.ID)).
 			OnlyX(ctx)
-		c.JSON(
-			http.StatusCreated,
-			gc.grantService.ToPublicGrant(gc.fileService, grantValue, make([]*ent.File, 0)),
-		)
+
 		if form.Email != nil {
 			var toBeEmailedPassword *string = nil
 			if form.EmailPassword {
@@ -119,6 +116,10 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 			return
 		}
+		c.JSON(
+			http.StatusCreated,
+			gc.grantService.ToPublicGrant(gc.fileService, grantValue, make([]*ent.File, 0)),
+		)
 	} else {
 		util.GinAbortWithError(ctx, c, http.StatusUnprocessableEntity, err)
 	}
