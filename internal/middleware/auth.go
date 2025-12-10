@@ -64,7 +64,7 @@ func Auth(p *oidc.FransOidcProvider, redirect bool) gin.HandlerFunc {
 
 		if newToken.Expiry.After(token.Expiry) {
 			p.UpdateSession(ctx, session, newToken)
-			oidc.SetAccessTokenCookie(c, newToken.AccessToken)
+			p.SetAccessTokenCookie(c, newToken.AccessToken)
 		}
 
 		userinfo, err := p.UserInfo(ctx, tokenSource)

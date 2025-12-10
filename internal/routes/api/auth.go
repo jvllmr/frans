@@ -15,7 +15,7 @@ import (
 )
 
 type authController struct {
-	config   config.Config
+	cfg      config.Config
 	provider *oidc.FransOidcProvider
 }
 
@@ -75,8 +75,8 @@ func (ac *authController) authCallback(c *gin.Context) {
 		return
 	}
 
-	oidc.SetIdTokenCookie(c, rawIDToken)
-	oidc.SetAccessTokenCookie(c, oauth2Token.AccessToken)
+	ac.provider.SetIdTokenCookie(c, rawIDToken)
+	ac.provider.SetAccessTokenCookie(c, oauth2Token.AccessToken)
 	err = ac.provider.CreateSession(ctx, user, oauth2Token, rawIDToken)
 	if err != nil {
 		slog.Error("could not store session", "err", err)
@@ -84,27 +84,27 @@ func (ac *authController) authCallback(c *gin.Context) {
 	authOrigin, err := c.Request.Cookie(config.AuthOriginCookieName)
 
 	if err != nil {
-		c.Redirect(http.StatusTemporaryRedirect, ac.config.RootPath)
+		c.Redirect(http.StatusTemporaryRedirect, ac.cfg.RootPath)
 		return
 	}
 	authOriginPath, err := url.PathUnescape(authOrigin.Value)
 	if err != nil {
-		c.Redirect(http.StatusTemporaryRedirect, ac.config.RootPath)
+		c.Redirect(http.StatusTemporaryRedirect, ac.cfg.RootPath)
 		return
 	}
 	c.Redirect(http.StatusTemporaryRedirect, authOriginPath)
 }
 
-func (ac *authController) logoutCallback(ctx *gin.Context) {
-	ctx.SetCookie(config.AccessTokenCookieName, "", 5, "", "", true, true)
-	idTokenCookie, err := ctx.Request.Cookie(config.IdTokenCookieName)
+func (ac *authController) logoutCallback(c *gin.Context) {
+	c.SetCookie(config.AccessTokenCookieName, "", 5, ac.cfg.RootPath, "", true, true)
+	idTokenCookie, err := c.Request.Cookie(config.IdTokenCookieName)
 	if err == nil {
-		_ = ac.provider.DeleteSession(ctx.Request.Context(), idTokenCookie)
+		_ = ac.provider.DeleteSession(c.Request.Context(), idTokenCookie)
 	}
-	ctx.SetCookie(config.IdTokenCookieName, "", 5, "", "", true, true)
-	redirectURI := ctx.Query("redirect_uri")
+	c.SetCookie(config.IdTokenCookieName, "", 5, ac.cfg.RootPath, "", true, true)
+	redirectURI := c.Query("redirect_uri")
 	slog.Debug(fmt.Sprintf("logout redirect %s", redirectURI))
-	ctx.Redirect(
+	c.Redirect(
 		http.StatusTemporaryRedirect,
 		fmt.Sprintf(
 			"%s?id_token_hint=%s&post_logout_redirect_uri=%s",
@@ -123,7 +123,7 @@ func setupAuthRoutes(
 ) {
 	authGroup := r.Group("/auth")
 	controller := authController{
-		config:   configValue,
+		cfg:      configValue,
 		provider: provider,
 	}
 
