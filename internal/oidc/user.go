@@ -42,7 +42,7 @@ func (fop *FransOidcProvider) ProvisionUser(
 	} else {
 		slog.WarnContext(ctx, "oidcProvider did not provide groups for user", "username", username)
 	}
-	isAdmin := slices.Contains(groups, fop.config.OidcAdminGroup)
+	isAdmin := slices.Contains(groups, fop.cfg.OidcAdminGroup)
 
 	fullName := claimsData["name"].(string)
 	email := claimsData["email"].(string)
