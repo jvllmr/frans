@@ -1,0 +1,18 @@
+{
+  "ticket_comment": "Opmerking bij ticket",
+  "grant_comment": "Opmerking bij upload-toestemming",
+  "contents": "Inhoud",
+  "url": "Link",
+  "password": "Wachtwoord",
+  "subject_ticket": "Downloadlink voor {{.FileName}}",
+  "subject_download": "Downloadmelding voor ticket",
+  "notification_download": "Het bestand {{.FileName}} (ticket {{.TicketName}}) is gedownload door {{.Address}}",
+  "subject_upload": "Uploadmelding voor upload-toestemming",
+  "notification_upload": "Bestanden zijn geüpload naar upload-toestemming {{.GrantName}} door {{.Address}}",
+  "subject_grant": "Link voor upload-toestemming",
+  "notification_deletion": "{{.Entity}} is verwijderd door een beheerder op {{.BaseUrl}}",
+  "subject_deletion": "Verwijderingsmelding voor",
+  "entity_ticket": "ticket {{.ID}}",
+  "entity_grant": "upload-toestemming {{.ID}}",
+  "entity_file": "bestand {{.ID}}"
+}
