@@ -67,6 +67,9 @@ smtp:
   # SMTP default sender from address (required)
   # Env var: FRANS_SMTP_FROM
   from:
+  # Whether to skip TLS verification
+  # Env var: FRANS_SMTP_INSECURESKIPVERIFY
+  insecureSkipVerify: false
 
 files:
   # Path to directory where files will be stored

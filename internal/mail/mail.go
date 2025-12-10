@@ -1,6 +1,7 @@
 package mail
 
 import (
+	"crypto/tls"
 	"log/slog"
 
 	"github.com/wneessen/go-mail"
@@ -9,7 +10,7 @@ import (
 )
 
 type Mailer struct {
-	config config.Config
+	cfg config.Config
 }
 
 func (m *Mailer) sendMail(message *mail.Msg) (err error) {
@@ -19,27 +20,41 @@ func (m *Mailer) sendMail(message *mail.Msg) (err error) {
 		}
 	}()
 	username := ""
-	if m.config.SMTPUsername != nil {
-		username = *m.config.SMTPUsername
+	if m.cfg.SMTPUsername != nil {
+		username = *m.cfg.SMTPUsername
 	}
 	password := ""
-	if m.config.SMTPPassword != nil {
-		password = *m.config.SMTPPassword
+	if m.cfg.SMTPPassword != nil {
+		password = *m.cfg.SMTPPassword
 	}
 
-	dialer, err := mail.NewClient(
-		m.config.SMTPServer,
-		mail.WithPort(m.config.SMTPPort),
+	clientOpts := []mail.Option{
+		mail.WithPort(m.cfg.SMTPPort),
 		mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover),
 		mail.WithUsername(username),
 		mail.WithPassword(password),
 		mail.WithTLSPortPolicy(mail.TLSOpportunistic),
+	}
+
+	if m.cfg.SMTPInsecureSkipVerify {
+		clientOpts = append(clientOpts, mail.WithTLSConfig(
+			&tls.Config{
+				ServerName:         m.cfg.SMTPServer,
+				MinVersion:         mail.DefaultTLSMinVersion,
+				InsecureSkipVerify: true,
+			},
+		))
+	}
+
+	dialer, err := mail.NewClient(
+		m.cfg.SMTPServer,
+		clientOpts...,
 	)
 	if err != nil {
 		slog.Error("Could not setup mail client", "err", err)
 		panic(err)
 	}
-	if err := message.From(m.config.SMTPFrom); err != nil {
+	if err := message.From(m.cfg.SMTPFrom); err != nil {
 		return err
 	}
 	if err := dialer.DialAndSend(message); err != nil {
@@ -50,5 +65,5 @@ func (m *Mailer) sendMail(message *mail.Msg) (err error) {
 }
 
 func NewMailer(config config.Config) Mailer {
-	return Mailer{config: config}
+	return Mailer{cfg: config}
 }
