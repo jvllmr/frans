@@ -1,0 +1,9 @@
+{
+  "title_create": "Upload-toestemming aanmaken",
+  "label_create": "Upload-toestemming aanmaken",
+  "title_reset": "Formuliervelden resetten",
+  "label_expiry": "Vervaldatum upload-toestemming",
+  "label_download_expiry": "Vervaldatum geüploade bestanden",
+  "grant_available": "Uw upload-toestemming is nu beschikbaar!",
+  "grant_another": "Nog een upload-toestemming aanmaken"
+}

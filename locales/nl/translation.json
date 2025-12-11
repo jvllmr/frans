@@ -1,0 +1,19 @@
+{
+  "logout": "Uitloggen",
+  "title_logout": "Uw sessie beëindigen",
+  "upload": "Uploaden",
+  "reset": "Resetten",
+  "generate": "Genereren",
+  "comment": "Opmerking",
+  "session_expired": "Uw sessie is verlopen",
+  "session_renew": "Opnieuw inloggen",
+  "expiration_type_none": "Nooit",
+  "file_downloaded_success": "Succesvol gedownload",
+  "url": "Link",
+  "password": "Wachtwoord",
+  "view_on_github": "Bekijk project op GitHub",
+  "licensed": "Deze software is gelicentieerd onder GPL-2.0",
+  "switch_color_scheme_dark": "Schakel over naar dark mode",
+  "switch_color_scheme_light": "Schakel over naar light mode",
+  "owner": "Eigenaar"
+}

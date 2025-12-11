@@ -23,7 +23,7 @@ The goal is to translate `frans` to the following languages:
 - [ ] `Russian`
 - [ ] `Simplified chinese`
 - [ ] `Japanese`
-- [ ] `Dutch`
+- [x] `Dutch`
 - [ ] `Portuguese, Brazilian`
 - [ ] `Czech`
 - [ ] `Italian`

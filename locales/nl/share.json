@@ -1,0 +1,11 @@
+{
+  "ticket_prompt": "Voer uw wachtwoord in om toegang te krijgen tot de gedeelde bestanden",
+  "ticket_submit": "Toegang tot gedeelde bestanden",
+  "ticket_message": "heeft de volgende bestanden met u gedeeld",
+  "comment": "Opmerking",
+  "title_open_share": "Deel openen",
+  "grant_prompt": "Voer uw wachtwoord in om bestanden te kunnen uploaden",
+  "grant_submit": "Toegang tot upload-toestemming",
+  "grant_message": "heeft u toestemming gegeven om hier bestanden te uploaden",
+  "files": "Bestanden"
+}

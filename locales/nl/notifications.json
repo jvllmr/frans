@@ -1,0 +1,14 @@
+{
+  "ticket_new_failed": "Maken van nieuw ticket mislukt",
+  "ticket_new_success": "Nieuw ticket aangemaakt",
+  "ticket_delete_failed": "Verwijderen van ticket mislukt",
+  "ticket_delete_success": "Ticket verwijderd",
+  "grant_new_failed": "Maken van upload-toestemming mislukt",
+  "grant_new_success": "Nieuwe upload-toestemming aangemaakt",
+  "grant_upload_failed": "Bestanden uploaden naar upload-toestemming mislukt",
+  "grant_upload_success": "Bestanden geüpload naar upload-toestemming",
+  "grant_delete_failed": "Verwijderen van upload-toestemming mislukt",
+  "grant_delete_success": "Upload-toestemming verwijderd",
+  "file_delete_failed": "Verwijderen van bestand mislukt",
+  "file_delete_success": "Bestand verwijderd"
+}
