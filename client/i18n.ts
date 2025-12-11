@@ -15,7 +15,7 @@ export const availableLanguages = [
   //"fr",
   //"it",
   //"ja",
-  //"nl",
+  "nl",
   //"ru",
   //"zh",
 ] as const;
@@ -31,7 +31,7 @@ export const availableLanguagesLabels: Record<AvailableLanguage, string> = {
   // fr: "FR",
   // it: "IT",
   // ja: "JA",
-  // nl: "NL",
+  nl: "NL",
   // ru: "RU",
   // zh: "ZH",
 };

@@ -10,7 +10,7 @@
   "label_receiver_lang": "Ontvanger taal",
   "label_password": "Wachtwoord",
   "label_password_email": "Wachtwoord in tekst weergeven met melding",
-  "label_password_email_highlight": "Weergeven",
+  "label_password_email_highlight": "weergeven",
   "expiry_automatic": "Automatisch",
   "expiry_single_use": "Eenmalig gebruik",
   "expiry_none": "Geen vervaldatum",
