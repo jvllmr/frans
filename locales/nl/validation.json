@@ -1,0 +1,5 @@
+{
+  "email": "Invoer moet een e-mailadres zijn",
+  "min_length": "Invoer moet ten minste # symbolen hebben",
+  "password": "Opgegeven wachtwoord is onjuist"
+}
