@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       smtp:
-        image: docker.io/rnwood/smtp4dev:3.11.0
+        image: docker.io/rnwood/smtp4dev:3.12.0
         ports:
           - 127.0.0.1:2525:25
     steps:
@@ -56,7 +56,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
         with:
-          node-version: 24.11.1
+          node-version: 24.12.0
           cache: "pnpm"
       - name: Setup go
         uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c # v6.1.0
