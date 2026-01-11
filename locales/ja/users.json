@@ -1,0 +1,9 @@
+{
+  "user": "ユーザー",
+  "admin": "管理者",
+  "tickets_submitted": "作成されたチケット",
+  "tickets_active": "有効なチケット",
+  "grants_submitted": "補助金が作成されました",
+  "grants_active": "補助金が有効です",
+  "current_size": "現在のサイズ"
+}
