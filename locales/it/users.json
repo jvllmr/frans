@@ -1,0 +1,9 @@
+{
+  "user": "Utente",
+  "admin": "Amministratore",
+  "tickets_submitted": "Biglietti creati",
+  "tickets_active": "Biglietti attivi",
+  "grants_submitted": "Sovvenzioni create",
+  "grants_active": "Sovvenzioni attive",
+  "current_size": "Dimensione attuale"
+}
