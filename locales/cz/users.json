@@ -1,0 +1,9 @@
+{
+  "user": "Uživatel",
+  "admin": "Admin",
+  "tickets_submitted": "Tikety byly vytvořeny",
+  "tickets_active": "Tikety aktivní",
+  "grants_submitted": "Vytvořené granty",
+  "grants_active": "Aktivní granty",
+  "current_size": "Aktuální velikost"
+}
