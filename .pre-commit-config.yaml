@@ -19,7 +19,7 @@ repos:
         args:
           - --fix=all
   - repo: https://github.com/jvllmr/pre-commit-prettier
-    rev: v3.8.0
+    rev: v3.8.1
     hooks:
       - id: prettier
         additional_dependencies:
