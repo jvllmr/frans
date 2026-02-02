@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       smtp:
-        image: docker.io/rnwood/smtp4dev:3.12.0
+        image: docker.io/rnwood/smtp4dev:3.14.0
         ports:
           - 127.0.0.1:2525:25
     steps:
