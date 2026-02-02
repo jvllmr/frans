@@ -31,7 +31,7 @@ services:
       - ./keycloak/realm_import:/opt/keycloak/data/import:Z
   smtp:
     container_name: frans_dev_smtp
-    image: docker.io/rnwood/smtp4dev:3.12.0
+    image: docker.io/rnwood/smtp4dev:3.14.0
     ports:
       - 127.0.0.1:5000:80
       - 127.0.0.1:2525:25
