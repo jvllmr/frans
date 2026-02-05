@@ -17,22 +17,22 @@ jobs:
       contents: read
       packages: write
       pull-requests: write
-    runs-on: ubuntu-latest
+    runs-on: codeberg-medium-lazy
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
           persist-credentials: false
           fetch-tags: true
           fetch-depth: 0
       - name: Generate version
         run: ./scripts/gen_version.sh
-      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+      - uses: https://github.com/docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
       - name: Get docker tags
         id: metadata
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
           images: |
-            ghcr.io/jvllmr/frans
+            codeberg.org/jvllmr/frans
           tags: |
             type=ref,event=pr
             type=ref,event=branch,enable={{is_default_branch}}
@@ -41,14 +41,14 @@ jobs:
             type=semver,pattern=v{{version}}
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: https://github.com/docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
-          registry: ghcr.io
+          registry: codeberg.org
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        uses: https://github.com/docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: .
           file: ./Dockerfile
@@ -60,27 +60,27 @@ jobs:
           # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#registry-cache
           cache-from: type=registry,ref=ghcr.io/jvllmr/frans:buildcache
           cache-to: type=registry,ref=ghcr.io/jvllmr/frans:buildcache,mode=max
-      - name: Comment PR
-        if: github.repository == 'jvllmr/frans' && github.event_name == 'pull_request'
-        uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc # v2.8.2
-        with:
-          message: |
-            🔄 Building container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
-          message-success: |
-            ✅ Successfully built and pushed container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`.
-               You can try it out now
-          message-failure: |
-            ❌ Failed to build container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
+      #- name: Comment PR
+      #  if: github.repository == 'jvllmr/frans' && github.event_name == 'pull_request'
+      #  uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc # v2.8.2
+      #  with:
+      #    message: |
+      #      🔄 Building container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
+      #    message-success: |
+      #      ✅ Successfully built and pushed container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`.
+      #         You can try it out now
+      #    message-failure: |
+      #      ❌ Failed to build container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
   helm-lint-test:
     needs:
       - container-publish
     name: Test Helm
-    runs-on: ubuntu-latest
+    runs-on: codeberg-small
     permissions:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -100,15 +100,15 @@ jobs:
           echo "Set app version to $APPVERSION"
           sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
       - name: Set up Helm
-        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        uses: https://github.com/azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
 
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - uses: https://github.com/actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.14.2"
           check-latest: true
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f # v2.8.0
+        uses: https://github.com/helm/chart-testing-action@6ec842c01de15ebb84c8627d2744a0c2f2755c9f # v2.8.0
         with:
           yamale_version: "6.0.0"
 
@@ -130,13 +130,13 @@ jobs:
 
       - name: Create kind cluster
         if: steps.list-changed.outputs.changed == 'true'
-        uses: helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
+        uses: https://github.com/helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
       - name: Setup postgres
         if: steps.list-changed.outputs.changed == 'true'
-        run: kubectl apply -f .github/manifests/postgres.yaml
+        run: kubectl apply -f .forgejo/manifests/postgres.yaml
       - name: Setup pocket-id
         if: steps.list-changed.outputs.changed == 'true'
-        run: kubectl apply -f .github/manifests/pocketid.yaml
+        run: kubectl apply -f .forgejo/manifests/pocketid.yaml
       - name: Change database address
         if: steps.list-changed.outputs.changed == 'true'
         run: "sed -i 's/host: localhost/host: postgres.default.svc.cluster.local/' charts/frans/values.yaml"
@@ -166,13 +166,13 @@ jobs:
       - container-publish
       - helm-lint-test
     name: Helm
-    runs-on: ubuntu-latest
+    runs-on: codeberg-tiny-lazy
     permissions:
       contents: read
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -203,9 +203,9 @@ jobs:
           echo "Set app version to $APPVERSION"
           sed -i "s/%VERSION%/$VERSION/g" charts/frans/Chart.yaml
           sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
-      - name: Log in to GitHub Container Registry
+      - name: Log in to Codeberg Container Registry
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io \
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login codeberg.org \
             --username ${GITHUB_ACTOR} \
             --password-stdin
       - name: Package and Push Helm Chart
@@ -219,4 +219,4 @@ jobs:
           echo $(ls packaged)
           echo "Pushing to ghcr.io/${{ github.repository_owner }}/${CHART_NAME}:${VERSION}"
           helm push packaged/${CHART_NAME}-${VERSION}.tgz \
-            oci://ghcr.io/${{ github.repository_owner }}
+            oci://codeberg.org/${{ github.repository_owner }}
