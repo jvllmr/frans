@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
     name: unittest
-    runs-on: codeberg-small
+    runs-on: codeberg-medium-lazy
     services:
       smtp:
         image: docker.io/rnwood/smtp4dev:3.14.0
