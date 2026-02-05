@@ -96,7 +96,7 @@ jobs:
     runs-on: codeberg-tiny-lazy
     env:
       FRANS_DB_TYPE: postgres
-      FRANS_DB_HOST: localhost
+      FRANS_DB_HOST: postgres
       FRANS_DB_USER: postgres
       FRANS_DB_PASSWORD: postgres
       FRANS_DB_NAME: postgres
@@ -130,7 +130,7 @@ jobs:
     runs-on: codeberg-tiny-lazy
     env:
       FRANS_DB_TYPE: mysql
-      FRANS_DB_HOST: localhost
+      FRANS_DB_HOST: mysql
       FRANS_DB_USER: user
       FRANS_DB_PASSWORD: abc123
       FRANS_DB_NAME: frans
