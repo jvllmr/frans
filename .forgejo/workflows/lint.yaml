@@ -8,10 +8,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  pre-commit-lite:
+  pre-commit:
     permissions:
       contents: read
-    name: pre-commit-lite
+    name: pre-commit
     runs-on: codeberg-tiny-lazy
     steps:
       - uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
@@ -32,5 +32,6 @@ jobs:
           go-version: ">=1.25.6"
       - name: Install dependencies
         run: pnpm install --frozen-lock
+      - uses: https://github.com/pre-commit/action@v3.0.1
       - uses: https://github.com/pre-commit-ci/lite-action@5d6cc0eb514c891a40562a58a8e71576c5c7fb43 # v1.1.0
         if: always()
