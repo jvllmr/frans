@@ -71,6 +71,7 @@ jobs:
         with:
           name: build-output
           path: frans
+          retention-days: 2
   migration-sqlite:
     needs: build
     permissions:
