@@ -1,6 +1,12 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 version: 2
 project_name: frans
+gitea_urls:
+  api: https://codeberg.org/api/v1
+  download: https://codeberg.org
+  # set to true if you use a self-signed certificate
+  skip_tls_verify: false
+
 before:
   hooks:
     - ./scripts/prebuild.sh
@@ -12,14 +18,11 @@ builds:
       - CGO_ENABLED=0
 
 release:
-  github:
-    owner: jvllmr
-    name: frans
   draft: true
   mode: keep-existing
 
 changelog:
-  use: github
+  use: gitea
   format: "{{.SHA}}: {{.Message}} (@{{.AuthorUsername}})"
   groups:
     - title: Features
