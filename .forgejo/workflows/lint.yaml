@@ -32,6 +32,6 @@ jobs:
           go-version: ">=1.25.6"
       - name: Install dependencies
         run: pnpm install --frozen-lock
-      - uses: https://github.com/pre-commit/action@v3.0.1
+      - uses: https://github.com/j178/prek-action@v1.1.1
       - uses: https://github.com/pre-commit-ci/lite-action@5d6cc0eb514c891a40562a58a8e71576c5c7fb43 # v1.1.0
         if: always()
