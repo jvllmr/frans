@@ -26,7 +26,6 @@ jobs:
           fetch-depth: 0
       - name: Generate version
         run: ./scripts/gen_version.sh
-      - uses: https://github.com/docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
       - name: Get docker tags
         id: metadata
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
@@ -40,26 +39,19 @@ jobs:
             type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{version}}
 
-      - name: Login to GitHub Container Registry
-        uses: https://github.com/docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-        with:
-          registry: codeberg.org
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push
-        uses: https://github.com/docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+      - name: Build container
+        uses: https://github.com/redhat-actions/buildah-build@v2.13
         with:
           context: .
-          file: ./Dockerfile
+          containerfiles: ./Dockerfile
           platforms: linux/amd64
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          annotations: ${{ steps.metadata.outputs.annotations }}
+          # annotations: ${{ steps.metadata.outputs.annotations }}
           # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#registry-cache
-          cache-from: type=registry,ref=ghcr.io/jvllmr/frans:buildcache
-          cache-to: type=registry,ref=ghcr.io/jvllmr/frans:buildcache,mode=max
+          #cache-from: type=registry,ref=ghcr.io/jvllmr/frans:buildcache
+          #cache-to: type=registry,ref=ghcr.io/jvllmr/frans:buildcache,mode=max
       #- name: Comment PR
       #  if: github.repository == 'jvllmr/frans' && github.event_name == 'pull_request'
       #  uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc # v2.8.2
@@ -71,6 +63,14 @@ jobs:
       #         You can try it out now
       #    message-failure: |
       #      ❌ Failed to build container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
+      - name: Push container
+        uses: https://github.com/redhat-actions/push-to-registry@v2.8
+        with:
+          registry: codeberg.org/jvllmr
+          username: ${{ forgejo.actor }}
+          password: ${{ forgejo.token }}
+          tags: ${{ steps.metadata.outputs.tags }}
+
   helm-lint-test:
     needs:
       - container-publish
