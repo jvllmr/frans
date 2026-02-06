@@ -11,5 +11,8 @@
   "go.alternateTools": {
     "customFormatter": "golangci-lint-v2"
   },
-  "go.formatFlags": ["fmt", "--stdin"]
+  "go.formatFlags": ["fmt", "--stdin"],
+  "json.schemaDownload.trustedDomains": {
+    "https://docs.renovatebot.com": true
+  }
 }
