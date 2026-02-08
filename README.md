@@ -73,7 +73,7 @@ configMap: |
 After your preparations are done, simply run
 
 ```shell
-helm install frans oci://codeberg.org/jvllmr/frans --values values.yaml
+helm install frans oci://codeberg.org/jvllmr/frans-helm --values values.yaml
 ```
 
 to install the helm chart.

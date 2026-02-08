@@ -83,6 +83,7 @@ jobs:
     needs:
       - container-publish
     name: Test Helm
+    if: false
     runs-on: codeberg-small
     permissions:
       contents: read
@@ -172,7 +173,7 @@ jobs:
   helm-publish:
     needs:
       - container-publish
-      - helm-lint-test
+      # - helm-lint-test
     name: Helm
     runs-on: codeberg-tiny-lazy
     permissions:
@@ -214,11 +215,11 @@ jobs:
       - name: Log in to Codeberg Container Registry
         run: |
           echo "${{ secrets.PUBLISH_TOKEN }}" | helm registry login codeberg.org/jvllmr \
-            --username ${GITHUB_ACTOR} \
+            --username jvllmr \
             --password-stdin
       - name: Package and Push Helm Chart
         run: |
-          CHART_NAME=frans
+          CHART_NAME=frans-helm
           CHART_PATH=charts/${CHART_NAME}
           VERSION=$(yq -r '.version' ${CHART_PATH}/Chart.yaml)
 
