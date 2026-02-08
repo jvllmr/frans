@@ -216,7 +216,7 @@ jobs:
           sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
       - name: Log in to Codeberg Container Registry
         run: |
-          echo "${{ secrets.PUBLISH_TOKEN }}" | helm registry login codeberg.org/jvllmr \
+          echo "${{ secrets.PUBLISH_TOKEN }}" | helm registry login codeberg.org \
             --username jvllmr \
             --password-stdin
       - name: Package and Push Helm Chart
