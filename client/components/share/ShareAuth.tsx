@@ -12,8 +12,10 @@ interface TokenGeneratorProps {
   password: string;
 }
 
-export interface ShareAuthProps<TData>
-  extends Omit<TokenGeneratorProps, "password"> {
+export interface ShareAuthProps<TData> extends Omit<
+  TokenGeneratorProps,
+  "password"
+> {
   children?: React.ReactNode;
   DataContextProvider: React.Provider<TData | null>;
   dataFetcher: (password: string) => Promise<TData>;

@@ -1,8 +1,10 @@
 import { TextInput, TextInputProps } from "@mantine/core";
 import React, { useMemo } from "react";
 
-export interface NullTextInputProps
-  extends Omit<TextInputProps, "value" | "onChange"> {
+export interface NullTextInputProps extends Omit<
+  TextInputProps,
+  "value" | "onChange"
+> {
   value?: string | null;
   onChange?: (value: string | null) => void;
 }

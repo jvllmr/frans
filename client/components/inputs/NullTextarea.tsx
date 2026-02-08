@@ -1,8 +1,10 @@
 import { Textarea, TextareaProps } from "@mantine/core";
 import React, { useMemo } from "react";
 
-export interface NullTextareaProps
-  extends Omit<TextareaProps, "value" | "onChange"> {
+export interface NullTextareaProps extends Omit<
+  TextareaProps,
+  "value" | "onChange"
+> {
   value?: string | null;
   onChange?: (value: string | null) => void;
 }
