@@ -34,7 +34,7 @@ services:
       context: .
       dockerfile: Dockerfile
       tags:
-        - ghcr.io/jvllmr/frans-test
+        - codeberg.org/jvllmr/frans-test
     command:
       - serve
     environment:

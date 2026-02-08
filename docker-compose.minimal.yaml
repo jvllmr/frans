@@ -4,7 +4,7 @@
 services:
   server:
     restart: unless-stopped
-    image: ghcr.io/jvllmr/frans:1
+    image: codeberg.org/jvllmr/frans:1
     command:
       - serve
     ports:
@@ -27,7 +27,7 @@ services:
       - files:/opt/frans/files
   cron-runner:
     restart: unless-stopped
-    image: ghcr.io/jvllmr/frans:1
+    image: codeberg.org/jvllmr/frans:1
     command:
       - cron
     environment:
@@ -41,7 +41,7 @@ services:
       - files:/opt/frans/files
   migrator:
     restart: on-failure
-    image: ghcr.io/jvllmr/frans:1
+    image: codeberg.org/jvllmr/frans:1
     command:
       - migrate
     environment:
