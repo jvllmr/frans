@@ -75,8 +75,8 @@ jobs:
         uses: https://github.com/redhat-actions/push-to-registry@v2.8
         with:
           registry: codeberg.org/jvllmr
-          username: ${{ forgejo.actor }}
-          password: ${{ forgejo.token }}
+          username: jvllmr
+          password: ${{ secrets.PUBLISH_TOKEN }}
           tags: ${{ steps.metadata.outputs.tags }}
 
   helm-lint-test:
@@ -213,7 +213,7 @@ jobs:
           sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
       - name: Log in to Codeberg Container Registry
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login codeberg.org \
+          echo "${{ secrets.PUBLISH_TOKEN }}" | helm registry login codeberg.org/jvllmr \
             --username ${GITHUB_ACTOR} \
             --password-stdin
       - name: Package and Push Helm Chart
