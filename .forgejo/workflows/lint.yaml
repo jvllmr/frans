@@ -30,6 +30,7 @@ jobs:
         uses: https://github.com/actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
         with:
           go-version: ">=1.25.6"
+          token: ${{ secrets.GH_PAT }}
       - name: Install dependencies
         run: pnpm install --frozen-lock
       - uses: https://github.com/j178/prek-action@v1.1.1
