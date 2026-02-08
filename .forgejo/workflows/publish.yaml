@@ -185,6 +185,8 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Install helm
+        uses: https://github.com/Azure/setup-helm@v4.3.1
       - name: Set version
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
