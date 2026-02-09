@@ -31,6 +31,10 @@ jobs:
         with:
           go-version: ">=1.25.6"
           token: ${{ secrets.GH_PAT }}
+      - name: Install uv with all available options
+        uses: astral-sh/setup-uv@v7
+        with:
+          github-token: ${{ secrets.GH_PAT }}
       - name: Install dependencies
         run: pnpm install --frozen-lock
       - uses: https://github.com/j178/prek-action@v1.1.1
