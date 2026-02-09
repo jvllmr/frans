@@ -17,7 +17,7 @@ jobs:
       contents: read
       packages: write
       pull-requests: write
-    runs-on: codeberg-medium-lazy
+    runs-on: docker
     steps:
       - run: apt-get update
       - run: apt-get install podman buildah ca-certificates -y
@@ -84,7 +84,7 @@ jobs:
       - container-publish
     name: Test Helm
     if: false
-    runs-on: codeberg-small
+    runs-on: docker
     permissions:
       contents: read
     steps:
@@ -175,7 +175,7 @@ jobs:
       - container-publish
       # - helm-lint-test
     name: Helm
-    runs-on: codeberg-tiny-lazy
+    runs-on: docker
     permissions:
       contents: read
       packages: write

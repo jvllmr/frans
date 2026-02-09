@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
     name: unittest
-    runs-on: codeberg-medium-lazy
+    runs-on: docker
     services:
       smtp:
         image: docker.io/rnwood/smtp4dev:3.14.0
@@ -45,7 +45,7 @@ jobs:
     permissions:
       contents: read
     name: test-build
-    runs-on: codeberg-small
+    runs-on: docker
     steps:
       - uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
@@ -80,7 +80,7 @@ jobs:
     permissions:
       contents: read
     name: test-migration-sqlite3
-    runs-on: codeberg-tiny-lazy
+    runs-on: docker
     env:
       FRANS_DB_TYPE: sqlite3
 
@@ -97,7 +97,7 @@ jobs:
     permissions:
       contents: read
     name: test-migration-postgres
-    runs-on: codeberg-tiny-lazy
+    runs-on: docker
     env:
       FRANS_DB_TYPE: postgres
       FRANS_DB_HOST: postgres
@@ -131,7 +131,7 @@ jobs:
     permissions:
       contents: read
     name: test-migration-mysql
-    runs-on: codeberg-tiny-lazy
+    runs-on: docker
     env:
       FRANS_DB_TYPE: mysql
       FRANS_DB_HOST: mysql
