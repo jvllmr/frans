@@ -1,4 +1,4 @@
-FROM docker.io/golang:1.25.6-alpine AS server-base
+FROM docker.io/golang:1.25.7-alpine@sha256:f6751d823c26342f9506c03797d2527668d095b0a15f1862cddb4d927a7a4ced AS server-base
 
 FROM docker.io/node:24.13.0-alpine AS client-base
 WORKDIR /workspace
