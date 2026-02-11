@@ -12,8 +12,6 @@ on:
 
 jobs:
   container-publish:
-    container:
-      image: quay.io/buildah/stable:v1.42.2
     name: Container
     permissions:
       contents: read
@@ -21,6 +19,12 @@ jobs:
       pull-requests: write
     runs-on: docker
     steps:
+      - run: apt-get update
+      - run: apt-get install podman buildah ca-certificates -y
+      # https://codeberg.org/actions/buildah-simple/src/branch/main/action.yml
+      - run: echo root:1:65536 | tee /etc/subuid /etc/subgid
+      - run: mv /etc/containers/storage.conf /etc/containers/storage.conf.bak || true
+      - run: printf '[storage]\ndriver="vfs"\nrunroot="/run/containers/storage"\ngraphroot="/var/lib/containers/storage"\n' | tee /etc/containers/storage.conf
       - uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
           persist-credentials: false
@@ -43,6 +47,8 @@ jobs:
 
       - name: Build container
         uses: https://github.com/redhat-actions/buildah-build@v2.13
+        env:
+          BUILDAH_ISOLATION: chroot
         with:
           context: .
           containerfiles: ./Dockerfile
