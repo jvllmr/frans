@@ -84,7 +84,7 @@ jobs:
       - container-publish
     name: Test Helm
     if: false
-    runs-on: docker
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
@@ -175,7 +175,7 @@ jobs:
       - container-publish
       # - helm-lint-test
     name: Helm
-    runs-on: docker
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
