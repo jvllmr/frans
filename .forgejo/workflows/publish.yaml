@@ -25,7 +25,7 @@ jobs:
       - run: echo root:1:65536 | tee /etc/subuid /etc/subgid
       - run: mv /etc/containers/storage.conf /etc/containers/storage.conf.bak || true
       - run: printf '[storage]\ndriver="vfs"\nrunroot="/run/containers/storage"\ngraphroot="/var/lib/containers/storage"\n' | tee /etc/containers/storage.conf
-      - uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: https://github.com/actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
           fetch-tags: true
@@ -89,7 +89,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: https://github.com/actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -139,7 +139,7 @@ jobs:
 
       - name: Create kind cluster
         if: steps.list-changed.outputs.changed == 'true'
-        uses: https://github.com/helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
+        uses: https://github.com/helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
       - name: Setup postgres
         if: steps.list-changed.outputs.changed == 'true'
         run: kubectl apply -f .forgejo/manifests/postgres.yaml
@@ -181,7 +181,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+        uses: https://github.com/actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           persist-credentials: false

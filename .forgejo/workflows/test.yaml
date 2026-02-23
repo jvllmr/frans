@@ -19,7 +19,7 @@ jobs:
         ports:
           - 127.0.0.1:2525:25
     steps:
-      - uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: https://github.com/actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: Setup pnpm
@@ -38,7 +38,7 @@ jobs:
       - name: Run tests
         run: pnpm test:cover
       - name: Upload coverage to codecov
-        uses: https://github.com/codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
+        uses: https://github.com/codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
   build:
@@ -47,7 +47,7 @@ jobs:
     name: test-build
     runs-on: docker
     steps:
-      - uses: https://github.com/actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - uses: https://github.com/actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: Setup pnpm
@@ -141,7 +141,7 @@ jobs:
 
     services:
       mysql:
-        image: docker.io/mysql:9
+        image: docker.io/mysql:9.6.0@sha256:e5dc14f6e01c3e577e669337d2855c6d1561b30d8ef2c592e63e4e8a9a52650a
         ports:
           - 3306:3306
         env:
