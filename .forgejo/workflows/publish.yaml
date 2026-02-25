@@ -44,7 +44,15 @@ jobs:
             type=semver,pattern=v{{major}}
             type=semver,pattern=v{{major}}.{{minor}}
             type=semver,pattern=v{{version}}
-
+      - name: Create docker config
+        run: mkdir -p /root/.docker/ && echo '{"auths":{}}' > /root/.docker/config.json
+      - name: Log in to Codeberg registry
+        uses: https://github.com/redhat-actions/podman-login@v1
+        with:
+          registry: codeberg.org/jvllmr
+          username: jvllmr
+          password: ${{ secrets.PUBLISH_TOKEN }}
+          auth_file_path: /run/user/0/containers/auth.json
       - name: Build container
         uses: https://github.com/redhat-actions/buildah-build@v2.13
         env:
@@ -56,6 +64,10 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          layers: true
+          extra-args: |
+            --cache-from codeberg.org/jvllmr/frans-cache
+            --cache-to codeberg.org/jvllmr/frans-cache
           # annotations: ${{ steps.metadata.outputs.annotations }}
           # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#registry-cache
           #cache-from: type=registry,ref=ghcr.io/jvllmr/frans:buildcache
@@ -94,7 +106,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Set version
-        run: sed -i "s/%VERSION%/0.1.0/g" charts/frans/Chart.yaml
+        run: sed -i "s/%VERSION%/0.1.0/g" charts/frans-helm/Chart.yaml
 
       - name: Set app version
         env:
@@ -107,7 +119,7 @@ jobs:
             APPVERSION="main"
           fi
           echo "Set app version to $APPVERSION"
-          sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
+          sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans-helm/Chart.yaml
       - name: Set up Helm
         uses: https://github.com/azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
 
@@ -148,19 +160,19 @@ jobs:
         run: kubectl apply -f .forgejo/manifests/pocketid.yaml
       - name: Change database address
         if: steps.list-changed.outputs.changed == 'true'
-        run: "sed -i 's/host: localhost/host: postgres.default.svc.cluster.local/' charts/frans/values.yaml"
+        run: "sed -i 's/host: localhost/host: postgres.default.svc.cluster.local/' charts/frans-helm/values.yaml"
       - name: Set database password
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          sed -i 's/password: ""/password: frans/' charts/frans/values.yaml
+          sed -i 's/password: ""/password: frans/' charts/frans-helm/values.yaml
       - name: Change oidc issuer
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          sed -i 's|issuer: ""|issuer: "http://pocket-id.default.svc.cluster.local:1411"|' charts/frans/values.yaml
+          sed -i 's|issuer: ""|issuer: "http://pocket-id.default.svc.cluster.local:1411"|' charts/frans-helm/values.yaml
       - name: Change oidc client id
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          sed -i 's|client_id: ""|client_id: "test"|' charts/frans/values.yaml
+          sed -i 's|client_id: ""|client_id: "test"|' charts/frans-helm/values.yaml
       - name: Waiting for pods to be ready
         if: steps.list-changed.outputs.changed == 'true'
         run: kubectl wait --for=condition=Ready pod --all --namespace=default --timeout=180s
@@ -212,8 +224,8 @@ jobs:
           fi
           echo "Set chart version to $VERSION"
           echo "Set app version to $APPVERSION"
-          sed -i "s/%VERSION%/$VERSION/g" charts/frans/Chart.yaml
-          sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans/Chart.yaml
+          sed -i "s/%VERSION%/$VERSION/g" charts/frans-helm/Chart.yaml
+          sed -i "s/%APPVERSION%/$APPVERSION/g" charts/frans-helm/Chart.yaml
       - name: Log in to Codeberg Container Registry
         run: |
           echo "${{ secrets.PUBLISH_TOKEN }}" | helm registry login codeberg.org \

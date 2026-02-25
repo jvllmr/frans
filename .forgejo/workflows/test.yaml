@@ -13,11 +13,19 @@ jobs:
       contents: read
     name: unittest
     runs-on: docker
+    env:
+      FRANS_DB_TYPE: postgres
+      FRANS_DB_HOST: postgres
+      FRANS_DB_USER: postgres
+      FRANS_DB_PASSWORD: postgres
+      FRANS_DB_NAME: postgres
+      FRANS_SMTP_SERVER: smtp
+      FRANS_SMTP_PORT: "25"
+
     services:
       smtp:
         image: docker.io/rnwood/smtp4dev:3.14.0
-        ports:
-          - 127.0.0.1:2525:25
+
     steps:
       - uses: https://github.com/actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -38,6 +46,7 @@ jobs:
       - name: Run tests
         run: pnpm test:cover
       - name: Upload coverage to codecov
+        if: false
         uses: https://github.com/codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -108,8 +117,6 @@ jobs:
     services:
       postgres:
         image: docker.io/postgres:18-alpine
-        ports:
-          - 5432:5432
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -142,8 +149,6 @@ jobs:
     services:
       mysql:
         image: docker.io/mysql:9.6.0@sha256:e5dc14f6e01c3e577e669337d2855c6d1561b30d8ef2c592e63e4e8a9a52650a
-        ports:
-          - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: secret
           MYSQL_USER: user

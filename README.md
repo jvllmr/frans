@@ -78,7 +78,7 @@ helm install frans oci://codeberg.org/jvllmr/frans-helm --values values.yaml
 
 to install the helm chart.
 
-For more `values.yaml` options, take a look inside the default [values.yaml](charts/frans/values.yaml).
+For more `values.yaml` options, take a look inside the default [values.yaml](charts/frans-helm/values.yaml).
 
 ### Docker Compose
 
