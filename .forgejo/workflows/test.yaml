@@ -24,7 +24,7 @@ jobs:
 
     services:
       smtp:
-        image: docker.io/rnwood/smtp4dev:3.14.0
+        image: docker.io/rnwood/smtp4dev:3.14.0@sha256:bc986e75a7a355a70a88315c9da2d3552fb93f4758f4f67d0df1b5bd0424945d
 
     steps:
       - uses: https://github.com/actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -79,7 +79,7 @@ jobs:
       - name: Build
         run: pnpm build
       - name: Upload build
-        uses: https://github.com/actions/upload-artifact@v3.2.1
+        uses: https://github.com/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
         with:
           name: build-output
           path: frans
@@ -95,7 +95,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: https://github.com/actions/download-artifact@v3.0.2
+        uses: https://github.com/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: build-output
       - run: chmod +x frans
@@ -116,7 +116,7 @@ jobs:
 
     services:
       postgres:
-        image: docker.io/postgres:18-alpine
+        image: docker.io/postgres:18-alpine@sha256:035b9ab53cfa147d7202b61f5f7782b939ae815b7d6bc81c96b7b42ff1fca950
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -127,7 +127,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: https://github.com/actions/download-artifact@v3.0.2
+        uses: https://github.com/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: build-output
       - run: chmod +x frans
@@ -162,7 +162,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: https://github.com/actions/download-artifact@v3.0.2
+        uses: https://github.com/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: build-output
       - run: chmod +x frans

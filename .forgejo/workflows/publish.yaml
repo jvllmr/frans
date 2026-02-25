@@ -47,14 +47,14 @@ jobs:
       - name: Create docker config
         run: mkdir -p /root/.docker/ && echo '{"auths":{}}' > /root/.docker/config.json
       - name: Log in to Codeberg registry
-        uses: https://github.com/redhat-actions/podman-login@v1
+        uses: https://github.com/redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
         with:
           registry: codeberg.org/jvllmr
           username: jvllmr
           password: ${{ secrets.PUBLISH_TOKEN }}
           auth_file_path: /run/user/0/containers/auth.json
       - name: Build container
-        uses: https://github.com/redhat-actions/buildah-build@v2.13
+        uses: https://github.com/redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         env:
           BUILDAH_ISOLATION: chroot
         with:
@@ -84,7 +84,7 @@ jobs:
       #    message-failure: |
       #      ❌ Failed to build container image `ghcr.io/jvllmr/frans:pr-${{ github.event.pull_request.number }}` on commit `${{ github.event.pull_request.head.sha }}`
       - name: Push container
-        uses: https://github.com/redhat-actions/push-to-registry@v2.8
+        uses: https://github.com/redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
         with:
           registry: codeberg.org/jvllmr
           username: jvllmr
@@ -198,7 +198,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Install helm
-        uses: https://github.com/Azure/setup-helm@v4.3.1
+        uses: https://github.com/Azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
       - name: Set version
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}

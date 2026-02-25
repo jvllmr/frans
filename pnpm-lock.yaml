@@ -79,7 +79,7 @@ importers:
         specifier: ^1.158.1
         version: 1.159.4(@tanstack/react-router@1.159.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(sugarss@5.0.1(postcss@8.5.6))(tsx@4.21.0))
       '@types/node':
-        specifier: ^24.10.9
+        specifier: 24.10.9
         version: 24.10.9
       '@types/react':
         specifier: 19.2.14
