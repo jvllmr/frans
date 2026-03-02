@@ -47,7 +47,7 @@ jobs:
       - name: Create docker config
         run: mkdir -p /root/.docker/ && echo '{"auths":{}}' > /root/.docker/config.json
       - name: Log in to Codeberg registry
-        uses: https://github.com/redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1
+        uses: https://github.com/redhat-actions/podman-login@4c93cb1ea36b10156ea541570dc69bc04dffe10e # v1.1.2
         with:
           registry: codeberg.org/jvllmr
           username: jvllmr
@@ -90,6 +90,8 @@ jobs:
           username: jvllmr
           password: ${{ secrets.PUBLISH_TOKEN }}
           tags: ${{ steps.metadata.outputs.tags }}
+          extra-args: |
+            --authfile /run/user/0/containers/auth.json
 
   helm-lint-test:
     needs:
