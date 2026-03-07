@@ -19,7 +19,7 @@ jobs:
           instance: https://codeberg.org
           username: jvllmr
           password: ${{ secrets.PUBLISH_TOKEN }}
-          package: ^frans(?:-cache)?$
+          package: ^frans(?:-cache|-helm)?$
           packageType: container
           owner: jvllmr
           keepVersions: ^(?:(?:v)?(?:\d+)(?:\.(\d+))?(?:\.(\d+))?(?:[a|b]\d+)?)?(?:main)?$
