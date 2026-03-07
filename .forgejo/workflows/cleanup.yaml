@@ -14,7 +14,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Cleanup
-        uses: ./
+        uses: https://codeberg.org/jvllmr/forgejo-pkg-cleanup@v1.0.0
         with:
           instance: https://codeberg.org
           username: jvllmr
