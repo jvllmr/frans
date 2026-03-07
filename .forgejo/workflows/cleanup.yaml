@@ -1,0 +1,26 @@
+name: Cleanup
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  container-images:
+    runs-on: docker
+    name: Container-Images
+    steps:
+      - uses: https://github.com/actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Cleanup
+        uses: ./
+        with:
+          instance: https://codeberg.org
+          username: jvllmr
+          password: ${{ secrets.PUBLISH_TOKEN }}
+          package: ^frans(?:-cache)?$
+          packageType: container
+          owner: jvllmr
+          keepVersions: ^(?:(?:v)?(?:\d+)(?:\.(\d+))?(?:\.(\d+))?(?:[a|b]\d+)?)?(?:main)?$
+          retention: 6h
