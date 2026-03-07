@@ -12,15 +12,20 @@ import (
 func RefreshUserTotalDataSize(ctx context.Context, u *ent.User, tx *ent.Tx) error {
 	ctx, span := otel.NewSpan(ctx, "refreshUserTotalDataSize")
 	defer span.End()
-	if totalDataSize, err := tx.User.Query().Where(user.ID(u.ID)).QueryFiles().QueryData().
-		Aggregate(ent.Sum(filedata.FieldSize)).
-		Int(ctx); err != nil {
+	filesCount, err := tx.User.Query().QueryFiles().Count(ctx)
+	if err != nil {
 		return err
-	} else {
-		if tx != nil {
-			return tx.User.UpdateOne(u).SetTotalDataSize(int64(totalDataSize)).Exec(ctx)
-		}
-
-		return u.Update().SetTotalDataSize(int64(totalDataSize)).Exec(ctx)
 	}
+	totalDataSize := 0
+	if filesCount > 0 {
+		totalDataSize, err = tx.User.Query().Where(user.ID(u.ID)).QueryFiles().QueryData().
+			Aggregate(ent.Sum(filedata.FieldSize)).
+			Int(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.User.UpdateOne(u).SetTotalDataSize(int64(totalDataSize)).Exec(ctx)
+
 }
