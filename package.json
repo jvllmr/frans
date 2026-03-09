@@ -49,7 +49,7 @@
     "@eslint/js": "^9.39.2",
     "@tanstack/react-query-devtools": "^5.91.3",
     "@tanstack/router-plugin": "^1.158.1",
-    "@types/node": "24.11.1",
+    "@types/node": "24.11.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
