@@ -14,7 +14,7 @@ services:
       - keycloak
   keycloak:
     container_name: frans_dev_keycloak
-    image: quay.io/keycloak/keycloak:26.5.4@sha256:ae8efb0d218d8921334b03a2dbee7069a0b868240691c50a3ffc9f42fabba8b4
+    image: quay.io/keycloak/keycloak:26.5.5@sha256:a7b0cb7a43a1235a61872883414d3f1d9a3ceac9df6e5907bd12202778a6265c
     command: start-dev --import-realm --verbose
     ports:
       - 127.0.0.1:8080:8080
@@ -31,13 +31,13 @@ services:
       - ./keycloak/realm_import:/opt/keycloak/data/import:Z
   smtp:
     container_name: frans_dev_smtp
-    image: docker.io/rnwood/smtp4dev:3.14.0@sha256:bc986e75a7a355a70a88315c9da2d3552fb93f4758f4f67d0df1b5bd0424945d
+    image: docker.io/rnwood/smtp4dev:3.15.0@sha256:25c434c1900a9c5b61e17ead0a774d9e81b80554d05cf64719d69e5ea8c66537
     ports:
       - 127.0.0.1:5000:80
       - 127.0.0.1:2525:25
   openobserve:
     container_name: frans_dev_openobserve
-    image: public.ecr.aws/zinclabs/openobserve:v0.60.3@sha256:406e08d99186d79214fdb9b2e4c4b5841afd22eccb7ddb897c3d316446eca529
+    image: public.ecr.aws/zinclabs/openobserve:v0.60.4@sha256:645bdc3913b82806fd52de4e7c3604aceafdf84b6ea77e97057dbf8ca9960607
     environment:
       ZO_ROOT_USER_EMAIL: "root@example.com"
       ZO_ROOT_USER_PASSWORD: "admin"
