@@ -11,7 +11,7 @@ jobs:
     name: Container-Images
     steps:
       - name: Cleanup
-        uses: https://codeberg.org/jvllmr/forgejo-pkg-cleanup@v1.0.0
+        uses: https://codeberg.org/jvllmr/forgejo-pkg-cleanup@86590be7b2d9308712dba5b0623f786314099990 # v1.0.0
         with:
           instance: https://codeberg.org
           username: jvllmr
