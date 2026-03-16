@@ -1,6 +1,6 @@
-FROM docker.io/golang:1.25.7-alpine@sha256:f6751d823c26342f9506c03797d2527668d095b0a15f1862cddb4d927a7a4ced AS server-base
+FROM docker.io/golang:1.26.1-alpine@sha256:2389ebfa5b7f43eeafbd6be0c3700cc46690ef842ad962f6c5bd6be49ed82039 AS server-base
 
-FROM docker.io/node:24.13.0-alpine AS client-base
+FROM docker.io/node:24.14.0-alpine@sha256:7fddd9ddeae8196abf4a3ef2de34e11f7b1a722119f91f28ddf1e99dcafdf114 AS client-base
 WORKDIR /workspace
 COPY ./package.json ./pnpm-workspace.yaml ./pnpm-lock.yaml ./
 RUN corepack prepare && corepack enable
