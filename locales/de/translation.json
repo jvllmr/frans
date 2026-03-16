@@ -15,5 +15,6 @@
   "licensed": "Diese Software ist lizenziert unter GPL-2.0",
   "switch_color_scheme_dark": "In den Dark-Mode wechseln",
   "switch_color_scheme_light": "In den Light-Mode wechseln",
-  "owner": "Besitzer"
+  "owner": "Besitzer",
+  "send": "Absenden"
 }

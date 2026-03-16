@@ -10,6 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconSendFilled } from "@tabler/icons-react";
 
 import { createFileRoute } from "@tanstack/react-router";
 import { zod4Resolver } from "mantine-form-zod-resolver";
@@ -150,8 +151,9 @@ function NewTicketForm() {
               type="submit"
               loading={createTicketMutation.isPending}
               title={t("title_upload")}
+              rightSection={<IconSendFilled />}
             >
-              {t("upload", { ns: "translation" })}
+              {t("send", { ns: "translation" })}
             </Button>
             <Button
               onClick={() => {
