@@ -2,7 +2,7 @@ name: Cleanup
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -16,8 +16,8 @@ jobs:
           instance: https://codeberg.org
           username: jvllmr
           password: ${{ secrets.PUBLISH_TOKEN }}
-          package: ^frans(?:-cache|-helm)?$
+          package: ^frans-cache$
           packageType: container
           owner: jvllmr
           keepVersions: ^(?:(?:v)?(?:\d+)(?:\.(\d+))?(?:\.(\d+))?(?:[a|b]\d+)?)?(?:main)?$
-          retention: 6h
+          retention: 30m
