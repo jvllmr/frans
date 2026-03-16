@@ -1,6 +1,6 @@
 # frans
 
-[![Crowdin](https://badges.crowdin.net/go-frans/localized.svg)](https://crowdin.com/project/go-frans)
+[![Translation status](https://translate.codeberg.org/widget/frans/svg-badge.svg)](https://translate.codeberg.org/engage/frans/)
 [![GitHub License](https://img.shields.io/github/license/jvllmr/frans)](https://github.com/jvllmr/frans/blob/main/LICENSE)
 
 Frans is a simple file-sharing service intended to be ready for cloud native.
@@ -29,7 +29,7 @@ The goal is to translate `frans` to the following languages:
 - [ ] `Czech`
 - [ ] `Italian`
 
-Feel free to contribute or improve translations via [Crowdin](https://crowdin.com/project/go-frans)
+Feel free to contribute or improve translations via [Codeberg Translate](https://translate.codeberg.org/engage/frans/)
 
 ## Installation
 
