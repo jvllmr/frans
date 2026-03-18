@@ -1,14 +1,14 @@
 {
-    "ticket_new_failed": "",
-    "ticket_new_success": "",
-    "ticket_delete_failed": "",
-    "ticket_delete_success": "",
-    "grant_new_failed": "",
-    "grant_new_success": "",
-    "grant_upload_failed": "",
-    "grant_upload_success": "",
-    "grant_delete_failed": "",
-    "grant_delete_success": "",
-    "file_delete_failed": "",
-    "file_delete_success": ""
+  "ticket_new_failed": "",
+  "ticket_new_success": "",
+  "ticket_delete_failed": "",
+  "ticket_delete_success": "",
+  "grant_new_failed": "",
+  "grant_new_success": "",
+  "grant_upload_failed": "",
+  "grant_upload_success": "",
+  "grant_delete_failed": "",
+  "grant_delete_success": "",
+  "file_delete_failed": "",
+  "file_delete_success": ""
 }

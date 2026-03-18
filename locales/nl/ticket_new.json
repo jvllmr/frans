@@ -1,7 +1,7 @@
 {
-    "title_upload": "Bestanden uploaden en verzenden",
-    "title_reset": "Formuliervelden resetten",
-    "label_expiry": "Vervaldatum ticket",
-    "ticket_available": "Uw ticket is nu beschikbaar!",
-    "ticket_another": "Nog een ticket aanmaken"
+  "title_upload": "Bestanden uploaden en verzenden",
+  "title_reset": "Formuliervelden resetten",
+  "label_expiry": "Vervaldatum ticket",
+  "ticket_available": "Uw ticket is nu beschikbaar!",
+  "ticket_another": "Nog een ticket aanmaken"
 }
