@@ -13,3 +13,4 @@ migration.db
 *.out
 coverage.txt
 testfiles
+.pnpm-store
