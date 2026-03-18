@@ -96,11 +96,6 @@ func ExpiryTotalDownloads(v uint8) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldExpiryTotalDownloads, v))
 }
 
-// EmailOnDownload applies equality check predicate on the "email_on_download" field. It's identical to EmailOnDownloadEQ.
-func EmailOnDownload(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEQ(FieldEmailOnDownload, v))
-}
-
 // CreatorLang applies equality check predicate on the "creator_lang" field. It's identical to CreatorLangEQ.
 func CreatorLang(v string) predicate.Ticket {
 	return predicate.Ticket(sql.FieldEQ(FieldCreatorLang, v))
@@ -536,61 +531,6 @@ func ExpiryTotalDownloadsLTE(v uint8) predicate.Ticket {
 	return predicate.Ticket(sql.FieldLTE(FieldExpiryTotalDownloads, v))
 }
 
-// EmailOnDownloadEQ applies the EQ predicate on the "email_on_download" field.
-func EmailOnDownloadEQ(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEQ(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadNEQ applies the NEQ predicate on the "email_on_download" field.
-func EmailOnDownloadNEQ(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldNEQ(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadIn applies the In predicate on the "email_on_download" field.
-func EmailOnDownloadIn(vs ...string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldIn(FieldEmailOnDownload, vs...))
-}
-
-// EmailOnDownloadNotIn applies the NotIn predicate on the "email_on_download" field.
-func EmailOnDownloadNotIn(vs ...string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldNotIn(FieldEmailOnDownload, vs...))
-}
-
-// EmailOnDownloadGT applies the GT predicate on the "email_on_download" field.
-func EmailOnDownloadGT(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldGT(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadGTE applies the GTE predicate on the "email_on_download" field.
-func EmailOnDownloadGTE(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldGTE(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadLT applies the LT predicate on the "email_on_download" field.
-func EmailOnDownloadLT(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldLT(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadLTE applies the LTE predicate on the "email_on_download" field.
-func EmailOnDownloadLTE(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldLTE(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadContains applies the Contains predicate on the "email_on_download" field.
-func EmailOnDownloadContains(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldContains(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadHasPrefix applies the HasPrefix predicate on the "email_on_download" field.
-func EmailOnDownloadHasPrefix(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldHasPrefix(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadHasSuffix applies the HasSuffix predicate on the "email_on_download" field.
-func EmailOnDownloadHasSuffix(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldHasSuffix(FieldEmailOnDownload, v))
-}
-
 // EmailOnDownloadIsNil applies the IsNil predicate on the "email_on_download" field.
 func EmailOnDownloadIsNil() predicate.Ticket {
 	return predicate.Ticket(sql.FieldIsNull(FieldEmailOnDownload))
@@ -599,16 +539,6 @@ func EmailOnDownloadIsNil() predicate.Ticket {
 // EmailOnDownloadNotNil applies the NotNil predicate on the "email_on_download" field.
 func EmailOnDownloadNotNil() predicate.Ticket {
 	return predicate.Ticket(sql.FieldNotNull(FieldEmailOnDownload))
-}
-
-// EmailOnDownloadEqualFold applies the EqualFold predicate on the "email_on_download" field.
-func EmailOnDownloadEqualFold(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldEqualFold(FieldEmailOnDownload, v))
-}
-
-// EmailOnDownloadContainsFold applies the ContainsFold predicate on the "email_on_download" field.
-func EmailOnDownloadContainsFold(v string) predicate.Ticket {
-	return predicate.Ticket(sql.FieldContainsFold(FieldEmailOnDownload, v))
 }
 
 // CreatorLangEQ applies the EQ predicate on the "creator_lang" field.

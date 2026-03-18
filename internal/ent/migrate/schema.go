@@ -84,7 +84,7 @@ var (
 		{Name: "file_expiry_total_downloads", Type: field.TypeUint8},
 		{Name: "last_upload", Type: field.TypeTime, Nullable: true},
 		{Name: "times_uploaded", Type: field.TypeUint64, Default: 0},
-		{Name: "email_on_upload", Type: field.TypeString, Nullable: true},
+		{Name: "email_on_upload", Type: field.TypeJSON, Nullable: true},
 		{Name: "creator_lang", Type: field.TypeString, Default: "en"},
 		{Name: "user_grants", Type: field.TypeUUID, Nullable: true},
 	}
@@ -162,7 +162,7 @@ var (
 		{Name: "expiry_total_days", Type: field.TypeUint8},
 		{Name: "expiry_days_since_last_download", Type: field.TypeUint8},
 		{Name: "expiry_total_downloads", Type: field.TypeUint8},
-		{Name: "email_on_download", Type: field.TypeString, Nullable: true},
+		{Name: "email_on_download", Type: field.TypeJSON, Nullable: true},
 		{Name: "creator_lang", Type: field.TypeString, Default: "en"},
 		{Name: "user_tickets", Type: field.TypeUUID, Nullable: true},
 	}

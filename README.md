@@ -86,7 +86,7 @@ See [docker-compose.minimal.yaml](docker-compose.minimal.yaml) for a minimal exa
 
 ### Pre-compiled binaries
 
-Take a look at [Frans GitHub Releases](https://github.com/jvllmr/frans/releases) for pre-compiled binaries for linux, macOS and windows!
+Take a look at [Frans Codeberg Releases](https://codeberg.org/jvllmr/frans/releases) for pre-compiled binaries for linux, macOS and windows!
 
 ## Requirements
 

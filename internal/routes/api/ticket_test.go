@@ -44,8 +44,8 @@ func createTestTicket(
 	}
 
 	comment := "Test comment"
-	email := "test_receiver@vllmr.dev"
-	emailOnDownload := "test_creator@vllmr.dev"
+	email := []string{"test_receiver@vllmr.dev"}
+	emailOnDownload := []string{"test_creator@vllmr.dev"}
 
 	fields := services.TicketFormParams{
 		Comment:                     &comment,

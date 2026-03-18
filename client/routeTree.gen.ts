@@ -71,8 +71,8 @@ export interface FileRoutesByFullPath {
   '/grants/active': typeof GrantsActiveRoute
   '/grants/new': typeof GrantsNewRoute
   '/s/$shareId': typeof SShareIdRoute
-  '/grants': typeof GrantsIndexRoute
-  '/tickets': typeof TicketsIndexRoute
+  '/grants/': typeof GrantsIndexRoute
+  '/tickets/': typeof TicketsIndexRoute
   '/share/grant/$grantId': typeof ShareGrantGrantIdRoute
   '/share/ticket/$ticketId': typeof ShareTicketTicketIdRoute
 }
@@ -107,8 +107,8 @@ export interface FileRouteTypes {
     | '/grants/active'
     | '/grants/new'
     | '/s/$shareId'
-    | '/grants'
-    | '/tickets'
+    | '/grants/'
+    | '/tickets/'
     | '/share/grant/$grantId'
     | '/share/ticket/$ticketId'
   fileRoutesByTo: FileRoutesByTo
@@ -166,14 +166,14 @@ declare module '@tanstack/react-router' {
     '/tickets/': {
       id: '/tickets/'
       path: '/tickets'
-      fullPath: '/tickets'
+      fullPath: '/tickets/'
       preLoaderRoute: typeof TicketsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/grants/': {
       id: '/grants/'
       path: '/grants'
-      fullPath: '/grants'
+      fullPath: '/grants/'
       preLoaderRoute: typeof GrantsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }

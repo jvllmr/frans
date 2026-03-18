@@ -89,16 +89,8 @@ func (_c *TicketCreate) SetExpiryTotalDownloads(v uint8) *TicketCreate {
 }
 
 // SetEmailOnDownload sets the "email_on_download" field.
-func (_c *TicketCreate) SetEmailOnDownload(v string) *TicketCreate {
+func (_c *TicketCreate) SetEmailOnDownload(v []string) *TicketCreate {
 	_c.mutation.SetEmailOnDownload(v)
-	return _c
-}
-
-// SetNillableEmailOnDownload sets the "email_on_download" field if the given value is not nil.
-func (_c *TicketCreate) SetNillableEmailOnDownload(v *string) *TicketCreate {
-	if v != nil {
-		_c.SetEmailOnDownload(*v)
-	}
 	return _c
 }
 
@@ -310,8 +302,8 @@ func (_c *TicketCreate) createSpec() (*Ticket, *sqlgraph.CreateSpec) {
 		_node.ExpiryTotalDownloads = value
 	}
 	if value, ok := _c.mutation.EmailOnDownload(); ok {
-		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
-		_node.EmailOnDownload = &value
+		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeJSON, value)
+		_node.EmailOnDownload = value
 	}
 	if value, ok := _c.mutation.CreatorLang(); ok {
 		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)

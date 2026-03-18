@@ -156,11 +156,6 @@ func ByExpiryTotalDownloads(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiryTotalDownloads, opts...).ToFunc()
 }
 
-// ByEmailOnDownload orders the results by the email_on_download field.
-func ByEmailOnDownload(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEmailOnDownload, opts...).ToFunc()
-}
-
 // ByCreatorLang orders the results by the creator_lang field.
 func ByCreatorLang(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatorLang, opts...).ToFunc()

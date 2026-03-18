@@ -3,7 +3,7 @@ import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { AvailableLanguage } from "~/i18n";
 import { LangInput } from "../inputs/LangInput";
-import { NullTextInput } from "../inputs/NullTextInput";
+import { NullTagsInput } from "../inputs/NullTagsInput";
 
 export interface HisHerEmailFormSectionProps {
   form: UseFormReturnType<{
@@ -16,7 +16,7 @@ export function HisHerEmailSection({ form }: HisHerEmailFormSectionProps) {
   return (
     <Fieldset>
       <Group w="100%" align="start">
-        <NullTextInput
+        <NullTagsInput
           {...form.getInputProps("email")}
           label={t("label_email")}
           w="50%"

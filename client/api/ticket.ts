@@ -23,7 +23,10 @@ function v1TicketUrl(url: string) {
 export const createTicketSchemaFactory = (t: typeof i18n.t) =>
   z.object({
     comment: z.string().nullable(),
-    email: z.email(t("email", { ns: "validation" })).nullable(),
+    email: z
+      .email(t("email", { ns: "validation" }))
+      .array()
+      .nullable(),
     password: z
       .string()
       .min(12, i18n.t("min_length", { ns: "validation" }).replace("#", "12")),
@@ -32,7 +35,10 @@ export const createTicketSchemaFactory = (t: typeof i18n.t) =>
     expiryTotalDays: z.int(),
     expiryDaysSinceLastDownload: z.int(),
     expiryTotalDownloads: z.int(),
-    emailOnDownload: z.email(i18n.t("email", { ns: "validation" })).nullable(),
+    emailOnDownload: z
+      .email(i18n.t("email", { ns: "validation" }))
+      .array()
+      .nullable(),
     files: z.file().array().min(1),
     creatorLang: z.enum(availableLanguages),
     receiverLang: z.enum(availableLanguages),

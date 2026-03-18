@@ -33,7 +33,7 @@ func (Grant) Fields() []ent.Field {
 		field.Uint8("file_expiry_total_downloads"),
 		field.Time("last_upload").Nillable().Optional(),
 		field.Uint64("times_uploaded").Default(0),
-		field.String("email_on_upload").Nillable().Optional(),
+		field.Strings("email_on_upload").Optional(),
 		field.String("creator_lang").Default("en"),
 	}
 }

@@ -1639,7 +1639,8 @@ type GrantMutation struct {
 	last_upload                             *time.Time
 	times_uploaded                          *uint64
 	addtimes_uploaded                       *int64
-	email_on_upload                         *string
+	email_on_upload                         *[]string
+	appendemail_on_upload                   []string
 	creator_lang                            *string
 	clearedFields                           map[string]struct{}
 	files                                   map[uuid.UUID]struct{}
@@ -2430,12 +2431,13 @@ func (m *GrantMutation) ResetTimesUploaded() {
 }
 
 // SetEmailOnUpload sets the "email_on_upload" field.
-func (m *GrantMutation) SetEmailOnUpload(s string) {
+func (m *GrantMutation) SetEmailOnUpload(s []string) {
 	m.email_on_upload = &s
+	m.appendemail_on_upload = nil
 }
 
 // EmailOnUpload returns the value of the "email_on_upload" field in the mutation.
-func (m *GrantMutation) EmailOnUpload() (r string, exists bool) {
+func (m *GrantMutation) EmailOnUpload() (r []string, exists bool) {
 	v := m.email_on_upload
 	if v == nil {
 		return
@@ -2446,7 +2448,7 @@ func (m *GrantMutation) EmailOnUpload() (r string, exists bool) {
 // OldEmailOnUpload returns the old "email_on_upload" field's value of the Grant entity.
 // If the Grant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GrantMutation) OldEmailOnUpload(ctx context.Context) (v *string, err error) {
+func (m *GrantMutation) OldEmailOnUpload(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldEmailOnUpload is only allowed on UpdateOne operations")
 	}
@@ -2460,9 +2462,23 @@ func (m *GrantMutation) OldEmailOnUpload(ctx context.Context) (v *string, err er
 	return oldValue.EmailOnUpload, nil
 }
 
+// AppendEmailOnUpload adds s to the "email_on_upload" field.
+func (m *GrantMutation) AppendEmailOnUpload(s []string) {
+	m.appendemail_on_upload = append(m.appendemail_on_upload, s...)
+}
+
+// AppendedEmailOnUpload returns the list of values that were appended to the "email_on_upload" field in this mutation.
+func (m *GrantMutation) AppendedEmailOnUpload() ([]string, bool) {
+	if len(m.appendemail_on_upload) == 0 {
+		return nil, false
+	}
+	return m.appendemail_on_upload, true
+}
+
 // ClearEmailOnUpload clears the value of the "email_on_upload" field.
 func (m *GrantMutation) ClearEmailOnUpload() {
 	m.email_on_upload = nil
+	m.appendemail_on_upload = nil
 	m.clearedFields[grant.FieldEmailOnUpload] = struct{}{}
 }
 
@@ -2475,6 +2491,7 @@ func (m *GrantMutation) EmailOnUploadCleared() bool {
 // ResetEmailOnUpload resets all changes to the "email_on_upload" field.
 func (m *GrantMutation) ResetEmailOnUpload() {
 	m.email_on_upload = nil
+	m.appendemail_on_upload = nil
 	delete(m.clearedFields, grant.FieldEmailOnUpload)
 }
 
@@ -2933,7 +2950,7 @@ func (m *GrantMutation) SetField(name string, value ent.Value) error {
 		m.SetTimesUploaded(v)
 		return nil
 	case grant.FieldEmailOnUpload:
-		v, ok := value.(string)
+		v, ok := value.([]string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4259,7 +4276,8 @@ type TicketMutation struct {
 	addexpiry_days_since_last_download *int8
 	expiry_total_downloads             *uint8
 	addexpiry_total_downloads          *int8
-	email_on_download                  *string
+	email_on_download                  *[]string
+	appendemail_on_download            []string
 	creator_lang                       *string
 	clearedFields                      map[string]struct{}
 	files                              map[uuid.UUID]struct{}
@@ -4741,12 +4759,13 @@ func (m *TicketMutation) ResetExpiryTotalDownloads() {
 }
 
 // SetEmailOnDownload sets the "email_on_download" field.
-func (m *TicketMutation) SetEmailOnDownload(s string) {
+func (m *TicketMutation) SetEmailOnDownload(s []string) {
 	m.email_on_download = &s
+	m.appendemail_on_download = nil
 }
 
 // EmailOnDownload returns the value of the "email_on_download" field in the mutation.
-func (m *TicketMutation) EmailOnDownload() (r string, exists bool) {
+func (m *TicketMutation) EmailOnDownload() (r []string, exists bool) {
 	v := m.email_on_download
 	if v == nil {
 		return
@@ -4757,7 +4776,7 @@ func (m *TicketMutation) EmailOnDownload() (r string, exists bool) {
 // OldEmailOnDownload returns the old "email_on_download" field's value of the Ticket entity.
 // If the Ticket object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TicketMutation) OldEmailOnDownload(ctx context.Context) (v *string, err error) {
+func (m *TicketMutation) OldEmailOnDownload(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldEmailOnDownload is only allowed on UpdateOne operations")
 	}
@@ -4771,9 +4790,23 @@ func (m *TicketMutation) OldEmailOnDownload(ctx context.Context) (v *string, err
 	return oldValue.EmailOnDownload, nil
 }
 
+// AppendEmailOnDownload adds s to the "email_on_download" field.
+func (m *TicketMutation) AppendEmailOnDownload(s []string) {
+	m.appendemail_on_download = append(m.appendemail_on_download, s...)
+}
+
+// AppendedEmailOnDownload returns the list of values that were appended to the "email_on_download" field in this mutation.
+func (m *TicketMutation) AppendedEmailOnDownload() ([]string, bool) {
+	if len(m.appendemail_on_download) == 0 {
+		return nil, false
+	}
+	return m.appendemail_on_download, true
+}
+
 // ClearEmailOnDownload clears the value of the "email_on_download" field.
 func (m *TicketMutation) ClearEmailOnDownload() {
 	m.email_on_download = nil
+	m.appendemail_on_download = nil
 	m.clearedFields[ticket.FieldEmailOnDownload] = struct{}{}
 }
 
@@ -4786,6 +4819,7 @@ func (m *TicketMutation) EmailOnDownloadCleared() bool {
 // ResetEmailOnDownload resets all changes to the "email_on_download" field.
 func (m *TicketMutation) ResetEmailOnDownload() {
 	m.email_on_download = nil
+	m.appendemail_on_download = nil
 	delete(m.clearedFields, ticket.FieldEmailOnDownload)
 }
 
@@ -5160,7 +5194,7 @@ func (m *TicketMutation) SetField(name string, value ent.Value) error {
 		m.SetExpiryTotalDownloads(v)
 		return nil
 	case ticket.FieldEmailOnDownload:
-		v, ok := value.(string)
+		v, ok := value.([]string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

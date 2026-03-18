@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -36,7 +37,7 @@ type Ticket struct {
 	// ExpiryTotalDownloads holds the value of the "expiry_total_downloads" field.
 	ExpiryTotalDownloads uint8 `json:"expiry_total_downloads,omitempty"`
 	// EmailOnDownload holds the value of the "email_on_download" field.
-	EmailOnDownload *string `json:"email_on_download,omitempty"`
+	EmailOnDownload []string `json:"email_on_download,omitempty"`
 	// CreatorLang holds the value of the "creator_lang" field.
 	CreatorLang string `json:"creator_lang,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -93,9 +94,11 @@ func (*Ticket) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case ticket.FieldEmailOnDownload:
+			values[i] = new([]byte)
 		case ticket.FieldExpiryTotalDays, ticket.FieldExpiryDaysSinceLastDownload, ticket.FieldExpiryTotalDownloads:
 			values[i] = new(sql.NullInt64)
-		case ticket.FieldComment, ticket.FieldExpiryType, ticket.FieldHashedPassword, ticket.FieldSalt, ticket.FieldEmailOnDownload, ticket.FieldCreatorLang:
+		case ticket.FieldComment, ticket.FieldExpiryType, ticket.FieldHashedPassword, ticket.FieldSalt, ticket.FieldCreatorLang:
 			values[i] = new(sql.NullString)
 		case ticket.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -174,11 +177,12 @@ func (_m *Ticket) assignValues(columns []string, values []any) error {
 				_m.ExpiryTotalDownloads = uint8(value.Int64)
 			}
 		case ticket.FieldEmailOnDownload:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field email_on_download", values[i])
-			} else if value.Valid {
-				_m.EmailOnDownload = new(string)
-				*_m.EmailOnDownload = value.String
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.EmailOnDownload); err != nil {
+					return fmt.Errorf("unmarshal field email_on_download: %w", err)
+				}
 			}
 		case ticket.FieldCreatorLang:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -270,10 +274,8 @@ func (_m *Ticket) String() string {
 	builder.WriteString("expiry_total_downloads=")
 	builder.WriteString(fmt.Sprintf("%v", _m.ExpiryTotalDownloads))
 	builder.WriteString(", ")
-	if v := _m.EmailOnDownload; v != nil {
-		builder.WriteString("email_on_download=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("email_on_download=")
+	builder.WriteString(fmt.Sprintf("%v", _m.EmailOnDownload))
 	builder.WriteString(", ")
 	builder.WriteString("creator_lang=")
 	builder.WriteString(_m.CreatorLang)

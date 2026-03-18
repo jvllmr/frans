@@ -55,17 +55,17 @@ func (ts TicketService) ShouldDeleteTicket(ticketValue *ent.Ticket) bool {
 }
 
 type TicketFormParams struct {
-	Comment                     *string `form:"comment"`
-	Email                       *string `form:"email"`
-	Password                    string  `form:"password"                    binding:"required"`
-	EmailPassword               bool    `form:"emailPassword"`
-	ExpiryType                  string  `form:"expiryType"                  binding:"required"`
-	ExpiryTotalDays             uint8   `form:"expiryTotalDays"             binding:"required"`
-	ExpiryDaysSinceLastDownload uint8   `form:"expiryDaysSinceLastDownload" binding:"required"`
-	ExpiryTotalDownloads        uint8   `form:"expiryTotalDownloads"        binding:"required"`
-	EmailOnDownload             *string `form:"emailOnDownload"`
-	CreatorLang                 string  `form:"creatorLang"                 binding:"required"`
-	ReceiverLang                string  `form:"receiverLang"                binding:"required"`
+	Comment                     *string   `form:"comment"`
+	Email                       *[]string `form:"email[]"`
+	Password                    string    `form:"password"                    binding:"required"`
+	EmailPassword               bool      `form:"emailPassword"`
+	ExpiryType                  string    `form:"expiryType"                  binding:"required"`
+	ExpiryTotalDays             uint8     `form:"expiryTotalDays"             binding:"required"`
+	ExpiryDaysSinceLastDownload uint8     `form:"expiryDaysSinceLastDownload" binding:"required"`
+	ExpiryTotalDownloads        uint8     `form:"expiryTotalDownloads"        binding:"required"`
+	EmailOnDownload             *[]string `form:"emailOnDownload[]"`
+	CreatorLang                 string    `form:"creatorLang"                 binding:"required"`
+	ReceiverLang                string    `form:"receiverLang"                binding:"required"`
 }
 
 func (ts TicketService) CreateTicket(

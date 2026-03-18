@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -48,7 +49,7 @@ type Grant struct {
 	// TimesUploaded holds the value of the "times_uploaded" field.
 	TimesUploaded uint64 `json:"times_uploaded,omitempty"`
 	// EmailOnUpload holds the value of the "email_on_upload" field.
-	EmailOnUpload *string `json:"email_on_upload,omitempty"`
+	EmailOnUpload []string `json:"email_on_upload,omitempty"`
 	// CreatorLang holds the value of the "creator_lang" field.
 	CreatorLang string `json:"creator_lang,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -105,9 +106,11 @@ func (*Grant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case grant.FieldEmailOnUpload:
+			values[i] = new([]byte)
 		case grant.FieldExpiryTotalDays, grant.FieldExpiryDaysSinceLastUpload, grant.FieldExpiryTotalUploads, grant.FieldFileExpiryTotalDays, grant.FieldFileExpiryDaysSinceLastDownload, grant.FieldFileExpiryTotalDownloads, grant.FieldTimesUploaded:
 			values[i] = new(sql.NullInt64)
-		case grant.FieldComment, grant.FieldExpiryType, grant.FieldHashedPassword, grant.FieldSalt, grant.FieldFileExpiryType, grant.FieldEmailOnUpload, grant.FieldCreatorLang:
+		case grant.FieldComment, grant.FieldExpiryType, grant.FieldHashedPassword, grant.FieldSalt, grant.FieldFileExpiryType, grant.FieldCreatorLang:
 			values[i] = new(sql.NullString)
 		case grant.FieldCreatedAt, grant.FieldLastUpload:
 			values[i] = new(sql.NullTime)
@@ -223,11 +226,12 @@ func (_m *Grant) assignValues(columns []string, values []any) error {
 				_m.TimesUploaded = uint64(value.Int64)
 			}
 		case grant.FieldEmailOnUpload:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field email_on_upload", values[i])
-			} else if value.Valid {
-				_m.EmailOnUpload = new(string)
-				*_m.EmailOnUpload = value.String
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.EmailOnUpload); err != nil {
+					return fmt.Errorf("unmarshal field email_on_upload: %w", err)
+				}
 			}
 		case grant.FieldCreatorLang:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -339,10 +343,8 @@ func (_m *Grant) String() string {
 	builder.WriteString("times_uploaded=")
 	builder.WriteString(fmt.Sprintf("%v", _m.TimesUploaded))
 	builder.WriteString(", ")
-	if v := _m.EmailOnUpload; v != nil {
-		builder.WriteString("email_on_upload=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("email_on_upload=")
+	builder.WriteString(fmt.Sprintf("%v", _m.EmailOnUpload))
 	builder.WriteString(", ")
 	builder.WriteString("creator_lang=")
 	builder.WriteString(_m.CreatorLang)

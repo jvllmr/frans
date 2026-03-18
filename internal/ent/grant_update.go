@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
@@ -290,16 +291,14 @@ func (_u *GrantUpdate) AddTimesUploaded(v int64) *GrantUpdate {
 }
 
 // SetEmailOnUpload sets the "email_on_upload" field.
-func (_u *GrantUpdate) SetEmailOnUpload(v string) *GrantUpdate {
+func (_u *GrantUpdate) SetEmailOnUpload(v []string) *GrantUpdate {
 	_u.mutation.SetEmailOnUpload(v)
 	return _u
 }
 
-// SetNillableEmailOnUpload sets the "email_on_upload" field if the given value is not nil.
-func (_u *GrantUpdate) SetNillableEmailOnUpload(v *string) *GrantUpdate {
-	if v != nil {
-		_u.SetEmailOnUpload(*v)
-	}
+// AppendEmailOnUpload appends value to the "email_on_upload" field.
+func (_u *GrantUpdate) AppendEmailOnUpload(v []string) *GrantUpdate {
+	_u.mutation.AppendEmailOnUpload(v)
 	return _u
 }
 
@@ -531,10 +530,15 @@ func (_u *GrantUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.AddField(grant.FieldTimesUploaded, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.EmailOnUpload(); ok {
-		_spec.SetField(grant.FieldEmailOnUpload, field.TypeString, value)
+		_spec.SetField(grant.FieldEmailOnUpload, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedEmailOnUpload(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, grant.FieldEmailOnUpload, value)
+		})
 	}
 	if _u.mutation.EmailOnUploadCleared() {
-		_spec.ClearField(grant.FieldEmailOnUpload, field.TypeString)
+		_spec.ClearField(grant.FieldEmailOnUpload, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.CreatorLang(); ok {
 		_spec.SetField(grant.FieldCreatorLang, field.TypeString, value)
@@ -936,16 +940,14 @@ func (_u *GrantUpdateOne) AddTimesUploaded(v int64) *GrantUpdateOne {
 }
 
 // SetEmailOnUpload sets the "email_on_upload" field.
-func (_u *GrantUpdateOne) SetEmailOnUpload(v string) *GrantUpdateOne {
+func (_u *GrantUpdateOne) SetEmailOnUpload(v []string) *GrantUpdateOne {
 	_u.mutation.SetEmailOnUpload(v)
 	return _u
 }
 
-// SetNillableEmailOnUpload sets the "email_on_upload" field if the given value is not nil.
-func (_u *GrantUpdateOne) SetNillableEmailOnUpload(v *string) *GrantUpdateOne {
-	if v != nil {
-		_u.SetEmailOnUpload(*v)
-	}
+// AppendEmailOnUpload appends value to the "email_on_upload" field.
+func (_u *GrantUpdateOne) AppendEmailOnUpload(v []string) *GrantUpdateOne {
+	_u.mutation.AppendEmailOnUpload(v)
 	return _u
 }
 
@@ -1207,10 +1209,15 @@ func (_u *GrantUpdateOne) sqlSave(ctx context.Context) (_node *Grant, err error)
 		_spec.AddField(grant.FieldTimesUploaded, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.EmailOnUpload(); ok {
-		_spec.SetField(grant.FieldEmailOnUpload, field.TypeString, value)
+		_spec.SetField(grant.FieldEmailOnUpload, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedEmailOnUpload(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, grant.FieldEmailOnUpload, value)
+		})
 	}
 	if _u.mutation.EmailOnUploadCleared() {
-		_spec.ClearField(grant.FieldEmailOnUpload, field.TypeString)
+		_spec.ClearField(grant.FieldEmailOnUpload, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.CreatorLang(); ok {
 		_spec.SetField(grant.FieldCreatorLang, field.TypeString, value)

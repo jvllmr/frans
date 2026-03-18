@@ -42,7 +42,7 @@ func createTestGrant(
 			SetID(uuid.New()).
 			SetComment("").
 			SetCreatorLang("en").
-			SetEmailOnUpload("testmail@vllmr.dev").
+			SetEmailOnUpload([]string{"testmail@vllmr.dev"}).
 			SetExpiryDaysSinceLastUpload(7).
 			SetExpiryTotalDays(30).
 			SetExpiryTotalUploads(10).

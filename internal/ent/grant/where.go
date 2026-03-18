@@ -126,11 +126,6 @@ func TimesUploaded(v uint64) predicate.Grant {
 	return predicate.Grant(sql.FieldEQ(FieldTimesUploaded, v))
 }
 
-// EmailOnUpload applies equality check predicate on the "email_on_upload" field. It's identical to EmailOnUploadEQ.
-func EmailOnUpload(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldEQ(FieldEmailOnUpload, v))
-}
-
 // CreatorLang applies equality check predicate on the "creator_lang" field. It's identical to CreatorLangEQ.
 func CreatorLang(v string) predicate.Grant {
 	return predicate.Grant(sql.FieldEQ(FieldCreatorLang, v))
@@ -841,61 +836,6 @@ func TimesUploadedLTE(v uint64) predicate.Grant {
 	return predicate.Grant(sql.FieldLTE(FieldTimesUploaded, v))
 }
 
-// EmailOnUploadEQ applies the EQ predicate on the "email_on_upload" field.
-func EmailOnUploadEQ(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldEQ(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadNEQ applies the NEQ predicate on the "email_on_upload" field.
-func EmailOnUploadNEQ(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldNEQ(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadIn applies the In predicate on the "email_on_upload" field.
-func EmailOnUploadIn(vs ...string) predicate.Grant {
-	return predicate.Grant(sql.FieldIn(FieldEmailOnUpload, vs...))
-}
-
-// EmailOnUploadNotIn applies the NotIn predicate on the "email_on_upload" field.
-func EmailOnUploadNotIn(vs ...string) predicate.Grant {
-	return predicate.Grant(sql.FieldNotIn(FieldEmailOnUpload, vs...))
-}
-
-// EmailOnUploadGT applies the GT predicate on the "email_on_upload" field.
-func EmailOnUploadGT(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldGT(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadGTE applies the GTE predicate on the "email_on_upload" field.
-func EmailOnUploadGTE(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldGTE(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadLT applies the LT predicate on the "email_on_upload" field.
-func EmailOnUploadLT(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldLT(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadLTE applies the LTE predicate on the "email_on_upload" field.
-func EmailOnUploadLTE(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldLTE(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadContains applies the Contains predicate on the "email_on_upload" field.
-func EmailOnUploadContains(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldContains(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadHasPrefix applies the HasPrefix predicate on the "email_on_upload" field.
-func EmailOnUploadHasPrefix(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldHasPrefix(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadHasSuffix applies the HasSuffix predicate on the "email_on_upload" field.
-func EmailOnUploadHasSuffix(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldHasSuffix(FieldEmailOnUpload, v))
-}
-
 // EmailOnUploadIsNil applies the IsNil predicate on the "email_on_upload" field.
 func EmailOnUploadIsNil() predicate.Grant {
 	return predicate.Grant(sql.FieldIsNull(FieldEmailOnUpload))
@@ -904,16 +844,6 @@ func EmailOnUploadIsNil() predicate.Grant {
 // EmailOnUploadNotNil applies the NotNil predicate on the "email_on_upload" field.
 func EmailOnUploadNotNil() predicate.Grant {
 	return predicate.Grant(sql.FieldNotNull(FieldEmailOnUpload))
-}
-
-// EmailOnUploadEqualFold applies the EqualFold predicate on the "email_on_upload" field.
-func EmailOnUploadEqualFold(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldEqualFold(FieldEmailOnUpload, v))
-}
-
-// EmailOnUploadContainsFold applies the ContainsFold predicate on the "email_on_upload" field.
-func EmailOnUploadContainsFold(v string) predicate.Grant {
-	return predicate.Grant(sql.FieldContainsFold(FieldEmailOnUpload, v))
 }
 
 // CreatorLangEQ applies the EQ predicate on the "creator_lang" field.

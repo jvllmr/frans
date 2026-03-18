@@ -206,11 +206,6 @@ func ByTimesUploaded(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTimesUploaded, opts...).ToFunc()
 }
 
-// ByEmailOnUpload orders the results by the email_on_upload field.
-func ByEmailOnUpload(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldEmailOnUpload, opts...).ToFunc()
-}
-
 // ByCreatorLang orders the results by the creator_lang field.
 func ByCreatorLang(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatorLang, opts...).ToFunc()

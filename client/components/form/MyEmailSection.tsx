@@ -6,11 +6,11 @@ import { useTranslation } from "react-i18next";
 import { meQueryOptions } from "~/api/user";
 import { AvailableLanguage } from "~/i18n";
 import { LangInput } from "../inputs/LangInput";
-import { NullTextInput } from "../inputs/NullTextInput";
+import { NullTagsInput } from "../inputs/NullTagsInput";
 
 interface UploadMyEmailFormSectionProps {
   form: UseFormReturnType<{
-    emailOnUpload: string | null;
+    emailOnUpload: string[] | null;
     creatorLang: AvailableLanguage;
   }>;
   variant: "upload";
@@ -18,7 +18,7 @@ interface UploadMyEmailFormSectionProps {
 
 interface DownloadMyEmailFormSectionProps {
   form: UseFormReturnType<{
-    emailOnDownload: string | null;
+    emailOnDownload: string[] | null;
     creatorLang: AvailableLanguage;
   }>;
   variant: "download";
@@ -38,8 +38,8 @@ export function MyEmailSection({ form, variant }: MyEmailFormSectionProps) {
       : form.getInputProps("emailOnDownload");
   const setEmail =
     variant === "upload"
-      ? (email: string) => form.setFieldValue("emailOnUpload", email)
-      : (email: string) => form.setFieldValue("emailOnDownload", email);
+      ? (email: string[]) => form.setFieldValue("emailOnUpload", email)
+      : (email: string[]) => form.setFieldValue("emailOnDownload", email);
 
   const inputPropsLang =
     variant === "upload"
@@ -50,7 +50,7 @@ export function MyEmailSection({ form, variant }: MyEmailFormSectionProps) {
     <Fieldset>
       <Grid>
         <Grid.Col span={12}>
-          <NullTextInput
+          <NullTagsInput
             {...inputPropsEmail}
             label={
               variant === "upload"
@@ -64,7 +64,7 @@ export function MyEmailSection({ form, variant }: MyEmailFormSectionProps) {
             fullWidth
             onClick={() => {
               if (me) {
-                setEmail(me.email);
+                setEmail([...(inputPropsEmail.value ?? []), me.email]);
               }
             }}
             mt="lg"

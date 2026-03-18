@@ -23,7 +23,10 @@ function v1GrantUrl(url: string) {
 export const createGrantSchemaFactory = (t: typeof i18n.t) =>
   z.object({
     comment: z.string().nullable(),
-    email: z.email(t("email", { ns: "validation" })).nullable(),
+    email: z
+      .email(t("email", { ns: "validation" }))
+      .array()
+      .nullable(),
     password: z
       .string()
       .min(12, i18n.t("min_length", { ns: "validation" }).replace("#", "12")),
@@ -36,7 +39,10 @@ export const createGrantSchemaFactory = (t: typeof i18n.t) =>
     fileExpiryTotalDays: z.int(),
     fileExpiryDaysSinceLastDownload: z.int(),
     fileExpiryTotalDownloads: z.int(),
-    emailOnUpload: z.email(i18n.t("email", { ns: "validation" })).nullable(),
+    emailOnUpload: z
+      .email(i18n.t("email", { ns: "validation" }))
+      .array()
+      .nullable(),
     creatorLang: z.enum(availableLanguages),
     receiverLang: z.enum(availableLanguages),
   });

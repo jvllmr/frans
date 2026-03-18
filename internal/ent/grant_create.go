@@ -141,16 +141,8 @@ func (_c *GrantCreate) SetNillableTimesUploaded(v *uint64) *GrantCreate {
 }
 
 // SetEmailOnUpload sets the "email_on_upload" field.
-func (_c *GrantCreate) SetEmailOnUpload(v string) *GrantCreate {
+func (_c *GrantCreate) SetEmailOnUpload(v []string) *GrantCreate {
 	_c.mutation.SetEmailOnUpload(v)
-	return _c
-}
-
-// SetNillableEmailOnUpload sets the "email_on_upload" field if the given value is not nil.
-func (_c *GrantCreate) SetNillableEmailOnUpload(v *string) *GrantCreate {
-	if v != nil {
-		_c.SetEmailOnUpload(*v)
-	}
 	return _c
 }
 
@@ -405,8 +397,8 @@ func (_c *GrantCreate) createSpec() (*Grant, *sqlgraph.CreateSpec) {
 		_node.TimesUploaded = value
 	}
 	if value, ok := _c.mutation.EmailOnUpload(); ok {
-		_spec.SetField(grant.FieldEmailOnUpload, field.TypeString, value)
-		_node.EmailOnUpload = &value
+		_spec.SetField(grant.FieldEmailOnUpload, field.TypeJSON, value)
+		_node.EmailOnUpload = value
 	}
 	if value, ok := _c.mutation.CreatorLang(); ok {
 		_spec.SetField(grant.FieldCreatorLang, field.TypeString, value)

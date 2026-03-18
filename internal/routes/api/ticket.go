@@ -70,17 +70,20 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 			if form.EmailPassword {
 				toBeEmailedPassword = &form.Password
 			}
-			if err := tc.mailer.SendTicketSharedNotification(
-				c,
-				tc.ticketService,
-				*form.Email,
-				form.ReceiverLang,
-				ticketValue,
-				toBeEmailedPassword,
-			); err != nil {
-				util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
-				return
+			for _, email := range *form.Email {
+				if err := tc.mailer.SendTicketSharedNotification(
+					c,
+					tc.ticketService,
+					email,
+					form.ReceiverLang,
+					ticketValue,
+					toBeEmailedPassword,
+				); err != nil {
+					util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+					return
+				}
 			}
+
 		}
 
 		if err := tx.Commit(); err != nil {

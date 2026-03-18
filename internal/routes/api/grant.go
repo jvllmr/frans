@@ -28,21 +28,21 @@ type grantController struct {
 }
 
 type grantForm struct {
-	Comment                         *string `form:"comment"`
-	Email                           *string `form:"email"`
-	Password                        string  `form:"password"                        binding:"required"`
-	EmailPassword                   bool    `form:"emailPassword"`
-	ExpiryType                      string  `form:"expiryType"                      binding:"required"`
-	ExpiryTotalDays                 uint8   `form:"expiryTotalDays"                 binding:"required"`
-	ExpiryDaysSinceLastUpload       uint8   `form:"expiryDaysSinceLastUpload"       binding:"required"`
-	ExpiryTotalUploads              uint8   `form:"expiryTotalUploads"              binding:"required"`
-	FileExpiryType                  string  `form:"fileExpiryType"                  binding:"required"`
-	FileExpiryTotalDays             uint8   `form:"fileExpiryTotalDays"             binding:"required"`
-	FileExpiryDaysSinceLastDownload uint8   `form:"fileExpiryDaysSinceLastDownload" binding:"required"`
-	FileExpiryTotalDownloads        uint8   `form:"fileExpiryTotalDownloads"        binding:"required"`
-	EmailOnUpload                   *string `form:"emailOnUpload"`
-	CreatorLang                     string  `form:"creatorLang"                     binding:"required"`
-	ReceiverLang                    string  `form:"receiverLang"                    binding:"required"`
+	Comment                         *string   `form:"comment"`
+	Email                           *[]string `form:"email[]"`
+	Password                        string    `form:"password"                        binding:"required"`
+	EmailPassword                   bool      `form:"emailPassword"`
+	ExpiryType                      string    `form:"expiryType"                      binding:"required"`
+	ExpiryTotalDays                 uint8     `form:"expiryTotalDays"                 binding:"required"`
+	ExpiryDaysSinceLastUpload       uint8     `form:"expiryDaysSinceLastUpload"       binding:"required"`
+	ExpiryTotalUploads              uint8     `form:"expiryTotalUploads"              binding:"required"`
+	FileExpiryType                  string    `form:"fileExpiryType"                  binding:"required"`
+	FileExpiryTotalDays             uint8     `form:"fileExpiryTotalDays"             binding:"required"`
+	FileExpiryDaysSinceLastDownload uint8     `form:"fileExpiryDaysSinceLastDownload" binding:"required"`
+	FileExpiryTotalDownloads        uint8     `form:"fileExpiryTotalDownloads"        binding:"required"`
+	EmailOnUpload                   *[]string `form:"emailOnUpload[]"`
+	CreatorLang                     string    `form:"creatorLang"                     binding:"required"`
+	ReceiverLang                    string    `form:"receiverLang"                    binding:"required"`
 }
 
 func (gc *grantController) createGrantHandler(c *gin.Context) {
@@ -99,17 +99,20 @@ func (gc *grantController) createGrantHandler(c *gin.Context) {
 			if form.EmailPassword {
 				toBeEmailedPassword = &form.Password
 			}
-			if err = gc.mailer.SendGrantSharedNotification(
-				c,
-				gc.grantService,
-				*form.Email,
-				form.ReceiverLang,
-				grantValue,
-				toBeEmailedPassword,
-			); err != nil {
-				util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
-				return
+			for _, email := range *form.Email {
+				if err = gc.mailer.SendGrantSharedNotification(
+					c,
+					gc.grantService,
+					email,
+					form.ReceiverLang,
+					grantValue,
+					toBeEmailedPassword,
+				); err != nil {
+					util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
+					return
+				}
 			}
+
 		}
 
 		if err := tx.Commit(); err != nil {

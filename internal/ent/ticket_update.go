@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/jvllmr/frans/internal/ent/file"
@@ -172,16 +173,14 @@ func (_u *TicketUpdate) AddExpiryTotalDownloads(v int8) *TicketUpdate {
 }
 
 // SetEmailOnDownload sets the "email_on_download" field.
-func (_u *TicketUpdate) SetEmailOnDownload(v string) *TicketUpdate {
+func (_u *TicketUpdate) SetEmailOnDownload(v []string) *TicketUpdate {
 	_u.mutation.SetEmailOnDownload(v)
 	return _u
 }
 
-// SetNillableEmailOnDownload sets the "email_on_download" field if the given value is not nil.
-func (_u *TicketUpdate) SetNillableEmailOnDownload(v *string) *TicketUpdate {
-	if v != nil {
-		_u.SetEmailOnDownload(*v)
-	}
+// AppendEmailOnDownload appends value to the "email_on_download" field.
+func (_u *TicketUpdate) AppendEmailOnDownload(v []string) *TicketUpdate {
+	_u.mutation.AppendEmailOnDownload(v)
 	return _u
 }
 
@@ -380,10 +379,15 @@ func (_u *TicketUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.AddField(ticket.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
 	if value, ok := _u.mutation.EmailOnDownload(); ok {
-		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
+		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedEmailOnDownload(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, ticket.FieldEmailOnDownload, value)
+		})
 	}
 	if _u.mutation.EmailOnDownloadCleared() {
-		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeString)
+		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.CreatorLang(); ok {
 		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)
@@ -667,16 +671,14 @@ func (_u *TicketUpdateOne) AddExpiryTotalDownloads(v int8) *TicketUpdateOne {
 }
 
 // SetEmailOnDownload sets the "email_on_download" field.
-func (_u *TicketUpdateOne) SetEmailOnDownload(v string) *TicketUpdateOne {
+func (_u *TicketUpdateOne) SetEmailOnDownload(v []string) *TicketUpdateOne {
 	_u.mutation.SetEmailOnDownload(v)
 	return _u
 }
 
-// SetNillableEmailOnDownload sets the "email_on_download" field if the given value is not nil.
-func (_u *TicketUpdateOne) SetNillableEmailOnDownload(v *string) *TicketUpdateOne {
-	if v != nil {
-		_u.SetEmailOnDownload(*v)
-	}
+// AppendEmailOnDownload appends value to the "email_on_download" field.
+func (_u *TicketUpdateOne) AppendEmailOnDownload(v []string) *TicketUpdateOne {
+	_u.mutation.AppendEmailOnDownload(v)
 	return _u
 }
 
@@ -905,10 +907,15 @@ func (_u *TicketUpdateOne) sqlSave(ctx context.Context) (_node *Ticket, err erro
 		_spec.AddField(ticket.FieldExpiryTotalDownloads, field.TypeUint8, value)
 	}
 	if value, ok := _u.mutation.EmailOnDownload(); ok {
-		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeString, value)
+		_spec.SetField(ticket.FieldEmailOnDownload, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedEmailOnDownload(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, ticket.FieldEmailOnDownload, value)
+		})
 	}
 	if _u.mutation.EmailOnDownloadCleared() {
-		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeString)
+		_spec.ClearField(ticket.FieldEmailOnDownload, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.CreatorLang(); ok {
 		_spec.SetField(ticket.FieldCreatorLang, field.TypeString, value)
