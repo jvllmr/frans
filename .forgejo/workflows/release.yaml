@@ -53,6 +53,7 @@ jobs:
           version: "~> v2"
           args: release --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITEA_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GORELEASER_FORCE_TOKEN: gitea # https://github.com/goreleaser/goreleaser/pull/3910
           # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
           # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
