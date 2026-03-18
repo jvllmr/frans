@@ -8,7 +8,7 @@ import resources from "virtual:i18next-loader";
 
 export const availableLanguages = [
   // "pt-BR",
-  // "cz",
+  // "cs",
   "de",
   "en",
   //"es",
@@ -17,14 +17,14 @@ export const availableLanguages = [
   //"ja",
   "nl",
   //"ru",
-  //"zh",
+  //"zh-CH",
 ] as const;
 
 export type AvailableLanguage = (typeof availableLanguages)[number];
 
 export const availableLanguagesLabels: Record<AvailableLanguage, string> = {
   // "pt-BR": "BR",
-  // cz: "CZ",
+  // cs: "CZ",
   de: "DE",
   en: "EN",
   // es: "ES",
@@ -33,7 +33,7 @@ export const availableLanguagesLabels: Record<AvailableLanguage, string> = {
   // ja: "JA",
   nl: "NL",
   // ru: "RU",
-  // zh: "ZH",
+  // "zh-CH": "ZH",
 };
 
 export function useFileSizeFormatter() {
@@ -65,7 +65,11 @@ i18n
     resources,
     detection: {
       convertDetectedLanguage(lng) {
-        if (!lng.startsWith("pt") && lng.includes("-")) {
+        if (
+          !lng.startsWith("pt") &&
+          !lng.startsWith("zh") &&
+          lng.includes("-")
+        ) {
           return lng.substring(0, 2);
         }
         return lng;
