@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/ent/session"
-	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent/session"
+	"codeberg.org/jvllmr/frans/internal/ent/shareaccesstoken"
 )
 
 func SessionLifecycleTask(db *ent.Client) {

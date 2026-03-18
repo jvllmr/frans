@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/ent/grant"
+	"codeberg.org/jvllmr/frans/internal/ent/shareaccesstoken"
+	"codeberg.org/jvllmr/frans/internal/ent/ticket"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/grant"
-	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
-	"github.com/jvllmr/frans/internal/ent/ticket"
 )
 
 // ShareAccessTokenCreate is the builder for creating a ShareAccessToken entity.

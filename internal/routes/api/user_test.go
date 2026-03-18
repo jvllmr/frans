@@ -7,10 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/services"
+	"codeberg.org/jvllmr/frans/internal/testutil"
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/services"
-	"github.com/jvllmr/frans/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 

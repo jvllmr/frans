@@ -4,12 +4,12 @@ import (
 	"log/slog"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/oidc"
+	"codeberg.org/jvllmr/frans/internal/otel"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/oidc"
-	"github.com/jvllmr/frans/internal/otel"
 
 	"golang.org/x/oauth2"
 )

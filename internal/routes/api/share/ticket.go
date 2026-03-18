@@ -7,18 +7,18 @@ import (
 	"strings"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent/file"
+	"codeberg.org/jvllmr/frans/internal/ent/ticket"
+	"codeberg.org/jvllmr/frans/internal/mail"
+	"codeberg.org/jvllmr/frans/internal/otel"
+	apiTypes "codeberg.org/jvllmr/frans/internal/routes/api/types"
+	"codeberg.org/jvllmr/frans/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/ent/file"
-	"github.com/jvllmr/frans/internal/ent/ticket"
-	"github.com/jvllmr/frans/internal/mail"
-	"github.com/jvllmr/frans/internal/otel"
-	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
-	"github.com/jvllmr/frans/internal/services"
 
-	"github.com/jvllmr/frans/internal/util"
+	"codeberg.org/jvllmr/frans/internal/util"
 )
 
 type ticketShareController struct {

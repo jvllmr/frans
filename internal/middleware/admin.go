@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"codeberg.org/jvllmr/frans/internal/otel"
+	"codeberg.org/jvllmr/frans/internal/util"
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/otel"
-	"github.com/jvllmr/frans/internal/util"
 )
 
 func AdminRequired(c *gin.Context) {

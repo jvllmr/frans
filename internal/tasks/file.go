@@ -4,10 +4,10 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/ent/file"
-	"github.com/jvllmr/frans/internal/services"
-	"github.com/jvllmr/frans/internal/util"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent/file"
+	"codeberg.org/jvllmr/frans/internal/services"
+	"codeberg.org/jvllmr/frans/internal/util"
 )
 
 func FileLifecycleTask(db *ent.Client, fs services.FileService) {

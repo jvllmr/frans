@@ -7,13 +7,13 @@ import (
 	"errors"
 	"fmt"
 
+	"codeberg.org/jvllmr/frans/internal/ent/file"
+	"codeberg.org/jvllmr/frans/internal/ent/filedata"
+	"codeberg.org/jvllmr/frans/internal/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/file"
-	"github.com/jvllmr/frans/internal/ent/filedata"
-	"github.com/jvllmr/frans/internal/ent/predicate"
 )
 
 // FileDataUpdate is the builder for updating FileData entities.

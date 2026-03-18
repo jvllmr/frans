@@ -8,14 +8,14 @@ import (
 	"fmt"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/ent/grant"
+	"codeberg.org/jvllmr/frans/internal/ent/predicate"
+	"codeberg.org/jvllmr/frans/internal/ent/shareaccesstoken"
+	"codeberg.org/jvllmr/frans/internal/ent/ticket"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/grant"
-	"github.com/jvllmr/frans/internal/ent/predicate"
-	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
-	"github.com/jvllmr/frans/internal/ent/ticket"
 )
 
 // ShareAccessTokenUpdate is the builder for updating ShareAccessToken entities.

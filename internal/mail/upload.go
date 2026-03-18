@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"text/template"
 
+	"codeberg.org/jvllmr/frans/internal/ent"
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/ent"
 	"github.com/wneessen/go-mail"
 )
 

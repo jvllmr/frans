@@ -8,17 +8,17 @@ import (
 	"fmt"
 	"math"
 
+	"codeberg.org/jvllmr/frans/internal/ent/file"
+	"codeberg.org/jvllmr/frans/internal/ent/grant"
+	"codeberg.org/jvllmr/frans/internal/ent/predicate"
+	"codeberg.org/jvllmr/frans/internal/ent/session"
+	"codeberg.org/jvllmr/frans/internal/ent/ticket"
+	"codeberg.org/jvllmr/frans/internal/ent/user"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/file"
-	"github.com/jvllmr/frans/internal/ent/grant"
-	"github.com/jvllmr/frans/internal/ent/predicate"
-	"github.com/jvllmr/frans/internal/ent/session"
-	"github.com/jvllmr/frans/internal/ent/ticket"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // UserQuery is the builder for querying User entities.

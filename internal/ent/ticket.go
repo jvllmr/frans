@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/ent/ticket"
+	"codeberg.org/jvllmr/frans/internal/ent/user"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/ticket"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // Ticket is the model entity for the Ticket schema.

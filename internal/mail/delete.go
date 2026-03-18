@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"text/template"
 
-	"github.com/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent"
 	"github.com/wneessen/go-mail"
 )
 

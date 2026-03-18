@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"log/slog"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	logging "codeberg.org/jvllmr/frans/internal/logging"
+	"codeberg.org/jvllmr/frans/internal/oidc"
+	apiRoutes "codeberg.org/jvllmr/frans/internal/routes/api"
+	clientRoutes "codeberg.org/jvllmr/frans/internal/routes/client"
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
-	logging "github.com/jvllmr/frans/internal/logging"
-	"github.com/jvllmr/frans/internal/oidc"
-	apiRoutes "github.com/jvllmr/frans/internal/routes/api"
-	clientRoutes "github.com/jvllmr/frans/internal/routes/client"
 )
 
 func SetupRootRouter(r *gin.Engine, configValue config.Config, db *ent.Client) error {

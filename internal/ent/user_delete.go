@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 
+	"codeberg.org/jvllmr/frans/internal/ent/predicate"
+	"codeberg.org/jvllmr/frans/internal/ent/user"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/jvllmr/frans/internal/ent/predicate"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // UserDelete is the builder for deleting a User entity.

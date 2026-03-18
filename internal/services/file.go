@@ -12,12 +12,12 @@ import (
 	"os"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent/file"
+	"codeberg.org/jvllmr/frans/internal/ent/filedata"
+	"codeberg.org/jvllmr/frans/internal/otel"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/ent/file"
-	"github.com/jvllmr/frans/internal/ent/filedata"
-	"github.com/jvllmr/frans/internal/otel"
 )
 
 type ErrFileTooBig struct {

@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent"
 )
 
 // The FileFunc type is an adapter to allow the use of ordinary

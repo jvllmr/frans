@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/config"
 )
 
 func SetupTestConfig() config.Config {

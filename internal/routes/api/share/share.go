@@ -1,9 +1,9 @@
 package shareRoutes
 
 import (
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
 )
 
 func SetupShareRoutes(r *gin.RouterGroup, configValue config.Config, db *ent.Client) {

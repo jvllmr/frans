@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 
+	"codeberg.org/jvllmr/frans/internal/ent/predicate"
+	"codeberg.org/jvllmr/frans/internal/ent/session"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/jvllmr/frans/internal/ent/predicate"
-	"github.com/jvllmr/frans/internal/ent/session"
 )
 
 // SessionDelete is the builder for deleting a Session entity.

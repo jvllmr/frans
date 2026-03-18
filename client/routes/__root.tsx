@@ -233,7 +233,7 @@ function RootRoute() {
             <Center my="xl">
               <Anchor
                 c="gray.5"
-                href="https://github.com/jvllmr/frans"
+                href="https://codeberg.org/jvllmr/frans"
                 title={t("view_on_github")}
                 size="sm"
                 target="_blank"

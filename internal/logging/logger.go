@@ -7,10 +7,10 @@ import (
 	"os"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/otel"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/otel"
 	slogmulti "github.com/samber/slog-multi"
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 )

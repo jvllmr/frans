@@ -1,7 +1,7 @@
 # frans
 
 [![Translation status](https://translate.codeberg.org/widget/frans/svg-badge.svg)](https://translate.codeberg.org/engage/frans/)
-[![GitHub License](https://img.shields.io/github/license/jvllmr/frans)](https://github.com/jvllmr/frans/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/jvllmr/frans)](https://codeberg.org/jvllmr/frans/blob/main/LICENSE)
 
 Frans is a simple file-sharing service intended to be ready for cloud native.
 

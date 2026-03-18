@@ -9,16 +9,16 @@ import (
 	"reflect"
 	"sync"
 
+	"codeberg.org/jvllmr/frans/internal/ent/file"
+	"codeberg.org/jvllmr/frans/internal/ent/filedata"
+	"codeberg.org/jvllmr/frans/internal/ent/grant"
+	"codeberg.org/jvllmr/frans/internal/ent/session"
+	"codeberg.org/jvllmr/frans/internal/ent/shareaccesstoken"
+	"codeberg.org/jvllmr/frans/internal/ent/ticket"
+	"codeberg.org/jvllmr/frans/internal/ent/user"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/jvllmr/frans/internal/ent/file"
-	"github.com/jvllmr/frans/internal/ent/filedata"
-	"github.com/jvllmr/frans/internal/ent/grant"
-	"github.com/jvllmr/frans/internal/ent/session"
-	"github.com/jvllmr/frans/internal/ent/shareaccesstoken"
-	"github.com/jvllmr/frans/internal/ent/ticket"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.

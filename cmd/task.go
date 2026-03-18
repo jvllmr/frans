@@ -3,8 +3,8 @@ package cmd
 import (
 	"log"
 
-	"github.com/jvllmr/frans/internal/services"
-	fransCron "github.com/jvllmr/frans/internal/tasks"
+	"codeberg.org/jvllmr/frans/internal/services"
+	fransCron "codeberg.org/jvllmr/frans/internal/tasks"
 	"github.com/spf13/cobra"
 )
 

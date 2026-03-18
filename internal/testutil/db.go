@@ -4,12 +4,12 @@ import (
 	"os"
 	"testing"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/db"
+	_ "codeberg.org/jvllmr/frans/internal/db/sqlite3"
+	"codeberg.org/jvllmr/frans/internal/ent"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/db"
-	_ "github.com/jvllmr/frans/internal/db/sqlite3"
-	"github.com/jvllmr/frans/internal/ent"
 )
 
 func SetupTestDBClient(t *testing.T) *ent.Client {

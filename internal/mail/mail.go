@@ -6,7 +6,7 @@ import (
 
 	"github.com/wneessen/go-mail"
 
-	"github.com/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/config"
 )
 
 type Mailer struct {

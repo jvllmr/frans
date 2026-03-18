@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/ent/user"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // User is the model entity for the User schema.

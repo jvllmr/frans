@@ -6,9 +6,9 @@ import (
 
 	"entgo.io/ent/dialect"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
 	entsql "entgo.io/ent/dialect/sql"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
 )
 
 func NewDBClient(dbConfig config.DBConfig) (*ent.Client, error) {

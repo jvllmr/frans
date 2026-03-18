@@ -3,11 +3,11 @@ package apiRoutes
 import (
 	"net/http"
 
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/middleware"
+	"codeberg.org/jvllmr/frans/internal/otel"
+	"codeberg.org/jvllmr/frans/internal/services"
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/middleware"
-	"github.com/jvllmr/frans/internal/otel"
-	"github.com/jvllmr/frans/internal/services"
 )
 
 type userController struct {

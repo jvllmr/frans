@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jvllmr/frans/internal/testutil"
+	"codeberg.org/jvllmr/frans/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -3,8 +3,8 @@ package tasks
 import (
 	"testing"
 
-	"github.com/jvllmr/frans/internal/services"
-	"github.com/jvllmr/frans/internal/testutil"
+	"codeberg.org/jvllmr/frans/internal/services"
+	"codeberg.org/jvllmr/frans/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 

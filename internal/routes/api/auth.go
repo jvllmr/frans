@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"net/url"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/oidc"
+	"codeberg.org/jvllmr/frans/internal/otel"
+	"codeberg.org/jvllmr/frans/internal/util"
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/oidc"
-	"github.com/jvllmr/frans/internal/otel"
-	"github.com/jvllmr/frans/internal/util"
 	"golang.org/x/oauth2"
 )
 

@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 
+	"codeberg.org/jvllmr/frans/internal/ent/grant"
+	"codeberg.org/jvllmr/frans/internal/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/jvllmr/frans/internal/ent/grant"
-	"github.com/jvllmr/frans/internal/ent/predicate"
 )
 
 // GrantDelete is the builder for deleting a Grant entity.

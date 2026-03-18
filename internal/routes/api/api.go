@@ -3,12 +3,12 @@ package apiRoutes
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/middleware"
-	"github.com/jvllmr/frans/internal/oidc"
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/middleware"
+	"codeberg.org/jvllmr/frans/internal/oidc"
 
-	shareRoutes "github.com/jvllmr/frans/internal/routes/api/share"
+	shareRoutes "codeberg.org/jvllmr/frans/internal/routes/api/share"
 )
 
 func SetupAPIRoutes(

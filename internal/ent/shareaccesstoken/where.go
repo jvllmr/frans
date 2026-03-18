@@ -5,9 +5,9 @@ package shareaccesstoken
 import (
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/jvllmr/frans/internal/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

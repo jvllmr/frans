@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/ent/session"
+	"codeberg.org/jvllmr/frans/internal/ent/user"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/session"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // Session is the model entity for the Session schema.

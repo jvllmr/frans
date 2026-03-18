@@ -1,6 +1,6 @@
 package services
 
-import "github.com/jvllmr/frans/internal/ent"
+import "codeberg.org/jvllmr/frans/internal/ent"
 
 type PublicUser struct {
 	ID       string `json:"id"`

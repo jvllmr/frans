@@ -5,11 +5,11 @@ package ent
 import (
 	"time"
 
-	"github.com/jvllmr/frans/internal/ent/file"
-	"github.com/jvllmr/frans/internal/ent/grant"
-	"github.com/jvllmr/frans/internal/ent/schema"
-	"github.com/jvllmr/frans/internal/ent/ticket"
-	"github.com/jvllmr/frans/internal/ent/user"
+	"codeberg.org/jvllmr/frans/internal/ent/file"
+	"codeberg.org/jvllmr/frans/internal/ent/grant"
+	"codeberg.org/jvllmr/frans/internal/ent/schema"
+	"codeberg.org/jvllmr/frans/internal/ent/ticket"
+	"codeberg.org/jvllmr/frans/internal/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code

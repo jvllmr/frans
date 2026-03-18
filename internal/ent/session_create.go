@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/ent/session"
+	"codeberg.org/jvllmr/frans/internal/ent/user"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent/session"
-	"github.com/jvllmr/frans/internal/ent/user"
 )
 
 // SessionCreate is the builder for creating a Session entity.

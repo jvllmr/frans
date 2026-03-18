@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/url"
 
-	"github.com/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/config"
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"

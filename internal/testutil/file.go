@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/services"
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/services"
 )
 
 func SetupTestFileService(cfg config.Config, db *ent.Client) services.FileService {

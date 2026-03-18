@@ -3,9 +3,9 @@ package oidc
 import (
 	"fmt"
 
+	"codeberg.org/jvllmr/frans/internal/config"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/config"
 	"golang.org/x/oauth2"
 )
 

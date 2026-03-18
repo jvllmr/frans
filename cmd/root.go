@@ -5,13 +5,13 @@ import (
 	"io/fs"
 	"log"
 
+	_ "codeberg.org/jvllmr/frans/internal/db/sqlite3"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	_ "github.com/jvllmr/frans/internal/db/sqlite3"
 
+	"codeberg.org/jvllmr/frans/internal/db"
+	"codeberg.org/jvllmr/frans/internal/logging"
 	"github.com/joho/godotenv"
-	"github.com/jvllmr/frans/internal/db"
-	"github.com/jvllmr/frans/internal/logging"
 	"github.com/spf13/cobra"
 )
 

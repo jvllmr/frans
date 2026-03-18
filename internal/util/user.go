@@ -3,10 +3,10 @@ package util
 import (
 	"context"
 
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/ent/filedata"
-	"github.com/jvllmr/frans/internal/ent/user"
-	"github.com/jvllmr/frans/internal/otel"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent/filedata"
+	"codeberg.org/jvllmr/frans/internal/ent/user"
+	"codeberg.org/jvllmr/frans/internal/otel"
 )
 
 func RefreshUserTotalDataSize(ctx context.Context, u *ent.User, tx *ent.Tx) error {

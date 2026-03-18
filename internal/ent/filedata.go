@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"codeberg.org/jvllmr/frans/internal/ent/filedata"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/jvllmr/frans/internal/ent/filedata"
 )
 
 // FileData is the model entity for the FileData schema.

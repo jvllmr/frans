@@ -3,9 +3,9 @@ package cmd
 import (
 	"log"
 
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/db"
-	"github.com/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/db"
+	"codeberg.org/jvllmr/frans/internal/ent"
 )
 
 func getConfigAndDBClient() (config.Config, *ent.Client) {

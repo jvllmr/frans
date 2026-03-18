@@ -9,16 +9,16 @@ import (
 	"strings"
 	"time"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent/grant"
+	"codeberg.org/jvllmr/frans/internal/mail"
+	"codeberg.org/jvllmr/frans/internal/otel"
+	apiTypes "codeberg.org/jvllmr/frans/internal/routes/api/types"
+	"codeberg.org/jvllmr/frans/internal/services"
+	"codeberg.org/jvllmr/frans/internal/util"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/ent/grant"
-	"github.com/jvllmr/frans/internal/mail"
-	"github.com/jvllmr/frans/internal/otel"
-	apiTypes "github.com/jvllmr/frans/internal/routes/api/types"
-	"github.com/jvllmr/frans/internal/services"
-	"github.com/jvllmr/frans/internal/util"
 )
 
 type grantShareController struct {

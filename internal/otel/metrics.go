@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/config"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"

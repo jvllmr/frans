@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/ent"
 	// required by schema hooks.
-	_ "github.com/jvllmr/frans/internal/ent/runtime"
+	_ "codeberg.org/jvllmr/frans/internal/ent/runtime"
 
+	"codeberg.org/jvllmr/frans/internal/ent/migrate"
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/jvllmr/frans/internal/ent/migrate"
 )
 
 type (

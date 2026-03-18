@@ -4,8 +4,8 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/services"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/services"
 )
 
 func TicketsLifecycleTask(db *ent.Client, ts services.TicketService) {

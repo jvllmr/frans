@@ -6,10 +6,10 @@ import (
 	"log/slog"
 	"slices"
 
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/util"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/google/uuid"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/util"
 	"golang.org/x/oauth2"
 )
 

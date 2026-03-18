@@ -7,11 +7,11 @@ import (
 	"log/slog"
 	"os"
 
+	"codeberg.org/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/ent"
+	"codeberg.org/jvllmr/frans/internal/otel"
+	"codeberg.org/jvllmr/frans/internal/routes"
 	"github.com/gin-gonic/gin"
-	"github.com/jvllmr/frans/internal/config"
-	"github.com/jvllmr/frans/internal/ent"
-	"github.com/jvllmr/frans/internal/otel"
-	"github.com/jvllmr/frans/internal/routes"
 	"github.com/spf13/cobra"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )

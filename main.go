@@ -1,6 +1,6 @@
 package main
 
-import "github.com/jvllmr/frans/cmd"
+import "codeberg.org/jvllmr/frans/cmd"
 
 func main() {
 	cmd.Main()

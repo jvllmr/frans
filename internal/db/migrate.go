@@ -13,9 +13,9 @@ import (
 	"ariga.io/atlas/sql/mysql"
 	"ariga.io/atlas/sql/postgres"
 	"ariga.io/atlas/sql/sqlite"
-	"github.com/jvllmr/frans/internal/config"
+	"codeberg.org/jvllmr/frans/internal/config"
 
-	"github.com/jvllmr/frans/internal/util"
+	"codeberg.org/jvllmr/frans/internal/util"
 )
 
 //go:embed migrations/*/*.sql
