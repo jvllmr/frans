@@ -47,7 +47,7 @@ jobs:
         run: pnpm test:cover
       - name: Upload coverage to codecov
         if: false
-        uses: https://github.com/codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        uses: https://github.com/codecov/codecov-action@1af58845a975a7985b0beb0cbe6fbbb71a41dbad # v5.5.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
   build:
@@ -79,7 +79,7 @@ jobs:
       - name: Build
         run: pnpm build
       - name: Upload build
-        uses: https://github.com/actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3.2.1
+        uses: https://github.com/actions/upload-artifact@c6a366c94c3e0affe28c06c8df20a878f24da3cf # v3.2.2
         with:
           name: build-output
           path: frans
@@ -95,7 +95,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: https://github.com/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        uses: https://github.com/actions/download-artifact@a9bc5e6ef2cb54c177f32aa5726adaa15e7e2d59 # v3.1.0
         with:
           name: build-output
       - run: chmod +x frans
@@ -127,7 +127,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: https://github.com/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        uses: https://github.com/actions/download-artifact@a9bc5e6ef2cb54c177f32aa5726adaa15e7e2d59 # v3.1.0
         with:
           name: build-output
       - run: chmod +x frans
@@ -162,7 +162,7 @@ jobs:
 
     steps:
       - name: Download artifact from build workflow
-        uses: https://github.com/actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        uses: https://github.com/actions/download-artifact@a9bc5e6ef2cb54c177f32aa5726adaa15e7e2d59 # v3.1.0
         with:
           name: build-output
       - run: chmod +x frans
