@@ -123,7 +123,7 @@ func (e *entRevisionsReadWriter) ReadRevisions(context.Context) ([]*migrate.Revi
 			partial_hashes,
 			operator_version
 			FROM atlas_schema_revisions
-			`,
+			ORDER BY version`,
 	)
 	if err != nil {
 		return nil, err

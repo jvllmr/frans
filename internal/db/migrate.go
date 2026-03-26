@@ -141,15 +141,23 @@ func Migrate(dbConfig config.DBConfig) {
 		log.Fatalf("Could not create revisions table: %v", err)
 	}
 
-	executor, err := migrate.NewExecutor(drv, dir, &rrw, migrate.WithAllowDirty(true))
+	executor, err := migrate.NewExecutor(
+		drv,
+		dir,
+		&rrw,
+		migrate.WithAllowDirty(true),
+		migrate.WithExecOrder(migrate.ExecOrderLinear),
+	)
 	if err != nil {
 		log.Fatalf("Could not get migration executor: %v", err)
 	}
 	err = executor.ExecuteN(context.Background(), 0)
 	if err != nil {
-		if !errors.Is(err, migrate.ErrNoPendingFiles) {
+		if errors.Is(err, migrate.ErrNoPendingFiles) {
+			log.Printf("All migrations already present. Nothing to do.")
+		} else {
 			log.Fatalf("Could not execute pending migrations: %v", err)
 		}
 	}
-
+	log.Printf("Finished database migration.")
 }
