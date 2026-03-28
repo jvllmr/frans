@@ -1,0 +1,20 @@
+{
+  "logout": "Logi välja",
+  "title_logout": "Lõpeta sessioon",
+  "upload": "Laadi üles",
+  "reset": "Lähtesta",
+  "generate": "Loo",
+  "comment": "Kommentaar",
+  "session_expired": "Sinu sisselogimissessioon on aegunud",
+  "session_renew": "Logi uuesti sisse",
+  "expiration_type_none": "Mitte kunagi",
+  "file_downloaded_success": "Allalaadimine õnnestus",
+  "url": "Võrguaadress",
+  "password": "Salasõna",
+  "view_on_github": "Vaata projekti teavet GitHubis",
+  "licensed": "See tarkvara on litsentseeritud GPL-i versioon 2.0 alusel",
+  "switch_color_scheme_dark": "Kasuta tumedat kujundust",
+  "switch_color_scheme_light": "Kasuta heledat kujundust",
+  "owner": "Omanik",
+  "send": "Saada"
+}

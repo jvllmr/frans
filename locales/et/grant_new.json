@@ -1,0 +1,9 @@
+{
+  "title_create": "Loo failiküsimine",
+  "label_create": "Loo failiküsimine",
+  "title_reset": "Lähtesta vormi väljad",
+  "label_expiry": "Failiküsimise aegumine",
+  "label_download_expiry": "Üleslaaditud failide aegumine",
+  "grant_available": "Sinu failiküsimine on nüüd saadaval!",
+  "grant_another": "Loo veel üks failiküsimine"
+}

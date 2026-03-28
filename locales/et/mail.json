@@ -1,0 +1,18 @@
+{
+  "ticket_comment": "Failisaatmise kommentaar",
+  "grant_comment": "Failiküsimise kommentaar",
+  "subject_grant": "Failiküsimise link",
+  "notification_upload": "Failiküsimisele laaditi faile üles: {{.GrantName}} - {{.Address}}",
+  "subject_upload": "Failiküsimise kohane üleslaadimisteavitus",
+  "url": "Võrguaadress",
+  "password": "Salasõna",
+  "contents": "Sisu",
+  "subject_ticket": "Allalaadimislink failile {{.FileName}}",
+  "subject_download": "Saadetud faili allalaadimisteavitus",
+  "notification_download": "{{.Address}} laadis alla {{.FileName}} faili (failijagamine {{.TicketName}})",
+  "notification_deletion": "Peakasutaja kustutas faili: {{.Entity}} - {{.BaseUrl}}",
+  "subject_deletion": "Kustutamise teavitus:",
+  "entity_ticket": "jagamine {{.ID}}",
+  "entity_file": "fail {{.ID}}",
+  "entity_grant": "üleslaadimispäring {{.ID}}"
+}

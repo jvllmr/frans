@@ -1,0 +1,9 @@
+{
+  "user": "Kasutaja",
+  "admin": "Peakasutaja",
+  "tickets_submitted": "Failisaatmine on loodud",
+  "tickets_active": "Aktiivsed failisaatmised",
+  "grants_submitted": "Loodud failiküsimised",
+  "grants_active": "Aktiivsed failiküsimised",
+  "current_size": "Praegune suurus"
+}

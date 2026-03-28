@@ -1,0 +1,11 @@
+{
+  "ticket_prompt": "Ligipääsuks jagatud failidele sisesta oma salasõna",
+  "ticket_submit": "Ligipääs jagatud failidele",
+  "ticket_message": "on sinuga jaganud järgnevaid faile",
+  "comment": "Kommentaar",
+  "title_open_share": "Aja jaosmeedia",
+  "grant_prompt": "Üleslaadimiseks sisesta oma salasõna",
+  "grant_submit": "Ligipääs jagatud failiküsimisele",
+  "grant_message": "on andnud sulle õiguse siia faile üles laadida",
+  "files": "Failid"
+}

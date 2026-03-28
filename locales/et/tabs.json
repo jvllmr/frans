@@ -1,0 +1,11 @@
+{
+  "new": "Uus saatmine",
+  "tickets": "Hetkel aktiivsed failisaatmised",
+  "new_grant": "Uus failiküsimine",
+  "active_grants": "Hetkel aktiivsed failiküsimised",
+  "grants": "Saadud failid",
+  "share": "Jaga",
+  "ticket_share": "Failisaatmise jagamine",
+  "users": "Kasutajad",
+  "grant_share": "Failiküsimise jagamine"
+}

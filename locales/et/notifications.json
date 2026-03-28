@@ -1,0 +1,14 @@
+{
+  "ticket_new_failed": "Uue saatmise lisamine ei õnnestunud",
+  "ticket_new_success": "Uus failisaatmine on loodud",
+  "ticket_delete_failed": "Failisaatmise kustutamine ei õnnestunud",
+  "ticket_delete_success": "Failisaatmine on kustutatud",
+  "grant_new_failed": "Uue failiküsimise loomine ei õnnestunud",
+  "grant_new_success": "Uus failiküsimine on loodud",
+  "grant_upload_failed": "Failiküsimise kohane ülelaadimine ei õnnestunud",
+  "grant_upload_success": "Failid on failiküsimise kohaselt laaditud üles",
+  "grant_delete_failed": "Failiküsimise kustutamine ei õnnestunud",
+  "grant_delete_success": "Failiküsimine on kustutatud",
+  "file_delete_failed": "Faili kustutamine ei õnnestunud",
+  "file_delete_success": "Fail on kustutatud"
+}
