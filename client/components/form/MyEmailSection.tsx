@@ -69,6 +69,7 @@ export function MyEmailSection({ form, variant }: MyEmailFormSectionProps) {
             }}
             mt="lg"
             title={t("title_own_email")}
+            disabled={inputPropsEmail.value?.includes(me?.email ?? "")}
           >
             {variant === "upload"
               ? t("label_own_email_upload")
