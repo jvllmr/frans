@@ -28,6 +28,7 @@ The goal is to translate `frans` to the following languages:
 - [ ] `Portuguese, Brazilian`
 - [ ] `Czech`
 - [ ] `Italian`
+- [x] `Estonian`
 
 Feel free to contribute or improve translations via [Codeberg Translate](https://translate.codeberg.org/engage/frans/)
 

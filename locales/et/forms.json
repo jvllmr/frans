@@ -10,7 +10,7 @@
   "label_receiver_lang": "Vastuvõtja keel",
   "label_password": "Salasõna",
   "label_password_email": "Saada lahtise tekstiga koos teavitusega",
-  "label_password_email_highlight": "tühjenda",
+  "label_password_email_highlight": "lahtise",
   "expiry_automatic": "Automaatne",
   "expiry_single_use": "Ühekordselt kasutatav",
   "expiry_none": "Ilma aegumiseta",
