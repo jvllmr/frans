@@ -5,13 +5,19 @@ import { AvailableLanguage } from "~/i18n";
 import { LangInput } from "../inputs/LangInput";
 import { NullTagsInput } from "../inputs/NullTagsInput";
 
-export interface HisHerEmailFormSectionProps {
-  form: UseFormReturnType<{
-    email: string | null;
-    receiverLang: AvailableLanguage;
-  }>;
+interface HisHerEmailFormValues {
+  email: string[] | null;
+  receiverLang: AvailableLanguage;
 }
-export function HisHerEmailSection({ form }: HisHerEmailFormSectionProps) {
+
+export interface HisHerEmailFormSectionProps<
+  TForm extends UseFormReturnType<HisHerEmailFormValues>,
+> {
+  form: TForm;
+}
+export function HisHerEmailSection<
+  TForm extends UseFormReturnType<HisHerEmailFormValues>,
+>({ form }: HisHerEmailFormSectionProps<TForm>) {
   const { t } = useTranslation("forms");
   return (
     <Fieldset>

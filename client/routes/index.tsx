@@ -126,26 +126,15 @@ function NewTicketForm() {
             <FilesInput {...form.getInputProps("files")} />
           </Box>
           <CommentInput {...form.getInputProps("comment")} />
-          <HisHerEmailSection
-            // @ts-expect-error the type should match...
-            form={form}
-          />
-          <PasswordSection
-            // @ts-expect-error the type should match...
-            form={form}
-          />
+          <HisHerEmailSection form={form} />
+          <PasswordSection form={form} />
 
           <ExpiryParamsDownloadSection
-            // @ts-expect-error the type should match...
             form={form}
             variant="ticket"
             label={t("label_expiry")}
           />
-          <MyEmailSection
-            // @ts-expect-error the type should match...
-            form={form}
-            variant="download"
-          />
+          <MyEmailSection form={form} variant="download" />
           <Flex justify="space-evenly">
             <Button
               type="submit"

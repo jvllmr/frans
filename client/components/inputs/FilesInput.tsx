@@ -48,7 +48,7 @@ export function FilesInput({ onChange, value }: FilesInputProps) {
             </Flex>
           ) : null}
         </Dropzone.Idle>
-        <Grid gutter="xl">
+        <Grid gap="xl">
           {value?.map((fileWithPath, filesIndex) => (
             <Grid.Col span={3} key={fileWithPath.path}>
               <FileCard>

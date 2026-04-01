@@ -118,27 +118,12 @@ function RouteComponent() {
     >
       <Box p="lg">
         <SimpleGrid spacing="xl">
-          <MyEmailSection
-            // @ts-expect-error the type should match...
-            form={form}
-            variant="upload"
-          />
+          <MyEmailSection form={form} variant="upload" />
           <CommentInput {...form.getInputProps("comment")} />
-          <HisHerEmailSection
-            // @ts-expect-error the type should match...
-            form={form}
-          />
-          <PasswordSection
-            // @ts-expect-error the type should match...
-            form={form}
-          />
-          <ExpiryParamsUploadSection
-            // @ts-expect-error the type should match...
-            form={form}
-            label={t("label_expiry")}
-          />
+          <HisHerEmailSection form={form} />
+          <PasswordSection form={form} />
+          <ExpiryParamsUploadSection form={form} label={t("label_expiry")} />
           <ExpiryParamsDownloadSection
-            // @ts-expect-error the type should match...
             form={form}
             variant="grant"
             label={t("label_download_expiry")}
