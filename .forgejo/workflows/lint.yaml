@@ -39,4 +39,4 @@ jobs:
         run: pnpm install --frozen-lock
       - run: ./scripts/gen_version.sh
       - run: ./scripts/prebuild.sh
-      - uses: https://github.com/j178/prek-action@79f765515bd648eb4d6bb1b17277b7cb22cb6468 # v2.0.0
+      - uses: https://github.com/j178/prek-action@53276d8b0d10f8b6672aa85b4588c6921d0370cc # v2.0.1
