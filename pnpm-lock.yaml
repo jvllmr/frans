@@ -115,11 +115,11 @@ importers:
         specifier: 7.0.1
         version: 7.0.1(postcss@8.5.9)
       prettier:
-        specifier: 3.8.1
-        version: 3.8.1
+        specifier: 3.8.2
+        version: 3.8.2
       prettier-plugin-organize-imports:
         specifier: 4.3.0
-        version: 4.3.0(prettier@3.8.1)(typescript@6.0.2)
+        version: 4.3.0(prettier@3.8.2)(typescript@6.0.2)
       tsx:
         specifier: 4.21.0
         version: 4.21.0
@@ -1658,8 +1658,8 @@ packages:
       vue-tsc:
         optional: true
 
-  prettier@3.8.1:
-    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
+  prettier@3.8.2:
+    resolution: {integrity: sha512-8c3mgTe0ASwWAJK+78dpviD+A8EqhndQPUBpNUIPt6+xWlIigCwfN01lWr9MAede4uqXGTEKeQWTvzb3vjia0Q==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -2545,7 +2545,7 @@ snapshots:
       '@tanstack/router-core': 1.168.9
       '@tanstack/router-utils': 1.161.6
       '@tanstack/virtual-file-routes': 1.161.7
-      prettier: 3.8.1
+      prettier: 3.8.2
       recast: 0.23.11
       source-map: 0.7.6
       tsx: 4.21.0
@@ -3460,12 +3460,12 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-plugin-organize-imports@4.3.0(prettier@3.8.1)(typescript@6.0.2):
+  prettier-plugin-organize-imports@4.3.0(prettier@3.8.2)(typescript@6.0.2):
     dependencies:
-      prettier: 3.8.1
+      prettier: 3.8.2
       typescript: 6.0.2
 
-  prettier@3.8.1: {}
+  prettier@3.8.2: {}
 
   prop-types@15.8.1:
     dependencies:
