@@ -14,7 +14,7 @@ services:
       - keycloak
   keycloak:
     container_name: frans_dev_keycloak
-    image: quay.io/keycloak/keycloak:26.5.7@sha256:45ae20191531eb608ddb0b775d012b40d3e4f942697f3214694887dd7c108d13
+    image: quay.io/keycloak/keycloak:26.6.0@sha256:b0e5dbced1775de4d629f103c0a9cfc057decc62ce8d3cb1c54f8849a6c6eb62
     command: start-dev --import-realm --verbose
     ports:
       - 127.0.0.1:8080:8080
@@ -37,7 +37,7 @@ services:
       - 127.0.0.1:2525:25
   openobserve:
     container_name: frans_dev_openobserve
-    image: public.ecr.aws/zinclabs/openobserve:v0.70.3@sha256:b13e59b128c20e1a2e07f93c38caef4ada7dbec963d140b9846df50268e41bf2
+    image: public.ecr.aws/zinclabs/openobserve:v0.80.0@sha256:2ea67fcd842c2be6caf139a7231fb396f4023d5dd00cf46f42b61a8ca7a36607
     environment:
       ZO_ROOT_USER_EMAIL: "root@example.com"
       ZO_ROOT_USER_PASSWORD: "admin"
