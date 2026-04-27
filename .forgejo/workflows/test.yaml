@@ -31,7 +31,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup pnpm
-        uses: https://github.com/pnpm/action-setup@078e9d416474b29c0c387560859308974f7e9c53 # v6.0.1
+        uses: https://github.com/pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e # v6.0.3
         with:
           run_install: false
       - name: Setup go
@@ -60,7 +60,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup pnpm
-        uses: https://github.com/pnpm/action-setup@078e9d416474b29c0c387560859308974f7e9c53 # v6.0.1
+        uses: https://github.com/pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e # v6.0.3
         with:
           run_install: false
       - name: Install Node.js
@@ -148,7 +148,7 @@ jobs:
 
     services:
       mysql:
-        image: docker.io/mysql:9.6.0@sha256:24e450bbd24f621c71b10404c946cc9ea1cbb0e6e7464b2be2de5193dcf1d05b
+        image: docker.io/mysql:9.7.0@sha256:c9e48b0c008f1936d4139d1c0dcd5950a9dbe57d4d40f383013cde432fa6d6aa
         env:
           MYSQL_ROOT_PASSWORD: secret
           MYSQL_USER: user
