@@ -48,7 +48,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@tanstack/react-query-devtools": "5.100.1",
-    "@tanstack/router-plugin": "1.167.22",
+    "@tanstack/router-plugin": "1.167.23",
     "@types/node": "24.12.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
