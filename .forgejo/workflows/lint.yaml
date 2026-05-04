@@ -18,7 +18,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup pnpm
-        uses: https://github.com/pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e # v6.0.3
+        uses: https://github.com/pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
         with:
           run_install: false
       - name: Install Node.js
@@ -39,4 +39,4 @@ jobs:
         run: pnpm install --frozen-lock
       - run: ./scripts/gen_version.sh
       - run: ./scripts/prebuild.sh
-      - uses: https://github.com/j178/prek-action@cbc2f23eb5539cf20d82d1aabd0d0ecbcc56f4e3 # v2.0.2
+      - uses: https://github.com/j178/prek-action@6ad80277337ad479fe43bd70701c3f7f8aa74db3 # v2.0.3
