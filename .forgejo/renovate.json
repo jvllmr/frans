@@ -15,11 +15,17 @@
   "pre-commit": {
     "enabled": true
   },
+
   "labels": ["dependencies"],
   "rangeStrategy": "bump",
   "packageRules": [
     { "matchDepTypes": ["golang", "toolchain"], "enabled": false },
-    { "matchFileNames": ["docker-compose.minimal.yaml"], "enabled": false }
+    { "matchFileNames": ["docker-compose.minimal.yaml"], "enabled": false },
+    {
+      "description": "Disable auto-creating digest PRs",
+      "matchUpdateTypes": ["digest"],
+      "dependencyDashboardApproval": true
+    }
   ],
   "vulnerabilityAlerts": {
     "enabled": true
