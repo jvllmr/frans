@@ -3,14 +3,14 @@ module codeberg.org/jvllmr/frans
 go 1.25.3
 
 require (
-	ariga.io/atlas v1.2.0
+	ariga.io/atlas v1.2.2
 	entgo.io/ent v0.14.6
 	github.com/coreos/go-oidc/v3 v3.18.0
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-playground/form/v4 v4.3.0
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/google/uuid v1.6.0
-	github.com/jackc/pgx/v5 v5.9.2
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/joho/godotenv v1.5.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/samber/slog-multi v1.8.0
@@ -122,5 +122,5 @@ require (
 	golang.org/x/text v0.37.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/sqlite v1.51.0
+	modernc.org/sqlite v1.52.0
 )
