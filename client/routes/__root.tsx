@@ -259,8 +259,7 @@ interface RoutingContext {
 export const Route = createRootRouteWithContext<RoutingContext>()({
   head(ctx): { meta: { title: string }[] } {
     const routeId = ctx.matches.at(-1)?.routeId as
-      | keyof Register["router"]["routesById"]
-      | undefined;
+      keyof Register["router"]["routesById"] | undefined;
     if (!routeId || routeId === "__root__")
       return { meta: [{ title: "Root" }] };
     const { translationKey } = hiddenTabTitles[routeId];

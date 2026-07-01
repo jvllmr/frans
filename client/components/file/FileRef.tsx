@@ -36,8 +36,7 @@ function FileRefFileWithSize({ file }: FileRefTextWithSizeProps) {
 }
 
 export type FileRefTextProps =
-  | FileRefTextWithSizeProps
-  | FileRefTextWithoutSizeProps;
+  FileRefTextWithSizeProps | FileRefTextWithoutSizeProps;
 
 export function FileRefText({ file, withoutSize }: FileRefTextProps) {
   return withoutSize ? (

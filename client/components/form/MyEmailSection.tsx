@@ -25,8 +25,7 @@ interface DownloadMyEmailFormSectionProps {
 }
 
 export type MyEmailFormSectionProps =
-  | UploadMyEmailFormSectionProps
-  | DownloadMyEmailFormSectionProps;
+  UploadMyEmailFormSectionProps | DownloadMyEmailFormSectionProps;
 
 export function MyEmailSection({ form, variant }: MyEmailFormSectionProps) {
   const { t } = useTranslation("forms");

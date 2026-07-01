@@ -15,8 +15,7 @@ export const NullTextInput = React.forwardRef<
 >(function NullTextInput({ value, onChange, ...props }, ref) {
   const fixedValue = useMemo(() => (value === null ? "" : value), [value]);
   const onChangeWrapper:
-    | React.ChangeEventHandler<HTMLInputElement>
-    | undefined = useMemo(
+    React.ChangeEventHandler<HTMLInputElement> | undefined = useMemo(
     () =>
       onChange
         ? (e) => {

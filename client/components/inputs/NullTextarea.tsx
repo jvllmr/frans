@@ -15,8 +15,7 @@ export const NullTextarea = React.forwardRef<
 >(function NullTextarea({ value, onChange, ...props }, ref) {
   const fixedValue = useMemo(() => (value === null ? "" : value), [value]);
   const onChangeWrapper:
-    | React.ChangeEventHandler<HTMLTextAreaElement>
-    | undefined = useMemo(
+    React.ChangeEventHandler<HTMLTextAreaElement> | undefined = useMemo(
     () =>
       onChange
         ? (e) => {
