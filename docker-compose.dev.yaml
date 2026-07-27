@@ -37,7 +37,7 @@ services:
       - 127.0.0.1:2525:25
   openobserve:
     container_name: frans_dev_openobserve
-    image: public.ecr.aws/zinclabs/openobserve:v0.91.2@sha256:a06372673ee8cef3aa80c8de445f66e5b267eb3b62e02ca76f02b0bef7d7d521
+    image: public.ecr.aws/zinclabs/openobserve:v0.91.3@sha256:a67bff40bbffdf9a442fb688c63495ede0bb7409f56bd79853881dac96c08dec
     environment:
       ZO_ROOT_USER_EMAIL: "root@example.com"
       ZO_ROOT_USER_PASSWORD: "admin"
