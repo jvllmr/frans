@@ -3,7 +3,7 @@ module codeberg.org/jvllmr/frans
 go 1.26.4
 
 require (
-	ariga.io/atlas v1.2.3
+	ariga.io/atlas v1.3.0
 	entgo.io/ent v0.14.6
 	github.com/coreos/go-oidc/v3 v3.20.0
 	github.com/gin-gonic/gin v1.12.0
@@ -34,7 +34,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.44.0
 	go.opentelemetry.io/otel/trace v1.44.0
 	golang.org/x/oauth2 v0.36.0
-	google.golang.org/grpc v1.82.1
+	google.golang.org/grpc v1.83.0
 )
 
 require (
@@ -122,5 +122,5 @@ require (
 	golang.org/x/text v0.40.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/sqlite v1.54.0
+	modernc.org/sqlite v1.55.0
 )

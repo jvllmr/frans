@@ -148,7 +148,7 @@ jobs:
 
     services:
       mysql:
-        image: docker.io/mysql:9.7.1@sha256:ad88e1c86cbf12ef52d0a0360cd4b774d22956c5ee9c565645fb019d7aacb6c3
+        image: docker.io/mysql:9.7.2@sha256:257388edf9c84dbc04c763625446d5f3fa6ed60d1b0873bc552c614ba0a7ab4e
         env:
           MYSQL_ROOT_PASSWORD: secret
           MYSQL_USER: user
