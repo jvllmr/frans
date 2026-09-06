@@ -9,29 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UsersRouteImport } from './routes/users'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TicketsIndexRouteImport } from './routes/tickets/index'
+import { Route as UsersRouteImport } from './routes/users'
 import { Route as GrantsIndexRouteImport } from './routes/grants/index'
-import { Route as SShareIdRouteImport } from './routes/s/$shareId'
-import { Route as GrantsNewRouteImport } from './routes/grants/new'
 import { Route as GrantsActiveRouteImport } from './routes/grants/active'
-import { Route as ShareTicketTicketIdRouteImport } from './routes/share/ticket/$ticketId'
+import { Route as GrantsNewRouteImport } from './routes/grants/new'
+import { Route as SShareIdRouteImport } from './routes/s/$shareId'
+import { Route as TicketsIndexRouteImport } from './routes/tickets/index'
 import { Route as ShareGrantGrantIdRouteImport } from './routes/share/grant/$grantId'
+import { Route as ShareTicketTicketIdRouteImport } from './routes/share/ticket/$ticketId'
 
-const UsersRoute = UsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TicketsIndexRoute = TicketsIndexRouteImport.update({
-  id: '/tickets/',
-  path: '/tickets/',
+const UsersRoute = UsersRouteImport.update({
+  id: '/users',
+  path: '/users',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GrantsIndexRoute = GrantsIndexRouteImport.update({
@@ -39,9 +34,9 @@ const GrantsIndexRoute = GrantsIndexRouteImport.update({
   path: '/grants/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SShareIdRoute = SShareIdRouteImport.update({
-  id: '/s/$shareId',
-  path: '/s/$shareId',
+const GrantsActiveRoute = GrantsActiveRouteImport.update({
+  id: '/grants/active',
+  path: '/grants/active',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GrantsNewRoute = GrantsNewRouteImport.update({
@@ -49,19 +44,24 @@ const GrantsNewRoute = GrantsNewRouteImport.update({
   path: '/grants/new',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GrantsActiveRoute = GrantsActiveRouteImport.update({
-  id: '/grants/active',
-  path: '/grants/active',
+const SShareIdRoute = SShareIdRouteImport.update({
+  id: '/s/$shareId',
+  path: '/s/$shareId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ShareTicketTicketIdRoute = ShareTicketTicketIdRouteImport.update({
-  id: '/share/ticket/$ticketId',
-  path: '/share/ticket/$ticketId',
+const TicketsIndexRoute = TicketsIndexRouteImport.update({
+  id: '/tickets/',
+  path: '/tickets/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShareGrantGrantIdRoute = ShareGrantGrantIdRouteImport.update({
   id: '/share/grant/$grantId',
   path: '/share/grant/$grantId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShareTicketTicketIdRoute = ShareTicketTicketIdRouteImport.update({
+  id: '/share/ticket/$ticketId',
+  path: '/share/ticket/$ticketId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -149,13 +149,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/users': {
-      id: '/users'
-      path: '/users'
-      fullPath: '/users'
-      preLoaderRoute: typeof UsersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -163,11 +156,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tickets/': {
-      id: '/tickets/'
-      path: '/tickets'
-      fullPath: '/tickets/'
-      preLoaderRoute: typeof TicketsIndexRouteImport
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/grants/': {
@@ -177,11 +170,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GrantsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/s/$shareId': {
-      id: '/s/$shareId'
-      path: '/s/$shareId'
-      fullPath: '/s/$shareId'
-      preLoaderRoute: typeof SShareIdRouteImport
+    '/grants/active': {
+      id: '/grants/active'
+      path: '/grants/active'
+      fullPath: '/grants/active'
+      preLoaderRoute: typeof GrantsActiveRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/grants/new': {
@@ -191,18 +184,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GrantsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/grants/active': {
-      id: '/grants/active'
-      path: '/grants/active'
-      fullPath: '/grants/active'
-      preLoaderRoute: typeof GrantsActiveRouteImport
+    '/s/$shareId': {
+      id: '/s/$shareId'
+      path: '/s/$shareId'
+      fullPath: '/s/$shareId'
+      preLoaderRoute: typeof SShareIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/share/ticket/$ticketId': {
-      id: '/share/ticket/$ticketId'
-      path: '/share/ticket/$ticketId'
-      fullPath: '/share/ticket/$ticketId'
-      preLoaderRoute: typeof ShareTicketTicketIdRouteImport
+    '/tickets/': {
+      id: '/tickets/'
+      path: '/tickets'
+      fullPath: '/tickets/'
+      preLoaderRoute: typeof TicketsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/share/grant/$grantId': {
@@ -210,6 +203,13 @@ declare module '@tanstack/react-router' {
       path: '/share/grant/$grantId'
       fullPath: '/share/grant/$grantId'
       preLoaderRoute: typeof ShareGrantGrantIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share/ticket/$ticketId': {
+      id: '/share/ticket/$ticketId'
+      path: '/share/ticket/$ticketId'
+      fullPath: '/share/ticket/$ticketId'
+      preLoaderRoute: typeof ShareTicketTicketIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
