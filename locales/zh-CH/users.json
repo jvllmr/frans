@@ -1,6 +1,6 @@
 {
-  "user": "",
-  "admin": "",
+  "user": "用户",
+  "admin": "管理员",
   "tickets_submitted": "",
   "tickets_active": "",
   "grants_submitted": "",

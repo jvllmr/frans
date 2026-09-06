@@ -1,8 +1,8 @@
 {
-  "table_title_file": "",
-  "table_title_size": "",
-  "table_title_date": "",
-  "table_title_expiration": "",
-  "total_size": "",
-  "title_delete": ""
+  "table_title_file": "Archivo",
+  "table_title_size": "Tamaño",
+  "table_title_date": "Fecha",
+  "table_title_expiration": "Vencimiento",
+  "total_size": "Tamaño total de todos los archivos",
+  "title_delete": "Borrar el archivo"
 }

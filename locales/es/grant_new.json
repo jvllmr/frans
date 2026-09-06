@@ -1,9 +1,9 @@
 {
-  "title_create": "",
-  "label_create": "",
-  "title_reset": "",
-  "label_expiry": "",
-  "label_download_expiry": "",
-  "grant_available": "",
-  "grant_another": ""
+  "title_create": "Generar autorización para subir",
+  "label_create": "Crear enlace de subida",
+  "title_reset": "Restablecer formulario",
+  "label_expiry": "Vencimiento del enlace de subida",
+  "label_download_expiry": "Vencimiento de los archivos subidos",
+  "grant_available": "¡Enlace de subida ya está disponible!",
+  "grant_another": "Crear otro enlace de subida"
 }

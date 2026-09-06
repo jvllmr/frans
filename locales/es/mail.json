@@ -1,1 +1,18 @@
-{}
+{
+  "ticket_comment": "Comentario de envío de archivo",
+  "grant_comment": "Permitir comentarios",
+  "contents": "Contenido",
+  "url": "URL",
+  "password": "Contraseña",
+  "subject_ticket": "Enlace de descarga para {{.FileName}}",
+  "subject_download": "Notificación de descarga de la incidencia",
+  "notification_download": "El archivo {{.FileName}} (incidencia {{.TicketName}}) fue descargado por {{.Address}}",
+  "subject_upload": "Notificación de carga según la solicitud de archivo",
+  "notification_upload": "Se han subido archivos {{.GrantName}} por {{.Address}}",
+  "subject_grant": "Enlace para solicitar el archivo",
+  "notification_deletion": "{{.Entity}} fue eliminado por un administrador en {{.BaseUrl}}",
+  "subject_deletion": "Aviso de eliminación de",
+  "entity_ticket": "Compartir {{.ID}}",
+  "entity_grant": "Enlace de descarga {{.ID}}",
+  "entity_file": "archivo {{.ID}}"
+}

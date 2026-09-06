@@ -1,14 +1,14 @@
 {
-  "ticket_new_failed": "",
-  "ticket_new_success": "",
-  "ticket_delete_failed": "",
-  "ticket_delete_success": "",
-  "grant_new_failed": "",
-  "grant_new_success": "",
-  "grant_upload_failed": "",
-  "grant_upload_success": "",
-  "grant_delete_failed": "",
-  "grant_delete_success": "",
-  "file_delete_failed": "",
-  "file_delete_success": ""
+  "ticket_new_failed": "Error al crear el nuevo enlace",
+  "ticket_new_success": "Enlace de descarga creado",
+  "ticket_delete_failed": "Error al borrar el enlace de descarga",
+  "ticket_delete_success": "Enlace de descarga borrado",
+  "grant_new_failed": "Error al crear el enlace de subida",
+  "grant_new_success": "Creado un nuevo enlace de subida",
+  "grant_upload_failed": "Error al subir los archivos al enlace de subida",
+  "grant_upload_success": "Archivos subidos al enlace de subida",
+  "grant_delete_failed": "Error al eliminar el enlace de subida",
+  "grant_delete_success": "Enlace de subida eliminado",
+  "file_delete_failed": "Error al eliminar el archivo",
+  "file_delete_success": "Archivo borrado"
 }

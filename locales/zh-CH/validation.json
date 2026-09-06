@@ -1,5 +1,5 @@
 {
-  "email": "",
+  "email": "输入必须是电子邮件地址",
   "min_length": "",
   "password": ""
 }

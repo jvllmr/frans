@@ -1,9 +1,9 @@
 {
-  "user": "",
-  "admin": "",
-  "tickets_submitted": "",
-  "tickets_active": "",
-  "grants_submitted": "",
-  "grants_active": "",
-  "current_size": ""
+  "user": "Usuario",
+  "admin": "Administrador",
+  "tickets_submitted": "Descargas creadas",
+  "tickets_active": "Descargas activas",
+  "grants_submitted": "Autorizaciones creadas",
+  "grants_active": "Autorizaciones activas",
+  "current_size": "Tamaño actual"
 }

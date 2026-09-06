@@ -1,5 +1,5 @@
 {
-  "email": "",
-  "min_length": "",
-  "password": ""
+  "email": "Introduce un correo electrónico válido",
+  "min_length": "Debe contener al menos # caracteres",
+  "password": "Contraseña incorrecta"
 }

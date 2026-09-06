@@ -1,11 +1,11 @@
 {
-  "ticket_prompt": "",
-  "ticket_submit": "",
-  "ticket_message": "",
-  "comment": "",
-  "title_open_share": "",
-  "grant_prompt": "",
-  "grant_submit": "",
-  "grant_message": "",
-  "files": ""
+  "ticket_prompt": "Introduce tu contraseña para acceder a los archivos compartidos",
+  "ticket_submit": "Ver archivos compartidos",
+  "ticket_message": "ha compartido los siguientes archivos",
+  "comment": "Comentario",
+  "title_open_share": "Abrir recurso compartido",
+  "grant_prompt": "Contraseña requerida para subir y compartir archivos",
+  "grant_submit": "Acceder a la subida",
+  "grant_message": "tienes permiso para subir archivos aquí",
+  "files": "Archivos"
 }

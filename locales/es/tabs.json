@@ -1,11 +1,11 @@
 {
-  "new": "",
-  "tickets": "",
-  "new_grant": "",
-  "active_grants": "",
-  "grants": "",
-  "share": "",
-  "ticket_share": "",
-  "users": "",
-  "grant_share": ""
+  "new": "Nuevo enlace",
+  "tickets": "Activar enlace",
+  "new_grant": "Nuevo enlace de subida",
+  "active_grants": "Autorizaciones activas",
+  "grants": "Archivos recibidos",
+  "share": "Compartir",
+  "ticket_share": "Compartir enlaces",
+  "users": "Usuarios",
+  "grant_share": "Compartir enlace de subida"
 }

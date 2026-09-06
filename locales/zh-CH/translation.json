@@ -1,10 +1,10 @@
 {
-  "logout": "",
-  "title_logout": "",
+  "logout": "退出登录",
+  "title_logout": "结束登录会话",
   "upload": "",
   "reset": "",
   "generate": "",
-  "comment": "",
+  "comment": "注释",
   "session_expired": "",
   "session_renew": "",
   "expiration_type_none": "",

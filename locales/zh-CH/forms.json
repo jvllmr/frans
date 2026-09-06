@@ -1,7 +1,7 @@
 {
-  "label_notify_email_download": "",
-  "label_notify_email_upload": "",
-  "label_own_email_download": "",
+  "label_notify_email_download": "下载时收到电子邮件通知",
+  "label_notify_email_upload": "文件上传时通过电子邮件接收通知",
+  "label_own_email_download": "使用我的电子邮件",
   "label_own_email_upload": "",
   "title_own_email_download": "",
   "title_own_email_upload": "",
