@@ -40,7 +40,7 @@ export default defineConfig((env) => ({
   },
   resolve: {
     alias: {
-      "~": path.resolve(__dirname, "/client"),
+      "~": path.resolve(import.meta.dirname, "/client"),
       // https://github.com/tabler/tabler-icons/issues/1233#issuecomment-2428245119
       "@tabler/icons-react": "@tabler/icons-react/dist/esm/icons/index.mjs",
     },
@@ -50,8 +50,11 @@ export default defineConfig((env) => ({
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,
-      routesDirectory: path.resolve(__dirname, "./client/routes"),
-      generatedRouteTree: path.resolve(__dirname, "./client/routeTree.gen.ts"),
+      routesDirectory: path.resolve(import.meta.dirname, "./client/routes"),
+      generatedRouteTree: path.resolve(
+        import.meta.dirname,
+        "./client/routeTree.gen.ts",
+      ),
     }),
     react(),
     i18nextLoader({ paths: ["./locales"], namespaceResolution: "basename" }),
@@ -62,7 +65,7 @@ export default defineConfig((env) => ({
   build: {
     emptyOutDir: true,
     manifest: true,
-    outDir: path.resolve(__dirname, "internal/routes/client/assets"),
+    outDir: path.resolve(import.meta.dirname, "internal/routes/client/assets"),
     rollupOptions: {
       input: "client/main.tsx",
       output: {
