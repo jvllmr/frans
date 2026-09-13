@@ -36,7 +36,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT }}
       - name: Install dependencies
-        run: pnpm install --frozen-lock
+        run: pnpm install --frozen-lockfile
       - run: ./scripts/gen_version.sh
       - run: ./scripts/prebuild.sh
       - uses: https://github.com/j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0

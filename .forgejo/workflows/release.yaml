@@ -33,7 +33,7 @@ jobs:
           package-manager-cache: false
           token: ${{ secrets.GH_PAT }}
       - name: Install javascript dependencies
-        run: pnpm install --frozen-lock
+        run: pnpm install --frozen-lockfile
       - name: Build client
         run: pnpm build:client
       - name: Set up Go

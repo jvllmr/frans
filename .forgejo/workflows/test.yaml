@@ -75,7 +75,7 @@ jobs:
           go-version: ">=1.25.6"
           token: ${{ secrets.GH_PAT }}
       - name: Install dependencies
-        run: pnpm install --frozen-lock
+        run: pnpm install --frozen-lockfile
       - name: Build
         run: pnpm build
       - name: Upload build

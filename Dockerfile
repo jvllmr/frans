@@ -9,7 +9,7 @@ RUN corepack enable pnpm
 
 FROM client-base AS client-deps
 WORKDIR /workspace
-RUN --mount=type=cache,target=/root/.pnpm-store pnpm install --frozen-lock
+RUN --mount=type=cache,target=/root/.pnpm-store pnpm install --frozen-lockfile
 
 FROM client-base AS client-builder
 WORKDIR /workspace
