@@ -50,7 +50,8 @@ func (m *Mailer) SendTicketDeletionNotification(t *ent.Ticket, baseUrl string) e
 		"ID": t.ID.String(),
 	}
 	var entity bytes.Buffer
-	if err := template.Must(template.New("").Parse(entityTmpl)).Execute(&entity, entityData); err != nil {
+	if err := template.Must(template.New("").Parse(entityTmpl)).
+		Execute(&entity, entityData); err != nil {
 		panic(err)
 	}
 
@@ -65,7 +66,8 @@ func (m *Mailer) SendGrantDeletionNotification(g *ent.Grant, baseUrl string) err
 		"ID": g.ID.String(),
 	}
 	var entity bytes.Buffer
-	if err := template.Must(template.New("").Parse(entityTmpl)).Execute(&entity, entityData); err != nil {
+	if err := template.Must(template.New("").Parse(entityTmpl)).
+		Execute(&entity, entityData); err != nil {
 		panic(err)
 	}
 
@@ -90,7 +92,8 @@ func (m *Mailer) SendFileDeletionNotification(f *ent.File, baseUrl string) error
 		"ID": f.ID.String(),
 	}
 	var entity bytes.Buffer
-	if err := template.Must(template.New("").Parse(entityTmpl)).Execute(&entity, entityData); err != nil {
+	if err := template.Must(template.New("").Parse(entityTmpl)).
+		Execute(&entity, entityData); err != nil {
 		panic(err)
 	}
 

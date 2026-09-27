@@ -123,7 +123,12 @@ func setupTicketShareRoutes(r *gin.RouterGroup, cfg config.Config, db *ent.Clien
 				return
 			}
 		} else if username != ticketId {
-			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
+			util.GinAbortWithError(
+				ctx,
+				c,
+				http.StatusUnauthorized,
+				fmt.Errorf("token does not match share"),
+			)
 			return
 		}
 		uuidValue, err := uuid.Parse(ticketId)

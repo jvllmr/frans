@@ -155,7 +155,10 @@ func (tc *ticketController) deleteTicketHandler(c *gin.Context) {
 	}
 
 	if !isUserOwner {
-		if err := tc.mailer.SendTicketDeletionNotification(t, tc.config.GetBaseURL(c.Request)); err != nil {
+		if err := tc.mailer.SendTicketDeletionNotification(
+			t,
+			tc.config.GetBaseURL(c.Request),
+		); err != nil {
 			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 			return
 		}

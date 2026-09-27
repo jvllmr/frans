@@ -124,7 +124,10 @@ func (fc *fileController) deleteFileHandler(c *gin.Context) {
 	}
 
 	if !isUserOwner {
-		if err := fc.mailer.SendFileDeletionNotification(f, fc.cfg.GetBaseURL(c.Request)); err != nil {
+		if err := fc.mailer.SendFileDeletionNotification(
+			f,
+			fc.cfg.GetBaseURL(c.Request),
+		); err != nil {
 			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 			return
 		}

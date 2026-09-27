@@ -38,7 +38,8 @@ func (m *Mailer) SendTicketSharedNotification(
 		"FileName": subjectFileName,
 	}
 	var subject bytes.Buffer
-	if err := template.Must(template.New("").Parse(subjectTmpl)).Execute(&subject, subjectData); err != nil {
+	if err := template.Must(template.New("").Parse(subjectTmpl)).
+		Execute(&subject, subjectData); err != nil {
 		panic(err)
 	}
 

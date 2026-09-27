@@ -189,7 +189,10 @@ func (gc *grantController) deleteGrantHandler(c *gin.Context) {
 	}
 
 	if !isUserOwner {
-		if err := gc.mailer.SendGrantDeletionNotification(g, gc.config.GetBaseURL(c.Request)); err != nil {
+		if err := gc.mailer.SendGrantDeletionNotification(
+			g,
+			gc.config.GetBaseURL(c.Request),
+		); err != nil {
 			util.GinAbortWithError(ctx, c, http.StatusInternalServerError, err)
 			return
 		}

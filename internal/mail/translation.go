@@ -41,7 +41,13 @@ func getTranslationFactory(locale string) func(string) string {
 		} else if text, ok = enJson[translationKey]; ok {
 			return text
 		} else {
-			panic(fmt.Sprintf("Could not get translation for key %s with locale %s", translationKey, locale))
+			panic(
+				fmt.Sprintf(
+					"Could not get translation for key %s with locale %s",
+					translationKey,
+					locale,
+				),
+			)
 		}
 	}
 }

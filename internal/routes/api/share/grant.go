@@ -178,7 +178,12 @@ func setupGrantShareRoutes(r *gin.RouterGroup, configValue config.Config, db *en
 				return
 			}
 		} else if username != grantId {
-			util.GinAbortWithError(ctx, c, http.StatusUnauthorized, fmt.Errorf("token does not match share"))
+			util.GinAbortWithError(
+				ctx,
+				c,
+				http.StatusUnauthorized,
+				fmt.Errorf("token does not match share"),
+			)
 			return
 		}
 		uuidValue, err := uuid.Parse(grantId)
