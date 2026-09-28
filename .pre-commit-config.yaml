@@ -19,18 +19,18 @@ repos:
         args:
           - --fix=all
   - repo: https://github.com/jvllmr/pre-commit-prettier
-    rev: v3.9.8
+    rev: v3.9.9
     hooks:
       - id: prettier
         additional_dependencies:
           - prettier@latest
           - prettier-plugin-organize-imports@latest
   - repo: https://github.com/golangci/golines
-    rev: v0.15.0
+    rev: v0.16.0
     hooks:
       - id: golines
   - repo: https://github.com/golangci/golangci-lint
-    rev: v2.13.2
+    rev: v2.14.0
     hooks:
       - id: golangci-lint-full
   - repo: local
