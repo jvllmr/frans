@@ -24,21 +24,21 @@ jobs:
       - name: Install Node.js
         uses: https://github.com/actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24.21.0
+          node-version: 24.22.1
           cache: "pnpm"
       - name: Setup go
         uses: https://github.com/actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: ">=1.27.2"
+          go-version: ">=1.27.3"
           token: ${{ secrets.GH_PAT }}
       - name: Install uv with all available options
-        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           github-token: ${{ secrets.GH_PAT }}
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - run: ./scripts/gen_version.sh
       - run: ./scripts/prebuild.sh
-      - uses: https://github.com/j178/prek-action@1382ad72dea72f9d53832f2bcb65b3e87a947204 # v3.0.1
+      - uses: https://github.com/j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
