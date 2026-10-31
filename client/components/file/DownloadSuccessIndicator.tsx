@@ -1,6 +1,7 @@
 import { Text } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
+
 import { useDateFormatter } from "~/i18n";
 export interface DownloadSuccessIndicatorProps {
   timesDownloaded: number;

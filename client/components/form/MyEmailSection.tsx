@@ -1,10 +1,11 @@
 import { Button, Fieldset, Grid } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useQuery } from "@tanstack/react-query";
-
 import { useTranslation } from "react-i18next";
+
 import { meQueryOptions } from "~/api/user";
 import { AvailableLanguage } from "~/i18n";
+
 import { LangInput } from "../inputs/LangInput";
 import { NullTagsInput } from "../inputs/NullTagsInput";
 
@@ -25,7 +26,8 @@ interface DownloadMyEmailFormSectionProps {
 }
 
 export type MyEmailFormSectionProps =
-  UploadMyEmailFormSectionProps | DownloadMyEmailFormSectionProps;
+  | UploadMyEmailFormSectionProps
+  | DownloadMyEmailFormSectionProps;
 
 export function MyEmailSection({ form, variant }: MyEmailFormSectionProps) {
   const { t } = useTranslation("forms");

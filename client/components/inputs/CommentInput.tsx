@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+
 import { NullTextarea, NullTextareaProps } from "./NullTextarea";
 
 export function CommentInput(props: NullTextareaProps) {

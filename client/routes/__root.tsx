@@ -36,6 +36,7 @@ import { isAxiosError } from "axios";
 import { type i18n as i18nType } from "i18next";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+
 import { queryClient } from "~/api";
 import { meQueryOptions } from "~/api/user";
 import { ColorSchemeSwitch } from "~/components/common/ColorSchemeSwitch";
@@ -259,7 +260,8 @@ interface RoutingContext {
 export const Route = createRootRouteWithContext<RoutingContext>()({
   head(ctx): { meta: { title: string }[] } {
     const routeId = ctx.matches.at(-1)?.routeId as
-      keyof Register["router"]["routesById"] | undefined;
+      | keyof Register["router"]["routesById"]
+      | undefined;
     if (!routeId || routeId === "__root__")
       return { meta: [{ title: "Root" }] };
     const { translationKey } = hiddenTabTitles[routeId];

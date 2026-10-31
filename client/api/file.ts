@@ -6,9 +6,10 @@ import {
 import axios, { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
 import { z } from "zod/v4";
-import { errorNotification, successNotification } from "~/util/notifications";
-import { baseFetchJSON, v1Url } from ".";
 
+import { errorNotification, successNotification } from "~/util/notifications";
+
+import { baseFetchJSON, v1Url } from ".";
 import { publicUserSchema } from "./user";
 
 export const filesKey = ["FILES"];

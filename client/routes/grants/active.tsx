@@ -2,6 +2,7 @@ import { Group, Table } from "@mantine/core";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+
 import {
   Grant,
   grantQueryOptions,

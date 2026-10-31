@@ -1,7 +1,7 @@
 {
   "recommendations": [
     "golang.go",
-    "esbenp.prettier-vscode",
+    "oxc.oxc-vscode",
     "yoavbls.pretty-ts-errors",
     "dbaeumer.vscode-eslint",
     "ms-kubernetes-tools.vscode-kubernetes-tools"

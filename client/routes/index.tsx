@@ -11,11 +11,11 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSendFilled } from "@tabler/icons-react";
-
 import { createFileRoute } from "@tanstack/react-router";
 import { zod4Resolver } from "mantine-form-zod-resolver";
 import { useMemo, useState } from "react";
 import { I18nextProvider, useTranslation } from "react-i18next";
+
 import { queryClient } from "~/api";
 import {
   CreateTicket,

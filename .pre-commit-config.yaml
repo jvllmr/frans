@@ -1,7 +1,7 @@
 ci:
   skip:
     - eslint
-    - prettier
+    - oxfmt
     - go-fmt
     - go-vet
     - go-tidy
@@ -18,13 +18,11 @@ repos:
       - id: zizmor
         args:
           - --fix=all
-  - repo: https://github.com/jvllmr/pre-commit-prettier
-    rev: v3.9.10
+  - repo: https://github.com/oxc-project/mirrors-oxfmt
+    rev: 1fb54d06ff80b555a6a428d9b12ff0796e67d923 # v0.74.0
     hooks:
-      - id: prettier
-        additional_dependencies:
-          - prettier@latest
-          - prettier-plugin-organize-imports@latest
+      - id: oxfmt
+        types_or: [javascript, jsx, ts, tsx, markdown, mdx]
   - repo: https://github.com/golangci/golines
     rev: v0.16.0
     hooks:

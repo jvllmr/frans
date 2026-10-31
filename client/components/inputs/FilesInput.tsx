@@ -10,7 +10,9 @@ import {
 import { Dropzone, FileWithPath } from "@mantine/dropzone";
 import { IconPlus } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
+
 import { useFileSizeFormatter } from "~/i18n";
+
 import { FileIcon } from "../file/FileIcon";
 
 function FileCard({ children }: { children: React.ReactNode }) {

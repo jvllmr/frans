@@ -6,8 +6,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import React, { useCallback, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import z from "zod";
-import { filesKey } from "~/api/file";
 
+import { filesKey } from "~/api/file";
 import {
   fetchGrantShare,
   fetchGrantShareAccessToken,
@@ -17,7 +17,6 @@ import {
 } from "~/api/grant";
 import { FileRefText } from "~/components/file/FileRef";
 import { ProgressBar } from "~/components/form/ProgressBar";
-
 import { FilesInput } from "~/components/inputs/FilesInput";
 import { ShareAuth } from "~/components/share/ShareAuth";
 import { useShareAuthContext } from "~/components/share/shareAuthContext";

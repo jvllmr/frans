@@ -1,7 +1,9 @@
 import { Fieldset, Group } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { useTranslation } from "react-i18next";
+
 import { AvailableLanguage } from "~/i18n";
+
 import { LangInput } from "../inputs/LangInput";
 import { NullTagsInput } from "../inputs/NullTagsInput";
 
