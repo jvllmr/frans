@@ -65,6 +65,11 @@ func (gsc *grantShareController) postGrantFiles(c *gin.Context) {
 	ctx, span := otel.NewSpan(c.Request.Context(), "postGrantShareFiles")
 	defer span.End()
 	multipartForm, _ := c.MultipartForm()
+	defer func() {
+		if err := multipartForm.RemoveAll(); err != nil {
+			slog.Error("Could not remove multipart temp files", "err", err)
+		}
+	}()
 	files := multipartForm.File["files[]"]
 	grantValue := c.MustGet(config.ShareGrantContext).(*ent.Grant)
 

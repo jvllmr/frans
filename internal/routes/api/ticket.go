@@ -41,6 +41,11 @@ func (tc *ticketController) createTicketHandler(c *gin.Context) {
 	}
 	if err := c.ShouldBind(&form); err == nil {
 		multipartForm, _ := c.MultipartForm()
+		defer func() {
+			if err := multipartForm.RemoveAll(); err != nil {
+				slog.Error("Could not remove multipart temp files", "err", err)
+			}
+		}()
 		files := multipartForm.File["files[]"]
 		if len(files) > int(tc.config.MaxFiles) {
 			util.GinAbortWithError(

@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -117,6 +118,41 @@ func TestCreateBasicTicket(t *testing.T) {
 	newTicket := createTestTicket(t, router, ticketInputModifier)
 
 	assert.Equal(t, 1, len(newTicket.Files))
+}
+
+func TestCreateTicketRemovesMultipartTempFiles(t *testing.T) {
+	db := testutil.SetupTestDBClient(t)
+	testUser := testutil.SetupTestUser(t, db, nil)
+	testConfig := testutil.SetupTestConfig()
+	router := setupTestTicketRouter(testConfig, db, testutil.NewTestAuthMiddleware(testUser))
+
+	countMultipartTempFiles := func() int {
+		entries, err := os.ReadDir(os.TempDir())
+		if err != nil {
+			t.Fatalf("read temp dir: %v", err)
+		}
+		count := 0
+		for _, entry := range entries {
+			if strings.HasPrefix(entry.Name(), "multipart-") {
+				count++
+			}
+		}
+		return count
+	}
+
+	before := countMultipartTempFiles()
+
+	ticketInputModifier := func(writer *multipart.Writer) int {
+		partWriter, _ := writer.CreateFormFile("files[]", "big.txt")
+		io.Copy(partWriter, strings.NewReader(strings.Repeat("a", 33<<20)))
+
+		return http.StatusCreated
+	}
+
+	newTicket := createTestTicket(t, router, ticketInputModifier)
+
+	assert.Equal(t, 1, len(newTicket.Files))
+	assert.Equal(t, before, countMultipartTempFiles())
 }
 
 func TestFetchTickets(t *testing.T) {
