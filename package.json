@@ -61,7 +61,7 @@
     "postcss-preset-mantine": "1.18.0",
     "postcss-simple-vars": "7.0.1",
     "tsx": "4.23.15",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vite": "8.3.5",
     "vite-plugin-i18next-loader": "4.1.0"
   },
