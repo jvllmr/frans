@@ -21,29 +21,26 @@ RUN pnpm build:client
 
 
 FROM server-base AS server-builder
-RUN mkdir /emptyd
-RUN touch /emptyf
 WORKDIR /workspace
 ENV CGO_ENABLED=0
 COPY go.mod go.sum ./
-COPY --from=client-builder /workspace/internal ./internal
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
 COPY ./internal/config/version.go ./internal/config/version.go
 COPY . .
+COPY --from=client-builder /workspace/internal/routes/client/assets ./internal/routes/client/assets
 RUN sh ./scripts/prebuild.sh
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     go build
-RUN chmod +x /workspace/frans
+RUN mkdir -p /rootfs/opt/frans/files /rootfs/opt/frans/migrations /rootfs/tmp \
+    && cp /workspace/frans /rootfs/opt/frans/frans \
+    && chmod +x /rootfs/opt/frans/frans \
+    && touch /rootfs/opt/frans/frans.db /rootfs/opt/frans/frans.db-journal
 
 
 FROM scratch AS runner
 COPY --from=server-builder /etc/ssl/certs /etc/ssl/certs
-COPY --from=server-builder --chown=1001:1001 /emptyd /tmp
-COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/files
-COPY --from=server-builder --chown=1001:1001 /emptyd /opt/frans/migrations
-COPY --from=server-builder --chown=1001:1001 /emptyf /opt/frans/frans.db
-COPY --from=server-builder --chown=1001:1001 /emptyf /opt/frans/frans.db-journal
-COPY --from=server-builder /workspace/frans /opt/frans/
+COPY --from=server-builder --chown=1001:1001 /rootfs/ /
 
 USER 1001:1001
 WORKDIR /opt/frans

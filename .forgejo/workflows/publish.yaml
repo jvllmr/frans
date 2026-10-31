@@ -52,7 +52,6 @@ jobs:
           registry: codeberg.org/jvllmr
           username: jvllmr
           password: ${{ secrets.PUBLISH_TOKEN }}
-          auth_file_path: /run/user/0/containers/auth.json
       - name: Build container
         uses: https://github.com/redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         env:
@@ -68,7 +67,6 @@ jobs:
           extra-args: |
             --cache-from cache-registry:5000/jvllmr/frans-cache
             --cache-to cache-registry:5000/jvllmr/frans-cache
-            --authfile /run/user/0/containers/auth.json
             --tls-verify=false
           # annotations: ${{ steps.metadata.outputs.annotations }}
           # https://github.com/docker/build-push-action/blob/master/docs/advanced/cache.md#registry-cache
@@ -92,8 +90,6 @@ jobs:
           username: jvllmr
           password: ${{ secrets.PUBLISH_TOKEN }}
           tags: ${{ steps.metadata.outputs.tags }}
-          extra-args: |
-            --authfile /run/user/0/containers/auth.json
 
   helm-lint-test:
     needs:

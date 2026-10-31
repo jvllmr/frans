@@ -7,3 +7,6 @@ node_modules
 *.exe
 /frans
 /files
+internal/routes/client/assets
+coverage.out
+coverage.txt

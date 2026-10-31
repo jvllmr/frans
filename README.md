@@ -20,7 +20,7 @@ The goal is to translate `frans` to the following languages:
 - [x] `English`
 - [x] `German`
 - [ ] `French`
-- [ ] `Spanish`
+- [x] `Spanish`
 - [ ] `Russian`
 - [ ] `Simplified chinese`
 - [ ] `Japanese`
