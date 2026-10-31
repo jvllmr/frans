@@ -1,6 +1,6 @@
 ci:
   skip:
-    - eslint
+    - oxlint
     - oxfmt
     - go-fmt
     - go-vet
@@ -33,9 +33,9 @@ repos:
       - id: golangci-lint-full
   - repo: local
     hooks:
-      - id: eslint
+      - id: oxlint
         name: lint typescript
-        entry: pnpm eslint
+        entry: pnpm oxlint --deny-warnings
         language: system
         pass_filenames: true
         types_or:

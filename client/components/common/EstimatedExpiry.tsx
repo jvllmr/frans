@@ -8,6 +8,7 @@ interface EstimatedExpiryProps {
 }
 
 export function EstimatedExpiry({ estimatedExpiry }: EstimatedExpiryProps) {
+  // eslint-disable-next-line react/purity
   const now = new Date();
   const relativeDateFormatter = useRelativeDateFormatter();
   const { t } = useTranslation();

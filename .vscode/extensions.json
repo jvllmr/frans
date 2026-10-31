@@ -3,7 +3,7 @@
     "golang.go",
     "oxc.oxc-vscode",
     "yoavbls.pretty-ts-errors",
-    "dbaeumer.vscode-eslint",
+    "oxc.oxc-vscode",
     "ms-kubernetes-tools.vscode-kubernetes-tools"
   ]
 }
