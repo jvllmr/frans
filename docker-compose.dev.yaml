@@ -14,7 +14,7 @@ services:
       - keycloak
   keycloak:
     container_name: frans_dev_keycloak
-    image: quay.io/keycloak/keycloak:26.8.1@sha256:a78d6b79572168cb25886b80a8b5b8d4ed4390743e3eecb810538683e209dd6b
+    image: quay.io/keycloak/keycloak:26.8.2@sha256:3879c623248408de29a5303178b5816c77e8dfef3890c361f8c0bbeaa979ba3b
     command: start-dev --import-realm --verbose
     ports:
       - 127.0.0.1:8080:8080
@@ -31,7 +31,7 @@ services:
       - ./keycloak/realm_import:/opt/keycloak/data/import:Z
   smtp:
     container_name: frans_dev_smtp
-    image: docker.io/rnwood/smtp4dev:3.15.0@sha256:25c434c1900a9c5b61e17ead0a774d9e81b80554d05cf64719d69e5ea8c66537
+    image: docker.io/rnwood/smtp4dev:3.16.1@sha256:211a60c1a4f51ff7ace4a35de055797348994b0e84ab36734991235f90f9ac75
     ports:
       - 127.0.0.1:5000:80
       - 127.0.0.1:2525:25

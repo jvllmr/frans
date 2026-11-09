@@ -13,7 +13,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
   - repo: https://github.com/woodruffw/zizmor-pre-commit
-    rev: v1.31.1
+    rev: v1.32.0
     hooks:
       - id: zizmor
         args:
@@ -24,7 +24,7 @@ repos:
       - id: oxfmt
         types_or: [javascript, jsx, ts, tsx, markdown, mdx]
   - repo: https://github.com/golangci/golines
-    rev: v0.16.0
+    rev: v0.16.1
     hooks:
       - id: golines
   - repo: https://github.com/golangci/golangci-lint
